@@ -33,3 +33,11 @@ printed_mounts_spec.md.
 - Sequencing: printed-mount rebuild (queue item 1) lands first - its parts become
   the construction axis; then the topology/form front door; then flower + SH96
   presets fill the space.
+
+## Open defect logged 2026-07-22 (his corner close-up)
+The rect form's mouth-end SECOND FLARE draws notched arrow facets at the corners -
+"looks very different than any synergy horn" (correct: reference square horns read
+as ONE clean pyramid; the JMOD second flare exists but its corner transition is a
+plain diagonal). Fix in the form axis: rect defaults to the clean single-pyramid
+look (plain diagonal corner facets); the two-flare panel stays as an explicit
+construction option whose corners are simple diagonals, never the arrow notch.
