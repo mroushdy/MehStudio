@@ -445,10 +445,10 @@ function driverLayout(S,st){
         return vnorm(vcross(v0,nOut0)); })();
       const fwK=Math.max(0.35,Math.hypot(u0[1],u0[2]));
       const stepK=(npc>1)? Math.max(saK+0.004,(sbK+0.003)/fwK) : 0;   // pair stagger: 3D + front-view clear (plate-photo law)
-      const uDotE=Math.abs(u0[1]*0.7071+u0[2]*0.7071);
-      const rF=Math.max((S.td||1)*IN*0.5+sbK+0.008,       // facet line: the kidney EDGE (radial half) clears the throat
-                        (2*saK+0.010)/1.4142+stepK*uDotE, // ring law at the STAGGERED innermost kidney across corners
-                        cornerDist-(saK+0.016));          // chord room for the tangential long half (reference board width law)
+      const Ntot=Math.max(1,n*npc);
+      const ringR=(2*saK+0.008)/(2*Math.sin(Math.PI/Math.max(2,Ntot)));   // even ring: neighbors clear at full tangential extents
+      const rF=Math.max((S.td||1)*IN*0.5+sbK+0.008,       // the kidney EDGE (radial half) clears the throat
+                        ringR);                            // ONE ring, evenly spaced - the plate-photo regularity law
       const dF=Math.max( (od+0.010)*0.7072,               // pair law: four frames 90 deg apart clear each other
                          cdR+od*0.5,                      // CD law: frame inner edge clears the CD radius
                          rF+od*0.3536+0.006,              // frame FULLY behind the chamfer board - never in the horn air
@@ -473,7 +473,8 @@ function driverLayout(S,st){
         for(let j=0;j<12;j++){const a2=j/12*2*Math.PI;
           d.magRim.push(vadd(magTip2,vadd(vscale(d.u,od*0.28*Math.cos(a2)),vscale(d.v,od*0.28*Math.sin(a2)))));}
         d.portC=tap0;
-        d.chamfer={dF:dF, plate:rPl, portR:rF, phi:phi, corner:cornerDist, pocket:Math.max(0,dF-rF), nOut:nOut.slice(), rF:rF, c0:c0, sa:saK, sb:sbK, step:stepK};
+        d.chamfer={dF:dF, plate:rPl, portR:rF, phi:phi, corner:cornerDist, pocket:Math.max(0,dF-rF), nOut:nOut.slice(), rF:rF, c0:c0, sa:saK, sb:sbK,
+          azs:Array.from({length:npc},(_x,jq)=>phi+(jq-(npc-1)/2)*(2*Math.PI/Math.max(2,n*npc)))};
       }
       return;
     }
@@ -538,9 +539,14 @@ function driverLayout(S,st){
       }
       if(d.kind==='woof' && S.plW==='remote'){ const rPt=Math.sqrt((S.apW*1e-4/Math.max(1,np))/Math.PI);
         off=np===1?0:(q/(np-1)-0.5)*2*(rPt+0.008); }
-      if(d.chamfer){ const step=d.chamfer.step||0;             // the law's stagger, verbatim (ring law already covers it)
-        const offS=np===1?0:(q/(np-1)-0.5)*2*step;
-        d.ports.push({p:vadd(d.portC,vscale(d.u,offS)), u:d.v.slice(), v:d.u.slice(), n:vscale(vnorm(d.chamfer.nOut),1)});   // long axis TANGENTIAL - kidneys arc around the throat
+      if(d.chamfer){ const R=d.chamfer.rF, nO=d.chamfer.nOut;   // ONE ring: this kidney's own azimuth slot
+        const az=(d.chamfer.azs&&d.chamfer.azs[q]!==undefined)? d.chamfer.azs[q] : d.chamfer.phi;
+        const py=R*Math.cos(az), pz=R*Math.sin(az);
+        const px=Math.max(0.004, Math.min(st.depth*0.95, (d.chamfer.c0-nO[1]*py-nO[2]*pz)/(nO[0]||1e-9)));   // ON the board plane
+        const ut=[0,-Math.sin(az),Math.cos(az)];                  // tangential at this azimuth...
+        const dotN=ut[0]*nO[0]+ut[1]*nO[1]+ut[2]*nO[2];
+        const uB=vnorm([ut[0]-nO[0]*dotN, ut[1]-nO[1]*dotN, ut[2]-nO[2]*dotN]);   // ...projected into the board
+        d.ports.push({p:[px,py,pz], u:uB, v:vnorm(vcross(nO,uB)), n:vscale(vnorm(nO),1)});
         continue; }
       let p=vadd(d.portC,vscale(d.u,off)), u2=d.u, v2=d.v, n2=d.normal;
       if(d.knPod){ n2=vscale(d.knPod.n,-1);
@@ -703,12 +709,14 @@ function fitCheck(S,st,layout){
         pocket=Math.max(pocket, d.chamfer.pocket);
         const nO=d.chamfer.nOut, e1=Math.cos(d.chamfer.phi), e2=Math.sin(d.chamfer.phi);
         const den=nO[1]*e1+nO[2]*e2;
+        const tC=[0,-e2,e1];                                    // chord direction of this corner's board
         for(const pr of (d.ports||[])){
           const dd2=dimsAt(st,Math.max(0,Math.min(st.depth,pr.p[0])));
           const rho=(d.chamfer.c0-nO[0]*pr.p[0])/(den||1e-9);
           const chord=Math.hypot(dd2.w/2,dd2.h/2)-rho;           // half-width of the board at this station
+          const cOff=Math.abs(pr.p[1]*tC[1]+pr.p[2]*tC[2]);      // the kidney's own offset from the board centerline
           const saR=(d.chamfer.sa||rP3);
-          const m=chord-(saR+0.004); if(m<worstS)worstS=m;
+          const m=chord-(cOff+saR+0.004); if(m<worstS)worstS=m;
           const e2=Math.max(1e-4,st.depth*1e-3), a2=dimsAt(st,Math.max(0,pr.p[0]-e2)), b2=dimsAt(st,Math.min(st.depth,pr.p[0]+e2));
           const ds2=Math.hypot(2*e2,(b2.w-a2.w)/2,(b2.h-a2.h)/2)||1e-9, fx2=2*e2/ds2;
           worstAp=Math.min(worstAp, pr.p[0]-rP3*fx2-0.005);   // innermost kidney end vs the apex
@@ -1186,7 +1194,7 @@ function applyAutos(){
         // panel floor: if a port crosses the crease, the tap walks OUT (never past the first-flare cap)
         for(let i=0;i<40;i++){
           const evp=MEH.evaluate(S);
-          if(!evp.fit.some(r=>r.sec==='WOOF'&&/within the wall|ring spacing|CD body|corner seam|clear of the apex/.test(r.name)&&r.st==='fail') && !evp.fit.some(r=>r.sec==='WOOF'&&/within the wall/.test(r.name)&&r.st!=='ok')) break;
+          if(!evp.fit.some(r=>r.sec==='WOOF'&&/within the wall|ring spacing|CD body|corner seam|clear of the apex/.test(r.name)&&r.st==='fail') && !evp.fit.some(r=>r.sec==='WOOF'&&/within the wall|corner seam/.test(r.name)&&r.st!=='ok')) break;
           // take our own advice first: shrink ports toward the velocity-limit CR (17 m/s, CR<=8)
           const crNow=S.sdW/S.apW, crMax=Math.min(8, 17/(2*Math.PI*80*(S.xmW*1e-3)));
           if(crNow < crMax-0.2){ S.apW=+(S.sdW/Math.min(crMax,crNow+0.6)).toFixed(1);
@@ -1944,6 +1952,32 @@ window.INSPECT={
       if(asp>aspLim||asp<1/aspLim)
         push('T3','fail',kind+' slot degenerate aspect '+asp.toFixed(1)+':1 (sliver)',at,0.12);
     }
+    // ---- T6: kidney fully within its board's chord (walls must not swallow the opening) ----
+    for(const d of L){ if(!d.chamfer||d.chamfer.c0===undefined) continue;
+      const nO=d.chamfer.nOut, e1c=Math.cos(d.chamfer.phi), e2c=Math.sin(d.chamfer.phi);
+      const den=nO[1]*e1c+nO[2]*e2c; if(Math.abs(den)<1e-6) continue;
+      const tC=[0,-e2c,e1c];
+      for(const pr of (d.ports||[])){
+        const dd2=MEH.dimsAt(st,Math.max(0,Math.min(st.depth,pr.p[0])));
+        const rho=(d.chamfer.c0-nO[0]*pr.p[0])/den;
+        const chord=Math.hypot(dd2.w/2,dd2.h/2)-rho;
+        const cOff=Math.abs(pr.p[1]*tC[1]+pr.p[2]*tC[2]);
+        const m=chord-(cOff+(d.chamfer.sa||0.02)+0.003);
+        if(m<0) push('T6','fail',d.kind+' kidney '+(m*-1000).toFixed(0)+'mm behind the wall (off the board chord)',pr.p,0.12);
+        else if(m<0.004) push('T6','warn',d.kind+' kidney rides the board edge ('+(m*1000).toFixed(1)+'mm)',pr.p,0.12);
+      } }
+    // ---- T5: regularity - chamfer kidneys form ONE ring, evenly spaced (the plate-photo look) ----
+    { const ck=[]; for(const d of L) if(d.chamfer) for(const pr of (d.ports||[])) ck.push(pr.p);
+      if(ck.length>=3){
+        const rads=ck.map(p=>Math.hypot(p[1],p[2]));
+        const rSpread=Math.max(...rads)-Math.min(...rads);
+        const azs=ck.map(p=>Math.atan2(p[2],p[1])).sort((x,y)=>x-y);
+        const gaps=azs.map((a2,i)=>(i? a2-azs[i-1] : a2+2*Math.PI-azs[azs.length-1]));
+        const gSpread=(Math.max(...gaps)-Math.min(...gaps))*180/Math.PI;
+        const c0=[ck.reduce((a2,p)=>a2+p[0],0)/ck.length, 0, 0];
+        if(rSpread>0.006) push('T5','fail','kidneys not on one ring (radius spread '+(rSpread*1000).toFixed(0)+'mm)',c0,0.3);
+        if(gSpread>8) push('T5','fail','kidney spacing uneven (azimuth gaps spread '+gSpread.toFixed(0)+'\u00b0)',c0,0.3);
+      } }
     // ---- D1: driver rim pairs (model metric) ----
     for(let i=0;i<L.length;i++)for(let j=i+1;j<L.length;j++){
       const m=MEH.minRimDist(L[i],L[j]);
@@ -2659,7 +2693,7 @@ buildSidebar(); try{init3d();}catch(e){document.getElementById('v3dnote').textCo
 const ARCH={
   unity:    {cdSel:'cd1'},   // CoSyne crosses ~1 kHz on a 1-inch CD (the sheet's own guidance)
   coax2:    {topo:'cw', cdSel:'cd14', wfSel:'bc8pe', nW:2, mouthW:28},
-  quadrant: {topo:'cw', cdSel:'cd14', wfSel:'bc12pe', nW:4, plW:'chamfer', npW:2, mouthW:36, thW:90, thV:90},
+  quadrant: {topo:'cw', cdSel:'cd14', wfSel:'bc12pe', nW:4, plW:'chamfer', npW:1, mouthW:36, thW:90, thV:90},
   knuckle:  {shape:'sup', cdSel:'de980', midSel:'bc5nsm', nM:2, wfSel:'bc8pe', nW:2, mouthW:32, plM:'knuckle', plW:'remote', dwall:'topbot'},
   wide:     {dwall:'sides', mouthW:36, thW:80, cdSel:'de980', wfSel:'w8', nW:2, Lw:6.5},
   roundprint:{shape:'cone', direct:true, mouthD:18},

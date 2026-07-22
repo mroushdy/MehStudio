@@ -241,7 +241,7 @@
   "fxLo": 300,
   "threeWay": true,
   "nW": 4,
-  "npW": 2,
+  "npW": 1,
   "dwall": "sides",
   "latW": 0.3,
   "bcM": 0,

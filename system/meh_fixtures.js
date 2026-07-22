@@ -45,7 +45,7 @@ run('F2 sides canon (dwall=sides)',
     ['woofer bodies inside the box footprint', c=>c.woofs.every(d=>d.body.every(p=>Math.abs(p[1])<(24/2+3)*0.0254)) ] ]);
 
 run('F3 reference big-square (36in square, 4x12 on 45-deg chamfer plates - his reference photos)',
-  {...DEF, mouthW:36, thW:90, thV:90, topo:'cw', threeWay:false, nM:0, nW:4, plW:'chamfer', npW:2, odW:31.5, dpW:12.0, sdW:522, coneW:25, vtcW:180, apW:69.6, Lw:3.9, L12:2.55, fxHi:600, td:1.4, cdDepth:1.7, cdBodyD:17, cdBodyL:13},
+  {...DEF, mouthW:36, thW:90, thV:90, topo:'cw', threeWay:false, nM:0, nW:4, plW:'chamfer', npW:1, odW:31.5, dpW:12.0, sdW:522, coneW:25, vtcW:180, apW:69.6, Lw:3.9, L12:2.55, fxHi:600, td:1.4, cdDepth:1.7, cdBodyD:17, cdBodyL:13},
   [ ['4 woofers on 4 corner facets', c=>c.woofs.length===4 && new Set(c.woofs.map(d=>Math.sign(d.center[1])+','+Math.sign(d.center[2]))).size===4],
     ['facet normals diagonal (45-deg planes)', c=>c.woofs.every(d=>Math.abs(Math.abs(d.normal[1])-Math.abs(d.normal[2]))<0.25)],
     ['no geometric fails', c=>c.fails.length===0 || c.fails.join(',')],
