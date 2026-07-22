@@ -41,3 +41,11 @@ as ONE clean pyramid; the JMOD second flare exists but its corner transition is 
 plain diagonal). Fix in the form axis: rect defaults to the clean single-pyramid
 look (plain diagonal corner facets); the two-flare panel stays as an explicit
 construction option whose corners are simple diagonals, never the arrow notch.
+
+## Diagnosis update (build 69)
+The corner-facet taper landed (helps big-mouth states where the board plane dies
+early), but the arrow READ on canon islands is the SHADING of four flat regions
+meeting at each corner (wall pre/post-knee x 2 walls) plus the chamfer band - a
+two-flare artifact. The real fix is the form-axis 'clean pyramid' rect option
+(single flare, st.knee=st.depth, honest Keele waistbanding note) - do it WITH the
+topology/form front door, not as a render hack.

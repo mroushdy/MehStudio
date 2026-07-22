@@ -1676,6 +1676,18 @@ function mesh3dInner(ev){
       const ok=(rho>0.002)&&(cornerBeyond>0)&&(Math.abs(z1)<=b+1e-6)&&(Math.abs(y2)<=a+1e-6)&&(z1*sz>=-1e-6)&&(y2*sy>=-1e-6);
       stns.push(ok? {x:pnt.x, P1:[pnt.x,sy*a,z1], P2:[pnt.x,y2,sz*b]} : null);
     }
+    { // continuous corner: past the board plane's last valid station the cut tapers
+      // to a sliver at the mouth (reference squares: thin board to the mouth, no notch)
+      let last=-1; for(let i=0;i<stns.length;i++) if(stns[i]) last=i;
+      if(last>=0 && last<stns.length-1){
+        const S0=stns[last], sy=Math.sign(e1)||1, sz=Math.sign(e2)||1;
+        const p0=pts[last], w0=Math.max(0.004, ((p0.h/2-Math.abs(S0.P1[2]))+(p0.w/2-Math.abs(S0.P2[1])))/2);
+        for(let i=last+1;i<stns.length;i++){ const pnt=pts[i], a=pnt.w/2, b=pnt.h/2;
+          const t=(i-last)/(stns.length-1-last), w=w0*(1-t)+w0*0.18*t;
+          stns[i]={x:pnt.x, P1:[pnt.x,sy*a,sz*(b-w)], P2:[pnt.x,sy*(a-w),sz*b]};
+        }
+      }
+    }
     const tris=[]; const push3=(A,B,C)=>{tris.push(A[0]*sc,A[2]*sc,A[1]*sc, B[0]*sc,B[2]*sc,B[1]*sc, C[0]*sc,C[2]*sc,C[1]*sc);};
     for(let i=1;i<stns.length;i++){
       const A=stns[i-1], B=stns[i]; if(!A||!B) continue;
@@ -2831,7 +2843,7 @@ window.driversFirst=function(){
   if(el) el.innerHTML='<table style="width:100%;border-collapse:collapse;font-size:11px;margin-top:4px;">'+
     rows.map(r=>'<tr style="border-top:1px solid #ddd;"><td style="padding:2px 4px;font-weight:600;white-space:nowrap;">'+(r.green?'\u2713 ':'\u2717 ')+r.isl+'</td><td style="padding:2px 4px;">'+r.mouth+'</td><td style="padding:2px 4px;">'+r.XO+'</td><td style="padding:2px 4px;color:#666;">'+r.note+(r.midNA?' (2-way: mid unused)':'')+'</td></tr>').join('')+'</table>';
 };
-window.MEH_BUILD=68;
+window.MEH_BUILD=69;
 window.persistS=function(){
   try{
     const ca=window.curArch||'unity';
