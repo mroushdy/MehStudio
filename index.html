@@ -1748,10 +1748,21 @@ function mesh3dInner(ev){
     for(const pr of (d.ports||[{p:d.portC,n:d.normal}])){
       const nIn=new THREE.Vector3(-pr.n[0],-pr.n[2],-pr.n[1]);   // inward, three-space
       const shq=((d.kind==='mid'?S.shM:S.shW)||'round')!=='round';   // rt + sq both draw as the slim reference rectangle
-      const slot=new THREE.Mesh(shq?new THREE.PlaneGeometry(2,2):new THREE.CircleGeometry(1,26),
+      if(shq && !window.__stadG){ const r=0.55, sp=new THREE.Shape();
+        sp.moveTo(-1+r,-1); sp.lineTo(1-r,-1); sp.quadraticCurveTo(1,-1,1,-1+r);
+        sp.lineTo(1,1-r); sp.quadraticCurveTo(1,1,1-r,1); sp.lineTo(-1+r,1);
+        sp.quadraticCurveTo(-1,1,-1,1-r); sp.lineTo(-1,-1+r); sp.quadraticCurveTo(-1,-1,-1+r,-1);
+        const g0=new THREE.ShapeGeometry(sp,10); window.__stadG=g0;
+        const P=g0.attributes.position.array, I=g0.index?g0.index.array:null; let A=0;
+        const nT=I?I.length/3:P.length/9;
+        for(let t=0;t<nT;t++){ const a3=I?I[t*3]:t*3, b3=I?I[t*3+1]:t*3+1, c3=I?I[t*3+2]:t*3+2;
+          A+=Math.abs((P[b3*3]-P[a3*3])*(P[c3*3+1]-P[a3*3+1])-(P[c3*3]-P[a3*3])*(P[b3*3+1]-P[a3*3+1]))/2; }
+        window.__stadK=A; }                                    // measured unit area - the law reads THIS
+      const slot=new THREE.Mesh(shq?window.__stadG:new THREE.CircleGeometry(1,26),
         new THREE.MeshBasicMaterial({color:(pFail||d.collide)?0xC8331D:0x232321,side:THREE.DoubleSide}));
       const isSeam=((d.kind==='mid'?S.plM:S.plW)==='diagonal');
-      if(isSeam){ slot.scale.set(sa*sc*2.3, sb*sc*0.435, 1); } else { slot.scale.set(sa*sc,sb*sc,1); }
+      const kA=shq? Math.sqrt(4/(window.__stadK||4)) : 1;      // rounding costs area; regain it isotropically
+      if(isSeam){ slot.scale.set(sa*sc*2.3*kA, sb*sc*0.435*kA, 1); } else { slot.scale.set(sa*sc*kA,sb*sc*kA,1); }
       const sOf=(d.chamfer?0.0038:0.0012)*sc;                       // chamfer kidneys sit proud of the printed block face (within the scene-audit tap tolerance)
       slot.position.set(pr.p[0]*sc + nIn.x*sOf, pr.p[2]*sc + nIn.y*sOf, pr.p[1]*sc + nIn.z*sOf);
       if(isSeam){  // long axis along the seam (meridian) direction
@@ -1957,8 +1968,8 @@ window.INSPECT={
       const kind=s.userData.kind||'mid';
       const np=Math.max(1,((kind==='mid'?S.npM:S.npW)|0)||1);
       const Ap=(kind==='mid'?S.apM:S.apW)*1e-4/np;
-      const g=s.geometry, isSq=g.type==='PlaneGeometry';
-      const A_drawn=(isSq? 4 : Math.PI)*Math.abs(s.scale.x*s.scale.y)/(sc*sc);   // plane is 2x2 units
+      const g=s.geometry, isSq=g.type==='PlaneGeometry', isRR=g.type==='ShapeGeometry';
+      const A_drawn=(isSq? 4 : isRR? (window.__stadK||4) : Math.PI)*Math.abs(s.scale.x*s.scale.y)/(sc*sc);   // rounded-rect unit area is MEASURED at creation
       const pl=(kind==='mid'?S.plM:S.plW);
       const expect=(pl==='diagonal')? Ap*1.0007 : Ap;             // slit basis is area-true too
       const gp=new THREE.Vector3(); s.getWorldPosition(gp);
@@ -2820,7 +2831,7 @@ window.driversFirst=function(){
   if(el) el.innerHTML='<table style="width:100%;border-collapse:collapse;font-size:11px;margin-top:4px;">'+
     rows.map(r=>'<tr style="border-top:1px solid #ddd;"><td style="padding:2px 4px;font-weight:600;white-space:nowrap;">'+(r.green?'\u2713 ':'\u2717 ')+r.isl+'</td><td style="padding:2px 4px;">'+r.mouth+'</td><td style="padding:2px 4px;">'+r.XO+'</td><td style="padding:2px 4px;color:#666;">'+r.note+(r.midNA?' (2-way: mid unused)':'')+'</td></tr>').join('')+'</table>';
 };
-window.MEH_BUILD=67;
+window.MEH_BUILD=68;
 window.persistS=function(){
   try{
     const ca=window.curArch||'unity';

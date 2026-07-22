@@ -1,4 +1,4 @@
-# MEH STUDIO — SESSION HANDOFF (build 67, verified deploy)
+# MEH STUDIO — SESSION HANDOFF (build 68, verified deploy)
 Companion to Horn Studio · Silence Please · NYC
 
 ## WHAT THIS IS
