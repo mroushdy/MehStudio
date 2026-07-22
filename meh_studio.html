@@ -1072,13 +1072,13 @@ const MIDS={
   m2:{name:'2" full-range', od:5.7,  dp:4.5, sd:13.4, cone:4.5,  vtc:12, xm:1.5, meshApprox:'BC_8MDN51'},
   m3:{name:'3" (3FE25-class)', od:9.3, dp:6.2, sd:31, cone:6.5,  vtc:25, xm:2.5, meshApprox:'BC_8MDN51'},
   m4:{name:'4" (4FE32-class)', od:10.3,dp:6.5, sd:50, cone:8.0,  vtc:40, xm:3, meshApprox:'BC_8MDN51'},
-  bc5ndl:{name:'B&C 5NDL38 (Ø155 · 4×M5 @142)', od:15.5, dp:6.6, sd:78, cone:10.5, vtc:30, xm:4.5,
+  bc5ndl:{name:'B&C 5NDL38 (Ø155 · 4×M5 @142)', meshApprox:'BC_8MDN51', od:15.5, dp:6.6, sd:78, cone:10.5, vtc:30, xm:4.5,
     bc:14.2, nb:4, bh:5.2, fl:0.9, bodyD:12.2, style:'basket', fshape:'square',
     p3:[[70,0],[42,26],[40,31],[61,33],[61,60],[52,64],[24,66],[24,60]]},
-  bc5nsm:{name:'B&C 5NSM38 sealed (Ø157 · 4×M5 @142)', od:15.7, dp:9.9, sd:78, cone:10.5, vtc:28, xm:3.5,
+  bc5nsm:{name:'B&C 5NSM38 sealed (Ø157 · 4×M5 @142)', meshApprox:'BC_8MDN51', od:15.7, dp:9.9, sd:78, cone:10.5, vtc:28, xm:3.5,
     bc:14.2, nb:4, bh:5.2, fl:0.9, bodyD:12.2, style:'slim', sealed:true, fshape:'square', ribs:true,
     p3:[[73,0],[61,3],[61,93],[54,99],[12,99]]},
-  bc8nsm:{name:'B&C 8NSM64 sealed (Ø239 · 6×M4 @222)', od:23.9, dp:9.9, sd:220, cone:16.8, vtc:70, xm:4,
+  bc8nsm:{name:'B&C 8NSM64 sealed (Ø239 · 6×M4 @222)', meshApprox:'BC_8MDN51', od:23.9, dp:9.9, sd:220, cone:16.8, vtc:70, xm:4,
     bc:22.2, nb:6, bh:5.0, fl:1.6, bodyD:20.0, style:'slim', sealed:true, fshape:'hex', ribs:true,
     p3:[[113,0],[100,4],[100,92],[89,99],[16,99]]},
   custom:{name:'Custom (set in advanced)'}
@@ -1094,19 +1094,19 @@ const WOOFS={
   pzb18:{name:'B&C 18PZB100 (Ø460 · BC440 · true CAD - sub island pending)', od:46.0, dp:20.2, sd:1134, cone:40, vtc:420, xm:8, bc:44.0, mesh:'BC_18PZB100'},
   sw18:{name:'B&C 18SW115 neo sub (Ø460 · BC443 · true CAD - sub island pending)', od:46.0, dp:24.2, sd:1210, cone:40, vtc:450, xm:14, bc:44.3, mesh:'BC_18SW115'},
   mdn8:{name:'B&C 8MDN51 midrange (Ø225 · BC210 · true CAD)', od:22.5, dp:9.5, sd:220, cone:16.8, vtc:75, xm:6, bc:21.0, mesh:'BC_8MDN51'},
-  bc8pe:{name:'B&C 8PE21 (Ø225 · 8×M6 @210)', od:22.5, dp:8.0, sd:220, cone:16.8, vtc:75, xm:3,
+  bc8pe:{name:'B&C 8PE21 (Ø225 · 8×M6 @210)', meshApprox:'BC_8MDN51', od:22.5, dp:8.0, sd:220, cone:16.8, vtc:75, xm:3,
     bc:21.0, nb:8, bh:6.5, fl:1.1, bodyD:18.7, style:'basket',
     p3:[[108,0],[64,40],[62,45],[68,47],[68,67],[58,71],[58,77],[21,80]]},
-  bc8nw:{name:'B&C 8NW51 (Ø225 · 8×M6 @210)', od:22.5, dp:8.9, sd:220, cone:16.8, vtc:80, xm:4.5,
+  bc8nw:{name:'B&C 8NW51 (Ø225 · 8×M6 @210)', meshApprox:'BC_8MDN51', od:22.5, dp:8.9, sd:220, cone:16.8, vtc:80, xm:4.5,
     bc:21.0, nb:8, bh:6.5, fl:1.1, bodyD:18.7, style:'basket',
     p3:[[108,0],[57,49],[55,54],[48,56],[48,77],[40,80],[40,88],[16,89]]},
-  bc10mbx:{name:'B&C 10MBX64 (Ø261 · 4×M6 @245)', od:26.1, dp:11.1, sd:345, cone:21, vtc:120, xm:5,
+  bc10mbx:{name:'B&C 10MBX64 (Ø261 · 4×M6 @245)', meshApprox:'BC_10HPL64', od:26.1, dp:11.1, sd:345, cone:21, vtc:120, xm:5,
     bc:24.5, nb:4, bh:7.0, fl:1.4, bodyD:23.0, style:'basket',
     p3:[[124,0],[70,56],[68,61],[77,63],[77,87],[64,91],[64,99],[23,111]]},
-  bc12pe:{name:'B&C 12PE32 (Ø315 · 8×M6 @296)', od:31.5, dp:12.0, sd:522, cone:25, vtc:180, xm:4.5,
+  bc12pe:{name:'B&C 12PE32 (Ø315 · 8×M6 @296)', meshApprox:'BC_12NDL76', od:31.5, dp:12.0, sd:522, cone:25, vtc:180, xm:4.5,
     bc:29.6, nb:8, bh:7.0, fl:1.5, bodyD:28.1, style:'basket',
     p3:[[150,0],[78,64],[76,69],[86,71],[86,98],[73,102],[73,110],[26,120]]},
-  bc12mh:{name:'B&C 12MH36 (Ø~315 · 8×M6 @296 — verify)', od:31.5, dp:12.5, sd:522, cone:25, vtc:170, xm:3.5,
+  bc12mh:{name:'B&C 12MH36 (Ø~315 · 8×M6 @296 — verify)', meshApprox:'BC_12NDL76', od:31.5, dp:12.5, sd:522, cone:25, vtc:170, xm:3.5,
     bc:29.6, nb:8, bh:7.0, fl:1.5, bodyD:28.2, style:'basket',
     p3:[[150,0],[78,66],[76,71],[86,73],[86,101],[73,105],[73,115],[26,125]]},
   custom:{name:'Custom (set in advanced)'}
@@ -1689,7 +1689,8 @@ function mesh3dInner(ev){
       const cC=dch.center, nrm=nO;
       const t0=ch.c0-(cC[0]*nrm[0]+cC[1]*nrm[1]+cC[2]*nrm[2]);     // signed distance frame->board plane (negative: inward)
       const cB=[cC[0]+nrm[0]*(t0+0.001), cC[1]+nrm[1]*(t0+0.001), cC[2]+nrm[2]*(t0+0.001)];
-      const cE=[cC[0]+nrm[0]*(dch.dp*1.08+0.020), cC[1]+nrm[1]*(dch.dp*1.08+0.020), cC[2]+nrm[2]*(dch.dp*1.08+0.020)];
+      const cupL=dch.dp*0.50+0.006;                              // seal collar at half-can: the real body shows behind it (his pocket photos)
+      const cE=[cC[0]+nrm[0]*cupL, cC[1]+nrm[1]*cupL, cC[2]+nrm[2]*cupL];
       const apK2=(dch.kind==='mid'?S.apM:S.apW), npK2=Math.max(1,((dch.kind==='mid'?S.npM:S.npW)|0)||1);
       const rPt2=Math.sqrt((apK2*1e-4/npK2)/Math.PI);
       const rSmall=Math.min(ch.rF*0.92, rPt2*(npK2>1?2.5:1.7)+0.010);
@@ -1719,7 +1720,7 @@ function mesh3dInner(ev){
   {
     const R=S.cdBodyD*MEH.CM/2*sc, L=S.cdBodyL*MEH.CM*sc;
     const CDP=CDS[S.cdSel]||{};
-    const CKEY=CDP.mesh||CDP.meshApprox;
+    const CKEY=CDP.mesh||CDP.meshApprox||(CDP.bodyD?(CDP.bodyD>14?'BC_DE900TN':'BC_DE500'):null);
     if(CKEY && window.CADM && CADM[CKEY]){           // TRUE CD body, or the nearest real one scaled
       const cm=cadMesh(CKEY,0x9a9a98); const M3=CADM[CKEY];
       const kr=CDP.mesh?1:(CDP.bodyD*10)/((M3.bb1[0]-M3.bb0[0])||1), kz=CDP.mesh?1:(CDP.bodyL*10)/((M3.bb1[2]-M3.bb0[2])||1);
@@ -1798,7 +1799,7 @@ function mesh3dInner(ev){
         s1.position.set(Math.cos(a2)*bcR, flT+0.0016*sc, Math.sin(a2)*bcR); sub.add(s1);}
     }
     const PRE=(d.kind==='mid'? MIDS[S.midSel] : WOOFS[S.wfSel])||{};
-    const MKEY=PRE.mesh||PRE.meshApprox;
+    const MKEY=PRE.mesh||PRE.meshApprox||(PRE.od?(PRE.od<20?'BC_8MDN51':PRE.od<29?'BC_10HPL64':PRE.od<40?'BC_12NDL76':'BC_18SW115'):null);
     if(MKEY && window.CADM && CADM[MKEY]){           // TRUE body, or the nearest real one scaled (all drivers look real)
       const cm=cadMesh(MKEY,col); const M2=CADM[MKEY];
       const kr=PRE.mesh?1:(PRE.od*10)/((M2.bb1[0]-M2.bb0[0])||1), kz=PRE.mesh?1:(PRE.dp*10)/((M2.bb1[2]-M2.bb0[2])||1);
@@ -2817,7 +2818,7 @@ window.driversFirst=function(){
   if(el) el.innerHTML='<table style="width:100%;border-collapse:collapse;font-size:11px;margin-top:4px;">'+
     rows.map(r=>'<tr style="border-top:1px solid #ddd;"><td style="padding:2px 4px;font-weight:600;white-space:nowrap;">'+(r.green?'\u2713 ':'\u2717 ')+r.isl+'</td><td style="padding:2px 4px;">'+r.mouth+'</td><td style="padding:2px 4px;">'+r.XO+'</td><td style="padding:2px 4px;color:#666;">'+r.note+(r.midNA?' (2-way: mid unused)':'')+'</td></tr>').join('')+'</table>';
 };
-window.MEH_BUILD=63;
+window.MEH_BUILD=64;
 window.persistS=function(){
   try{
     const ca=window.curArch||'unity';
