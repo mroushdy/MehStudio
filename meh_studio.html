@@ -85,7 +85,7 @@ footer{padding:10px 20px;font-family:var(--mono);font-size:9px;letter-spacing:.1
 <div class="cols">
 <aside id="params"></aside>
 <main>
-  <div class="card"><h2>3-D model — drag to rotate · scroll to zoom · drivers turn red when they collide · amber = inside build tolerance (tight)</h2><div id="v3d"><button id="v3dmode" class="act" style="position:absolute;left:8px;top:8px;z-index:2;">View: assembly</button><div id="v3dnote"></div></div></div>
+  <div class="card"><h2>3-D model — drag to rotate · scroll to zoom · drivers turn red when they collide · amber = inside build tolerance (tight)</h2><div id="v3d"><button id="v3dmode" class="act" style="position:absolute;left:8px;top:8px;z-index:2;">View: assembly</button><button id="v3dinspect" class="act" style="position:absolute;left:8px;top:44px;z-index:2;">Inspect</button><div id="insppanel" style="display:none;position:absolute;right:8px;top:8px;bottom:8px;width:270px;overflow:auto;background:rgba(255,255,255,0.96);border:1px solid #999;z-index:3;font-size:11px;padding:8px;"></div><div id="v3dnote"></div></div></div>
   <div class="card"><h2>Acoustic network — the numbers behind the picture</h2><div id="network" class="note" style="font-size:11px;"></div></div>
   <div class="card"><h2>Profile — horizontal plane above axis · vertical plane below</h2><div id="profile"></div></div>
   <div class="card"><h2>Mouth view — flares, taps, drivers</h2><div id="mouth"></div></div>
@@ -105,7 +105,7 @@ footer{padding:10px 20px;font-family:var(--mono);font-size:9px;letter-spacing:.1
 </div>
 <footer>
   <div>MEH STUDIO · CC BY-NC 4.0 · Unity/MEH principles patented by T.J. — personal builds only, do not sell</div>
-  <div class="card"><h2>Provenance</h2><p class="note" style="border-left:3px solid #C8331D;padding-left:10px;"><b>Strict rule:</b> every check and constant in this tool traces to a cited source — US patents 6,411,718 &amp; 8,284,976 · the Waslo calc sheet v5 · Keele 1975–83 · JW Sound Solana/SAWMOD/JMOD guides · B&amp;C mechanical drawings · measured reference parts — or is explicitly labeled a solver allowance. Nothing is invented; conflicting sources are presented as tensions. Rear tubes on open-back mids are Waslo’s sealed mailing-tube canon (Ø 0.85·frame, length from Vrc); sealed-back drivers (5NSM38, 8NSM64) don’t need them. the Waslo calc sheet v5 (read directly from the sheet): mid port ≈ 2–2.5″ from the throat for a 1 kHz cutoff — “smaller is usually better, but hard to build”; canonical mids are four small 2″ open-backs on the widened #2 panels.</p></div><div id="buildstamp">build 59 · 8 TRUE CAD bodies + datasheet presets (DCX464 on cd14 · 10HPL64 canon on pa3way · 12NDL76/12LW1400/18PZB100 · DE900TN/DE610/DE500, specs web-extracted from B&C/18Sound) · conformal pocket cups (sector-safe; orbit-reviewed) · chamfer taps on real 45° boards (on-surface law; floating-kidney class extinct) · pa3way reference chamfer mids (per-kind pockets) · intent-only saved state (program updates re-derive) · reference chamfer quadrant · printed mounts · sweep gate (no silent overlap/taps anywhere reachable) · driver-off-tap freedom · taps first-class (CR levers · shape canon · true-scale dims · n=2 seam-pair fix) · knuckle island LIVE (SAWMOD S2 passages + remote bandpass woofers, corpus-grounded) · drivers-first designer · numeric suite v2 (72 checks, blessed settled-states) · Hornresp ME2 mapping · B&C library from the mechanical drawings</div>
+  <div class="card"><h2>Provenance</h2><p class="note" style="border-left:3px solid #C8331D;padding-left:10px;"><b>Strict rule:</b> every check and constant in this tool traces to a cited source — US patents 6,411,718 &amp; 8,284,976 · the Waslo calc sheet v5 · Keele 1975–83 · JW Sound Solana/SAWMOD/JMOD guides · B&amp;C mechanical drawings · measured reference parts — or is explicitly labeled a solver allowance. Nothing is invented; conflicting sources are presented as tensions. Rear tubes on open-back mids are Waslo’s sealed mailing-tube canon (Ø 0.85·frame, length from Vrc); sealed-back drivers (5NSM38, 8NSM64) don’t need them. the Waslo calc sheet v5 (read directly from the sheet): mid port ≈ 2–2.5″ from the throat for a 1 kHz cutoff — “smaller is usually better, but hard to build”; canonical mids are four small 2″ open-backs on the widened #2 panels.</p></div><div id="buildstamp">build 60 · INSPECT engine in-tool (tap-scale invariants · fly-to-violation evidence · live panel) · 8 TRUE CAD bodies + datasheet presets (DCX464 on cd14 · 10HPL64 canon on pa3way · 12NDL76/12LW1400/18PZB100 · DE900TN/DE610/DE500, specs web-extracted from B&C/18Sound) · conformal pocket cups (sector-safe; orbit-reviewed) · chamfer taps on real 45° boards (on-surface law; floating-kidney class extinct) · pa3way reference chamfer mids (per-kind pockets) · intent-only saved state (program updates re-derive) · reference chamfer quadrant · printed mounts · sweep gate (no silent overlap/taps anywhere reachable) · driver-off-tap freedom · taps first-class (CR levers · shape canon · true-scale dims · n=2 seam-pair fix) · knuckle island LIVE (SAWMOD S2 passages + remote bandpass woofers, corpus-grounded) · drivers-first designer · numeric suite v2 (72 checks, blessed settled-states) · Hornresp ME2 mapping · B&C library from the mechanical drawings</div>
 </footer>
 </div></div>
 
@@ -433,9 +433,22 @@ function driverLayout(S,st){
       const cornerDist=Math.hypot(dPc.w/2,dPc.h/2);
       const cdR=(S.cdBodyD||10)*CM/2;
       const npc=Math.max(1,((kind==='mid'?S.npM:S.npW)|0)||1);
-      const rF=Math.max((S.td||1)*IN*0.5+rP2+0.008,       // facet line: the kidney EDGE clears the throat opening...
-                        (2*rP2+0.010)/1.4142+((npc>1)?(rP2+0.006)*0.76:0),   // ring law at the INNERMOST kidney - adjacent corners must clear (the deleted radial-stack law, reborn for boards)
-                        cornerDist-(rP2+0.016));          // ...with chord room for the kidney + slope slack (reference board width law)
+      const shK=(kind==='mid'?S.shM:S.shW)||'round';
+      const ApK=((kind==='mid'?S.apM:S.apW)*1e-4)/npc;
+      const saK=shK==='round'?Math.sqrt(ApK/Math.PI):Math.sqrt(ApK/Math.PI*2.2);   // long half (tangential)
+      const sbK=shK==='round'?saK:saK/2.2;                                          // short half (radial)
+      const eP0=Math.max(1e-4,st.depth*2e-3);
+      const xm0=Math.max(0,xPort-eP0), xp0=Math.min(xPort+eP0,st.depth);
+      const dd0=(Math.hypot(dimsAt(st,xp0).w/2,dimsAt(st,xp0).h/2)-Math.hypot(dimsAt(st,xm0).w/2,dimsAt(st,xm0).h/2))/(xp0-xm0||1e-9);
+      const nOut0=[-dd0,0.7071,0.7071]; { const L0=Math.hypot(nOut0[0],nOut0[1],nOut0[2]); nOut0[0]/=L0;nOut0[1]/=L0;nOut0[2]/=L0; }
+      const u0=(function(){ const v0=[0,-0.7071,0.7071];   // chord dir at phi=45; symmetry: same geometry every corner
+        return vnorm(vcross(v0,nOut0)); })();
+      const fwK=Math.max(0.35,Math.hypot(u0[1],u0[2]));
+      const stepK=(npc>1)? Math.max(saK+0.004,(sbK+0.003)/fwK) : 0;   // pair stagger: 3D + front-view clear (plate-photo law)
+      const uDotE=Math.abs(u0[1]*0.7071+u0[2]*0.7071);
+      const rF=Math.max((S.td||1)*IN*0.5+sbK+0.008,       // facet line: the kidney EDGE (radial half) clears the throat
+                        (2*saK+0.010)/1.4142+stepK*uDotE, // ring law at the STAGGERED innermost kidney across corners
+                        cornerDist-(saK+0.016));          // chord room for the tangential long half (reference board width law)
       const dF=Math.max( (od+0.010)*0.7072,               // pair law: four frames 90 deg apart clear each other
                          cdR+od*0.5,                      // CD law: frame inner edge clears the CD radius
                          rF+od*0.3536+0.006,              // frame FULLY behind the chamfer board - never in the horn air
@@ -460,7 +473,7 @@ function driverLayout(S,st){
         for(let j=0;j<12;j++){const a2=j/12*2*Math.PI;
           d.magRim.push(vadd(magTip2,vadd(vscale(d.u,od*0.28*Math.cos(a2)),vscale(d.v,od*0.28*Math.sin(a2)))));}
         d.portC=tap0;
-        d.chamfer={dF:dF, plate:rPl, portR:rF, phi:phi, corner:cornerDist, pocket:Math.max(0,dF-rF), nOut:nOut.slice(), rF:rF, c0:c0};
+        d.chamfer={dF:dF, plate:rPl, portR:rF, phi:phi, corner:cornerDist, pocket:Math.max(0,dF-rF), nOut:nOut.slice(), rF:rF, c0:c0, sa:saK, sb:sbK, step:stepK};
       }
       return;
     }
@@ -525,9 +538,9 @@ function driverLayout(S,st){
       }
       if(d.kind==='woof' && S.plW==='remote'){ const rPt=Math.sqrt((S.apW*1e-4/Math.max(1,np))/Math.PI);
         off=np===1?0:(q/(np-1)-0.5)*2*(rPt+0.008); }
-      if(d.chamfer){ const rPt=Math.sqrt(((d.kind==='mid'?S.apM:S.apW)*1e-4/Math.max(1,np))/Math.PI);
-        const offS=np===1?0:(q/(np-1)-0.5)*2*(rPt+0.006);      // kidneys stack along the chamfer board (his slit photo)
-        d.ports.push({p:vadd(d.portC,vscale(d.u,offS)), u:d.u.slice(), v:d.v.slice(), n:vscale(vnorm(d.chamfer.nOut),1)});
+      if(d.chamfer){ const step=d.chamfer.step||0;             // the law's stagger, verbatim (ring law already covers it)
+        const offS=np===1?0:(q/(np-1)-0.5)*2*step;
+        d.ports.push({p:vadd(d.portC,vscale(d.u,offS)), u:d.v.slice(), v:d.u.slice(), n:vscale(vnorm(d.chamfer.nOut),1)});   // long axis TANGENTIAL - kidneys arc around the throat
         continue; }
       let p=vadd(d.portC,vscale(d.u,off)), u2=d.u, v2=d.v, n2=d.normal;
       if(d.knPod){ n2=vscale(d.knPod.n,-1);
@@ -694,7 +707,8 @@ function fitCheck(S,st,layout){
           const dd2=dimsAt(st,Math.max(0,Math.min(st.depth,pr.p[0])));
           const rho=(d.chamfer.c0-nO[0]*pr.p[0])/(den||1e-9);
           const chord=Math.hypot(dd2.w/2,dd2.h/2)-rho;           // half-width of the board at this station
-          const m=chord-(rP3+0.004); if(m<worstS)worstS=m;
+          const saR=(d.chamfer.sa||rP3);
+          const m=chord-(saR+0.004); if(m<worstS)worstS=m;
           const e2=Math.max(1e-4,st.depth*1e-3), a2=dimsAt(st,Math.max(0,pr.p[0]-e2)), b2=dimsAt(st,Math.min(st.depth,pr.p[0]+e2));
           const ds2=Math.hypot(2*e2,(b2.w-a2.w)/2,(b2.h-a2.h)/2)||1e-9, fx2=2*e2/ds2;
           worstAp=Math.min(worstAp, pr.p[0]-rP3*fx2-0.005);   // innermost kidney end vs the apex
@@ -1271,6 +1285,17 @@ function applyAutos(){
     if(!/INFEASIBLE/.test(S.bindM)) S.bindM=(S.bindM||'')+' · INFEASIBLE: mid ring cannot clear CD and woofers - smaller drivers, lower fxHi, or 2-way';
     break;
   }
+  // chamfer chord finisher: if the board is too narrow for the kidney at its station,
+  // walk the MID tap deeper (bigger corner) - bounded by the lambda/4 ceiling for fxHi
+  if(MEH.HAS_M(S)&&S.plM==='chamfer') for(let i=0;i<14;i++){
+    const evc=MEH.evaluate(S);
+    const row=evc.fit.find(r=>r.sec==='MID'&&/corner seam/.test(r.name));
+    if(!row||row.st!=='fail') break;
+    const cap=(MEH.C/(4*S.fxHi))/MEH.IN - S.cdDepth - 0.05;
+    if(S.L12>=cap){ if(!/INFEASIBLE/.test(S.bindM||'')) S.bindM=(S.bindM||'')+' · INFEASIBLE: board cannot host the kidney within the lambda/4 budget - smaller/more ports'; break; }
+    S.L12=+(S.L12+0.15).toFixed(2);
+    if(!/board width/.test(S.bindM||'')) S.bindM=(S.bindM||'')+' · tap walked out for board width';
+  }
   // chamfer finisher: pocketed mids decouple frame from tap, so don't ride the -3 mm
   // prim-puck tolerance - walk the woofers out until the rings clear by the real GAP
   if(MEH.HAS_M(S)&&MEH.HAS_W(S)&&S.plM==='chamfer') for(let i=0;i<12;i++){
@@ -1301,6 +1326,10 @@ function applyAutos(){
     }
     if(window._fitIter>0 && !stuck)
       S.bindW=(S.bindW||'')+' \u00b7 horn sized '+window._grew0+'\u2033\u2192'+S[dim]+'\u2033 to fit the drivers';
+    if(!stuck){                                     // clean solve: INFEASIBLE notes from transient mid-solve caps are stale - strip them
+      for(const bk of ['bindM','bindW']) if(/INFEASIBLE/.test(S[bk]||''))
+        S[bk]=S[bk].split(' \u00b7 ').filter(t=>!/INFEASIBLE/.test(t)).join(' \u00b7 ');
+    }
     window._fitIter=0; window._grew0=0;
     const el9=document.getElementById('num_'+dim); if(el9&&+el9.value!==S[dim]) el9.value=S[dim];
   }
@@ -1503,6 +1532,17 @@ function init3d(){
   V3D.yaw=0.8; V3D.pitch=0.35; V3D.dist=1.8; V3D.group=null;
   const cv=V3D.renderer.domElement; let drag=false,px=0,py=0;
   cv.addEventListener('pointerdown',e=>{drag=true;V3D.spin=false;px=e.clientX;py=e.clientY;cv.setPointerCapture(e.pointerId);});
+  { const bI=document.getElementById('v3dinspect'), pI=document.getElementById('insppanel');
+    if(bI) bI.addEventListener('click',()=>{
+      if(pI.style.display==='block'){ pI.style.display='none'; INSPECT.reset(); return; }
+      const r=INSPECT.report();
+      pI.innerHTML='<b>INSPECT</b> — '+r.fails+' fail · '+r.warns+' warn'
+        +(r.violations.length?'':'<br><span style="color:#2c7a2c;">clean: taps on their surfaces, clearances hold, drawn sizes truthful, counts match</span>')
+        +'<div>'+r.violations.map((v,i)=>'<div style="margin:5px 0;padding:4px;border-left:3px solid '+(v.sev==='fail'?'#C8331D':'#A8842C')+';cursor:pointer;" onclick="INSPECT.frame(INSPECT._last['+i+'])"><b>'+v.code+'</b> '+v.msg+'</div>').join('')+'</div>'
+        +'<div style="margin-top:6px;color:#666;cursor:pointer;" onclick="INSPECT.reset()">↺ reset view</div>';
+      INSPECT._last=r.violations; pI.style.display='block';
+      if(r.violations.length) INSPECT.frame(r.violations[0]);
+    }); }
   cv.addEventListener('pointermove',e=>{if(!drag)return;
     V3D.yaw+=(e.clientX-px)*0.008; V3D.pitch=Math.max(-1.3,Math.min(1.3,V3D.pitch+(e.clientY-py)*0.008));
     px=e.clientX;py=e.clientY; render3d();});
@@ -1827,11 +1867,131 @@ function mesh3dInner(ev){
 }
 function render3d(){
   if(!V3D.ready)return;
+  const t=V3D.tgt||{x:0,y:0,z:0};
   const cp=Math.cos(V3D.pitch), r=V3D.dist;
-  V3D.camera.position.set(r*cp*Math.cos(V3D.yaw), r*Math.sin(V3D.pitch), r*cp*Math.sin(V3D.yaw));
-  V3D.camera.lookAt(0,0,0);
+  V3D.camera.position.set(t.x+r*cp*Math.cos(V3D.yaw), t.y+r*Math.sin(V3D.pitch), t.z+r*cp*Math.sin(V3D.yaw));
+  V3D.camera.lookAt(t.x,t.y,t.z);
   V3D.renderer.render(V3D.scene,V3D.camera);
 }
+/* ================= INSPECT - the in-tool geometric auditor (build 60) =================
+   Contract: audit() reads the CURRENT state (S -> MEH.evaluate) and the CURRENT drawn
+   scene (V3D.group, tagged meshes) and returns violations:
+   {code, sev:'fail'|'warn', msg, at:[x,y,z] model-m, span_m, ids}. frame(v) flies there. */
+window.INSPECT={
+  audit(){
+    const V=[], ev=MEH.evaluate(S), st=ev.st, sc=window.__sc||1;
+    const L=ev.layout;
+    const push=(code,sev,msg,at,span,ids)=>V.push({code,sev,msg,at,span:span||0.08,ids:ids||[]});
+    // ---- T1: every tap ON the horn boundary (chamfer taps: on their board) ----
+    for(const d of L){ for(const pr of (d.ports||[])){
+      let off, how;
+      if(d.chamfer&&d.chamfer.c0!==undefined){ const nO=d.chamfer.nOut;
+        off=Math.abs(pr.p[0]*nO[0]+pr.p[1]*nO[1]+pr.p[2]*nO[2]-d.chamfer.c0); how='board'; }
+      else if(d.knPod){ const f=d.knPod.face,n=d.knPod.n;
+        off=Math.abs((pr.p[0]-f[0])*n[0]+(pr.p[1]-f[1])*n[1]+(pr.p[2]-f[2])*n[2]); how='pod face'; }
+      else { off=Math.abs(MEH.cavityMargin(st,pr.p)); how='surface'; }
+      if(off>0.006) push('T1','fail',d.kind+' tap '+(off*1000).toFixed(1)+'mm off its '+how,pr.p,0.10);
+      else if(off>0.004) push('T1','warn',d.kind+' tap '+(off*1000).toFixed(1)+'mm off its '+how,pr.p,0.10);
+    }}
+    // ---- T2: port-port clearance across ALL drivers (model positions, drawn radii) ----
+    const taps=[];
+    for(const d of L){ const np=Math.max(1,((d.kind==='mid'?S.npM:S.npW)|0)||1);
+      const Ap=(d.kind==='mid'?S.apM:S.apW)*1e-4/np, sh=(d.kind==='mid'?S.shM:S.shW)||'round';
+      const sa=sh==='round'?Math.sqrt(Ap/Math.PI):Math.sqrt(Ap/Math.PI*2.2), sb=sh==='round'?sa:sa/2.2;
+      const isSeam=((d.kind==='mid'?S.plM:S.plW)==='diagonal');
+      for(const pr of (d.ports||[])) taps.push({d,p:pr.p,u:pr.u||d.u,rMax:isSeam?sa*2.3:Math.max(sa,sb),rMin:isSeam?sb*0.435:Math.min(sa,sb)});
+    }
+    for(let i=0;i<taps.length;i++)for(let j=i+1;j<taps.length;j++){
+      const a=taps[i],b=taps[j];
+      const dd=Math.hypot(a.p[0]-b.p[0],a.p[1]-b.p[1],a.p[2]-b.p[2]);
+      const same=(a.d===b.d);
+      const need=same? (a.rMax+b.rMax)*0.92+0.003                 // same driver: full drawn extents must clear
+                     : (a.rMin+b.rMin)*1.0+0.004;                 // cross-driver: minor-radii floor
+      if(dd<need) push('T2','fail','taps '+(dd*1000).toFixed(0)+'mm apart ('+(need*1000).toFixed(0)+' needed'+(same?', same driver':'')+')',
+        [(a.p[0]+b.p[0])/2,(a.p[1]+b.p[1])/2,(a.p[2]+b.p[2])/2], Math.max(0.10,dd*2.4));
+      const gy=b.p[1]-a.p[1], gz=b.p[2]-a.p[2];
+      const dFront=Math.hypot(gy,gz);                             // T4: the front view must SHOW distinct taps (his plate photo)
+      if(dd>=need && dFront>1e-6){
+        const gN=[gy/dFront,gz/dFront];
+        const ext=(t)=>{ if(!t.u) return t.rMax;
+          const uf=Math.hypot(t.u[1],t.u[2])>1e-6?[t.u[1],t.u[2]]:[1,0];
+          const uL=Math.hypot(uf[0],uf[1]); const c=(uf[0]*gN[0]+uf[1]*gN[1])/(uL||1);
+          return Math.hypot(t.rMax*c, t.rMin*Math.sqrt(Math.max(0,1-c*c))); };
+        const needF=ext(a)+ext(b)+0.002;
+        if(dFront<needF)
+          push('T4', dFront<needF*0.95?'fail':'warn',
+            'taps overlap in the front view ('+(dFront*1000).toFixed(0)+'mm on-axis vs '+(needF*1000).toFixed(0)+' drawn)',
+            [(a.p[0]+b.p[0])/2,(a.p[1]+b.p[1])/2,(a.p[2]+b.p[2])/2], Math.max(0.10,dd*2.4));
+      }
+    }
+    // ---- T3: drawn slots tell the truth (area + aspect) ----
+    const slots=[]; V3D.group.traverse(o=>{ if(o.isMesh&&o.userData&&o.userData.tag==='port') slots.push(o); });
+    for(const s of slots){
+      const kind=s.userData.kind||'mid';
+      const np=Math.max(1,((kind==='mid'?S.npM:S.npW)|0)||1);
+      const Ap=(kind==='mid'?S.apM:S.apW)*1e-4/np;
+      const g=s.geometry, isSq=g.type==='PlaneGeometry';
+      const A_drawn=(isSq? (1.772*1.772) : Math.PI)*Math.abs(s.scale.x*s.scale.y)/(sc*sc);
+      const pl=(kind==='mid'?S.plM:S.plW);
+      const expect=(pl==='diagonal')? Ap*1.0007 : Ap;             // slit basis is area-true too
+      const gp=new THREE.Vector3(); s.getWorldPosition(gp);
+      const off=new THREE.Vector3(); V3D.group.getWorldPosition(off); gp.sub(off).multiplyScalar(1/sc);
+      const at=[gp.x,gp.z,gp.y];
+      if(Math.abs(A_drawn-expect)/expect>0.12)
+        push('T3','fail',kind+' slot drawn '+(A_drawn*1e4).toFixed(1)+'cm2 vs Ap '+(expect*1e4).toFixed(1),at,0.12);
+      const asp=Math.abs(s.scale.x/(s.scale.y||1e-9));
+      const aspLim=(pl==='diagonal')?7:2.6;
+      if(asp>aspLim||asp<1/aspLim)
+        push('T3','fail',kind+' slot degenerate aspect '+asp.toFixed(1)+':1 (sliver)',at,0.12);
+    }
+    // ---- D1: driver rim pairs (model metric) ----
+    for(let i=0;i<L.length;i++)for(let j=i+1;j<L.length;j++){
+      const m=MEH.minRimDist(L[i],L[j]);
+      if(m<-0.003) push('D1','fail','frames overlap '+(m*1000).toFixed(1)+'mm ('+L[i].kind+'-'+L[j].kind+')',
+        [(L[i].center[0]+L[j].center[0])/2,(L[i].center[1]+L[j].center[1])/2,(L[i].center[2]+L[j].center[2])/2],0.35);
+      else if(m<0) push('D1','warn','frames snug '+(m*1000).toFixed(1)+'mm ('+L[i].kind+'-'+L[j].kind+')',
+        [(L[i].center[0]+L[j].center[0])/2,(L[i].center[1]+L[j].center[1])/2,(L[i].center[2]+L[j].center[2])/2],0.35);
+    }
+    // ---- D2: no floating parts - every driver seats (unless declared remote/pocketed) ----
+    for(const d of L){
+      if(d.remote||d.chamfer||d.knPod) continue;                  // declared standoffs carry pods/blocks
+      const gap=MEH.conformity? Math.abs(MEH.cavityMargin(st,d.portC)) : 0;
+      const seat=Math.abs(MEH.cavityMargin(st,d.center))-(d.stand||0.012);
+      if(seat>0.05) push('D2','fail',d.kind+' floats '+(seat*1000).toFixed(0)+'mm off its seat',d.center,0.3);
+    }
+    // ---- M1: embedded CAD bodies match their presets ----
+    if(window.CADM){ const chk=(pre,kindTxt)=>{ if(!pre||!pre.mesh||!CADM[pre.mesh])return;
+        const M=CADM[pre.mesh], D=(M.bb1[0]-M.bb0[0])/10, DEP=(M.bb1[2]-M.bb0[2])/10;
+        const od=pre.od||pre.bodyD, dp=pre.dp||pre.bodyL;
+        if(od&&Math.abs(D-od)/od>0.05) push('M1','fail',kindTxt+' CAD body D'+D.toFixed(1)+' vs preset '+od,[0,0,0],0.5);
+        if(dp&&Math.abs(DEP-dp)/dp>0.08) push('M1','fail',kindTxt+' CAD depth '+DEP.toFixed(1)+' vs preset '+dp,[0,0,0],0.5); };
+      chk(WOOFS[S.wfSel],'woofer'); chk(MIDS[S.midSel],'mid'); chk(CDS[S.cdSel],'CD'); }
+    // ---- F1: the model's own verdicts (fail rows / red or amber solids) are violations too ----
+    for(const r of ev.fit) if(r.st==='fail')
+      push('F1','fail','fit row FAIL: '+r.name+' = '+r.val,[st.depth*0.3,0,0],0.9);
+    for(const d of L){ if(d.collide) push('F1','fail',d.kind+' flagged RED (collision)',d.center,0.35);
+      else if(d.snug) push('F1','warn',d.kind+' amber (tolerance-band contact)',d.center,0.35); }
+    if(/INFEASIBLE/.test((S.bindM||'')+(S.bindW||'')))
+      push('F1','fail','state carries an INFEASIBLE note: '+((S.bindM||'')+' '+(S.bindW||'')).match(/INFEASIBLE[^\u00b7]*/)[0].slice(0,80),[0,0,0],1.0);
+    // ---- C1: drawn counts match the model ----
+    let dDrv=0,dPort=0; V3D.group.traverse(o=>{const t=o.userData&&o.userData.tag;
+      if(t==='driver'&&!o.isMesh)dDrv++; if(t==='port'&&o.isMesh)dPort++;});
+    const mPort=L.reduce((a,d)=>a+(d.ports||[]).length,0);
+    if(dDrv!==L.length) push('C1','fail','drawn drivers '+dDrv+' != model '+L.length,[0,0,0],1.2);
+    if(dPort!==mPort) push('C1','fail','drawn ports '+dPort+' != model '+mPort,[0,0,0],1.2);
+    return V;
+  },
+  frame(v){                                                        // fly the camera to the violation
+    const sc=window.__sc||1, off=new THREE.Vector3(); V3D.group.getWorldPosition(off);
+    V3D.tgt={x:v.at[0]*sc+off.x, y:v.at[2]*sc+off.y, z:v.at[1]*sc+off.z};
+    V3D.spin=false; V3D.dist=Math.max(0.18, v.span*sc*3.2);
+    V3D.yaw=(V3D.yaw||0.6)+0.0001; V3D.pitch=0.35; render3d();
+  },
+  reset(){ V3D.tgt=null; V3D.dist=2.0; render3d(); },
+  report(){ const v=this.audit();
+    return {fails:v.filter(x=>x.sev==='fail').length, warns:v.filter(x=>x.sev==='warn').length, violations:v};
+  }
+};
 
 /* ---------- STL export (binary) ---------- */
 const STLX=(()=>{
@@ -2578,7 +2738,7 @@ window.driversFirst=function(){
   if(el) el.innerHTML='<table style="width:100%;border-collapse:collapse;font-size:11px;margin-top:4px;">'+
     rows.map(r=>'<tr style="border-top:1px solid #ddd;"><td style="padding:2px 4px;font-weight:600;white-space:nowrap;">'+(r.green?'\u2713 ':'\u2717 ')+r.isl+'</td><td style="padding:2px 4px;">'+r.mouth+'</td><td style="padding:2px 4px;">'+r.XO+'</td><td style="padding:2px 4px;color:#666;">'+r.note+(r.midNA?' (2-way: mid unused)':'')+'</td></tr>').join('')+'</table>';
 };
-window.MEH_BUILD=59;
+window.MEH_BUILD=60;
 window.persistS=function(){
   try{
     const ca=window.curArch||'unity';

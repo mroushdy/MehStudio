@@ -1,4 +1,4 @@
-# MEH STUDIO — SESSION HANDOFF (build 59, verified deploy)
+# MEH STUDIO — SESSION HANDOFF (build 60, verified deploy)
 Companion to Horn Studio · Silence Please · NYC
 
 ## WHAT THIS IS
@@ -8,6 +8,12 @@ pa3way) — the knuckle island went LIVE in build 49 (SAWMOD S2 passages + remot
 woofers, corpus-grounded). Value-level enforcement, drivers↔horn-size coupling,
 geometry-derived crossovers, seam-tap law, knuckle passage law, drivers-first designer,
 Hornresp ME2 mapping. Verified against reference fixtures + blessed settled states.
+
+## THE DEV LOOP (build 60 — the process fix)
+After EVERY patch, BEFORE any gate: `node meh_inspect.js` — the in-tool INSPECT engine
+audits tap-scale invariants on all islands and saves camera-framed evidence crops to
+/tmp/inspect for anything wrong. In the tool itself, the Inspect button runs the same
+audit live; clicking a finding flies the camera to it. The contract is project-agnostic.
 
 ## THE HARD RULE (Marwan's mandate, 2026-07-20)
 **Nothing ships without a full VERIFY PASS.** Every change: patch → `node verify.js`
@@ -131,7 +137,7 @@ panels = rect2f), Hornresp manual (ME1/ME2 tap mapping). Makarski thesis is NOT 
 ## FILES
 meh_studio.html · meh_studio_handoff_v2.md (newest-first; top block authoritative) ·
 system/: verify.js · verify_visual.py · **meh_suite.js** (72) · **capture_states.js** ·
-deploy.sh (8 gates: verify · visual · suite · sweep · controls · scene · livetest · ORBIT VIEWER) · meh_livetest3.js · island_deep.js (knuckle now held to
+deploy.sh (9 gates: verify · visual · suite · sweep · controls · scene · livetest · INSPECT · ORBIT VIEWER) · meh_livetest3.js · island_deep.js (knuckle now held to
 the bar) · meh_fixtures.js (F3 aspirational-fail by design) · probe_pa3way.js ·
 t_knuckle.js · t_ladder.js · t_driversfirst.js · repro_*.js · render_analyze.js ·
 golden/: **21 blessed renders** + **settled_states.json**
