@@ -455,14 +455,17 @@ function driverLayout(S,st){
         for(const dm of list){ if(dm.kind!=='mid') continue;
           for(const pm of (dm.ports&&dm.ports.length?dm.ports:(dm.portC?[{p:dm.portC}]:[])))
             midClear=Math.max(midClear, Math.hypot(pm.p[1],pm.p[2])+rPtM); } }
-      const rF=Math.max((S.td||1)*IN*0.5+saK+0.008,       // the kidney's flow-length clears the throat
+      let rF=Math.max((S.td||1)*IN*0.5+saK+0.008,       // the kidney's flow-length clears the throat
                         ringR,
                         midClear? midClear+saK+0.012 : 0,  // front-projection clear of the mid ring (SH96 photo)
-                        cornerDist-(sbK+0.014));           // FILL THE CORNERS: taps sit under their drivers (his call)
+                        kind==='mid'? cornerDist-(sbK+0.014) : 0);  // corner-fill is the MID law; SH96 woofer slots sit tight to the throat (his photos)
+      const chordAt=2*(cornerDist-rF);                    // what the corner board can host at the tap
+      const FLUSH=(kind!=='mid') && (chordAt>=od+0.028);  // SH96 dialect only when the board hosts the frame; else F3 pocket dialect
       const dF=Math.max( (od+0.010)*0.7072,               // pair law: four frames 90 deg apart clear each other
                          cdR+od*0.5,                      // CD law: frame inner edge clears the CD radius
-                         rF+od*0.3536+0.006,              // frame FULLY behind the chamfer board - never in the horn air
+                         FLUSH? rF : rF+od*0.3536+0.006,  // flush: frame ON the board OVER its slot (SH96); else pocketed outboard (F3 reference)
                          0.12 );
+      if(FLUSH) rF=Math.max(rF, dF-od*0.25);              // the slot stays under the frame footprint
       const rPl=Math.min(cornerDist-0.004, dF);           // the plate rides the corner (or the frame line if inboard)
       for(let k=0;k<n;k++){
         const phi=Math.PI/4+k*Math.PI/2;
@@ -483,7 +486,7 @@ function driverLayout(S,st){
         for(let j=0;j<12;j++){const a2=j/12*2*Math.PI;
           d.magRim.push(vadd(magTip2,vadd(vscale(d.u,od*0.28*Math.cos(a2)),vscale(d.v,od*0.28*Math.sin(a2)))));}
         d.portC=tap0;
-        d.chamfer={dF:dF, plate:rPl, portR:rF, phi:phi, corner:cornerDist, pocket:Math.max(0,dF-rF), nOut:nOut.slice(), rF:rF, c0:c0, sa:saK, sb:sbK,
+        d.chamfer={dF:dF, plate:rPl, portR:rF, phi:phi, corner:cornerDist, pocket:Math.max(0,dF-rF), flush:FLUSH?1:0, nOut:nOut.slice(), rF:rF, c0:c0, sa:saK, sb:sbK,
           azs:Array.from({length:npc},(_x,jq)=>phi+(jq-(npc-1)/2)*(2*Math.PI/Math.max(2,n*npc)))};
       }
       return;
@@ -748,6 +751,16 @@ function fitCheck(S,st,layout){
         st: worstAp>=0.004?'ok':worstAp>=0?'warn':'fail',
         why: worstAp<0?'the innermost kidney crosses the throat apex - area the acoustics count is not physically there':'axial margin between the innermost kidney and the apex'});
       if(worstAp<0) for(const d of chs) d.collide=true;
+      { let chWorst=1e9;
+        for(const d of chs){ if(!d.chamfer.flush) continue;   // the chord bar is the FLUSH dialect's law; F3 pockets have no such bar
+          const m2=2*(d.chamfer.corner-d.chamfer.portR)-(d.od+0.028);
+          chWorst=Math.min(chWorst,m2); }
+        if(chWorst<1e8)
+        rows.push({sec:SEC,name:'Corner board hosts the frame',val:(chWorst*1000).toFixed(0)+' mm',
+          st: chWorst>=0.02?'ok':chWorst>=0?'warn':'fail',
+          why: chWorst<0?'the corner board chord cannot host the frame - the horn must grow (SH96 boards are wide)':'frame bolts flush on the corner board over its slot (SH96 interior photo)'});
+        if(chWorst<0) for(const d of chs) d.collide=true;
+      }
       rows.push({sec:SEC,name:'Chamfer pocket depth (frame behind plate)',val:(pocket*1000).toFixed(0)+' mm',
         st:'ok', why:'the frame recesses in a printed/boxed pocket OUTSIDE the corner (his reference plate photo); the seam kidneys are the horn opening'});
     }
@@ -1192,7 +1205,7 @@ function applyAutos(){
     const x0w=S.Lw;
     const lats = S.shape==='sup' ? [0.30,0.34,0.38,0.42,0.26,0.22,0.18,0.14,0.10]
                : (/^rect/.test(S.shape) ? [0.30,0.34,0.38,0.26,0.22] : [S.latW||0.30]);
-    const badW=ev=>ev.fit.some(r=>r.sec==='WOOF' && /CD body|conform|ring spacing|within the wall|pads on the wall|corner seam|clear of the apex/.test(r.name) && r.st==='fail');
+    const badW=ev=>ev.fit.some(r=>r.sec==='WOOF' && /CD body|conform|ring spacing|within the wall|pads on the wall|corner seam|clear of the apex|hosts the frame/.test(r.name) && r.st==='fail');
     let done=false;
     const bind0=S.bindW;
     const tryLats=()=>{
@@ -1207,7 +1220,7 @@ function applyAutos(){
         // panel floor: if a port crosses the crease, the tap walks OUT (never past the first-flare cap)
         for(let i=0;i<40;i++){
           const evp=MEH.evaluate(S);
-          if(!evp.fit.some(r=>r.sec==='WOOF'&&/within the wall|ring spacing|CD body|corner seam|clear of the apex/.test(r.name)&&r.st==='fail') && !evp.fit.some(r=>r.sec==='WOOF'&&/within the wall|corner seam/.test(r.name)&&r.st!=='ok')) break;
+          if(!evp.fit.some(r=>r.sec==='WOOF'&&/within the wall|ring spacing|CD body|corner seam|clear of the apex|hosts the frame/.test(r.name)&&r.st==='fail') && !evp.fit.some(r=>r.sec==='WOOF'&&/within the wall|corner seam/.test(r.name)&&r.st!=='ok')) break;
           // take our own advice first: shrink ports toward the velocity-limit CR (17 m/s, CR<=8)
           const crNow=S.sdW/S.apW, crMax=Math.min(8, 17/(2*Math.PI*80*(S.xmW*1e-3)));
           if(crNow < crMax-0.2){ S.apW=+(S.sdW/Math.min(crMax,crNow+0.6)).toFixed(1);
@@ -1343,7 +1356,7 @@ function applyAutos(){
       if(g9<0.004) stuck=true;
     }
     const dim=(S.shape==='cone'||S.shape==='os')?'mouthD':'mouthW';
-    const CAPS={unity:30,coax2:36,knuckle:36,roundprint:24,pa3way:50,quadrant:64,wide:64};
+    const CAPS={unity:30,coax2:36,knuckle:36,roundprint:24,pa3way:56,quadrant:64,wide:64};
     const cap=(CAPS[window.curArch]||64);
     if(stuck && window._fitIter<15 && S[dim]<cap){
       window._fitIter++; if(!window._grew0) window._grew0=S[dim];
@@ -1663,8 +1676,22 @@ function mesh3dInner(ev){
   rim(first,first.w,first.h,first.w+2*wallT,first.h+2*wallT);     // throat-end closure
   // mouth baffle plate — anchors the mouth plane like a real build
   {
-    const m=0.10;                                                  // 100 mm border
+    let hw=0;                                                      // outermost hardware (frame + collar allowance)
+    for(const d of (ev.layout||[])){ const r=Math.hypot(d.center[1],d.center[2])+(d.od||0)*0.62+0.035; if(r>hw)hw=r; }
+    const m=Math.min(0.40, Math.max(0.10, hw-Math.min(last.w,last.h)/2-wallT));   // cabinet-front border: hides exterior mounts (his front-view call-out)
     rim(last,last.w+2*wallT,last.h+2*wallT,last.w+2*wallT+2*m,last.h+2*wallT+2*m);
+    if(st.form==='rect'){   // CABINET SIDES (every reference build): opaque panels, mouth baffle edge back to the throat plane - exterior mounts stop reading through the front
+      const W2=last.w/2+wallT+m, H2=last.h/2+wallT+m, x1=last.x*sc, x0=0;
+      const sp=[], quad=(A,B,C,D)=>{sp.push(...A,...B,...C, ...A,...C,...D);};
+      quad([x0, H2*sc,-W2*sc],[x1, H2*sc,-W2*sc],[x1, H2*sc, W2*sc],[x0, H2*sc, W2*sc]);
+      quad([x0,-H2*sc,-W2*sc],[x0,-H2*sc, W2*sc],[x1,-H2*sc, W2*sc],[x1,-H2*sc,-W2*sc]);
+      quad([x0,-H2*sc, W2*sc],[x0, H2*sc, W2*sc],[x1, H2*sc, W2*sc],[x1,-H2*sc, W2*sc]);
+      quad([x0,-H2*sc,-W2*sc],[x1,-H2*sc,-W2*sc],[x1, H2*sc,-W2*sc],[x0, H2*sc,-W2*sc]);
+      const sg=new THREE.BufferGeometry(); sg.setAttribute('position',new THREE.Float32BufferAttribute(sp,3));
+      sg.computeVertexNormals();
+      const sm=new THREE.Mesh(sg,new THREE.MeshPhongMaterial({color:0xEDEBE6,shininess:6,side:THREE.DoubleSide}));
+      sm.userData.tag='shell'; grp.add(sm);
+    }
   }
   // station rings (round family only — on rect they ghost around the silhouette)
   const rings=[];
@@ -1719,6 +1746,19 @@ function mesh3dInner(ev){
       const rBig=dch.od*0.5+0.008,
             cupC=(dch.kind==='woof')? dch.dp*0.16+0.004      // 2-way woofer: bolted flange ring, back exposed (his call)
                                     : dch.dp*0.50+0.006;     // 3-way mid: sealed pocket
+      if(dch.chamfer&&dch.chamfer.flush){                     // FLUSH frame-on-board (SH96): plain flange ring + board patch, no cone
+        const fr2=[[dch.od*0.5-0.012,0.000],[rBig,0.003],[rBig,0.014],[dch.od*0.5-0.012,0.017]].map(p=>new THREE.Vector2(p[0],p[1]));
+        const ring3=new THREE.Mesh(new THREE.LatheGeometry(fr2,48),
+          new THREE.MeshPhongMaterial({color:0xE9E4D8,shininess:8,side:THREE.DoubleSide}));
+        orientAlong(ring3,[nrm[0],nrm[2],nrm[1]]);
+        ring3.position.set(cB[0]*sc,cB[2]*sc,cB[1]*sc); ring3.scale.setScalar(sc);
+        ring3.userData.tag='fixture'; grp.add(ring3);
+        const bp=new THREE.Mesh(new THREE.CircleGeometry((dch.od*0.5+0.020)*sc,48),
+          new THREE.MeshPhongMaterial({color:0xE0DCD2,shininess:5,side:THREE.DoubleSide}));
+        bp.quaternion.setFromUnitVectors(new THREE.Vector3(0,0,1), new THREE.Vector3(nrm[0],nrm[2],nrm[1]).normalize());
+        bp.position.set((cB[0]+nrm[0]*0.0012)*sc,(cB[2]+nrm[2]*0.0012)*sc,(cB[1]+nrm[1]*0.0012)*sc);
+        bp.userData.tag='shell'; grp.add(bp);          // the SOLID board over the frame footprint - driver hides behind, slot reads through (SH96)
+      } else {
       const rFl=rSmall+0.016;                                    // Reference-B perimeter base flange on the board
       const prof=[[rFl,0],[rFl,0.004],[rSmall+0.004,0.006],[rSmall,0.010],
                   [rBig*0.985,dBF*0.96],[rBig,dBF],[rBig,dBF+cupC*0.985],[rBig*0.94,dBF+cupC],[dch.od*0.5*0.42,dBF+cupC]]
@@ -1728,6 +1768,7 @@ function mesh3dInner(ev){
       orientAlong(cup,[nrm[0],nrm[2],nrm[1]]);                     // scene axes are (x,z,y)
       cup.position.set(cB[0]*sc,cB[2]*sc,cB[1]*sc); cup.scale.setScalar(sc);
       cup.userData.tag='fixture'; grp.add(cup);
+      }
     }
     if(tris.length){
       const fg=new THREE.BufferGeometry(); fg.setAttribute('position',new THREE.Float32BufferAttribute(tris,3));
@@ -2003,6 +2044,26 @@ window.INSPECT={
       const aspLim=(pl==='diagonal')?7:3.6;                          // slim reference slots are 3:1 by canon
       if(asp>aspLim||asp<1/aspLim)
         push('T3','fail',kind+' slot degenerate aspect '+asp.toFixed(1)+':1 (sliver)',at,0.12);
+    }
+    { // ---- F2: mounts/fixtures stay OUT of the horn (mouth plane + cavity) ----
+      const gp2=new THREE.Vector3();
+      V3D.group.traverse(o=>{ if(!o.isMesh||!o.userData||o.userData.tag!=='fixture') return;
+        const pos=o.geometry.attributes.position; let worst=-1e9, air=0;
+        for(let i=0;i<pos.count;i+=4){ gp2.set(pos.getX(i),pos.getY(i),pos.getZ(i)); o.localToWorld(gp2);
+          const mx=gp2.x/sc, my=gp2.z/sc, mz=gp2.y/sc;
+          if(mx-st.depth>worst) worst=mx-st.depth;
+          if(mx>0.004&&mx<st.depth){ const dm=MEH.dimsAt(st,mx);
+            if(Math.abs(my)<dm.w/2-0.004&&Math.abs(mz)<dm.h/2-0.004){
+              let solid=false;                       // corner region beyond a chamfer board plane is SOLID, not air
+              for(const dc of L){ if(!dc.chamfer||dc.chamfer.c0===undefined) continue;
+                const nO2=dc.chamfer.nOut;
+                if(nO2[0]*mx+nO2[1]*my+nO2[2]*mz >= dc.chamfer.c0-0.003){ solid=true; break; } }
+              if(!solid) air++; } } }
+        const wp=new THREE.Vector3(); o.getWorldPosition(wp);
+        const at2=[wp.x/sc,wp.z/sc,wp.y/sc];
+        if(worst>0.002) push('F2','fail','fixture crosses the mouth plane by '+(worst*1000).toFixed(0)+'mm',at2,0.15);
+        if(air>0) push('F2','fail','fixture has '+air+' sampled verts inside the horn air',at2,0.15);
+      });
     }
     // ---- T6: kidney fully within its board's chord (walls must not swallow the opening) ----
     for(const d of L){ if(!d.chamfer||d.chamfer.c0===undefined) continue;
@@ -2763,7 +2824,7 @@ const ARCH={
   knuckle:  {shape:'sup', cdSel:'de980', midSel:'bc5nsm', nM:2, wfSel:'bc8pe', nW:2, mouthW:32, plM:'knuckle', plW:'remote', dwall:'topbot'},
   wide:     {dwall:'sides', mouthW:36, thW:80, cdSel:'de980', wfSel:'w8', nW:2, Lw:6.5},
   roundprint:{shape:'cone', direct:true, mouthD:18},
-  pa3way:   {mouthW:30, thW:90, thV:90, midSel:'m4', nM:4, wfSel:'w15', nW:4, cdSel:'cd14', shM:'round', shW:'rt', npW:1, plM:'diagonal', plW:'chamfer'},
+  pa3way:   {mouthW:30, thW:90, thV:90, midSel:'m4', nM:4, wfSel:'hpl10', nW:4, cdSel:'cd14', shM:'round', shW:'rt', npW:1, plM:'diagonal', plW:'chamfer'},
   free:     {}
 };
 const ARCH_TUNE={
@@ -2783,7 +2844,7 @@ const ARCH_DRV={   // per-island driver classes (curated from the references)
   knuckle:   {mid:['bc5nsm','bc5ndl'], woof:['bc8pe','bc8nw','mdn8'], cd:['de980','de900','de610','cd14']},
   wide:      {mid:['m2','m3','bc5ndl','bc5nsm'], woof:['w8','bc8pe','bc8nw','mdn8','w10'], cd:['cd075','cd1','cd14','de980','de900','de610']},
   roundprint:{mid:['m2','m3'], woof:['w65','w8'], cd:['cd075','cd1','cd14','de980','de900','de610','de500']},
-  pa3way:    {mid:['m4','bc5nsm','bc5ndl'], woof:['w15','hpl10','bc10mbx','ndl12','es12lw','bc12pe'], cd:['cd14','dcm420']}
+  pa3way:    {mid:['m4','bc5nsm','bc5ndl'], woof:['hpl10','bc10mbx','ndl12','es12lw','bc12pe','w15'], cd:['cd14','dcm420']}
 };
 const ARCH_CNT={   // canonical symmetric counts only
   unity:{nM:[2,4],nW:[2]}, coax2:{nW:[2]}, quadrant:{nW:[4]}, knuckle:{nM:[2],nW:[2]},
@@ -2853,7 +2914,7 @@ window.driversFirst=function(){
   if(el) el.innerHTML='<table style="width:100%;border-collapse:collapse;font-size:11px;margin-top:4px;">'+
     rows.map(r=>'<tr style="border-top:1px solid #ddd;"><td style="padding:2px 4px;font-weight:600;white-space:nowrap;">'+(r.green?'\u2713 ':'\u2717 ')+r.isl+'</td><td style="padding:2px 4px;">'+r.mouth+'</td><td style="padding:2px 4px;">'+r.XO+'</td><td style="padding:2px 4px;color:#666;">'+r.note+(r.midNA?' (2-way: mid unused)':'')+'</td></tr>').join('')+'</table>';
 };
-window.MEH_BUILD=72;
+window.MEH_BUILD=75;
 window.persistS=function(){
   try{
     const ca=window.curArch||'unity';
