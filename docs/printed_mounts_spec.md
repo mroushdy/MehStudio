@@ -45,3 +45,22 @@ Two reference parts define the canon:
 ## Queue confirmed with Marwan
 (1) one-piece printed mounts + export · (2) stadium/radiused taps + foam option ·
 (3) pa3way nM→6 + 15" woofer preset (SH96HO class) · (4) flower 2-way island.
+
+## Reference batch 2 (2026-07-22, ten photos) — canon corrections & confirmations
+1. REAL SH-96 INTERIOR (the key photo): the big 3-way runs 4 WOOFERS ON CORNER
+   BOARDS (plywood diagonal shelves + wedge blocks, tight to the throat) and SIX
+   MIDS IN A TIGHT RING bolted around a small square throat plate at the CD.
+   CANON CORRECTION for our pa3way/SH96 class: mids do NOT belong in the corners -
+   corners carry the woofers; mids ring the apex. Needs a new placement 'apexring'
+   (mid frames around the throat plate) + plW='chamfer' as the corner-woofer style.
+2. MOTHER SHELL MILLING (robot photo): curved-shell woofers sit FLUSH in shallow
+   MILLED OVAL LANDS (recessed dishes) with the slot tap cut inside the dish; the
+   rear photo shows them bolted directly, backs fully exposed. The 'curved-shell
+   foot' work item becomes: oval recessed land + flush driver (kills the pucks).
+3. Production apex inserts (fabric horn close-up, squircle horn, donut horn): the
+   printed apex unit with small mid slots ringing the CD bore is REAL and shipping -
+   Reference B confirmed at three scales, incl. the ATH donut roll-back mouth.
+4. Two-stage waveguide dialect (squircle photo): a rect inner waveguide with corner
+   slots inset within the rounded outer flare - log as a future form option.
+5. Printed diamond pods (black cluster + ADDIT close-up): the flower island's
+   exterior - drivers in angled printed pods on a hub, CD snout central.
