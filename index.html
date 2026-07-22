@@ -1861,11 +1861,13 @@ function mesh3dInner(ev){
     if(d.mount && !d.chamfer){          // printed CONFORMAL mount (his cross-section); chamfer pockets live inside the drawn corner BLOCK instead
       const wedge=(d.remote||st.form!=='rect')? Math.min(0.075, MSP.padD/2000*0.55) : 0;
       const stH=(d.mount.h+wedge+0.004)*sc;
-      const pod=cyl(MSP.padD/2*MM, MSP.padD/2*MM*1.14, stH, 0xE9E4D8, true);
+      const pod=cyl(MSP.padD/2*MM, MSP.padD/2*MM*1.45, stH, 0xE9E4D8, true);   // Mother-style oval LAND: wide flared foot buried in the shell, not a puck
       pod.position.y=-stH/2+0.0008*sc; sub.add(pod);
+      const lip=cyl(MSP.padD/2*MM*1.06, MSP.padD/2*MM*1.10, 0.006*sc, 0xE0DCD2, true);
+      lip.position.y=0.0018*sc; sub.add(lip);        // milled land rim at the seat
     } else if(st.form!=='rect' && !d.knPod){   // mounting pad (print families only - wood mounts flush to the board)
       const stH=(Math.max(0.002,(d.stand||0.012)-0.012)+0.003)*sc;
-      const pod=cyl(MSP.padD/2*MM, MSP.padD/2*MM*1.04, stH, 0xdedad2, true);
+      const pod=cyl(MSP.padD/2*MM, MSP.padD/2*MM*1.30, stH, 0xdedad2, true);   // shallow flared land (Mother milling photo)
       pod.position.y=-stH/2+0.0008*sc; sub.add(pod);
     }
     {   // fasteners at the real bolt circle (count, spacing, head size from the datasheet)
@@ -2914,7 +2916,7 @@ window.driversFirst=function(){
   if(el) el.innerHTML='<table style="width:100%;border-collapse:collapse;font-size:11px;margin-top:4px;">'+
     rows.map(r=>'<tr style="border-top:1px solid #ddd;"><td style="padding:2px 4px;font-weight:600;white-space:nowrap;">'+(r.green?'\u2713 ':'\u2717 ')+r.isl+'</td><td style="padding:2px 4px;">'+r.mouth+'</td><td style="padding:2px 4px;">'+r.XO+'</td><td style="padding:2px 4px;color:#666;">'+r.note+(r.midNA?' (2-way: mid unused)':'')+'</td></tr>').join('')+'</table>';
 };
-window.MEH_BUILD=75;
+window.MEH_BUILD=76;
 window.persistS=function(){
   try{
     const ca=window.curArch||'unity';
