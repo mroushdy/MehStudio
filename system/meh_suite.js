@@ -104,7 +104,7 @@ if(STATES) for(const name of Object.keys(XO_PIN)){
   const reds=ev.layout.filter(d=>d.collide).length;
   ck(name+' pin: 0 fails / 0 reds', fails.length===0&&reds===0, fails.join(',')||('reds='+reds));
   ck(name+' pin: XO '+XO_PIN[name], S.fxHi===XO_PIN[name], S.fxHi+'');
-  ck(name+' pin: island identity holds', (name!=='knuckle' || (S.plM==='knuckle'&&S.plW==='remote')) && (name!=='pa3way' || S.plM==='chamfer'), S.plM+'/'+S.plW);
+  ck(name+' pin: island identity holds', (name!=='knuckle' || (S.plM==='knuckle'&&S.plW==='remote')) && (name!=='pa3way' || (S.plM==='diagonal'&&S.plW==='chamfer')), S.plM+'/'+S.plW);
 }
 { // wall-rule canon: wide's woofers ride the SIDE walls (from the blessed state)
   if(STATES&&STATES.wide){ const ev=MEH.evaluate(STATES.wide);
@@ -127,7 +127,7 @@ if(STATES) for(const name of Object.keys(XO_PIN)){
   if(STATES&&STATES.pa3way){ const ev=MEH.evaluate(STATES.pa3way);
     const mids=ev.layout.filter(d=>d.kind==='mid'), woofs=ev.layout.filter(d=>d.kind==='woof');
     const corners=new Set(mids.map(d=>Math.sign(d.center[1])+','+Math.sign(d.center[2])));
-    ck('pa3way canon: 4 mids on 4 corner facets, pocketed', mids.length===4&&corners.size===4&&mids.every(d=>d.chamfer&&d.chamfer.pocket>0), corners.size+' corners');
+    ck('pa3way canon (SH96): 4 woofers on 4 corner boards, throat mids', woofs.length===4&&corners.size===4&&woofs.every(d=>d.chamfer)&&mids.every(d=>!d.chamfer), corners.size+' corners');
     let mw=1e9; for(const a of mids)for(const b of woofs)mw=Math.min(mw,MEH.minRimDist(a,b));
     ck('pa3way canon: mid ring clears woofer ring >= 4mm', mw>=0.004, (mw*1000).toFixed(1)+'mm');
     let mm=1e9; for(let i=0;i<mids.length;i++)for(let j=i+1;j<mids.length;j++)mm=Math.min(mm,MEH.minRimDist(mids[i],mids[j]));

@@ -450,8 +450,14 @@ function driverLayout(S,st){
       const stepK=(npc>1)? Math.max(saK+0.004,(sbK+0.003)/fwK) : 0;   // pair stagger: 3D + front-view clear (plate-photo law)
       const Ntot=Math.max(1,n*npc);
       const ringR=(2*sbK+0.008)/(2*Math.sin(Math.PI/Math.max(2,Ntot)));   // even ring: neighbors clear at tangential (short) extents
+      let midClear=0;                                     // SH96 law: woofer ring clears the mid tap ring in front view
+      if(kind!=='mid'){ const rPtM=Math.sqrt((S.apM*1e-4/Math.max(1,(S.npM|0)||1))/Math.PI);
+        for(const dm of list){ if(dm.kind!=='mid') continue;
+          for(const pm of (dm.ports&&dm.ports.length?dm.ports:(dm.portC?[{p:dm.portC}]:[])))
+            midClear=Math.max(midClear, Math.hypot(pm.p[1],pm.p[2])+rPtM); } }
       const rF=Math.max((S.td||1)*IN*0.5+saK+0.008,       // the kidney's flow-length clears the throat
                         ringR,
+                        midClear? midClear+saK+0.012 : 0,  // front-projection clear of the mid ring (SH96 photo)
                         cornerDist-(sbK+0.014));           // FILL THE CORNERS: taps sit under their drivers (his call)
       const dF=Math.max( (od+0.010)*0.7072,               // pair law: four frames 90 deg apart clear each other
                          cdR+od*0.5,                      // CD law: frame inner edge clears the CD radius
@@ -1447,7 +1453,7 @@ const ARCH_CARD=`<div class="card" style="border-left:3px solid #1a1a1a;">
     <option value="knuckle">Molded / printed knuckle (SAWMOD/Solana) — knuckle passages + remote bandpass woofers</option>
     <option value="wide">Side-entry wide format — big horns only (proportion-bound)</option>
     <option value="roundprint">Printed round MEH — conical/OS · ring drivers · BETA: ring interleave pending</option>
-    <option value="pa3way">Big-format 3-way PA (big-format 3-way class) — square · reference chamfer mids</option>
+    <option value="pa3way">Big-format 3-way PA (big-format 3-way class) — square · corner woofers + throat mids (SH96 canon)</option>
     <option value="free">Free design — all parameters (advanced; the solver judges you)</option>
   </select>
 </div>`;
@@ -2757,7 +2763,7 @@ const ARCH={
   knuckle:  {shape:'sup', cdSel:'de980', midSel:'bc5nsm', nM:2, wfSel:'bc8pe', nW:2, mouthW:32, plM:'knuckle', plW:'remote', dwall:'topbot'},
   wide:     {dwall:'sides', mouthW:36, thW:80, cdSel:'de980', wfSel:'w8', nW:2, Lw:6.5},
   roundprint:{shape:'cone', direct:true, mouthD:18},
-  pa3way:   {mouthW:30, thW:90, thV:90, midSel:'bc5nsm', nM:4, wfSel:'hpl10', nW:2, cdSel:'cd14', shM:'rt', plM:'chamfer'},
+  pa3way:   {mouthW:30, thW:90, thV:90, midSel:'m4', nM:4, wfSel:'w15', nW:4, cdSel:'cd14', shM:'round', shW:'rt', npW:1, plM:'diagonal', plW:'chamfer'},
   free:     {}
 };
 const ARCH_TUNE={
@@ -2777,11 +2783,11 @@ const ARCH_DRV={   // per-island driver classes (curated from the references)
   knuckle:   {mid:['bc5nsm','bc5ndl'], woof:['bc8pe','bc8nw','mdn8'], cd:['de980','de900','de610','cd14']},
   wide:      {mid:['m2','m3','bc5ndl','bc5nsm'], woof:['w8','bc8pe','bc8nw','mdn8','w10'], cd:['cd075','cd1','cd14','de980','de900','de610']},
   roundprint:{mid:['m2','m3'], woof:['w65','w8'], cd:['cd075','cd1','cd14','de980','de900','de610','de500']},
-  pa3way:    {mid:['m4','bc5nsm','bc5ndl'], woof:['hpl10','bc10mbx','ndl12','es12lw','bc12pe'], cd:['cd14','dcm420']}
+  pa3way:    {mid:['m4','bc5nsm','bc5ndl'], woof:['w15','hpl10','bc10mbx','ndl12','es12lw','bc12pe'], cd:['cd14','dcm420']}
 };
 const ARCH_CNT={   // canonical symmetric counts only
   unity:{nM:[2,4],nW:[2]}, coax2:{nW:[2]}, quadrant:{nW:[4]}, knuckle:{nM:[2],nW:[2]},
-  wide:{nW:[2]}, roundprint:{nM:[3,4,6],nW:[4]}, pa3way:{nM:[4],nW:[2]}
+  wide:{nW:[2]}, roundprint:{nM:[3,4,6],nW:[4]}, pa3way:{nM:[4],nW:[2,4]}
 };
 window.ARCH_DRV=ARCH_DRV; window.ARCH_CNT=ARCH_CNT;
 window.ARCH_PL={   // placements OFFERED per island (the reachable-space sweep's verdicts, build 63)
@@ -2791,7 +2797,7 @@ window.ARCH_PL={   // placements OFFERED per island (the reachable-space sweep's
   knuckle:   {plM:['knuckle','edge'], plW:['remote','edge','straddle']},
   wide:      {plM:['diagonal','edge','corner'], plW:['straddle','cross','edge']},
   roundprint:{plM:['edge','center','straddle'], plW:['edge','straddle','center']},
-  pa3way:    {plM:['chamfer','edge','corner'], plW:['straddle','cross','remote','edge']}
+  pa3way:    {plM:['diagonal','chamfer','edge','corner'], plW:['chamfer','straddle','cross','remote','edge']}
 };
 window.enforceIsland=function(){
   const ca=window.curArch; if(!ca||ca==='free'||S.adv||!window.ARCH_DRV) return;
@@ -2847,7 +2853,7 @@ window.driversFirst=function(){
   if(el) el.innerHTML='<table style="width:100%;border-collapse:collapse;font-size:11px;margin-top:4px;">'+
     rows.map(r=>'<tr style="border-top:1px solid #ddd;"><td style="padding:2px 4px;font-weight:600;white-space:nowrap;">'+(r.green?'\u2713 ':'\u2717 ')+r.isl+'</td><td style="padding:2px 4px;">'+r.mouth+'</td><td style="padding:2px 4px;">'+r.XO+'</td><td style="padding:2px 4px;color:#666;">'+r.note+(r.midNA?' (2-way: mid unused)':'')+'</td></tr>').join('')+'</table>';
 };
-window.MEH_BUILD=71;
+window.MEH_BUILD=72;
 window.persistS=function(){
   try{
     const ca=window.curArch||'unity';
