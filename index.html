@@ -1697,7 +1697,9 @@ function mesh3dInner(ev){
       const rBig=dch.od*0.5+0.008,
             cupC=(dch.kind==='woof')? dch.dp*0.16+0.004      // 2-way woofer: bolted flange ring, back exposed (his call)
                                     : dch.dp*0.50+0.006;     // 3-way mid: sealed pocket
-      const prof=[[rSmall,0],[rBig*0.985,dBF*0.96],[rBig,dBF],[rBig,dBF+cupC*0.985],[rBig*0.94,dBF+cupC],[dch.od*0.5*0.42,dBF+cupC]]
+      const rFl=rSmall+0.016;                                    // Reference-B perimeter base flange on the board
+      const prof=[[rFl,0],[rFl,0.004],[rSmall+0.004,0.006],[rSmall,0.010],
+                  [rBig*0.985,dBF*0.96],[rBig,dBF],[rBig,dBF+cupC*0.985],[rBig*0.94,dBF+cupC],[dch.od*0.5*0.42,dBF+cupC]]
         .map(p=>new THREE.Vector2(p[0],p[1]));
       const cup=new THREE.Mesh(new THREE.LatheGeometry(prof,48),
         new THREE.MeshPhongMaterial({color:0xE9E4D8,shininess:8,side:THREE.DoubleSide}));
@@ -2818,7 +2820,7 @@ window.driversFirst=function(){
   if(el) el.innerHTML='<table style="width:100%;border-collapse:collapse;font-size:11px;margin-top:4px;">'+
     rows.map(r=>'<tr style="border-top:1px solid #ddd;"><td style="padding:2px 4px;font-weight:600;white-space:nowrap;">'+(r.green?'\u2713 ':'\u2717 ')+r.isl+'</td><td style="padding:2px 4px;">'+r.mouth+'</td><td style="padding:2px 4px;">'+r.XO+'</td><td style="padding:2px 4px;color:#666;">'+r.note+(r.midNA?' (2-way: mid unused)':'')+'</td></tr>').join('')+'</table>';
 };
-window.MEH_BUILD=66;
+window.MEH_BUILD=67;
 window.persistS=function(){
   try{
     const ca=window.curArch||'unity';
