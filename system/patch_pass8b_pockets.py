@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# BUILD 52b - chamfer v2: ARA POCKET GEOMETRY (his printed-plate photo, literally):
+# BUILD 52b - chamfer v2: REFERENCE POCKET GEOMETRY (his printed-plate photo, literally):
 # the frame sits in a recessed pocket OUTSIDE the nominal corner; only the port kidneys
 # open inside the horn. Seat distance dF is CLEARANCE-DRIVEN (pair law + CD law), the
 # plate rides the corner, ports open just inside it. F3 must clear by construction.
@@ -12,7 +12,7 @@ def rep(a,b,cnt=1):
     src=src.replace(a,b)
 
 # v2 branch: clearance-driven seats, plate at the corner, ports inside it
-rep("""    if(pl==='chamfer' && st.form!=='round'){   // ARA 45-deg corner plates: one frame per facet (his reference photos)
+rep("""    if(pl==='chamfer' && st.form!=='round'){   // reference 45-deg corner plates: one frame per facet (his reference photos)
       const dPc=dimsAt(st,xPort);
       const padR=mountSpec(S,kind).padD/2000;
       const cornerDist=Math.hypot(dPc.w/2,dPc.h/2);
@@ -32,7 +32,7 @@ rep("""    if(pl==='chamfer' && st.form!=='round'){   // ARA 45-deg corner plate
       }
       return;
     }""",
-"""    if(pl==='chamfer' && st.form!=='round'){   // ARA corner plates v2: frames in POCKETS outside the corner (his printed-plate photo)
+"""    if(pl==='chamfer' && st.form!=='round'){   // reference corner plates v2: frames in POCKETS outside the corner (his printed-plate photo)
       const dPc=dimsAt(st,xPort);
       const rP2=Math.sqrt(((kind==='mid'?S.apM:S.apW)*1e-4/Math.max(1,(kind==='mid'?S.npM:S.npW)|0||1))/Math.PI);
       const cornerDist=Math.hypot(dPc.w/2,dPc.h/2);
@@ -58,7 +58,7 @@ rep("""    if(pl==='chamfer' && st.form!=='round'){   // ARA 45-deg corner plate
     }""")
 
 # rows v2: pocket depth + port-inside-corner (replace the brittle facet/cut rows)
-rep("""  { // ARA chamfer checks: each facet must host its pad; the cut must not eat the walls
+rep("""  { // reference chamfer checks: each facet must host its pad; the cut must not eat the walls
     const chs=layout.filter(d=>d.chamfer);
     if(chs.length){
       const padR2=mountSpec(S,'woof').padD/2000;
@@ -84,7 +84,7 @@ rep("""  { // ARA chamfer checks: each facet must host its pad; the cut must not
         why:'the throat region runs octagonal (reference); the shell keeps the square mouth - keep the cut modest'});
     }
   }""",
-"""  { // ARA chamfer checks v2: ports must open INSIDE the horn corner; pocket depth reported
+"""  { // reference chamfer checks v2: ports must open INSIDE the horn corner; pocket depth reported
     const chs=layout.filter(d=>d.chamfer);
     if(chs.length){
       let worstIn=1e9, pocket=0;

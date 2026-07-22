@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# BUILD 52 - THE ARA CHAMFER DIALECT (Marwan's 6x-reported big-square problem, fixed at
+# BUILD 52 - THE REFERENCE CHAMFER DIALECT (Marwan's 6x-reported big-square problem, fixed at
 # the geometry, not the label). His three reference photos are the spec: 45-degree corner
 # facet plates host the four woofers, one frame per plane - frames stop fighting the
 # adjacent wall because they no longer share it.
@@ -25,7 +25,7 @@ H='meh_studio_v4.html'
 
 # 1) the chamfer placement branch (before the edge-placement path, after knuckle's)
 rep(H, "    // edge placement: the port hugs the throat at the cone's near edge; the DRIVER CENTER",
-"""    if(pl==='chamfer' && st.form!=='round'){   // ARA 45-deg corner plates: one frame per facet (his reference photos)
+"""    if(pl==='chamfer' && st.form!=='round'){   // reference 45-deg corner plates: one frame per facet (his reference photos)
       const dPc=dimsAt(st,xPort);
       const padR=mountSpec(S,kind).padD/2000;
       const cornerDist=Math.hypot(dPc.w/2,dPc.h/2);
@@ -61,7 +61,7 @@ rep(H, "if(worst<-0.002) for(const d of rings[kind]) if(conformity(st,d)<-0.002)
 
 # 3) the chamfer honesty rows (next to the knuckle rows)
 rep(H, "  { // SAWMOD knuckle checks: passages must leave the HF jet a throat-width channel; S2 displacement stays modest",
-"""  { // ARA chamfer checks: each facet must host its pad; the cut must not eat the walls
+"""  { // reference chamfer checks: each facet must host its pad; the cut must not eat the walls
     const chs=layout.filter(d=>d.chamfer);
     if(chs.length){
       const padR2=mountSpec(S,'woof').padD/2000;
@@ -102,7 +102,7 @@ rep(H, '<option value="quadrant">Big square, 4 woofers — one per face (hex-bui
 
 # 5) render: draw the four facet plates (the white corner panels in his photo)
 rep(H, "    if(d.knPod){   // SAWMOD knuckle channel: printed boss from the wall to the injection face",
-"""    if(d.chamfer){   // ARA corner plate: the 45-deg facet panel itself
+"""    if(d.chamfer){   // reference corner plate: the 45-deg facet panel itself
       const ell=d.chamfer.ell*sc, thk=0.012*sc;
       const plate=new THREE.Mesh(new THREE.BoxGeometry(ell*2.4, thk, ell*2.0),
         new THREE.MeshPhongMaterial({color:0xE9E4D8, shininess:5}));

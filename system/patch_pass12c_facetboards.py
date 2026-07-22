@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# BUILD 56c - THE REAL ARA CHAMFER BOARDS (the F3 'aspirational' item, forced by the eyes:
+# BUILD 56c - THE REAL REFERENCE CHAMFER BOARDS (the F3 'aspirational' item, forced by the eyes:
 # frames visibly poked through the walls into the horn air, and ridge taps had no honest
 # surface). His square rear photo shows actual 45-deg chamfer boards running the depth of
 # the box; the printed-plate photo shows kidneys opening through that board.
@@ -126,7 +126,7 @@ rep("""      let worstS=0, pocket=0, worstAp=1e9;
 
 # 6) mesh3d: DRAW the chamfer boards (ribbon between the wall intersections per station)
 rep("""  grp.traverse(function(o){ if(o.isMesh && !o.userData.tag) o.userData.tag='shell'; });   // everything built so far is horn shell""",
-"""  for(const dch of ev.layout.filter(d=>d.chamfer&&d.chamfer.c0!==undefined)){   // ARA chamfer boards: real 45-deg corner facets (his square rear photo)
+"""  for(const dch of ev.layout.filter(d=>d.chamfer&&d.chamfer.c0!==undefined)){   // reference chamfer boards: real 45-deg corner facets (his square rear photo)
     const ch=dch.chamfer, e1=Math.cos(ch.phi), e2=Math.sin(ch.phi), nO=ch.nOut;
     const den=nO[1]*e1+nO[2]*e2; if(Math.abs(den)<1e-6) continue;
     const strip=[]; let prev=null;

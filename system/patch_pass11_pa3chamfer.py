@@ -21,10 +21,10 @@ rep("      if(d.chamfer){ const rPt=Math.sqrt((S.apW*1e-4/Math.max(1,np))/Math.P
     "      if(d.chamfer){ const rPt=Math.sqrt(((d.kind==='mid'?S.apM:S.apW)*1e-4/Math.max(1,np))/Math.PI);")
 
 # 3) fitCheck chamfer rows: per-kind loop (sec/ap/np follow the kind; row names unchanged)
-rep("""  { // ARA chamfer checks v2: ports must open INSIDE the horn corner; pocket depth reported
+rep("""  { // reference chamfer checks v2: ports must open INSIDE the horn corner; pocket depth reported
     const chs=layout.filter(d=>d.chamfer);
     if(chs.length){""",
-"""  for(const KK of ['mid','woof']){ // ARA chamfer checks v2 (per kind): ports must open INSIDE the horn corner; pocket depth reported
+"""  for(const KK of ['mid','woof']){ // reference chamfer checks v2 (per kind): ports must open INSIDE the horn corner; pocket depth reported
     const chs=layout.filter(d=>d.chamfer&&d.kind===KK);
     const SEC=KK.toUpperCase(), apK=(KK==='mid'?S.apM:S.apW), npK=((KK==='mid'?S.npM:S.npW)|0)||1;
     if(chs.length){""")

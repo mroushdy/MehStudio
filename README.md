@@ -1,4 +1,4 @@
-# MEH STUDIO — SESSION HANDOFF (build 61, verified deploy)
+# MEH STUDIO — SESSION HANDOFF (build 63, verified deploy)
 Companion to Horn Studio · Silence Please · NYC
 
 ## WHAT THIS IS
@@ -45,7 +45,27 @@ test output through `tail` in a gating chain. `typeof` does NOT guard const TDZ 
 late tables via window. \u escapes are illegal in python regex replacement templates (lambda).
 Storage key = mehstudio_v42 (INTENT-ONLY payload: {__b, arch, adv, tune, full?}); bump on ANY state-schema change.
 
-## BUILD 57 (this session) — what landed
+## BUILDS 62–63 — what landed
+- **SLIM-SLOT CANON** (Marwan's reference-photo law): rt/sq ports are 3:1 slim rectangles
+  with the LONG axis ALONG the horn (flow dir), never around the diameter — sa=√(Ap·3)/2,
+  sb=√(Ap/3)/2, drawn as a scaled unit plane so drawn area is EXACT. Chamfer kidneys share
+  ONE common ring radius (corner-fill law: ring reaches toward the corner run) with
+  projection-aware stagger so front-view pairs never superimpose.
+- **INSPECT laws T3–T6** (each validated by FAILING on the then-current geometry first):
+  T3 drawn-slot truth (area + aspect ≤3.6), T4 front-projection distinctness, T5 ring
+  regularity (radius spread ≤6 mm, azimuth gaps ≤8°), T6 in-chord (chord − (cOff+sb+3 mm)).
+  meh_inspect.js: default run = 7 canon islands (deploy gate 8); `--full` = the ~10-min
+  reachable-space sweep (islands × placements × mouth cap). Silent fails ≠ F1 honest refusals.
+- **ARCH_PL honest placement menus**: every island's placement dropdowns list only options
+  that MEAN something there; dead/broken combos are disabled with a reason. The full sweep's
+  26 broken off-canon states → 0 silent (65 clean / 3 honest refusals).
+- **ALL drivers look real (meshApprox)**: presets without true CAD wear the nearest real
+  body rescaled per-axis (kr=od/CAD_D, kz=dp/CAD_depth). 10 true CAD bodies now embedded
+  (+18SW115, +8MDN51). Ring finisher reads MEH.minRimDist (not rounded row text); growth
+  chases the real 4 mm chamfer-mid ring; pa3way cap 50 (settles 44″ · L12 2.1 · Lw 9.15);
+  stale INFEASIBLE notes stripped on clean solves. V3D.tgt orbit target + INSPECT.frame().
+
+## BUILD 57 — what landed
 - **THE ORBIT VIEWER (gate #8, Marwan's directive)**: orbit_viewer.js renders every island
   from 10 angles; montages are REVIEWED at full res before any bless; build_viewer.py
   packages meh_viewer.html (self-contained gallery, ships with every deploy). Hand-picked

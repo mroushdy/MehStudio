@@ -111,7 +111,7 @@ rep("/within the wall|ring spacing|CD body|kidney ring|inside the corner|corner 
     "/within the wall|ring spacing|CD body|corner seam|clear of the apex/")
 
 # 4) the floating pocket disc dies (the plate photo shows plate + kidney holes, no opening disc)
-rep("""    if(d.chamfer){   // ARA pocket opening: recessed disc at the plate line (his printed-plate photo)
+rep("""    if(d.chamfer){   // reference pocket opening: recessed disc at the plate line (his printed-plate photo)
       const e=[0,Math.cos(d.chamfer.phi),Math.sin(d.chamfer.phi)];
       const nO=d.chamfer.nOut||d.normal;
       const pr=(d.od/2)*0.97*sc;                       // the pocket hosts the frame - the opening IS frame-sized (his plate photo)

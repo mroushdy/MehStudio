@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# BUILD 55 suite: pin the new pa3way dialect - Ara chamfer mids. Island identity extends
+# BUILD 55 suite: pin the new pa3way dialect - the reference builder chamfer mids. Island identity extends
 # to pa3way (plM==='chamfer'), and a canon check mirrors the quadrant one: four mid frames
 # on four corner facets, kidneys per-kind, mid ring clears the woofer ring by the REAL gap
 # (no more riding the -3 mm prim-puck tolerance).
@@ -15,7 +15,7 @@ rep("  ck(name+' pin: island identity holds', name!=='knuckle' || (S.plM==='knuc
     "  ck(name+' pin: island identity holds', (name!=='knuckle' || (S.plM==='knuckle'&&S.plW==='remote')) && (name!=='pa3way' || S.plM==='chamfer'), S.plM+'/'+S.plW);")
 
 rep("""sec('F - knuckle + remote invariants (pass 1-2 features)');""",
-"""{ // pa3way chamfer-mid canon (build 55, his Ara square rear photo): 4 mids on 4 corner
+"""{ // pa3way chamfer-mid canon (build 55, his the reference builder square rear photo): 4 mids on 4 corner
   // facets in pockets, bodies outside, and the mid ring clears the woofer ring for real
   if(STATES&&STATES.pa3way){ const ev=MEH.evaluate(STATES.pa3way);
     const mids=ev.layout.filter(d=>d.kind==='mid'), woofs=ev.layout.filter(d=>d.kind==='woof');

@@ -66,7 +66,7 @@ rep("      if(d.chamfer){ const rPt=Math.sqrt((S.apW*1e-4/Math.max(1,np))/Math.P
     "      if(d.chamfer){ const rPt=Math.sqrt((S.apW*1e-4/Math.max(1,np))/Math.PI);\n        const e3=[0,Math.cos(d.chamfer.phi),Math.sin(d.chamfer.phi)];\n        const offR=np===1?0:(q/(np-1)-0.5)*2*(rPt+0.004);      // reference pockets: kidneys run RADIALLY\n        const nP=vscale(vnorm(d.chamfer.nOut||d.normal),-1);   // kidneys open in the PLATE face (front-visible)\n        const uP=vnorm(vcross(nP,[1,0,0]));\n        d.ports.push({p:vadd(d.portC,vscale(e3,offR)), u:[1,0,0], v:uP, n:nP});\n        continue; }")
 
 # 3c) the plate renders as the pocket OPENING at the plate line (not a slab at the frame line)
-rep("""    if(d.chamfer){   // ARA corner plate: the 45-deg facet panel itself
+rep("""    if(d.chamfer){   // reference corner plate: the 45-deg facet panel itself
       const ell=d.chamfer.ell*sc, thk=0.012*sc;
       const plate=new THREE.Mesh(new THREE.BoxGeometry(ell*2.4, thk, ell*2.0),
         new THREE.MeshPhongMaterial({color:0xE9E4D8, shininess:5}));
@@ -75,7 +75,7 @@ rep("""    if(d.chamfer){   // ARA corner plate: the 45-deg facet panel itself
       plate.position.set(d.portC[0]*sc, (d.chamfer.dF-0.007)*e[2]*sc, (d.chamfer.dF-0.007)*e[1]*sc);
       grp.add(plate);
     }""",
-"""    if(d.chamfer){   // ARA pocket opening: recessed disc at the plate line (his printed-plate photo)
+"""    if(d.chamfer){   // reference pocket opening: recessed disc at the plate line (his printed-plate photo)
       const e=[0,Math.cos(d.chamfer.phi),Math.sin(d.chamfer.phi)];
       const nO=d.chamfer.nOut||d.normal;
       const pr=Math.min(MSP.padD/2000, d.chamfer.corner*0.52)*sc;
