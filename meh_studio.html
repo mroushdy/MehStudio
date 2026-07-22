@@ -517,7 +517,8 @@ function driverLayout(S,st){
         } else if(pl==='corner'){                        // woofers: quadrant square for n>=3, centered per wall for n<=2 (SAWMOD)
           y=(perFace===1?(n<=2?0:(k%4<2?-1:1)):Math.sign(y||1))*Math.max((od+0.006)/2, d.w*(S.latW||0.30));
         } else if(perFace>1){ y=Math.sign(y||1)*Math.max(Math.abs(y),(od+0.006)/2); }
-        const yD=(kind==='woof'&&S.doffW)? y+(face>0?1:-1)*(S.__flip?-1:1)*S.doffW*IN : y;   // frame slides; tap holds (Waslo)
+        const yD=(kind==='woof'&&S.doffW)? y+(face>0?1:-1)*(S.__flip?-1:1)*S.doffW*IN
+               : (kind==='mid'&&S.doffM)? y+(face>0?1:-1)*(S.__flip?-1:1)*S.doffM*IN : y;   // frame slides; tap holds (Waslo)
         if(st.form==='sup'){
           const phi=azForLateral(st,x,yD,face), phiP=azForLateral(st,xPort,y,face);
           place(kind, surfPt(st,x,phi), surfNormal(st,x,phi), od, dp);
@@ -1140,7 +1141,7 @@ const DEF={ shape:'rect2f', direct:false, mouthW:24, mouthD:18, rollR:2.5,
   thW:90,thV:60,fc:385,td:0.707,kk:25306,ratw:0.65,
   topo:'cmw', cdSel:'custom', midSel:'custom', wfSel:'custom', adv:false,
   cdBodyD:11, cdBodyL:9, odM:5.7, dpM:4.5, odW:16.7, dpW:8.5,
-  L12:1.5,cdDepth:1.4,knA:0.9,crM:6,crW:4.5,doffW:0,nM:4,npM:1,plM:'diagonal',shM:'round',xmM:1.5,sdM:13.4,coneM:7,apM:2.25,vtcM:11.8,lptM:1.18,frM:true,vrcM:150,
+  L12:1.5,cdDepth:1.4,knA:0.9,crM:6,crW:4.5,doffW:0, doffM:0,nM:4,npM:1,plM:'diagonal',shM:'round',xmM:1.5,sdM:13.4,coneM:7,apM:2.25,vtcM:11.8,lptM:1.18,frM:true,vrcM:150,
   fxHi:950,fxLo:300,
   threeWay:true,nW:2,npW:2,dwall:'sides',latW:0.30,bcM:0,nbM:0,bhM:0,flM:0,bdM:0,styM:'basket',sealM:false,p3M:null,fshM:'round',rbsM:false,p3W:null,fshW:'round',rbsW:false,bcW:0,nbW:0,bhW:0,flW:0,bdW:0,styW:'basket',plW:'straddle',shW:'round',xmW:5,Lw:4.4,sdW:126,coneW:12.7,apW:37.7,vtcW:41.2,lptW:1.18,frW:true,
   T:0.465, edgeR:0.75 };
@@ -1257,7 +1258,7 @@ function applyAutos(){
       return w; };
     S.doffW=0;
     let best=worstW(MEH.evaluate(S)), bestS=0;
-    if(best<-0.0005 && S.plW!=='remote' && S.shape!=='cone' && S.shape!=='os'){
+    if(best<0.001 && S.plW!=='remote' && S.shape!=='cone' && S.shape!=='os'){   // comfort: snug (amber) is also worth relieving
       const cap=Math.min(2.5, 0.4*S.coneW/2.54);
       for(let s2=0.1;s2<=cap+1e-9;s2+=0.1){
         S.doffW=+s2.toFixed(2);
@@ -1269,6 +1270,28 @@ function applyAutos(){
       }
       S.doffW=bestS;
       if(bestS>0) S.bindW=(S.bindW||'')+' \u00b7 drivers slid \u00b1'+bestS.toFixed(1)+'\u2033 off their taps (clearance - taps hold)';
+    }
+    { // mids: same law, their own lever (corpus #1 - six snug drivers at a 64-inch horn)
+      const worstM=(ev)=>{ let w=1e9; const L=ev.layout;
+        for(let i=0;i<L.length;i++)for(let j=i+1;j<L.length;j++){
+          if(L[i].kind!=='mid'&&L[j].kind!=='mid') continue;
+          const g=MEH.minRimDist(L[i],L[j]); if(g<w)w=g; }
+        return w; };
+      S.doffM=0;
+      let bestM=worstM(MEH.evaluate(S)), bestMS=0;
+      if(bestM<0.001 && MEH.HAS_M(S) && S.plM!=='knuckle' && S.plM!=='chamfer' && S.shape!=='cone' && S.shape!=='os'){
+        const capM=Math.min(2.0, 0.4*(S.coneM||5)/2.54);
+        for(let s2=0.1;s2<=capM+1e-9;s2+=0.1){
+          S.doffM=+s2.toFixed(2);
+          const ev2=MEH.evaluate(S);
+          const bad=ev2.fit.some(r=>r.sec==='MID'&&r.st==='fail');
+          const w2=worstM(ev2);
+          if(!bad && w2>bestM){ bestM=w2; bestMS=S.doffM; }
+          if(!bad && w2>=0.003){ bestMS=S.doffM; bestM=w2; break; }
+        }
+        S.doffM=bestMS;
+        if(bestMS>0) S.bindM=(S.bindM||'')+' \u00b7 mids slid \u00b1'+bestMS.toFixed(1)+'\u2033 off their taps (clearance - taps hold)';
+      }
     }
   }
   // fit-aware nudge: if the mid ring collides, slide it outward within the λ/4 budget.
@@ -1425,7 +1448,7 @@ const PARAMS=[
  ["npW","Ports per woofer","",1,3,1],
  ["shW","Woofer port shape","sel",[["round","Round (drilled)"],["rt","Slim slot (racetrack) slot"],["sq","Rectangle - slim, along the horn (reference)"]]],
  ["crW","Woofer port compression Sd:Ap","",2,10,0.5],
- ["doffW","Driver offset from tap","in",0,3,0.05],
+ ["doffW","Driver offset from tap","in",0,3,0.05],["doffM","Mid offset from tap","in",0,2,0.05],
  ["sdW","Sd per driver","cm²",30,600,1],
  ["coneW","Cone dia","cm",6,40,0.1],
  ["odW","Frame outer dia","cm",10,45,0.1],
@@ -1454,7 +1477,7 @@ const DF_CARD=`<div class="card" style="border-left:3px solid #1a6b3a;">
   <button id="df_go" style="width:100%;margin:6px 0 2px 0;">Test the islands</button>
   <div id="df_out" class="note"></div>
 </div>`;
-const WOOF_KEYS=new Set(["wfSel","nW","plW","npW","crW","doffW","Lw","latW","dwall","sdW","coneW","odW","dpW","apW","vtcW","xmW","lptW","frW","shW"]);
+const WOOF_KEYS=new Set(["wfSel","nW","plW","npW","crW","doffW","doffM","Lw","latW","dwall","sdW","coneW","odW","dpW","apW","vtcW","xmW","lptW","frW","shW"]);
 
 const ARCH_CARD=`<div class="card" style="border-left:3px solid #1a1a1a;">
   <h2>Design — pick an island</h2>
@@ -2046,6 +2069,22 @@ window.INSPECT={
       const aspLim=(g.type==='CircleGeometry')?1.3:(pl==='diagonal')?7:3.6;   // ROUND MEANS ROUND; slim slots are 3:1 by canon
       if(asp>aspLim||asp<1/aspLim)
         push('T3','fail',kind+' slot degenerate aspect '+asp.toFixed(1)+':1 (sliver)',at,0.12);
+    }
+    { // ---- F3: MARKER BIJECTION (Autopilot P0) - drawn red/amber must trace to flags AND rows ----
+      let drawnRed=0, drawnAmber=0;
+      V3D.group.traverse(o=>{ if(o.isMesh&&o.material&&o.material.color){ const h=o.material.color.getHexString();
+        if(h==='c8331d')drawnRed++; else if(h==='a8842c')drawnAmber++; }});
+      const flagRed=L.filter(d=>d.collide).length, flagSnug=L.filter(d=>d.snug&&!d.collide).length;
+      const rowFail=document.querySelectorAll('tr .bad,td.bad,tr.bad').length,
+            rowWarn=document.querySelectorAll('tr .warn,td.warn,tr.warn').length;
+      if(drawnRed>0 && flagRed===0)
+        push('F3','fail',drawnRed+' RED marker(s) drawn but no driver carries a collide flag',[0,0,0],0.3);
+      if(flagRed>0 && rowFail===0)
+        push('F3','fail',flagRed+' collide flag(s) but the fit table shows no failing row',[0,0,0],0.3);
+      if(drawnAmber>0 && flagSnug===0 && flagRed===0)
+        push('F3','fail',drawnAmber+' AMBER marker(s) drawn but no driver carries a snug flag',[0,0,0],0.3);
+      if(flagSnug>0 && rowWarn===0)
+        push('F3','fail',flagSnug+' snug flag(s) but the fit table shows no warn row',[0,0,0],0.3);
     }
     { // ---- F2: mounts/fixtures stay OUT of the horn (mouth plane + cavity) ----
       const gp2=new THREE.Vector3();
@@ -2916,7 +2955,7 @@ window.driversFirst=function(){
   if(el) el.innerHTML='<table style="width:100%;border-collapse:collapse;font-size:11px;margin-top:4px;">'+
     rows.map(r=>'<tr style="border-top:1px solid #ddd;"><td style="padding:2px 4px;font-weight:600;white-space:nowrap;">'+(r.green?'\u2713 ':'\u2717 ')+r.isl+'</td><td style="padding:2px 4px;">'+r.mouth+'</td><td style="padding:2px 4px;">'+r.XO+'</td><td style="padding:2px 4px;color:#666;">'+r.note+(r.midNA?' (2-way: mid unused)':'')+'</td></tr>').join('')+'</table>';
 };
-window.MEH_BUILD=77;
+window.MEH_BUILD=78;
 window.persistS=function(){
   try{
     const ca=window.curArch||'unity';
