@@ -1694,7 +1694,9 @@ function mesh3dInner(ev){
       const apK2=(dch.kind==='mid'?S.apM:S.apW), npK2=Math.max(1,((dch.kind==='mid'?S.npM:S.npW)|0)||1);
       const rPt2=Math.sqrt((apK2*1e-4/npK2)/Math.PI);
       const rSmall=Math.min(ch.rF*0.92, rPt2*(npK2>1?2.5:1.7)+0.010);
-      const rBig=dch.od*0.5+0.008, cupC=dch.dp*0.50+0.006;
+      const rBig=dch.od*0.5+0.008,
+            cupC=(dch.kind==='woof')? dch.dp*0.16+0.004      // 2-way woofer: bolted flange ring, back exposed (his call)
+                                    : dch.dp*0.50+0.006;     // 3-way mid: sealed pocket
       const prof=[[rSmall,0],[rBig*0.985,dBF*0.96],[rBig,dBF],[rBig,dBF+cupC*0.985],[rBig*0.94,dBF+cupC],[dch.od*0.5*0.42,dBF+cupC]]
         .map(p=>new THREE.Vector2(p[0],p[1]));
       const cup=new THREE.Mesh(new THREE.LatheGeometry(prof,48),
@@ -2816,7 +2818,7 @@ window.driversFirst=function(){
   if(el) el.innerHTML='<table style="width:100%;border-collapse:collapse;font-size:11px;margin-top:4px;">'+
     rows.map(r=>'<tr style="border-top:1px solid #ddd;"><td style="padding:2px 4px;font-weight:600;white-space:nowrap;">'+(r.green?'\u2713 ':'\u2717 ')+r.isl+'</td><td style="padding:2px 4px;">'+r.mouth+'</td><td style="padding:2px 4px;">'+r.XO+'</td><td style="padding:2px 4px;color:#666;">'+r.note+(r.midNA?' (2-way: mid unused)':'')+'</td></tr>').join('')+'</table>';
 };
-window.MEH_BUILD=65;
+window.MEH_BUILD=66;
 window.persistS=function(){
   try{
     const ca=window.curArch||'unity';
