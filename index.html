@@ -187,10 +187,13 @@ function axisym(S){
 }
 
 function stations(S){
-  if(S.shape==='rect2f'||S.shape==='sup'){
+  if(/^rect/.test(S.shape)||S.shape==='sup'){
     const g=geometry(S), pts=[];
     const seg=(x0,x1,w0,w1,h0,h1,n)=>{for(let i=(pts.length?1:0);i<=n;i++){const t=i/n;
       pts.push({x:x0+(x1-x0)*t, w:w0+(w1-w0)*t, h:h0+(h1-h0)*t});}};
+    if(S.shape==='rect1f'){ seg(0,g.depth,g.ts,g.D34H,g.ts,g.D34V,34);
+      return {form:'rect',pts,depth:g.depth,g,pat:{fH:g.fPatH,fV:g.fPatV,fNarrow:g.fNarrow},
+              mouthW:g.D34H,mouthH:g.D34V,throat:g.ts,knee:g.depth}; }
     seg(0,g.L1,g.ts,g.D23H,g.ts,g.D23V,24);
     seg(g.L1,g.depth,g.D23H,g.D34H,g.D23V,g.D34V,10);
     return {form:S.shape==='sup'?'sup':'rect',pts,depth:g.depth,g,pat:{fH:g.fPatH,fV:g.fPatV,fNarrow:g.fNarrow},
@@ -1172,7 +1175,7 @@ function applyAutos(){
       if(S.odM>9) S.bindM+=' \u00b7 the Waslo calc sheet canon: small (2\u2033) open-back mids near the throat';
     } }
   S.fxLo=300;
-  S.lptM = S.shape==='rect2f' ? +(S.T*2.54).toFixed(2) : 1.5;
+  S.lptM = /^rect/.test(S.shape) ? +(S.T*2.54).toFixed(2) : 1.5;
   S.lptW = S.lptM;
   const st0=MEH.stations(S);
   { const sol=MEH.solveTap(S, st0, 'woof'); S.Lw=sol.x_in; S.bindW=sol.binding; }
@@ -1182,7 +1185,7 @@ function applyAutos(){
   {
     const x0w=S.Lw;
     const lats = S.shape==='sup' ? [0.30,0.34,0.38,0.42,0.26,0.22,0.18,0.14,0.10]
-               : (S.shape==='rect2f' ? [0.30,0.34,0.38,0.26,0.22] : [S.latW||0.30]);
+               : (/^rect/.test(S.shape) ? [0.30,0.34,0.38,0.26,0.22] : [S.latW||0.30]);
     const badW=ev=>ev.fit.some(r=>r.sec==='WOOF' && /CD body|conform|ring spacing|within the wall|pads on the wall|corner seam|clear of the apex/.test(r.name) && r.st==='fail');
     let done=false;
     const bind0=S.bindW;
@@ -1269,7 +1272,7 @@ function applyAutos(){
         const still=ev0.fit.some(r=>((r.sec==='MID'&&/CD body|ring spacing|within the wall|pads on the wall|clear of the apex/.test(r.name))||/Mid ring vs woofer ring/.test(r.name))&&r.st==='fail')
           || ev0.layout.some(d2=>d2.kind==='mid'&&d2.collide) || /INFEASIBLE/.test(S.bindM||'');
         if(!still || S.plM===plNew || S.plM==='diagonal' || S.plM==='chamfer') return;
-        if(plNew==='knuckle' && !(S.shape==='rect2f'||S.shape==='sup')) return;
+        if(plNew==='knuckle' && !(/^rect/.test(S.shape)||S.shape==='sup')) return;
         for(let x=1.0;x<=3.51;x+=0.15){   // re-solve the tap for the candidate placement (geometry-first)
           const evT=MEH.evaluate({...S,plM:plNew,L12:+x.toFixed(2)});
           const ok=!evT.fit.some(r=>((r.sec==='MID')||/Mid ring vs woofer ring/.test(r.name))&&r.st==='fail') && !evT.layout.some(d2=>d2.kind==='mid'&&d2.collide);
@@ -1354,7 +1357,7 @@ function applyAutos(){
 
 const PARAMS=[
  ["SHAPE & SIZE"],
- ["shape","Family","sel",[["rect2f","Rect conical + 2nd flare"],["sup","Superellipse + 2nd flare (molded/print)"],["cone","Round conical + roundover"],["os","OS waveguide + roundover"]]],
+ ["shape","Family","sel",[["rect2f","Rect conical + 2nd flare"],["rect1f","Rect conical — clean pyramid (single flare, honest waistbanding)"],["sup","Superellipse + 2nd flare (molded/print)"],["cone","Round conical + roundover"],["os","OS waveguide + roundover"]]],
  ["mouthW","Mouth width","in",8,60,0.1],
  ["mouthD","Mouth diameter","in",6,60,0.1],
  ["thW","Coverage angle","°",40,120,1],
@@ -1485,7 +1488,7 @@ function buildSidebar(){
   }
 }
 function applicability(){
-  const rect=S.shape==='rect2f', sup=S.shape==='sup', axi=!rect&&!sup, adv=S.adv;
+  const rect=/^rect/.test(S.shape), sup=S.shape==='sup', axi=!rect&&!sup, adv=S.adv;
   const hasW=MEH.HAS_W(S), hasM=MEH.HAS_M(S);
   const show=(k,on)=>{const el=document.querySelector(`[data-k="${k}"]`); if(el)el.classList.toggle('off',!on);};
   const showSect=(s,on)=>{const el=document.querySelector(`.sect[data-s="${s}"]`); if(el)el.classList.toggle('off',!on);};
@@ -2381,7 +2384,7 @@ function drawProfile(ev){
   }
   s+=`<text x="${X(st.depth)+8}" y="${Y(st.mouthW/2)+4}" font-size="9">${fin(st.mouthW)}" ${st.form==='round'?'Ø':'W'}</text>`;
   if(st.form!=='round') s+=`<text x="${X(st.depth)+8}" y="${Y2(st.mouthH/2)+4}" font-size="9">${fin(st.mouthH)}" H</text>`;
-  const kneeLbl=st.form==='rect' ? `second flare ${fin(st.depth-st.knee)}"` : `roundover R ${f2(S.rollR)}"`;
+  const kneeLbl=st.form==='rect' ? (st.knee<st.depth*0.999? `second flare ${fin(st.depth-st.knee)}"` : 'single flare — expect Keele waistbanding') : `roundover R ${f2(S.rollR)}"`;
   s+=`<text x="${X(st.depth/2)}" y="${H-8}" font-size="9" fill="var(--faint)" text-anchor="middle">depth ${fin(st.depth)}"  ·  first expansion ${fin(st.knee)}"  ·  ${kneeLbl}</text>`;
   s+=`<text x="${cx-6}" y="${Y(st.pts[0].w/2)-6}" font-size="9" fill="var(--faint)" text-anchor="end">throat ${fin(st.throat)}"${st.form==='rect'?' sq':' Ø'}</text>`;
   s+=`</svg>`;
@@ -2637,7 +2640,7 @@ function drawNetwork(ev){
     return 'Ø'+(2*Math.sqrt(Ap/Math.PI)/2.54).toFixed(2)+'″';};
   if(MEH.HAS_M(S)) seg.push(`<b>MID ×${S.nM}</b> — path ${f2(S.L12+S.cdDepth)}" · <b>${S.npM}× ${portDims(S.apM,S.npM,S.shM,S.plM==='diagonal')}/drv</b> (CR ${f1(S.sdM/S.apM)}:1) · Ap Σ ${f1(S.nM*S.apM)} cm² (${S.npM}/drv) · Vtc Σ ${f1(S.nM*S.vtcM)} cm³ · Lpt_eff ${f2((S.frM?0.5:1)*S.lptM+0.85*Math.sqrt(S.apM/Math.max(1,S.npM)/Math.PI))} cm · LP ${fHz(ev.mid.fLP)} · null ${fHz(ev.mid.fNull)} · v̂ ${f1(ev.mid.vPort)} m/s`);
   if(MEH.HAS_W(S)) seg.push(`<b>WOOF ×${S.nW}</b> — path ${f2(S.Lw+S.cdDepth)}" · <b>${S.npW}× ${portDims(S.apW,S.npW,S.shW,S.plW==='diagonal')}/drv</b> (CR ${f1(S.sdW/S.apW)}:1) · Ap Σ ${f1(S.nW*S.apW)} cm² (${S.npW}/drv) · Vtc Σ ${f1(S.nW*S.vtcW)} cm³ · Lpt_eff ${f2((S.frW?0.5:1)*S.lptW+0.85*Math.sqrt(S.apW/Math.max(1,S.npW)/Math.PI))} cm · LP ${fHz(ev.wf.fLP)} · null ${fHz(ev.wf.fNull)} · v̂ ${f1(ev.wf.vPort)} m/s`);
-  seg.push(`XO ${MEH.HAS_M(S)?fHz(S.fxLo)+' / ':''}${fHz(S.fxHi)} Hz · wall ${S.shape==='rect2f'?f3(S.T)+'"':'12 mm'} · throat Ø ${f3(S.td)}"`);
+  seg.push(`XO ${MEH.HAS_M(S)?fHz(S.fxLo)+' / ':''}${fHz(S.fxHi)} Hz · wall ${/^rect/.test(S.shape)?f3(S.T)+'"':'12 mm'} · throat Ø ${f3(S.td)}"`);
   el.innerHTML=seg.join('<br>');
 }
 function drawMounting(ev){
@@ -2844,7 +2847,7 @@ window.driversFirst=function(){
   if(el) el.innerHTML='<table style="width:100%;border-collapse:collapse;font-size:11px;margin-top:4px;">'+
     rows.map(r=>'<tr style="border-top:1px solid #ddd;"><td style="padding:2px 4px;font-weight:600;white-space:nowrap;">'+(r.green?'\u2713 ':'\u2717 ')+r.isl+'</td><td style="padding:2px 4px;">'+r.mouth+'</td><td style="padding:2px 4px;">'+r.XO+'</td><td style="padding:2px 4px;color:#666;">'+r.note+(r.midNA?' (2-way: mid unused)':'')+'</td></tr>').join('')+'</table>';
 };
-window.MEH_BUILD=70;
+window.MEH_BUILD=71;
 window.persistS=function(){
   try{
     const ca=window.curArch||'unity';
