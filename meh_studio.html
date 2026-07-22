@@ -1088,6 +1088,7 @@ const WOOFS={
   w8: {name:'8" woofer',  od:21.0, dp:10,   sd:220, cone:16.5, vtc:80, xm:6.5, meshApprox:'BC_8MDN51'},
   w10:{name:'10" woofer', od:26.0, dp:12,   sd:330, cone:21,   vtc:130, xm:8, meshApprox:'BC_10HPL64'},
   w12:{name:'12" woofer', od:31.5, dp:14,   sd:480, cone:25,   vtc:190, xm:9, meshApprox:'BC_12NDL76'},
+  w15:{name:'15" woofer', od:39.0, dp:17,   sd:855, cone:32,   vtc:320, xm:10, meshApprox:'BC_18SW115'},
   hpl10:{name:'B&C 10HPL64 (Ø261 · BC245 · true CAD)', od:26.1, dp:12.2, sd:320, cone:21, vtc:120, xm:4, bc:24.5, mesh:'BC_10HPL64'},
   ndl12:{name:'B&C 12NDL76 neo (Ø315 · BC298 · true CAD)', od:31.5, dp:14.1, sd:522, cone:25, vtc:180, xm:7, bc:29.8, mesh:'BC_12NDL76'},
   es12lw:{name:'18Sound 12LW1400 (Ø315 · BC296 · true CAD)', od:31.5, dp:14.1, sd:531, cone:25, vtc:180, xm:8.3, bc:29.6, mesh:'ES_12LW1400'},
@@ -2843,7 +2844,7 @@ window.driversFirst=function(){
   if(el) el.innerHTML='<table style="width:100%;border-collapse:collapse;font-size:11px;margin-top:4px;">'+
     rows.map(r=>'<tr style="border-top:1px solid #ddd;"><td style="padding:2px 4px;font-weight:600;white-space:nowrap;">'+(r.green?'\u2713 ':'\u2717 ')+r.isl+'</td><td style="padding:2px 4px;">'+r.mouth+'</td><td style="padding:2px 4px;">'+r.XO+'</td><td style="padding:2px 4px;color:#666;">'+r.note+(r.midNA?' (2-way: mid unused)':'')+'</td></tr>').join('')+'</table>';
 };
-window.MEH_BUILD=69;
+window.MEH_BUILD=70;
 window.persistS=function(){
   try{
     const ca=window.curArch||'unity';
