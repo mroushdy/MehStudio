@@ -31,6 +31,17 @@ Two reference parts define the canon:
 5. New flower 2-way island (CD + 6 small woofers radial on a printed hub — the
    arda.audio build) is Reference B generalized to a full ring.
 
+## Reference C — coax "synergy-exit" printed flare in a wood cube (BMS coax build)
+- The ENTIRE horn is the printed part: axisymmetric flare with the CD throat bore at
+  center, a ring of small cone-taps immediately around it (the coax's cone section
+  fires through them - few-cm paths, phase-coherent), and the driver seat with its
+  bolt circle on the back - one print. The wood box is just the enclosure: square
+  cab, printed corner gussets, flare drops in (octagon corner cutouts at the mouth).
+- This is our coax2 island acoustics (coax + cone taps at the throat, XO from landed
+  geometry) wearing the roundprint island's construction. The printed-mount rebuild
+  should make this state expressible: coax2 x round/printed form, flare exported as
+  the printable part with tap ring + throat bore + seat integrated.
+
 ## Queue confirmed with Marwan
 (1) one-piece printed mounts + export · (2) stadium/radiused taps + foam option ·
 (3) pa3way nM→6 + 15" woofer preset (SH96HO class) · (4) flower 2-way island.
