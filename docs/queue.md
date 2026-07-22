@@ -4,7 +4,7 @@ Last updated: 2026-07-22, build 77 deployed.
 ## NOW: AUTOPILOT (docs/autopilot_plan.md — Marwan's directive, takes priority)
 - P0: red-bijection oracle · red-pixel detector · corpus entry #1 (his rect-64" red
   screenshot) root-caused and fixed · queue saved (this file)
-- P1: harness daemon + real-UI driver + settle hooks · provenance tags · nameability census
+- P1: harness daemon + real-UI driver + settle hooks (look.js LANDED - the coding eyes: beauty + false-color provenance + section + focus in one composite) · provenance tags · nameability census
 - P2: state lattice (pairwise + boundaries) · containment/overlap/symmetry/region oracles
 - P3: occlusion probe · reference-likeness specs (7 families) · oracle mutation tests
 - P4: agent loop as standard dev cycle · deploy gates = battery+corpus+lattice
