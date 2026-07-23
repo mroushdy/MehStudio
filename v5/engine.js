@@ -623,6 +623,17 @@ function acoustics(S,L,st){
       cr<band[0]?'below the classic band - big ports, mild loading (JMOD territory); excursion-limited duty':'derived from the 17 m/s limit, graded against the band');
     const vel=cr*2*Math.PI*fLow*(xm/1000);
     add(kind.toUpperCase(),'Port velocity at band low edge ('+fLow+' Hz)',vel.toFixed(1)+' m/s',vel<=17.2,vel<=20,'compendium: the real port-area criterion, evaluated at the band bottom');
+    /* his pins #20/#21: the tap must OPEN INTO THE CONE, not the frame. Sd
+       sets the emissive radius (sqrt(Sd/pi)); the farthest lit point of the
+       opening (pair offset + half-length) must stay inside it. Hinson canon:
+       the tap works the volume trapped UNDER the cone - a hole past the cone
+       rim connects nothing. */
+    { const s0=drs[0].slot, rSd=Math.sqrt(sd*1e-4/Math.PI);
+      const need=((s0.np||1)>=2? (s0.offm||0):0)+s0.sa;
+      add(kind.toUpperCase(),'Tap opening fits the cone',
+        (need*1000).toFixed(0)+' vs '+(rSd*1000).toFixed(0)+' mm (Sd radius)',
+        need<=rSd, need<=1.1*rSd,
+        'the port must land on the cone that drives it; a straddling pair or a second tap shrinks each opening'); }
     /* REAL port length: print wall + 0.85r end correction (matches the response network) */
     const lpt=(S.wallT||0.012)+0.85*Math.sqrt(ap*1e-4/Math.PI);
     /* pin #5: the axial land is printed SOLID - the tap port runs THROUGH it, so

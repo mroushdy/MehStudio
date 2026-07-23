@@ -133,7 +133,10 @@ select{width:100%;font-family:var(--mono);font-size:11px;background:var(--paper)
     </select>
   </div>
 </aside>
-<main class="viewcol"><div id="v3dwrap">
+<main class="viewcol">
+  <div id="refuseBanner" style="display:none;background:#B3261E;color:#fff;font-family:inherit;
+    font-size:12px;letter-spacing:.06em;padding:8px 12px;text-transform:uppercase"></div>
+  <div id="v3dwrap">
   <div id="v3d"></div>
   <div id="hud">
     <button id="bPin">PIN A BUG</button>
@@ -781,6 +784,17 @@ function acoustics(S,L,st){
       cr<band[0]?'below the classic band - big ports, mild loading (JMOD territory); excursion-limited duty':'derived from the 17 m/s limit, graded against the band');
     const vel=cr*2*Math.PI*fLow*(xm/1000);
     add(kind.toUpperCase(),'Port velocity at band low edge ('+fLow+' Hz)',vel.toFixed(1)+' m/s',vel<=17.2,vel<=20,'compendium: the real port-area criterion, evaluated at the band bottom');
+    /* his pins #20/#21: the tap must OPEN INTO THE CONE, not the frame. Sd
+       sets the emissive radius (sqrt(Sd/pi)); the farthest lit point of the
+       opening (pair offset + half-length) must stay inside it. Hinson canon:
+       the tap works the volume trapped UNDER the cone - a hole past the cone
+       rim connects nothing. */
+    { const s0=drs[0].slot, rSd=Math.sqrt(sd*1e-4/Math.PI);
+      const need=((s0.np||1)>=2? (s0.offm||0):0)+s0.sa;
+      add(kind.toUpperCase(),'Tap opening fits the cone',
+        (need*1000).toFixed(0)+' vs '+(rSd*1000).toFixed(0)+' mm (Sd radius)',
+        need<=rSd, need<=1.1*rSd,
+        'the port must land on the cone that drives it; a straddling pair or a second tap shrinks each opening'); }
     /* REAL port length: print wall + 0.85r end correction (matches the response network) */
     const lpt=(S.wallT||0.012)+0.85*Math.sqrt(ap*1e-4/Math.PI);
     /* pin #5: the axial land is printed SOLID - the tap port runs THROUGH it, so
@@ -1515,7 +1529,7 @@ return {C,IN,CM, sePoint,seRing, profile, stations, dimsAt, surfPt, surfN, layou
 if(typeof module!=='undefined') module.exports=MEH2;
 
 /* parametric */
-window.MEH_BUILD=518;
+window.MEH_BUILD=519;
 document.getElementById('bno').textContent=MEH_BUILD;
 "use strict";
 /* ---------------- driver presets (v4 datasheets; mesh = true CAD, meshApprox = nearest body) ---------------- */
@@ -1897,20 +1911,33 @@ function rebuild(){
           const sp2=MEH2.sePoint(dd.a,dd.b,(dd.n!==undefined)?dd.n:st2.n,phi);
           return new THREE.Vector3(mx, sp2[1]*0.9975, sp2[0]*0.9975);
         };
-        const ctr=conform(c0.clone());
-        pos.push(ctr.x,ctr.y,ctr.z);
-        for(let q=0;q<=K;q++){ const a2=q/K*2*Math.PI;
+        /* his pins #20/#21: a flat black decal reads as a smear at glancing
+           angles - a round hole must READ round. Draw the tap as a RECESSED
+           PLUG: the conformed outline on the surface, a bore skirt dropping
+           2.5 mm INTO the wall (+n is into the material from the inner face),
+           and a near-black cap at the bottom. Depth cues do the rest; the
+           outline itself is exactly d.slot (round when sa==sb). */
+        const ring=[];
+        for(let q=0;q<K;q++){ const a2=q/K*2*Math.PI;
           const pu=(Math.abs(Math.cos(a2))>1e-9?Math.sign(Math.cos(a2)):0)*cx + sb*Math.cos(a2);
           const pv=sb*Math.sin(a2);
           const P=c0.clone().add(ua.clone().multiplyScalar(pu)).add(va.clone().multiplyScalar(pv));
-          const Q=conform(P);
-          pos.push(Q.x,Q.y,Q.z);
-          if(q>0) idx.push(0,q,q+1);
-        }
+          ring.push(conform(P)); }
+        const lip=ring.map(Q=>Q.clone().add(n.clone().multiplyScalar(0.0002)));
+        const deep=ring.map(Q=>Q.clone().add(n.clone().multiplyScalar(0.0025)));
+        { const ctr=deep.reduce((A,B)=>A.add(B),new THREE.Vector3()).multiplyScalar(1/K);
+          pos.push(ctr.x,ctr.y,ctr.z); const c0i=(pos.length/3)-1;
+          const base=pos.length/3;
+          deep.forEach(Q=>pos.push(Q.x,Q.y,Q.z));
+          for(let q=0;q<K;q++) idx.push(c0i, base+q, base+(q+1)%K); }
+        { const bL=pos.length/3; lip.forEach(Q=>pos.push(Q.x,Q.y,Q.z));
+          const bD=pos.length/3; deep.forEach(Q=>pos.push(Q.x,Q.y,Q.z));
+          for(let q=0;q<K;q++){ const q2=(q+1)%K;
+            idx.push(bL+q,bD+q,bL+q2, bL+q2,bD+q,bD+q2); } }
         const tg=new THREE.BufferGeometry();
         tg.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));
         tg.setIndex(idx); tg.computeVertexNormals();
-        const tap=new THREE.Mesh(tg,new THREE.MeshBasicMaterial({color:0x0d0c0b,side:THREE.DoubleSide}));
+        const tap=new THREE.Mesh(tg,new THREE.MeshPhongMaterial({color:0x141311,shininess:4,side:THREE.DoubleSide}));
         tap.userData.tag='port'; tap.userData.kind=d.kind; g.add(tap);
       }
     }
@@ -1969,6 +1996,18 @@ function rebuild(){
   rw.innerHTML=ev.rows.map(x=>'<div class="'+x.st+'">'+(x.st==='ok'?'✓':x.st==='warn'?'△':'✗')+' '+x.name+' — '+x.val+'</div>').join('')
     +(r.infeasible?'<div class="fail">✗ INFEASIBLE'+(r.atCap?' at cap — change drivers or count':' — a bigger mouth cannot fix the failing laws; change the CD or drivers')+'</div>':'')
     +(r.grown>0?'<div class="warn">△ grew to '+r.S.mouthW+'&Prime; to fit</div>':'');
+  /* his pin #22: refusal must be LOUD - a banner over the 3D and a ghosted
+     shell, not one red row below the fold. The solver already knows. */
+  { const fl=ev.rows.filter(x=>x.st==='fail');
+    const rb=document.getElementById('refuseBanner');
+    const refused=!!r.infeasible||fl.length>0;
+    if(rb){ rb.style.display=refused?'':'none';
+      if(refused) rb.textContent='✗ REFUSED — this horn cannot work: '
+        +(fl[0]? fl[0].name+' ('+fl[0].val+')':'no feasible size')
+        +(fl.length>1?' · +'+(fl.length-1)+' more failing laws':'')
+        +(r.atCap?' · at the mouth cap':'')+' — see the law rows'; }
+    if(refused&&!V3D.xray) g.traverse(o=>{ if(o.isMesh&&o.userData.tag==='shell'&&o.material){
+      o.material.transparent=true; o.material.opacity=0.22; } }); }
   document.getElementById('dims').textContent=
     (st.n<=2.4?'round':st.n>=10?'square':'squircle')+' · '+r.S.mouthW+'″ mouth · '+(st.depth/MEH2.IN).toFixed(1)+'″ deep · XO '
     +(S.topo==='3way'&&r.S.fxDerived?r.S.fxDerived.hi+' / ':'')+(r.S.fxDerived?r.S.fxDerived.lo:'—')+' Hz';
