@@ -44,7 +44,8 @@ for(const [covH,covV] of [[90,60],[60,60],[120,60],[60,90]])
 for(const placeW of (topo==='2way'?['auto','ring','pairsH','pairsV']:['auto']))
 for(const wallT of (placeW==='auto'?[0.008,0.02]:[0.012]))
 for(const mount of ((placeW==='auto'&&wallT===0.02)?['flush','axial']:['flush']))
-  lattice.push(mk({topo,seN,style,covH,covV,placeW,wallT,mount,
+for(const np of ((placeW==='auto'&&wallT===0.008)?[1,2]:[1]))          // pins #1/#23/#25: straddling pairs swept too
+  lattice.push(mk({topo,seN,style,covH,covV,placeW,wallT,mount,npW:np,npM:np,
     _w: covH>=120?'w8':(seN>=12?'hpl10':'w5'), _m: topo==='3way'?'m4':'m3'}));
 
 for(const S of lattice){
@@ -105,6 +106,23 @@ for(const S of lattice){
   ck(ev.rows.length>=(L.missing?3:4), tag+' too few law rows');   // pre-solve states may not host rings yet
   for(const r of ev.rows){ ck(!!r.sec&&!!r.name&&r.val!==undefined&&!/NaN|Infinity/.test(String(r.val)), tag+' bad row: '+r.sec+'/'+r.name+'='+r.val);
     ck(['ok','warn','fail'].includes(r.st), tag+' bad row status'); }
+  /* pins #1/#25: a straddling pair rides the CROSS direction at ONE station -
+     crossV must be unit, in the wall plane, and orthogonal to flow */
+  for(const d of ev.layout){ if(d.kind!=='woof'&&d.kind!=='mid') continue;
+    const wantNp=((d.kind==='mid'?(S.npM|0):(S.npW|0))||1);
+    if(d.slot) ck(d.slot.np===wantNp, tag+' slot np='+d.slot.np+' want '+wantNp);
+    if(d.slot&&d.slot.np>=2){
+      ck(d.slot.offm>0, tag+' pair missing cross offset');
+      ck(!!d.crossV&&!!d.flowU, tag+' pair missing flow/cross frame');
+      if(d.crossV&&d.flowU){
+        ck(Math.abs(Math.hypot(...d.crossV)-1)<0.01, tag+' crossV not unit');
+        const dn=Math.abs(d.crossV[0]*d.normal[0]+d.crossV[1]*d.normal[1]+d.crossV[2]*d.normal[2]);
+        ck(dn<0.02, tag+' crossV out of the wall plane');
+        const du=Math.abs(d.crossV[0]*d.flowU[0]+d.crossV[1]*d.flowU[1]+d.crossV[2]*d.flowU[2]);
+        ck(du<0.02, tag+' crossV not orthogonal to flow (ports would sit behind each other)');
+      }
+    }
+  }
   /* response finite */
   try{ const R=MEH2.response(S,ev);
     ck(R.f.length>50, tag+' response too short');
@@ -140,6 +158,24 @@ for(const S of lattice){
     ck(d.W===eW && d.M===eM, 'placement matrix: '+why+' (got '+d.W+'/'+d.M+' want '+eW+'/'+eM+')'); }
 }
 
+/* ---------- 2.7 KNOWN-BUILD PRESETS (M8): every preset must land EXEMPLARY -
+   solve at its stated mouth with zero fails, zero warns, zero growth ---------- */
+{
+  ck(!!MEH2.BUILDS && ['1way','2way','3way'].every(t=>Array.isArray(MEH2.BUILDS[t])&&MEH2.BUILDS[t].length),
+    'BUILDS missing a topology group');
+  for(const topo of Object.keys(MEH2.BUILDS||{})) for(const b of MEH2.BUILDS[topo]){
+    const tag='[build '+topo+'/'+b.key+']';
+    ck(!!b.key&&!!b.name&&!!b.s, tag+' malformed entry');
+    ck(b.s.topo===topo, tag+' bundle topo does not match its group');
+    const r=MEH2.solve({...b.s});
+    const f=r.ev.rows.filter(q=>q.st==='fail').length, w=r.ev.rows.filter(q=>q.st==='warn').length;
+    ck(!r.infeasible, tag+' infeasible');
+    ck(f===0, tag+' lands with '+f+' fail(s)');
+    ck(w===0, tag+' lands with '+w+' warn(s) - presets must be exemplary');
+    ck(r.S.mouthW===b.s.mouthW, tag+' mouth grew '+b.s.mouthW+'" -> '+r.S.mouthW+'" (bake the settled size)');
+  }
+}
+
 /* ---------- 3. canonical matrix (subprocess, expectations asserted there) ---------- */
 {
   const {execSync}=require('child_process');
@@ -152,6 +188,22 @@ for(const S of lattice){
   const sh=fs.readFileSync('shell.html','utf8');
   ck(sh.includes('/*__ENGINE__*/'), 'shell engine marker missing');
   ck(sh.includes("id=\"placeW\"")||sh.includes("id='placeW'"), 'placement selector missing');
+  ck(sh.includes('id="buildSel"')||sh.includes("id='buildSel'"), 'known-build selector missing');
+  /* M8: preset driver/CD numerics must mirror the shell's datasheet tables */
+  { const grab=(re)=>{ const m=sh.match(re); return m? new Function('return '+m[1])() : null; };
+    const shW=grab(/const WPRE=([\s\S]*?);\nconst MPRE/), shM=grab(/const MPRE=([\s\S]*?);\nconst CDP/),
+          shC=grab(/const CDP=(\{.*?\});/);
+    ck(!!shW&&!!shM&&!!shC, 'could not read shell driver tables for the preset cross-check');
+    if(shW&&shM&&shC) for(const topo of Object.keys(MEH2.BUILDS)) for(const b of MEH2.BUILDS[topo]){
+      const s=b.s, tag='[build '+topo+'/'+b.key+']';
+      if(s.wPre){ const P=shW[s.wPre];
+        ck(!!P&&P.od===s.odW&&P.dp===s.dpW&&P.sd===s.sdW&&P.vtc===s.vtcW&&P.xm===s.xmW, tag+' woofer numerics drift from shell WPRE.'+s.wPre); }
+      if(s.mPre){ const P=shM[s.mPre];
+        ck(!!P&&P.od===s.odM&&P.dp===s.dpM&&P.sd===s.sdM&&P.vtc===s.vtcM&&P.xm===s.xmM, tag+' mid numerics drift from shell MPRE.'+s.mPre); }
+      if(s.cdSel){ const P=shC[s.cdSel];
+        ck(!!P&&P.td===s.td&&P.floor===s.cdFloor&&P.dep===s.cdDepth, tag+' CD numerics drift from shell CDP.'+s.cdSel); }
+    }
+  }
   ck(/BUGPINS/.test(sh), 'BUGPINS module missing');
   ck(!/window\.V3D(?!=)/.test(sh.replace(/window\.V3D=/g,'')), 'shell window.V3D guard regression');
   /* monochrome law: red only in failure semantics */

@@ -1,5 +1,28 @@
 # MEH STUDIO — STANDING QUEUE (versioned; update on every landed item)
-Last updated: 2026-07-23 (M2+gate landed). v4 frozen at build 83. All work is v5.
+Last updated: 2026-07-23 (build 502: M8 presets + pins 22-27 & local #1 resolved).
+v4 frozen at build 83. All work is v5.
+
+## BUILD 502 PIN SWEEP (all 7 open pins resolved; sourced from diyaudio 339799
+## + Synergy Calc V5 + Danley canon)
+- TAP CANON REWRITE (pins 1/23/25): straddling pairs ride the CROSS direction at
+  ONE station (taps live on the disc orthogonal to the axis - equal throat
+  paths; nc535/bwaslo), drawn as the X toward the wall intersections (corner
+  venting: least HF interference - mark100/GM/Danley). Slots rotate ±45°,
+  pair offset 0.24·od (slot.offm). TAPS PER WOOFER / TAPS PER MID now separate.
+  Spacing law reads TRUE port positions. Gate lattice sweeps np=2 (360 states).
+- SOLVER HONESTY (pins 24/27): solve() grows ONLY on growth-fixable fails
+  (law rows carry .grow: fit, seat clearance, taps-vs-area, entry size, coax-vs-
+  body); driver-ceiling fails refuse AT the user's size (mouth slider no longer
+  masked by balloon-to-cap). atCap flag distinguishes the two refusals in the HUD.
+- AXIAL LAND LAW (pin 24): wedge height = seatR·tan(tilt) stated per section;
+  warn >30°, fail >45° ("use FLUSH on steep walls - Danley lands live on
+  near-axial walls").
+- 1-WAY = COAX (pin 22): plain CDs disabled on 1way (no cone, no taps); new COAX
+  rows: tap ring must sit OVER the cone; coax unit vs horn body (grow-fixable).
+- TRUE PLATES (pin 26): classic angular renders as exact facet-vertex quad strips
+  (no 64-pt resampling through creases): knife-straight seams drawn as
+  construction edges, flat printed mouth face, polygonal apex plate;
+  engine exports offsetVerts.
 
 ## DONE (v5 core, ~one day old)
 1. Form engine: ONE superellipse family, ATH profile, mouth roll-back
@@ -68,8 +91,19 @@ M7. LAYOUT DIALECTS [PLACEMENT MATRIX LANDED - docs/placement_matrix.md is
     42in clean); crease exclusion by true axial footprint; velocity-first CR
     grading]. Still open: SH96 corner boards as a WOOFER dialect, knuckle
     passages, remote bandpass (Solana).
-M8. PROVEN-BUILD PRESETS: SH50-class, SH96-class, arda-class, JMOD-class one-click
-    bundles with driver sets.
+M8. PROVEN-BUILD PRESETS [LANDED build 501 - his call: "default settings drop
+    downs that match popular MEH styles so users that are not advanced can land
+    at well known MEH horns". KNOWN BUILD dropdown under TOPOLOGY, repopulates
+    per 1way/2way/3way. Bundles are ENGINE CANON (MEH2.BUILDS): 10 complete
+    states, each gate-asserted EXEMPLARY (0 fails, 0 warns, 0 mouth growth at
+    its baked size); gate also cross-checks bundle driver/CD numerics against
+    the shell's WPRE/MPRE/CDP tables (drift = gate fail). The dropdown is
+    TRUTHFUL: selection re-derived from state on every change - touch any
+    slider -> "custom"; hand-build a canon -> its name lights up. Fresh default
+    state now IS the 2way house canon (odM 10.3/6.5 fix). w5 (5.25") added to
+    shell WPRE. v5/assemble.js added (shell+engine -> meh5.html, ran before
+    gate). Still open: JMOD-class bundle; SH96-class 4x15+6mid still refuses
+    honestly at cap (needs M7 corner-board woofer dialect first).]
 M9. ENCLOSURE REALITY: rear chamber volumes, magnet clearance at angle, the box.
 M10. FULL T/S per preset (Fs Qts Re Le...) + Hornresp ME2 export.
 

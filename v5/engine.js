@@ -343,8 +343,9 @@ function facetN(st,x,fi){
 /* PIN #18: the OUTER wall of a printed shell is each panel pushed out by the
    wall thickness along its own normal (offset polygon), NOT a scaled copy -
    scaling widened the chamfers and misaligned the outer creases. */
-function offsetRing(st,x,wt,M){
-  if(st.style!=='angular'){ const d=dimsAt(st,x); return seRing(d.a+wt,d.b+wt,st.n,M,st.style); }
+/* exact outer-corner vertices (pin #18 offset polygon; pin #26 exposes them so
+   the shell can build TRUE plates instead of resampling through the creases) */
+function offsetVerts(st,x,wt){
   const F=facetsAt(st,x), NV=F.length, OV=[];
   for(let i=0;i<NV;i++){
     const A=F[(i-1+NV)%NV], B=F[i];
@@ -355,6 +356,12 @@ function offsetRing(st,x,wt,M){
     const t=((p2[0]-p1[0])*(-d2[1])-(p2[1]-p1[1])*(-d2[0]))/det;
     OV.push([p1[0]+d1[0]*t, p1[1]+d1[1]*t]);
   }
+  return OV;
+}
+function offsetRing(st,x,wt,M){
+  if(st.style!=='angular'){ const d=dimsAt(st,x); return seRing(d.a+wt,d.b+wt,st.n,M,st.style); }
+  const F=facetsAt(st,x), NV=F.length;
+  const OV=offsetVerts(st,x,wt);
   const segs=[]; let L=0;
   for(let i=0;i<NV;i++){ const p=OV[i], q=OV[(i+1)%NV];
     const l=Math.hypot(q[0]-p[0],q[1]-p[1]); segs.push(l); L+=l; }
@@ -441,6 +448,15 @@ function layout(S,st){
       tap:p,                                    // PRINTED LAW: the tap IS under the driver
       seatR:od/2+0.011});
   };
+  /* pins #1/#23/#25 - flow direction u and cross direction v IN the wall plane
+     at each seat. A straddling pair rides v (both ports on the SAME orthogonal
+     disc = equal throat paths, Danley corner canon), never u ("behind each
+     other" was the v4-era mistake the pins caught). */
+  const flowCross=(nrm)=>{
+    const fx=[1-nrm[0]*nrm[0], -nrm[0]*nrm[1], -nrm[0]*nrm[2]];
+    const l=Math.hypot(fx[0],fx[1],fx[2])||1e-9, u=[fx[0]/l,fx[1]/l,fx[2]/l];
+    return {u, v:[nrm[1]*u[2]-nrm[2]*u[1], nrm[2]*u[0]-nrm[0]*u[2], nrm[0]*u[1]-nrm[1]*u[0]]};
+  };
   /* seats at uniform ARC positions (uniform azimuth bunches on flattened superellipses) */
   const placeRing=(kind,x,nSeats,od,dp,arcOffset,mode)=>{
     for(const q of seatsFor(st,x,nSeats,mode||'ring',arcOffset||0,od/2+0.011)){
@@ -449,6 +465,7 @@ function layout(S,st){
               : surfN(st,x,(q.param!==undefined)?q.param:Math.atan2(q[1],q[0]));   // ONE proven normal path per style
       const drv={kind, x, phi:Math.atan2(q[1],q[0]), center:p, normal:nrm, od, dp, tap:p, seatR:od/2+0.011, facet:q.facet};
       if(S.mount==='axial') drv.mountN=[-1,0,0];               // pin #5: spot-face land - body axis parallel to the horn axis
+      const fc=flowCross(nrm); drv.flowU=fc.u; drv.crossV=fc.v;
       out.push(drv);
     }
   };
@@ -461,6 +478,7 @@ function layout(S,st){
       const drv={kind:'woof', x:xW, phi:Math.atan2(q[1],q[0]), center:p, normal:nrm,
         od:S.odW*CM, dp:S.dpW*CM, tap:p, seatR:S.odW*CM/2+0.011, facet:q.facet};
       if(S.mount==='axial') drv.mountN=[-1,0,0];               // pin #5: spot-face land
+      const fc=flowCross(nrm); drv.flowU=fc.u; drv.crossV=fc.v;
       out.push(drv);
     }
   }
@@ -496,7 +514,7 @@ function layout(S,st){
    slim 3:1 stadium, area exactly Ap/driver. */
 function acoustics(S,L,st){
   const out={rows:[]};
-  const add=(sec,name,val,ok,warn,why)=>out.rows.push({sec,name,val,st:ok?'ok':(warn?'warn':'fail'),why});
+  const add=(sec,name,val,ok,warn,why,grow)=>out.rows.push({sec,name,val,st:ok?'ok':(warn?'warn':'fail'),why,grow:!!grow});
   const kinds=[];
   /* v4 SOURCED LAW (compendium): peak port velocity = CR * 2pi * fLOW * xm at the
      BAND'S LOW EDGE (woofers run to the sub XO ~80 Hz; mids to their lower XO).
@@ -513,7 +531,9 @@ function acoustics(S,L,st){
     const ap=sd/cr;                                      // cm^2 per driver
     for(const d of drs){ const apP=ap/(np||1);              // pin #19: area split across the ports
       const saM=Math.sqrt(apP*1e-4*3)/2, sbM=Math.sqrt(apP*1e-4/3)/2;
-      d.slot={sa:saM, sb:sbM, ap:ap, np:np||1}; }
+      d.slot={sa:saM, sb:sbM, ap:ap, np:np||1,
+        offm:(np||1)>=2? 0.24*d.od : 0};                    // pins #1/#25: pair straddles CROSS-wise (same station)
+    }
     add(kind.toUpperCase(),'Compression ratio Sd/Ap',cr.toFixed(1)+':1',
       cr>=band[0], cr>=band[0]*0.6,
       cr<band[0]?'below the classic band - big ports, mild loading (JMOD territory); excursion-limited duty':'derived from the 17 m/s limit, graded against the band');
@@ -530,7 +550,15 @@ function acoustics(S,L,st){
       for(const d of drs){ if(!d.mountN) continue;
         const ct=Math.abs(d.normal[0]*d.mountN[0]+d.normal[1]*d.mountN[1]+d.normal[2]*d.mountN[2]);
         mx=Math.max(mx, Math.tan(Math.acos(Math.min(1,ct)))); }
-      if(mx>0){ lptEff=lpt + 0.7*(((drs[0].seatR)||0.05))*mx; landed=true; }
+      if(mx>0){ lptEff=lpt + 0.7*(((drs[0].seatR)||0.05))*mx; landed=true;
+        /* pin #24: on a steeply tilted wall the printed land becomes a monster
+           wedge - say so. Danley uses spot-faces where walls run near-parallel
+           to the axis (Waslo flare 2); past ~30 deg flush is the honest mount. */
+        const wedge=(((drs[0].seatR)||0.05))*mx, tilt=Math.atan(mx)*180/Math.PI;
+        add(kind.toUpperCase(),'Axial land wedge (wall tilt '+tilt.toFixed(0)+'°)',(wedge*1000).toFixed(0)+' mm tall',
+          tilt<=30, tilt<=45,
+          'the spot-face land grows with wall tilt (seatR·tan); past ~30° the print is a wedge monster - use FLUSH on steep walls (Danley lands live on near-axial walls)');
+      }
     }
     const fLP=C/(2*Math.PI)*Math.sqrt((ap*1e-4)/((vtc*1e-6)*lptEff));
     add(kind.toUpperCase(),'Chamber acoustic low-pass',Math.round(fLP)+' Hz',fLP>=1.2*fx,fLP>=fx,
@@ -545,16 +573,25 @@ function acoustics(S,L,st){
       const eLam=Math.sqrt(4*Math.PI*Astn)/lam;
       add(K,'Entry size - local circumference vs \u03bb (US 8,284,976)',eLam.toFixed(2)+' \u03bb',
         eLam<=1.0, eLam<=1.3,
-        'patent: enter where the horn is \u22641 wavelength around at the band top ('+fx+' Hz)');
+        'patent: enter where the horn is \u22641 wavelength around at the band top ('+fx+' Hz)',
+        true);   // smooth family: a longer horn eases the flare near the throat - growth can fix this
       const tf=(drs.length*ap*1e-4)/Astn, tfOK=kind==='mid'?0.20:0.50, tfWarn=kind==='mid'?0.30:0.70;
       add(K,'Taps vs horn area at station',(tf*100).toFixed(0)+'%',
         tf<=tfOK, tf<=tfWarn,
-        kind==='mid'?'practice: \u226420% protects the HF wavefront (patent ideal is full area match - the tension is the design)':'far from the throat the wavefront tolerates more; CoSyne measured clean at 43%');
+        kind==='mid'?'practice: \u226420% protects the HF wavefront (patent ideal is full area match - the tension is the design)':'far from the throat the wavefront tolerates more; CoSyne measured clean at 43%',
+        true);   // a bigger mouth grows the station area - growth CAN fix this one
+      /* TRUE port positions: a straddling pair adds two cross-offset ports per
+         driver - the spacing law must see them, not just the seat centers */
+      const ports=[];
+      for(const d of drs){ const o=(d.slot&&d.slot.offm)||0;
+        if(o>0&&d.crossV) for(const sg of [-1,1])
+          ports.push([d.tap[0]+sg*o*d.crossV[0], d.tap[1]+sg*o*d.crossV[1], d.tap[2]+sg*o*d.crossV[2]]);
+        else ports.push(d.tap); }
       let spread=0;
-      for(let i=0;i<drs.length;i++)for(let j=i+1;j<drs.length;j++){
-        const a2=drs[i].tap,b2=drs[j].tap;
+      for(let i=0;i<ports.length;i++)for(let j=i+1;j<ports.length;j++){
+        const a2=ports[i],b2=ports[j];
         spread=Math.max(spread,Math.hypot(a2[0]-b2[0],a2[1]-b2[1],a2[2]-b2[2])); }
-      if(drs.length>1){ const sLam=spread/(lam/4);
+      if(ports.length>1){ const sLam=spread/(lam/4);
         const okS=kind==='mid'?1.0:1.5, wnS=kind==='mid'?1.2:2.0;   // v4 canon: strict for mids; SH96 woofer taps measure ~1.5x
         add(K,'Any-pair tap spacing (radiate as one driver)',(spread*1000).toFixed(0)+' mm = '+sLam.toFixed(2)+'\u00d7\u03bb/4',
           sLam<=okS, sLam<=wnS,
@@ -563,7 +600,7 @@ function acoustics(S,L,st){
       const coneD=2*Math.sqrt(sd*1e-4/Math.PI)/((np||1)>=2?2:1), fCone=C/(2*coneD);
       add(K,'Cone dia vs \u03bb/2 at band top',Math.round(fCone)+' Hz max',
         fCone>=fx, fCone>=0.85*fx,
-        (np>=2?'TWO straddling ports halve the worst cone path (v4 law) - null pushed up an octave; ':'')+'path spread across the cone cancels above c/(2\u00b7D); a second straddling port would buy an octave');
+        (np>=2?'TWO ports at ONE station straddle the cone toward the corners (Danley canon): equal throat paths, worst cone path halved; ':'')+'path spread across the cone cancels above c/(2\u00b7D); a second straddling port would buy an octave');
     }
   }
   /* ---- M2 for the 1-way coax cone section (same laws on the plate tap ring) ---- */
@@ -582,6 +619,19 @@ function acoustics(S,L,st){
       if(ap>0){ const lpt=(S.wallT||0.012)+0.85*Math.sqrt(ap*1e-4/Math.PI);
         const fLP=C/(2*Math.PI)*Math.sqrt((taps.length*ap*1e-4)/((vtc*1e-6)*lpt));
         add('COAX','Chamber acoustic low-pass',Math.round(fLP)+' Hz',fLP>=1.2*fx,fLP>=fx,'coax front chamber + plate slots must clear the crossover'); }
+      /* pin #22: honesty about the coax UNIT itself. The tap ring must sit OVER
+         the cone (or the slots feed nothing), and a unit fatter than the mouth
+         is a picture, not a speaker. */
+      const rCone=(S.odW? S.odW*CM : (S.odC||0.22))/2;
+      const sa=(taps[0].slot&&taps[0].slot.sa)||0;
+      add('COAX','Tap ring sits over the coax cone',(rT*1000).toFixed(0)+' vs '+(rCone*1000).toFixed(0)+' mm',
+        rT+sa<=rCone*0.95, rT+sa<=rCone*1.05,
+        'the plate slots must land on the cone that feeds them');
+      const mo2=st.pts[st.pts.length-1];
+      add('COAX','Coax unit vs the horn body','Ø '+(2*rCone/IN).toFixed(1)+'″ on a '+(2*mo2.a/IN).toFixed(0)+'″ mouth',
+        rCone<=mo2.a*0.75, rCone<=mo2.a,
+        'a unit wider than the horn shadows the mouth - grow the horn or pick a smaller coax',
+        true);   // a bigger mouth genuinely fixes this one
     }
   }
   /* PIN #16 (M4 down payment): Keele pattern-control floors per plane -
@@ -616,7 +666,7 @@ function evaluate(S){
     }
   }
   const rows=[];
-  const add=(sec,name,val,ok,warn,why)=>rows.push({sec,name,val,st:ok?'ok':(warn?'warn':'fail'),why});
+  const add=(sec,name,val,ok,warn,why,grow)=>rows.push({sec,name,val,st:ok?'ok':(warn?'warn':'fail'),why,grow:!!grow});
   /* pin #4/#11 acceptance: every driver's tap under its frame; ring even */
   let tapOff=0;
   for(const d of L){ if(!d.tap) continue;
@@ -628,8 +678,8 @@ function evaluate(S){
     const a=L[i], b=L[j];
     const g=Math.hypot(a.center[0]-b.center[0],a.center[1]-b.center[1],a.center[2]-b.center[2])-(a.seatR+b.seatR);
     if(g<worst)worst=g; }
-  add('LAW','Seats clear each other',(worst*1000).toFixed(0)+' mm', worst>=0.006, worst>=0,'printed seats must not merge');
-  add('LAW','Every ring fits inside the horn', L.missing?'NO':'yes', !L.missing, false,'drivers sit at the smallest station whose ring hosts them; if none exists the horn grows');
+  add('LAW','Seats clear each other',(worst*1000).toFixed(0)+' mm', worst>=0.006, worst>=0,'printed seats must not merge', true);
+  add('LAW','Every ring fits inside the horn', L.missing?'NO':'yes', !L.missing, false,'drivers sit at the smallest station whose ring hosts them; if none exists the horn grows', true);
   if(S.fxDerived&&S.fxDerived.lo)
     add('XO','Derived crossover (from landed geometry)', (S.topo==='3way'? S.fxDerived.hi+' / ':'')+S.fxDerived.lo+' Hz',
       (S.fxDerived.lo<= (S.topo==='3way'?S.fxLo:S.fxHi)*1.35), true, 'XO falls out of the path length; ceiling from the driver choice');
@@ -739,15 +789,67 @@ function solve(S0){
   for(let it=0;it<120;it++){                        // must outlast (cap - start)/step
     const ev=evaluate(S);
     if(!ev.fails) return {S, ev, grown:S.mouthW-S0.mouthW};
+    /* PIN #27: grow ONLY while a failing law is actually growth-fixable (fit and
+       station-area laws carry .grow). Driver-ceiling laws (CD reach, chamber LP,
+       port velocity...) never improve with a bigger mouth - growing anyway
+       ballooned every infeasible state to cap and made the mouth slider look
+       dead. Refuse honestly AT the user's size instead. */
+    if(!ev.rows.some(q=>q.st==='fail'&&q.grow))
+      return {S, ev, grown:S.mouthW-S0.mouthW, infeasible:true};
     S.mouthW=+(S.mouthW+1).toFixed(2);
     if(S.mouthW>S0.mouthCap) {
       const evC=evaluate(S);
-      return {S, ev:evC, grown:S.mouthW-S0.mouthW, infeasible:true};
+      return {S, ev:evC, grown:S.mouthW-S0.mouthW, infeasible:true, atCap:true};
     }
   }
   return {S, ev:evaluate(S), infeasible:true};
 }
 
-return {C,IN,CM, sePoint,seRing, profile, stations, dimsAt, surfPt, surfN, layout, evaluate, solve, response, areaAt, facetsAt, facetN, offsetRing};
+/* ---- M8: KNOWN-BUILD PRESETS - the per-topology front door. Each bundle is a
+   COMPLETE state: it must solve at its stated mouth with ZERO fails and ZERO
+   warns (presets land exemplary, not merely legal - gate-asserted). Driver
+   numerics mirror the shell's datasheet tables verbatim (gate cross-checks). */
+const BUILDS=(()=>{
+  const B={style:'smooth',wallT:0.012,rollR:2,mouthCap:64,subXO:80,npW:1,npM:1,
+    placeW:'auto',mount:'flush',fxHi:900,fxLo:300,coaxRing:4.5};
+  const CDX={cdSel:'dcx464',td:1.4,throat:1.4,cdFloor:300,cdDepth:2.4};
+  const W5 ={wPre:'w5',   odW:13.2,dpW:7,   sdW:85, vtcW:35, xmW:4.5};
+  const W65={wPre:'w65',  odW:16.7,dpW:8.5, sdW:132,vtcW:45, xmW:5};
+  const W8 ={wPre:'w8',   odW:21.0,dpW:10,  sdW:220,vtcW:80, xmW:6.5};
+  const W10={wPre:'hpl10',odW:26.1,dpW:12.2,sdW:330,vtcW:130,xmW:8};
+  const W12={wPre:'ndl12',odW:31.5,dpW:14,  sdW:522,vtcW:180,xmW:9};
+  const M4 ={mPre:'m4',   odM:10.3,dpM:6.5, sdM:50, vtcM:40, xmM:3};
+  const CXU={sdC:150,vtcC:60,xmC:4,coaxTaps:6,odC:0.22,dpC:0.11};
+  return {
+   '1way':[
+    {key:'coax90', name:'point source — 90°×60° · DCX-class coax dish',
+     s:{...B,...CDX,...CXU,...W12, topo:'1way',seN:6, covH:90,covV:60,mouthW:24,nW:2,nM:4}},
+    {key:'coax60', name:'round — 60°×60° · DCX-class coax dish',
+     s:{...B,...CDX,...CXU,...W12, topo:'1way',seN:2, covH:60,covV:60,mouthW:24,nW:2,nM:4}},
+   ],
+   '2way':[
+    {key:'canon9060', name:'house canon — 90°×60° · 4×6.5″ on the DCX coax',
+     s:{...B,...CDX,...W65,...M4, topo:'2way',seN:6, covH:90,covV:60,mouthW:24,nW:4,nM:4}},
+    {key:'compact',   name:'compact synergy — 90°×60° · 4×5.25″',
+     s:{...B,...CDX,...W5,...M4,  topo:'2way',seN:6, covH:90,covV:60,mouthW:24,nW:4,nM:4}},
+    {key:'square',    name:'square-format — 90°×60° · 4×8″',
+     s:{...B,...CDX,...W8,...M4,  topo:'2way',seN:12,covH:90,covV:60,mouthW:24,nW:4,nM:4}},
+    {key:'tall',      name:'tall — 60°×90° · 4×5.25″',
+     s:{...B,...CDX,...W5,...M4,  topo:'2way',seN:6, covH:60,covV:90,mouthW:24,nW:4,nM:4}},
+    {key:'angular',   name:'classic angular (Waslo) — 90°×60° · 4×5.25″',
+     s:{...B,...CDX,...W5,...M4,  topo:'2way',style:'angular',seN:12,covH:90,covV:60,mouthW:24,nW:4,nM:4}},
+   ],
+   '3way':[
+    {key:'sh50',      name:'SH50-class — 70°×70° square · 4×10″ + 4 mids',
+     s:{...B,...CDX,...W10,...M4, topo:'3way',seN:12,covH:70,covV:70,mouthW:24,nW:4,nM:4,fxLo:250}},
+    {key:'classic',   name:'classic — 90°×60° · 4×10″ + 4 mids',
+     s:{...B,...CDX,...W10,...M4, topo:'3way',seN:6, covH:90,covV:60,mouthW:27,nW:4,nM:4,fxLo:250}},
+    {key:'angular',   name:'classic angular — 70°×70° · 4×10″ + 4 mids',
+     s:{...B,...CDX,...W10,...M4, topo:'3way',style:'angular',seN:12,covH:70,covV:70,mouthW:33,nW:4,nM:4,fxLo:250}},
+   ],
+  };
+})();
+
+return {C,IN,CM, sePoint,seRing, profile, stations, dimsAt, surfPt, surfN, layout, evaluate, solve, response, areaAt, facetsAt, facetN, offsetRing, offsetVerts, BUILDS};
 })();
 if(typeof module!=='undefined') module.exports=MEH2;
