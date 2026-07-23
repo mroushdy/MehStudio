@@ -68,7 +68,7 @@ select{width:100%;font-family:var(--mono);font-size:11px;background:var(--paper)
   <input type="range" id="rollR" min="0.5" max="4" step="0.25" value="2">
   <div class="sec">DRIVERS</div>
   <label>COMPRESSION DRIVER</label>
-  <select id="cdSel"><option value="1.0">1" exit</option><option value="1.4" selected>1.4" exit</option></select>
+  <select id="cdSel"><option value="de500">1&Prime; CD (to ~900 Hz)</option><option value="de900" selected>1.4&Prime; CD (to ~550 Hz)</option><option value="dcx464">1.4&Prime; COAX DCX464 (to ~300 Hz)</option></select>
   <label>WOOFER / LOW-MID</label>
   <select id="wPre"></select>
   <label>WOOFER / LOW-MID Ø [cm] <span class="val" id="vOdW"></span></label>
@@ -345,8 +345,11 @@ function wire(){
     b.onclick=()=>{ S.style=b.dataset.v;
       document.querySelectorAll('#segStyle button').forEach(x=>x.classList.toggle('on',x===b));
       save(); rebuild(); }; });
-  document.getElementById('cdSel').value=String(S.td);
-  document.getElementById('cdSel').onchange=e=>{ S.td=+e.target.value; S.throat=S.td; save(); rebuild(); };
+  const CDP={de500:{td:1.0,floor:900,dep:1.2}, de900:{td:1.4,floor:550,dep:1.7}, dcx464:{td:1.4,floor:300,dep:2.4}};
+  document.getElementById('cdSel').value=S.cdSel||'de900';
+  document.getElementById('cdSel').onchange=e=>{ S.cdSel=e.target.value; const P=CDP[S.cdSel];
+    S.td=P.td; S.throat=P.td; S.cdFloor=P.floor; S.cdDepth=P.dep; save(); rebuild(); };
+  { const P=CDP[S.cdSel||'de900']; S.td=P.td; S.throat=P.td; S.cdFloor=P.floor; S.cdDepth=P.dep; }
   document.getElementById('bXray').onclick=()=>{ V3D.xray=!V3D.xray; rebuild(); };
 }
 /* ---------------- bug pins (proven v3 module; bare-scope safe) ---------------- */

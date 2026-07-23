@@ -130,26 +130,56 @@ function ringSeats(st,x,n,K,off){
   const out=[]; for(let k=0;k<n;k++) out.push(ring[(Math.round(k*K/n)+o)%K]);
   return out;
 }
-function xForRing(st,n,seatR,xMin,off){
-  const K=n*48, xMax=st.depth*0.84;   // seats stay OFF the mouth-roll curvature (his v5 rim-clip observation)
+/* WALL-PAIR seats (his pin #1: 'like how danley does it'): wide-format horns put
+   woofers in rows on the TOP/BOTTOM walls; tall formats use the sides. */
+function pairSeats(st,x,n,vertical){
+  const d=dimsAt(st,x);
+  const nT=Math.ceil(n/2), nB=n-nT, out=[];
+  const put=(count,sgn)=>{
+    for(let i=0;i<count;i++){
+      const t=count===1?0:((i/(count-1))-0.5)*2;         // spread across the flat of the wall
+      if(vertical){ const z=t*d.b*0.60;
+        const y=sgn*d.a*Math.pow(Math.max(0,1-Math.pow(Math.abs(z/d.b),st.n)),1/st.n);
+        out.push([y,z]); }
+      else{ const y=t*d.a*0.60;
+        const z=sgn*d.b*Math.pow(Math.max(0,1-Math.pow(Math.abs(y/d.a),st.n)),1/st.n);
+        out.push([y,z]); }
+    } };
+  put(nT,1); put(nB,-1);
+  return out;
+}
+function seatsFor(st,x,n,mode,off){
+  return mode==='pairsH'? pairSeats(st,x,n,false)
+       : mode==='pairsV'? pairSeats(st,x,n,true)
+       : ringSeats(st,x,n,n*48,off||0);
+}
+function xForSeats(st,n,seatR,xMin,mode,off){
+  const xMax=st.depth*0.84;
   for(let x=xMin;x<=xMax;x+=st.depth/128){
-    const seats=ringSeats(st,x,n,K,off);
+    const seats=seatsFor(st,x,n,mode,off);
     let ok=true;
-    for(let k=0;k<n;k++){ const a2=seats[k], b2=seats[(k+1)%n];
-      if(Math.hypot(a2[0]-b2[0],a2[1]-b2[1]) < 2*seatR+0.008){ ok=false; break; } }
+    for(let i=0;i<n&&ok;i++) for(let j=i+1;j<n;j++){
+      if(Math.hypot(seats[i][0]-seats[j][0],seats[i][1]-seats[j][1]) < 2*seatR+0.008){ ok=false; break; } }
     if(ok) return x;
   }
-  return null;                                  // does not fit anywhere - horn must grow
+  return null;
 }
+function xForRing(st,n,seatR,xMin,off){ return xForSeats(st,n,seatR,xMin,'ring',off); }
 function layout(S,st){
   const out=[];
   /* GEOMETRY FIRST, XO DERIVED (v4 coax2 canon, now universal):
      drivers sit at the smallest station whose ring fits them; the crossover
      falls out of the path length. fxHi/fxLo become CEILINGS to respect. */
   const seatW=S.odW*CM/2+0.011, seatM=S.odM*CM/2+0.011;
-  const offW=0;   // no stagger by default; a cross-ring law may reintroduce it WITH the verifier knowing
-  const xM0=xForRing(st,(S.nM|0)||4,seatM,0.012,0);
-  const xW0=xForRing(st,(S.nW|0)||2,seatW,(S.topo==='3way'&&xM0!=null)?(xM0+seatM+seatW+0.008):0.02,offW);
+  const offW=0;
+  /* DIALECT BY COVERAGE (pin #1): wide format -> woofer PAIRS on top/bottom walls
+     (Danley canon); tall -> side pairs; near-square/round -> ring. */
+  const ratio=Math.tan(d2r(S.covH/2))/Math.tan(d2r(S.covV/2));
+  const modeW=(S.topo!=='1way' && ((S.nW|0)||2)>=2 && ratio>=1.25)? 'pairsH'
+            : (S.topo!=='1way' && ((S.nW|0)||2)>=2 && ratio<=0.8)? 'pairsV' : 'ring';
+  S.dialectW=modeW;
+  const xM0=xForSeats(st,(S.nM|0)||4,seatM,0.012,'ring',0);
+  const xW0=xForSeats(st,(S.nW|0)||2,seatW,(S.topo==='3way'&&xM0!=null)?(xM0+seatM+seatW+0.008):0.02,modeW,offW);
   const xM=xM0, xW=xW0;
   S.fxDerived={ hi: xM!=null? Math.round(C/(4*((S.topo==='3way'?xM:xW||st.depth)+S.cdDepth*IN))) : null,
                 lo: xW!=null? Math.round(C/(4*(xW+S.cdDepth*IN))) : null };
@@ -181,7 +211,22 @@ function layout(S,st){
       out.push({kind, x, phi:Math.atan2(q[1],q[0]), center:p, normal:nrm, od, dp, tap:p, seatR:od/2+0.011});
     }
   };
-  if(S.topo!=='1way' && xW!=null) placeRing('woof', xW, (S.nW|0)||2, S.odW*CM, S.dpW*CM, offW);
+  if(S.topo!=='1way' && xW!=null){
+    const seats=seatsFor(st,xW,(S.nW|0)||2,modeW,offW);
+    const d0=dimsAt(st,xW), e2=Math.max(1e-4,st.depth*2e-3), d1=dimsAt(st,Math.min(st.depth,xW+e2));
+    for(const q of seats){
+      const p=[xW,q[0],q[1]];
+      const u=[e2, q[0]*(d1.a/d0.a-1), q[1]*(d1.b/d0.b-1)];
+      const eps=0.004;
+      const qn=[q[0]+(-q[1])*eps/(Math.hypot(q[0],q[1])||1), q[1]+(q[0])*eps/(Math.hypot(q[0],q[1])||1)];
+      const v=[0, qn[0]-q[0], qn[1]-q[1]];
+      let nrm=[u[1]*v[2]-u[2]*v[1], u[2]*v[0]-u[0]*v[2], u[0]*v[1]-u[1]*v[0]];
+      const L2=Math.hypot(nrm[0],nrm[1],nrm[2])||1e-9; nrm=nrm.map(cc=>cc/L2);
+      if(nrm[1]*p[1]+nrm[2]*p[2]<0) nrm=nrm.map(cc=>-cc);
+      out.push({kind:'woof', x:xW, phi:Math.atan2(q[1],q[0]), center:p, normal:nrm,
+        od:S.odW*CM, dp:S.dpW*CM, tap:p, seatR:S.odW*CM/2+0.011});
+    }
+  }
   if(S.topo==='3way' && xM!=null) placeRing('mid', xM, (S.nM|0)||4, S.odM*CM, S.dpM*CM, 0);
   if(S.topo!=='1way' && xW==null) out.missing=true;
   if(S.topo==='3way' && xM==null) out.missing=true;
@@ -227,7 +272,7 @@ function acoustics(S,L){
   }
   /* XO ceilings: CD reach (by exit size) and mid reach */
   if(S.fxDerived){
-    const cdReach=S.td>=1.35?550:S.td>=0.95?900:1200;
+    const cdReach=S.cdFloor||(S.td>=1.35?550:S.td>=0.95?900:1200);   // coax CDs (DCX464) reach ~300
     const top=(S.topo==='3way'?S.fxDerived.hi:S.fxDerived.lo);
     if(top) add('XO','CD reaches the derived crossover',top+' vs '+cdReach+' Hz floor',top>=cdReach*0.9,top>=cdReach*0.75,'a '+S.td+'\u2033 exit CD wants to cross at or above its floor');
   }
