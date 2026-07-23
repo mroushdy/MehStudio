@@ -34,7 +34,7 @@ select{width:100%;font-family:var(--mono);font-size:11px;background:var(--paper)
 #hud button{background:#FFFFFFee;border:1px solid var(--gridmaj);color:var(--ink);padding:6px 10px;font-family:var(--mono);font-weight:600;font-size:9px;cursor:pointer;letter-spacing:.14em;text-transform:uppercase;}
 #note{position:absolute;left:12px;bottom:10px;color:var(--faint);font-size:10px;z-index:3;}
 #dims{position:absolute;right:14px;bottom:10px;color:var(--faint);font-size:10px;z-index:3;letter-spacing:.04em;}
-#rows{position:absolute;right:12px;top:12px;z-index:3;background:#FFFFFFee;padding:8px 12px;border:1px solid var(--gridmaj);max-width:340px;}
+#rows{position:absolute;right:12px;top:12px;z-index:3;background:#FFFFFFee;padding:8px 12px;border:1px solid var(--gridmaj);max-width:340px;max-height:72%;overflow-y:auto;}
 #rows div{font-size:9.5px;margin:2.5px 0;letter-spacing:.02em;}
 .ok{color:var(--ok)}.warn{color:var(--warn)}.fail{color:var(--bad)}
 </style></head><body>
@@ -137,7 +137,7 @@ select{width:100%;font-family:var(--mono);font-size:11px;background:var(--paper)
 <script>
 /*__ENGINE__*/
 /*__CAD__*/
-window.MEH_BUILD=509;
+window.MEH_BUILD=510;
 document.getElementById('bno').textContent=MEH_BUILD;
 "use strict";
 /* ---------------- driver presets (v4 datasheets; mesh = true CAD, meshApprox = nearest body) ---------------- */
@@ -748,6 +748,29 @@ function wire(){
       if(dm) msg+=' + dish insert '+dl(dm,'meh5_dish_b'+MEH_BUILD+'.stl')+' tris (real tap holes + bore)'; }
     else { const tc=MEH2.tapCutters(r.S);
       if(tc) msg+=' + tap cutters '+dl(tc,'meh5_tapcutters_b'+MEH_BUILD+'.stl')+' tris (import as NEGATIVE volumes in the slicer to cut the slots)'; }
+    if(S.style==='angular'){ const pl=MEH2.panelLayout(r.S);
+      if(pl){ const IN=MEH2.IN, f=v=>(v/IN).toFixed(2);
+        let y=40, sv='', maxW=0;
+        for(const p of pl.panels){ const H1=p.slants[0]/IN*10, H2=(p.slants[1]||0)/IN*10;
+          const w=p.widths.map(v=>v/IN*10);
+          const cx=Math.max(...w)/2+20; maxW=Math.max(maxW,cx*2+40);
+          sv+='<text x="20" y="'+(y-8)+'" font-size="11" font-family="monospace">'+p.name
+             +' — widths '+p.widths.map(v=>f(v)+'″').join(' / ')+' · slants '+p.slants.map(v=>f(v)+'″').join(' + ')+'</text>';
+          sv+='<polygon fill="none" stroke="#1C1C1C" points="'
+             +(cx-w[0]/2)+','+y+' '+(cx+w[0]/2)+','+y+' '+(cx+w[1]/2)+','+(y+H1)+' '+(cx-w[1]/2)+','+(y+H1)+'"/>';
+          if(H2){ sv+='<polygon fill="none" stroke="#1C1C1C" points="'
+             +(cx-w[1]/2)+','+(y+H1)+' '+(cx+w[1]/2)+','+(y+H1)+' '+(cx+w[2]/2)+','+(y+H1+H2)+' '+(cx-w[2]/2)+','+(y+H1+H2)+'"/>'
+             +'<text x="'+(cx+w[1]/2+6)+'" y="'+(y+H1+4)+'" font-size="9" font-family="monospace" fill="#a07d1e">flare break</text>'; }
+          y+=H1+H2+46; }
+        sv+='<text x="20" y="'+(y-8)+'" font-size="11" font-family="monospace">seam bevels (each edge): '
+           +pl.seams.filter((s2,i2)=>i2<4).map(s2=>s2.bevel.toFixed(1)+'°').join(' · ')+' — included angles '
+           +pl.seams.filter((s2,i2)=>i2<4).map(s2=>s2.deg.toFixed(1)+'°').join(' · ')+'</text>';
+        const svg='<svg xmlns="http://www.w3.org/2000/svg" width="'+Math.max(maxW,760)+'" height="'+(y+20)+'">'
+          +'<text x="20" y="20" font-size="12" font-family="monospace">MEH5 b'+MEH_BUILD+' panel layout — outside faces, 1:10 scale drawing, dims true — verify before cutting</text>'+sv+'</svg>';
+        const blob=new Blob([svg],{type:'image/svg+xml'});
+        const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+        a.download='meh5_panels_b'+MEH_BUILD+'.svg'; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),5000);
+        msg+=' + panel layout SVG ('+pl.panels.length+' parts, seam bevels included)'; } }
     document.getElementById('note').textContent=msg+' — watertight (gate-asserted); pre-cut shell, snout/flange/wings are next slices'; };
   { const el=document.getElementById('placeW'); el.value=S.placeW||'auto';
     el.onchange=()=>{ S.placeW=el.value; save(); rebuild(); }; }

@@ -726,6 +726,33 @@ function acoustics(S,L,st){
         'below the floor the wall angle stops steering (the sections still sum - a MEH keeps loading); grow the mouth to push the floor down');
     }
   }
+  /* ---- C. MAX SPL TILE - ported from Horn Studio hornMaxSPL (entry 215):
+     Makarski 2006 Ch.7 harmonic source terms reduced under 1-D area-law
+     transfer; per-slice second-harmonic law Thuras/Jenkins/O'Neil 1935;
+     Horn Studio benched the reduction at 0.008% vs the Thuras closed form.
+     K2_horn = (g+1)/(2*sqrt2*rho*c^2) * k * pt * sqrt(St) * INT dz/sqrt(S),
+     plus the post-mouth spreading tail ln(d/rm) at d = 4 m (Makarski's
+     convention). Q here = geometric Q from the coverage solid angle.
+     HONEST LIMITS (Horn Studio's words): ideal driver (a good 1.4in costs
+     ~3 dB up top); no directivity-at-2f interaction; invalid below cutoff. */
+  if(st){
+    const GAM=1.402;
+    let SmaxV=0, stopX=st.depth;
+    for(let i=0;i<=48;i++){ const x=st.depth*i/48, A=areaAt(st,x); if(A>SmaxV){SmaxV=A; stopX=x;} }
+    let I9=0, aP=areaAt(st,1e-5);
+    for(let i=1;i<=48;i++){ const x=stopX*i/48, A=areaAt(st,x);
+      I9+=(stopX/48)*0.5*(1/Math.sqrt(aP)+1/Math.sqrt(A)); aP=A; }
+    const St=areaAt(st,1e-5), rm=Math.sqrt(SmaxV/Math.PI);
+    const OM=4*Math.asin(Math.min(1,Math.sin(d2r(S.covH)/2)*Math.sin(d2r(S.covV)/2)));
+    const Q=4*Math.PI/Math.max(0.1,OM), G=Math.sqrt(St*Q/(4*Math.PI));
+    const coef=(GAM+1)/(2*Math.SQRT2*1.205*C*C);
+    const ceil=f=>{ const k=2*Math.PI*f/C;
+      const x2=coef*k*Math.sqrt(St)*I9 + coef*k*G*Math.log(Math.max(1.02,4/rm));
+      return 20*Math.log10(G*0.10/x2/2e-5)-10.46; };
+    add('SPL','Air-distortion ceiling K2 3% (1k / 10k)',ceil(1000).toFixed(0)+' / '+ceil(10000).toFixed(0)+' dB @ 1 m',
+      true,true,
+      'the AIR itself distorts in the narrow throat (Makarski/Thuras, Horn Studio port): the geometry’s hard ceiling falls ~6 dB/octave; ideal driver assumed, invalid below cutoff');
+  }
   /* XO ceilings: CD reach (by exit size) and mid reach */
   if(S.fxDerived){
     const cdReach=S.cdFloor||(S.td>=1.35?550:S.td>=0.95?900:1200);   // coax CDs (DCX464) reach ~300
@@ -1040,6 +1067,36 @@ function tapCutters(S){
   }
   return pos.length? {pos, tri} : null;
 }
+/* ---- A. EXPORT slice 4: PANEL LAYOUT for CLASSIC ANGULAR - the flat parts.
+   Each wall/chamfer unfolds to stacked trapezoids (throat->break->mouth widths
+   + true slant lengths); seams carry the included dihedral and the per-edge
+   bevel (half of it). Panel normals are constant along x for this family, so
+   one angle per seam is exact, not an approximation. ---- */
+function panelLayout(S){
+  if(S.style!=='angular') return null;
+  const st=stations(S);
+  const x0=(S.topo==='1way'&&st.xAdapter)? st.xAdapter : 1e-4;
+  const stns=[x0]; if(st.xBreak!==undefined) stns.push(st.xBreak); stns.push(st.depth-1e-6);
+  const FS=stns.map(x=>facetsAt(st,x));
+  const NV=FS[0].length;
+  const panels=[], seams=[];
+  for(let i=0;i<NV;i++){
+    const widths=FS.map(F=>F[i].len);
+    const slants=[];
+    for(let s=0;s<stns.length-1;s++){
+      const A=FS[s][i], B=FS[s+1][i];
+      const dr=Math.hypot(B.mid[0]-A.mid[0],B.mid[1]-A.mid[1]);
+      slants.push(Math.hypot(stns[s+1]-stns[s], dr));
+    }
+    panels.push({name:(FS[0][i].ch?'chamfer ':'wall ')+i, ch:!!FS[0][i].ch, widths, slants});
+  }
+  for(let i=0;i<NV;i++){
+    const a=FS[0][i].n2, b=FS[0][(i+1)%NV].n2;
+    const inc=180-(Math.acos(Math.max(-1,Math.min(1,a[0]*b[0]+a[1]*b[1])))*180/Math.PI);
+    seams.push({a:i, b:(i+1)%NV, deg:inc, bevel:(180-inc)/2});
+  }
+  return {panels, seams, stations:stns.length===3?['throat','break','mouth']:['throat','mouth']};
+}
 /* binary STL bytes from shellMesh (mm units for slicers) */
 function stlBytes(mesh){
   const n=mesh.tri.length, buf=new ArrayBuffer(84+n*50), dv=new DataView(buf);
@@ -1110,6 +1167,6 @@ const BUILDS=(()=>{
   };
 })();
 
-return {C,IN,CM, sePoint,seRing, profile, stations, dimsAt, surfPt, surfN, layout, evaluate, solve, response, areaAt, facetsAt, facetN, offsetRing, offsetVerts, BUILDS, shellMesh, dishMesh, tapCutters, stlBytes};
+return {C,IN,CM, sePoint,seRing, profile, stations, dimsAt, surfPt, surfN, layout, evaluate, solve, response, areaAt, facetsAt, facetN, offsetRing, offsetVerts, BUILDS, shellMesh, dishMesh, tapCutters, panelLayout, stlBytes};
 })();
 if(typeof module!=='undefined') module.exports=MEH2;

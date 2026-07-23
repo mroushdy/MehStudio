@@ -143,8 +143,13 @@ A. EXPORTS [STL SLICE LANDED build 506: MEH2.shellMesh(S) builds the shell
 B. TRUE PRINTED-PART GEOMETRY [shell wall DONE - real thickness, outer-face mounts, Lpt geometry-true in the Helmholtz law; ONE proven normal path via carried surface params]: seat+slot as one
    solid insert; CD apex insert (Reference B/C: bore + tap ring + bolt circle);
    bandpass chamber housings; 1way coax full part.
-C. MAX SPL TILE (Thuras/Makarski from Horn Studio): the geometry's distortion
-   ceiling, computed from v5's area law. Plus cutoff/loading estimate tiles.
+C. MAX SPL TILE [LANDED build 510 - Marwan dropped Horn Studio.html: ported
+   hornMaxSPL (entry 215, Makarski Ch.7 / Thuras 1935, benched 0.008% vs the
+   closed form) onto v5's areaAt: SPL row 'Air-distortion ceiling K2 3%
+   (1k/10k)' with geometric Q from the coverage solid angle, d=4m convention,
+   Horn Studio's honest-limits text carried over]. Still open: cutoff/loading
+   estimate tiles; v1.4 square-family study in docs/meh14_square_study.md
+   awaits Marwan's pick.
 D. REPORTS PANEL [LANDED build 509: collapsible REPORTS under the chart - path
    table (per-section station + throat path incl. CD depth, the M3 view), front
    chamber Vtc totals, ANGULAR panel cut list (per-panel widths at throat/break/
