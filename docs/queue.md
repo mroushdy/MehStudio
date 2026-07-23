@@ -7,8 +7,8 @@ Last updated: 2026-07-23. v4 frozen at build 83 (reference). ALL WORK IS v5 NOW.
 3. [DONE] Topology front door (1way coax / 2way / 3way) + live law rows + bug pins native
 4. [DONE] Full canonical matrix solves (8/8 incl. v4-impossible square 2way, SH96 4x15+6mid)
 5. [DONE] Seats clamped off the mouth-roll curvature
-6. REAL driver bodies: migrate the 10 CAD meshes + meshApprox from v4 (drivers must look real)
-7. Driver PRESET library from v4 datasheets (replaces raw diameter sliders)
+6. [DONE] Real driver bodies: 10 CAD meshes + meshApprox migrated
+7. [DONE] Driver preset library (custom sliders kept as fallback)
 8. 1-way coax apex insert, full Reference-C part: printed flare + tap ring + CD bore + seat
 9. Acoustic physics rows carried from v4: port area/velocity (17 m/s), CR bands, Vtc,
    chamber LP, path-length table, Hornresp ME2 export
@@ -16,6 +16,7 @@ Last updated: 2026-07-23. v4 frozen at build 83 (reference). ALL WORK IS v5 NOW.
     housings for bandpass, conformal outer surface
 11. STL/3MF EXPORT — the drawn part IS the printable part (the point of print-only)
 12. Superformula unique-mouth extension of the shape slider (his original ask)
+12b. [DONE] CLASSIC ANGULAR style (his call: the classic faceted look as a printed aesthetic)
 13. v5 oracle battery: INSPECT laws rebuilt on the new scene + look.js adapted +
     lattice sweep + acceptance tests (pins #4 taps-under-drivers, #10 port-count
     never breaks geometry, #11 mids ring not line)

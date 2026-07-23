@@ -37,6 +37,9 @@ select,input[type=number]{width:100%;background:#0f0e0d;color:var(--ink);border:
     <button data-v="1way">1-WAY COAX</button><button data-v="2way" class="on">2-WAY</button><button data-v="3way">3-WAY</button>
   </div>
   <div class="sec">FORM</div>
+  <div class="seg" id="segStyle">
+    <button data-v="smooth" class="on">SMOOTH</button><button data-v="angular">CLASSIC ANGULAR</button>
+  </div>
   <label>SHAPE — ROUND ⟷ SQUARE <span class="val" id="vN"></span></label>
   <input type="range" id="seN" min="2" max="12" step="0.5" value="6">
   <label>MOUTH WIDTH [in] <span class="val" id="vMouth"></span></label>
@@ -50,11 +53,15 @@ select,input[type=number]{width:100%;background:#0f0e0d;color:var(--ink);border:
   <div class="sec">DRIVERS</div>
   <label>COMPRESSION DRIVER</label>
   <select id="cdSel"><option value="1.0">1" exit</option><option value="1.4" selected>1.4" exit</option></select>
+  <label>WOOFER / LOW-MID</label>
+  <select id="wPre"></select>
   <label>WOOFER / LOW-MID Ø [cm] <span class="val" id="vOdW"></span></label>
   <input type="range" id="odW" min="8" max="46" step="1" value="14">
   <label>WOOFER COUNT <span class="val" id="vNW"></span></label>
   <input type="range" id="nW" min="2" max="8" step="1" value="6">
   <div id="midCtl" style="display:none">
+    <label>MID</label>
+    <select id="mPre"></select>
     <label>MID Ø [cm] <span class="val" id="vOdM"></span></label>
     <input type="range" id="odM" min="5" max="16" step="0.5" value="10">
     <label>MID COUNT <span class="val" id="vNM"></span></label>
@@ -75,11 +82,28 @@ select,input[type=number]{width:100%;background:#0f0e0d;color:var(--ink);border:
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 /*__ENGINE__*/
+/*__CAD__*/
 window.MEH_BUILD=500;
 document.getElementById('bno').textContent=MEH_BUILD;
 "use strict";
+/* ---------------- driver presets (v4 datasheets; mesh = true CAD, meshApprox = nearest body) ---------------- */
+const WPRE={
+  w65:{name:'6.5\u2033 woofer', od:16.7, dp:8.5, meshApprox:'BC_8MDN51'},
+  w8:{name:'8\u2033 woofer', od:21.0, dp:10, meshApprox:'BC_8MDN51'},
+  mdn8:{name:'B&C 8MDN51 (true CAD)', od:22.0, dp:10.5, mesh:'BC_8MDN51'},
+  hpl10:{name:'B&C 10HPL64 (true CAD)', od:26.1, dp:12.2, mesh:'BC_10HPL64'},
+  ndl12:{name:'B&C 12NDL76 (true CAD)', od:31.5, dp:14, mesh:'BC_12NDL76'},
+  es12:{name:'18Sound 12LW1400 (true CAD)', od:32.2, dp:15, mesh:'ES_12LW1400'},
+  w15:{name:'15\u2033 woofer', od:39.0, dp:17, meshApprox:'BC_18SW115'},
+  sw18:{name:'B&C 18SW115 (true CAD)', od:46.0, dp:22, mesh:'BC_18SW115'},
+  pzb18:{name:'B&C 18PZB100 (true CAD)', od:46.0, dp:20, mesh:'BC_18PZB100'}};
+const MPRE={
+  m3:{name:'3\u2033 mid', od:9.3, dp:6.2, meshApprox:'BC_8MDN51'},
+  m4:{name:'4\u2033 mid', od:10.3, dp:6.5, meshApprox:'BC_8MDN51'},
+  bc5:{name:'B&C 5\u2033 sealed', od:15.7, dp:8.2, meshApprox:'BC_8MDN51'},
+  mdn8m:{name:'B&C 8MDN51 (true CAD)', od:22.0, dp:10.5, mesh:'BC_8MDN51'}};
 /* ---------------- state ---------------- */
-const S={topo:'2way', seN:6, covH:90, covV:60, mouthW:24, mouthCap:64, throat:1.4, rollR:2,
+const S={topo:'2way', style:'smooth', wPre:'w8', mPre:'m4', seN:6, covH:90, covV:60, mouthW:24, mouthCap:64, throat:1.4, rollR:2,
   fxHi:900, fxLo:300, cdDepth:1.7, td:1.4, coaxRing:4.5,
   nW:6, odW:14, dpW:7, nM:4, odM:10, dpM:6};
 try{ Object.assign(S, JSON.parse(localStorage.getItem('meh5_state')||'{}')); }catch(e){}
@@ -136,8 +160,8 @@ function rebuild(){
   const hg=new THREE.BufferGeometry();
   hg.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));
   hg.setIndex(idx); hg.computeVertexNormals();
-  const horn=new THREE.Mesh(hg,new THREE.MeshPhongMaterial({color:0xEDEAE4,shininess:14,side:THREE.DoubleSide,
-    transparent:V3D.xray,opacity:V3D.xray?0.35:1}));
+  const horn=new THREE.Mesh(hg,new THREE.MeshPhongMaterial({color:S.style==='angular'?0xE6DFD2:0xEDEAE4,shininess:S.style==='angular'?4:14,side:THREE.DoubleSide,
+    flatShading:S.style==='angular',transparent:V3D.xray,opacity:V3D.xray?0.35:1}));
   horn.userData.tag='shell'; g.add(horn);
   /* apex insert: printed disc with CD bore (+ coax tap ring for 1way) */
   { const t0=st.pts[0];
@@ -176,8 +200,15 @@ function rebuild(){
       seat.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),n);
       seat.position.copy(c).add(n.clone().multiplyScalar(0.0115));   // fully outside the shell seat.userData.tag='seat'; g.add(seat);
     }
-    /* driver body: simple can for now (CAD bodies next increment) */
+    /* driver body: simple can + REAL CAD overlay (v4 convention: CAD over solid) */
     { const body=new THREE.Group();
+      const PRE=(d.kind==='mid'? MPRE[S.mPre] : WPRE[S.wPre])||null;
+      const MK=PRE&&(PRE.mesh||PRE.meshApprox);
+      if(MK && window.CADM && CADM[MK] && typeof cadMesh==='function'){
+        const cm=cadMesh(MK,0x8f8d87), MM2=CADM[MK];
+        const kr=PRE.mesh?1:(PRE.od*10)/((MM2.bb1[0]-MM2.bb0[0])||1), kz=PRE.mesh?1:(PRE.dp*10)/((MM2.bb1[2]-MM2.bb0[2])||1);
+        cm.scale.set(kr/1000,kz/1000,kr/1000); body.add(cm);
+      }
       const fl=new THREE.Mesh(new THREE.CylinderGeometry(d.od/2,d.od/2,0.008,36),
         new THREE.MeshPhongMaterial({color:0x8f8d87,shininess:16}));
       fl.position.y=0.018; body.add(fl);
@@ -224,12 +255,29 @@ function wire(){
     const show=()=>{ const v=document.getElementById('v'+id.charAt(0).toUpperCase()+id.slice(1));
       if(v)v.textContent=fmt?fmt(S[key]):S[key]; };
     show();
-    el.oninput=()=>{ S[key]=+el.value; if(key==='odW')S.dpW=S.odW*0.5; if(key==='odM')S.dpM=S.odM*0.6;
+    el.oninput=()=>{ S[key]=+el.value;
+      if(key==='odW'){S.dpW=S.odW*0.5; S.wPre='custom'; const p=document.getElementById('wPre'); if(p)p.value='custom';}
+      if(key==='odM'){S.dpM=S.odM*0.6; S.mPre='custom'; const p=document.getElementById('mPre'); if(p)p.value='custom';}
       show(); save(); rebuild(); }; };
   bind('seN','seN',v=>v<=2.4?'round':v>=10?'square':('n='+v));
   bind('mouthW','mouthW',v=>v+'″'); bind('covH','covH',v=>v+'°'); bind('covV','covV',v=>v+'°');
   bind('rollR','rollR',v=>v+'″'); bind('odW','odW',v=>v+' cm'); bind('nW','nW');
   bind('odM','odM',v=>v+' cm'); bind('nM','nM');
+  const fillPre=(id,tbl,cur)=>{ const el=document.getElementById(id);
+    el.innerHTML=Object.keys(tbl).map(k=>'<option value="'+k+'">'+tbl[k].name+'</option>').join('')+'<option value="custom">custom (sliders)</option>';
+    el.value=cur; };
+  fillPre('wPre',WPRE,S.wPre); fillPre('mPre',MPRE,S.mPre);
+  document.getElementById('wPre').onchange=e=>{ S.wPre=e.target.value;
+    if(WPRE[S.wPre]){ S.odW=WPRE[S.wPre].od; S.dpW=WPRE[S.wPre].dp; document.getElementById('odW').value=S.odW; }
+    save(); rebuild(); };
+  document.getElementById('mPre').onchange=e=>{ S.mPre=e.target.value;
+    if(MPRE[S.mPre]){ S.odM=MPRE[S.mPre].od; S.dpM=MPRE[S.mPre].dp; document.getElementById('odM').value=S.odM; }
+    save(); rebuild(); };
+  document.querySelectorAll('#segStyle button').forEach(b=>{
+    if(b.dataset.v===S.style){document.querySelectorAll('#segStyle button').forEach(x=>x.classList.remove('on'));b.classList.add('on');}
+    b.onclick=()=>{ S.style=b.dataset.v;
+      document.querySelectorAll('#segStyle button').forEach(x=>x.classList.toggle('on',x===b));
+      save(); rebuild(); }; });
   document.getElementById('cdSel').value=String(S.td);
   document.getElementById('cdSel').onchange=e=>{ S.td=+e.target.value; S.throat=S.td; save(); rebuild(); };
   document.getElementById('bXray').onclick=()=>{ V3D.xray=!V3D.xray; rebuild(); };

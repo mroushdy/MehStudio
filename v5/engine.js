@@ -43,12 +43,13 @@ function profile(S){
   const ht=S.throat*IN/2;
   const hm=S.mouthW*IN/2;
   const depth=Math.max(0.06,(hm-ht)/Math.tan(th));
-  const rollR=S.rollR*IN;
+  const rollR=(S.style==='angular'? Math.min(S.rollR,0.75) : S.rollR)*IN;   // angular keeps a printable bevel, not a donut
   const N=48, pts=[];
   for(let i=0;i<=N;i++){ const t=i/N, x=t*depth;
     const s=t*t*(3-2*t);                        // smoothstep: zero slope at throat, eases to mouth
     const lin=ht+(hm-ht)*t;
-    const eased=ht+(hm-ht)*(0.72*t+0.28*s);     // mostly conical (pattern control) + eased ends
+    const eased=(S.style==='angular')? lin                    // CLASSIC ANGULAR: pure straight cone (his call - the classic look, printed)
+               : ht+(hm-ht)*(0.72*t+0.28*s);     // smooth: mostly conical (pattern control) + eased ends
     pts.push({x, h:eased});
   }
   /* roll-back: quarter-torus past the mouth plane, tangent to the last segment */
