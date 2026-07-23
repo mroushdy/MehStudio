@@ -93,6 +93,17 @@ function profile(S){
     const rP=(S.coaxRing||4.5)*CM+0.03;
     const thA=d2r(38);
     const La=Math.max(0.01,(rP-ht)/Math.tan(thA));
+    if(S.style==='angular'){
+      /* REFERENCE D (Marwan's build photos, 2026-07-23): the ROUND printed dish
+         (nOv:2) drops into a SQUARE straight-walled classic flare - single
+         expansion at the coverage angle, flat printed mouth, corner wings
+         bridge the dish rim to the square section. */
+      const Da=Math.max(0.05,(hm-rP)/Math.tan(th));
+      const depth=La+Da, pts=[];
+      for(let i=0;i<=8;i++){ const x=La*i/8; pts.push({x, h:ht+Math.tan(thA)*x, nOv:2}); }
+      for(let j=1;j<=32;j++){ const x=La+Da*j/32; pts.push({x, h:rP+Math.tan(th)*(x-La)}); }
+      return {pts, depth, rollR:0, mouthH:hm, xAdapter:La};
+    }
     const D2=Math.max(0.05,(hm-rP)/Math.tan(th));
     const depth=La+D2, pts=[];
     for(let i=0;i<=8;i++){ const x=La*i/8; pts.push({x, h:ht+Math.tan(thA)*x}); }
@@ -160,7 +171,8 @@ function stations(S){
     const t=Math.min(1, x/(0.45*pr.depth)), s=t*t*(3-2*t);
     return 2+(S.seN-2)*s; };                             // M5/pin #20: ROUND at the CD exit -> the chosen shape (ATH canon)
   return { form:'se', n:S.seN, style:S.style,
-           pts:pr.pts.map(p=>({x:p.x, a:p.h, b:(p.v!==undefined)?p.v:p.h*ar, roll:p.roll, n:morph(p.x)})),
+           pts:pr.pts.map(p=>({x:p.x, a:p.h, b:(p.v!==undefined)?p.v:p.h*ar, roll:p.roll,
+             n:(p.nOv!==undefined)?p.nOv:morph(p.x)})),   // Reference D: the dish stays ROUND inside an angular horn
            depth:pr.depth, rollR:pr.rollR, throat:S.throat*IN/2, ar, xBreak:pr.xBreak, slopeCos:pr.slopeCos, xAdapter:pr.xAdapter };
 }
 function dimsAt(st,x){
@@ -822,7 +834,9 @@ const BUILDS=(()=>{
   const CXU={sdC:150,vtcC:60,xmC:4,coaxTaps:6,odC:0.22,dpC:0.11};
   return {
    '1way':[
-    {key:'coax90', name:'point source — 90°×60° · DCX-class coax dish',
+    {key:'refd',   name:'Reference D — square classic · coax dish · 70°×70°',
+     s:{...B,...CDX,...CXU,...W12, topo:'1way',style:'angular',seN:12,covH:70,covV:70,mouthW:24,nW:2,nM:4}},
+    {key:'coax90', name:'point source — 90°×60° smooth · coax dish',
      s:{...B,...CDX,...CXU,...W12, topo:'1way',seN:6, covH:90,covV:60,mouthW:24,nW:2,nM:4}},
     {key:'coax60', name:'round — 60°×60° · DCX-class coax dish',
      s:{...B,...CDX,...CXU,...W12, topo:'1way',seN:2, covH:60,covV:60,mouthW:24,nW:2,nM:4}},

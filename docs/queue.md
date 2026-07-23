@@ -1,5 +1,7 @@
 # MEH STUDIO — STANDING QUEUE (versioned; update on every landed item)
-Last updated: 2026-07-23 (build 502: M8 presets + pins 22-27 & local #1 resolved).
+Last updated: 2026-07-23 (build 503: Reference D 1-way landed from photo study -
+dish-in-square-angular + wings + snout + coax stack; 2-WAY renamed 2-WAY COAX;
+'Reference D' flagship 1way preset. See printed_mounts_spec.md photo study).
 v4 frozen at build 83. All work is v5.
 
 ## BUILD 502 PIN SWEEP (all 7 open pins resolved; sourced from diyaudio 339799

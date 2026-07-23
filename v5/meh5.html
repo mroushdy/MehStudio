@@ -50,7 +50,7 @@ select{width:100%;font-family:var(--mono);font-size:11px;background:var(--paper)
 <aside>
   <div class="sec">TOPOLOGY</div>
   <div class="seg" id="segTopo">
-    <button data-v="1way">1-WAY COAX</button><button data-v="2way" class="on">2-WAY</button><button data-v="3way">3-WAY</button>
+    <button data-v="1way">1-WAY COAX</button><button data-v="2way" class="on">2-WAY COAX</button><button data-v="3way">3-WAY</button>
   </div>
   <label>KNOWN BUILD — LAND A PROVEN MEH</label>
   <select id="buildSel"></select>
@@ -222,6 +222,17 @@ function profile(S){
     const rP=(S.coaxRing||4.5)*CM+0.03;
     const thA=d2r(38);
     const La=Math.max(0.01,(rP-ht)/Math.tan(thA));
+    if(S.style==='angular'){
+      /* REFERENCE D (Marwan's build photos, 2026-07-23): the ROUND printed dish
+         (nOv:2) drops into a SQUARE straight-walled classic flare - single
+         expansion at the coverage angle, flat printed mouth, corner wings
+         bridge the dish rim to the square section. */
+      const Da=Math.max(0.05,(hm-rP)/Math.tan(th));
+      const depth=La+Da, pts=[];
+      for(let i=0;i<=8;i++){ const x=La*i/8; pts.push({x, h:ht+Math.tan(thA)*x, nOv:2}); }
+      for(let j=1;j<=32;j++){ const x=La+Da*j/32; pts.push({x, h:rP+Math.tan(th)*(x-La)}); }
+      return {pts, depth, rollR:0, mouthH:hm, xAdapter:La};
+    }
     const D2=Math.max(0.05,(hm-rP)/Math.tan(th));
     const depth=La+D2, pts=[];
     for(let i=0;i<=8;i++){ const x=La*i/8; pts.push({x, h:ht+Math.tan(thA)*x}); }
@@ -289,7 +300,8 @@ function stations(S){
     const t=Math.min(1, x/(0.45*pr.depth)), s=t*t*(3-2*t);
     return 2+(S.seN-2)*s; };                             // M5/pin #20: ROUND at the CD exit -> the chosen shape (ATH canon)
   return { form:'se', n:S.seN, style:S.style,
-           pts:pr.pts.map(p=>({x:p.x, a:p.h, b:(p.v!==undefined)?p.v:p.h*ar, roll:p.roll, n:morph(p.x)})),
+           pts:pr.pts.map(p=>({x:p.x, a:p.h, b:(p.v!==undefined)?p.v:p.h*ar, roll:p.roll,
+             n:(p.nOv!==undefined)?p.nOv:morph(p.x)})),   // Reference D: the dish stays ROUND inside an angular horn
            depth:pr.depth, rollR:pr.rollR, throat:S.throat*IN/2, ar, xBreak:pr.xBreak, slopeCos:pr.slopeCos, xAdapter:pr.xAdapter };
 }
 function dimsAt(st,x){
@@ -951,7 +963,9 @@ const BUILDS=(()=>{
   const CXU={sdC:150,vtcC:60,xmC:4,coaxTaps:6,odC:0.22,dpC:0.11};
   return {
    '1way':[
-    {key:'coax90', name:'point source — 90°×60° · DCX-class coax dish',
+    {key:'refd',   name:'Reference D — square classic · coax dish · 70°×70°',
+     s:{...B,...CDX,...CXU,...W12, topo:'1way',style:'angular',seN:12,covH:70,covV:70,mouthW:24,nW:2,nM:4}},
+    {key:'coax90', name:'point source — 90°×60° smooth · coax dish',
      s:{...B,...CDX,...CXU,...W12, topo:'1way',seN:6, covH:90,covV:60,mouthW:24,nW:2,nM:4}},
     {key:'coax60', name:'round — 60°×60° · DCX-class coax dish',
      s:{...B,...CDX,...CXU,...W12, topo:'1way',seN:2, covH:60,covV:60,mouthW:24,nW:2,nM:4}},
@@ -984,7 +998,7 @@ return {C,IN,CM, sePoint,seRing, profile, stations, dimsAt, surfPt, surfN, layou
 if(typeof module!=='undefined') module.exports=MEH2;
 
 /* parametric */
-window.MEH_BUILD=502;
+window.MEH_BUILD=503;
 document.getElementById('bno').textContent=MEH_BUILD;
 "use strict";
 /* ---------------- driver presets (v4 datasheets; mesh = true CAD, meshApprox = nearest body) ---------------- */
@@ -1086,15 +1100,18 @@ function rebuild(){
        knife-flat, the flare-break and corner seams are straight lines, and the
        seams draw as construction edges - "just two plates meeting". */
     const wt=S.wallT||0.012;
-    const FS=st.pts.map(p=>MEH2.facetsAt(st,p.x));
-    const OS=st.pts.map(p=>MEH2.offsetVerts(st,p.x,wt));
-    const NV=FS[0].length, NS=st.pts.length;
+    /* Reference D: on a 1-way the ROUND dish owns the throat region - the square
+       plates start at the dish rim (the dish renders as its own insert below) */
+    const SP=(S.topo==='1way'&&st.xAdapter)? st.pts.filter(p=>p.x>=st.xAdapter-1e-9) : st.pts;
+    const FS=SP.map(p=>MEH2.facetsAt(st,p.x));
+    const OS=SP.map(p=>MEH2.offsetVerts(st,p.x,wt));
+    const NV=FS[0].length, NS=SP.length;
     const mat=(col,op)=>new THREE.MeshPhongMaterial({color:col,shininess:4,side:THREE.DoubleSide,
       flatShading:true,transparent:V3D.xray,opacity:V3D.xray?op:1});
     const plates=(get,mt)=>{ const pos=[],idx=[]; let base=0;
       for(let i=0;i<NV;i++){
         for(let j=0;j<NS;j++){ const [pA,pB]=get(j,i);
-          pos.push(st.pts[j].x,pA[1],pA[0], st.pts[j].x,pB[1],pB[0]); }
+          pos.push(SP[j].x,pA[1],pA[0], SP[j].x,pB[1],pB[0]); }
         for(let j=0;j<NS-1;j++){ const a=base+2*j;
           idx.push(a,a+2,a+1, a+1,a+2,a+3); }
         base+=2*NS; }
@@ -1108,8 +1125,8 @@ function rebuild(){
     { const jm=NS-1, pos=[],idx=[];
       for(let i=0;i<NV;i++){ const a=FS[jm][i].p, b=FS[jm][i].q, A=OS[jm][i], B=OS[jm][(i+1)%NV];
         const b0=pos.length/3;
-        pos.push(st.pts[jm].x,a[1],a[0], st.pts[jm].x,b[1],b[0],
-                 st.pts[jm].x,A[1],A[0], st.pts[jm].x,B[1],B[0]);
+        pos.push(SP[jm].x,a[1],a[0], SP[jm].x,b[1],b[0],
+                 SP[jm].x,A[1],A[0], SP[jm].x,B[1],B[0]);
         idx.push(b0,b0+2,b0+1, b0+1,b0+2,b0+3); }
       const rg2=new THREE.BufferGeometry();
       rg2.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));
@@ -1120,14 +1137,14 @@ function rebuild(){
     { const ep=[];
       const push=(x1,p1,x2,p2)=>ep.push(x1,p1[1],p1[0], x2,p2[1],p2[0]);
       for(let i=0;i<NV;i++) for(let j=0;j<NS-1;j++){
-        push(st.pts[j].x,FS[j][i].p, st.pts[j+1].x,FS[j+1][i].p);
-        push(st.pts[j].x,OS[j][i],   st.pts[j+1].x,OS[j+1][i]); }
+        push(SP[j].x,FS[j][i].p, SP[j+1].x,FS[j+1][i].p);
+        push(SP[j].x,OS[j][i],   SP[j+1].x,OS[j+1][i]); }
       let jb=NS-1;
       if(st.xBreak!==undefined){ let bd=1e9;
-        for(let j=0;j<NS;j++){ const d=Math.abs(st.pts[j].x-st.xBreak); if(d<bd){bd=d;jb=j;} } }
+        for(let j=0;j<NS;j++){ const d=Math.abs(SP[j].x-st.xBreak); if(d<bd){bd=d;jb=j;} } }
       for(const j of [0, jb, NS-1]) for(let i=0;i<NV;i++){
-        push(st.pts[j].x,FS[j][i].p, st.pts[j].x,FS[j][i].q);
-        push(st.pts[j].x,OS[j][i],   st.pts[j].x,OS[j][(i+1)%NV]); }
+        push(SP[j].x,FS[j][i].p, SP[j].x,FS[j][i].q);
+        push(SP[j].x,OS[j][i],   SP[j].x,OS[j][(i+1)%NV]); }
       const lg=new THREE.BufferGeometry();
       lg.setAttribute('position',new THREE.Float32BufferAttribute(ep,3));
       const seams=new THREE.LineSegments(lg,new THREE.LineBasicMaterial({color:0x8a877f}));
@@ -1179,7 +1196,56 @@ function rebuild(){
   }
   /* apex insert: printed plate with CD bore (+ coax tap ring for 1way) -
      polygon plate on ANGULAR (pin #26), disc on smooth */
-  { const t0=st.pts[0];
+  if(S.topo==='1way'&&st.xAdapter){
+    /* REFERENCE D DISH (his build photos): the round adapter dish is its own
+       printed insert - conical face carrying the tap holes, central snout tube
+       for the CD bore, a seam ring where the flange seats on the horn, and on
+       ANGULAR the four corner WINGS that bridge dish rim to the square walls. */
+    const dishM=new THREE.MeshPhongMaterial({color:0xD8D3C9,shininess:8,side:THREE.DoubleSide});
+    const NR=48, K=10, pos=[], idx=[];
+    for(let k=0;k<=K;k++){ const x=st.xAdapter*k/K;
+      const r=Math.max(0.004, MEH2.dimsAt(st,x).a*0.998);
+      for(let m=0;m<NR;m++){ const a2=m/NR*2*Math.PI; pos.push(x, r*Math.sin(a2), r*Math.cos(a2)); } }
+    for(let k=0;k<K;k++) for(let m=0;m<NR;m++){
+      const a=k*NR+m, b2=k*NR+(m+1)%NR, c=(k+1)*NR+m, d2=(k+1)*NR+(m+1)%NR;
+      idx.push(a,c,b2, b2,c,d2); }
+    const dg=new THREE.BufferGeometry();
+    dg.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));
+    dg.setIndex(idx); dg.computeVertexNormals();
+    const dish=new THREE.Mesh(dg,dishM); dish.userData.tag='apex'; g.add(dish);
+    /* seam ring: the dish flange seating on the horn (the dark step in his photos) */
+    { const rR=MEH2.dimsAt(st,st.xAdapter).a, sp2=[];
+      for(let m=0;m<=64;m++){ const a2=m/64*2*Math.PI; sp2.push(st.xAdapter, rR*Math.sin(a2), rR*Math.cos(a2)); }
+      const lgg=new THREE.BufferGeometry();
+      lgg.setAttribute('position',new THREE.Float32BufferAttribute(sp2,3));
+      const seam=new THREE.Line(lgg,new THREE.LineBasicMaterial({color:0x6b6963}));
+      seam.userData.tag='apex'; g.add(seam); }
+    /* central snout tube: the CD bore through the dish center */
+    { const rB=S.td*MEH2.IN/2+0.003;
+      const tube=new THREE.Mesh(new THREE.CylinderGeometry(rB,rB+0.002,0.035,32,1,true),dishM);
+      tube.rotation.z=Math.PI/2; tube.position.x=-0.014; tube.userData.tag='apex'; g.add(tube); }
+    /* corner wings (angular): flat vanes from the dish rim to the square corners */
+    if(S.style==='angular'){
+      const rR=MEH2.dimsAt(st,st.xAdapter).a;
+      const F=MEH2.facetsAt(st,Math.min(st.depth,st.xAdapter+1e-4));
+      for(const f of F){ if(!f.ch) continue;
+        const ph=Math.atan2(f.mid[1],f.mid[0]);
+        const wp=[], wi=[]; wp.push(st.xAdapter, f.mid[1], f.mid[0]);
+        const NA=7;
+        for(let q=0;q<=NA;q++){ const aa=ph-0.55+1.1*q/NA;
+          wp.push(st.xAdapter, rR*Math.sin(aa), rR*Math.cos(aa)); }
+        for(let q=0;q<NA;q++) wi.push(0,1+q,2+q);
+        const wg=new THREE.BufferGeometry();
+        wg.setAttribute('position',new THREE.Float32BufferAttribute(wp,3));
+        wg.setIndex(wi); wg.computeVertexNormals();
+        const wing=new THREE.Mesh(wg,new THREE.MeshPhongMaterial({color:0xD2CCC0,shininess:6,side:THREE.DoubleSide}));
+        wing.userData.tag='apex'; g.add(wing);
+      }
+    }
+    const bore=new THREE.Mesh(new THREE.CircleGeometry(S.td*MEH2.IN/2,32),
+      new THREE.MeshBasicMaterial({color:0x0d0c0b,side:THREE.DoubleSide}));
+    bore.rotation.y=Math.PI/2; bore.position.x=-0.0005; bore.userData.tag='port'; g.add(bore);
+  } else { const t0=st.pts[0];
     let plate;
     if(S.style==='angular'){
       const F=MEH2.facetsAt(st,t0.x), pos=[],idx=[];
@@ -1280,6 +1346,13 @@ function rebuild(){
     body.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),new THREE.Vector3(-1,0,0));
     body.position.set(st.pts[0].x-0.004,0,0);
     body.traverse(o=>o.userData.tag='driver'); g.add(body);
+    /* Reference D photo canon: the coax's CD stacks on the woofer's back */
+    { const met=new THREE.MeshPhongMaterial({color:0x8a8a88,shininess:18});
+      const xB=st.pts[0].x-0.004-cx.dp*0.95;
+      const c1=new THREE.Mesh(new THREE.CylinderGeometry(0.048,0.052,0.045,28),met);
+      c1.rotation.z=Math.PI/2; c1.position.set(xB-0.024,0,0); c1.userData.tag='driver'; g.add(c1);
+      const c2=new THREE.Mesh(new THREE.CylinderGeometry(0.030,0.033,0.032,24),met);
+      c2.rotation.z=Math.PI/2; c2.position.set(xB-0.062,0,0); c2.userData.tag='driver'; g.add(c2); }
   } else {
     const cd=new THREE.Mesh(new THREE.CylinderGeometry(0.065,0.075,S.cdDepth*MEH2.IN,28),
       new THREE.MeshPhongMaterial({color:0x8a8a88,shininess:18}));

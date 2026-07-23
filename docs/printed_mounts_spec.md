@@ -76,3 +76,19 @@ Photo: reference/build_photos (coax dish on the printer bed). Corrections to v5'
 - v5 to-do (queued in M5): 1way part = dish insert (flange + bore tube + round
   tap holes + wings) sitting in a square angular first flare; tap-hole area
   still velocity-derived; XO from the dish-face slant path (unchanged law).
+
+### Reference D photo study (2026-07-23, five-shot carousel) — LANDED build 503
+Confirmations from the new photos (render + real BMS-coax part):
+1. SQUARE straight-walled single-expansion horn (classic angular), FLAT mouth
+   with a bolt-hole flange - no roll, no second Waslo expansion on the 1-way.
+2. The dish is a SEPARATE round insert with a stepped flange seat (visible as
+   the dark seam ring where it lands on the horn walls).
+3. Four corner WINGS (flat vanes) bridge the dish rim to the square corners.
+4. Central snout: external funnel behind the dish rising to the CD bore tube.
+5. THE COAX STACK: the compression driver bolts coaxially on the BACK of the
+   woofer (BMS style) - the whole unit hangs behind the dish on its bolt circle.
+v5 build 503 implements all five: engine profile 1way+angular = round dish
+(nOv:2) in a square straight flare; shell renders dish insert + seam + wings +
+snout tube + stacked CD; 'Reference D' is the flagship 1-way KNOWN BUILD
+(70x70 square, gate-asserted exemplary). Topology button renamed 2-WAY COAX
+(the only feasible 2-way rides the coax CD - plain-CD states refuse honestly).
