@@ -127,6 +127,21 @@ function sePoint(a,b,n,phi){
    FLAT segments (his call: straight panels, not a smoothed superellipse). The shape
    slider maps to chamfer size: square end = small chamfer, round end = wide (octagon). */
 function panelRing(a,b,n,M){
+  /* pin #7: the shape slider works in ANGULAR too - square end = rect + 45deg
+     chamfers; round end = a 16-facet barrel (a 'circle' built from straight panels). */
+  if(n<=7){
+    const NF=Math.max(8, Math.round(22-2*n));       // n=2 -> 18 facets, n=7 -> 8
+    const V=[]; for(let i=0;i<NF;i++){ const t=(i+0.5)/NF*2*Math.PI; V.push(sePoint(a,b,Math.max(n,2),t)); }
+    const segs=[]; let L=0;
+    for(let i=0;i<NF;i++){ const p=V[i], q=V[(i+1)%NF];
+      const l=Math.hypot(q[0]-p[0],q[1]-p[1]); segs.push(l); L+=l; }
+    const out=[]; let used=0, i=0;
+    for(let k=0;k<M;k++){ const t=k/M*L;
+      while(used+segs[i]<t){ used+=segs[i]; i=(i+1)%NF; }
+      const f=(t-used)/(segs[i]||1e-9), p=V[i], q=V[(i+1)%NF];
+      const pt=[p[0]+(q[0]-p[0])*f, p[1]+(q[1]-p[1])*f]; pt.param=Math.atan2(pt[1],pt[0]); out.push(pt); }
+    return out;
+  }
   const ch=Math.max(0.06, Math.min(0.42, (12-n)/12*0.42+0.06));   // chamfer fraction of the half-width
   const ca=a*ch, cb=b*ch;
   const V=[ [a,-b+cb],[a,b-cb],[a-ca,b],[-a+ca,b],[-a,b-cb],[-a,-b+cb],[-a+ca,-b],[a-ca,-b] ];
@@ -677,10 +692,10 @@ function rebuild(){
       tap.applyMatrix4(mB); tap.userData.tag='port'; tap.userData.kind=d.kind; g.add(tap);
     }
     /* printed seat: FLUSH pad under the flange (pin #2: proud collars read as rings) */
-    { const seat=new THREE.Mesh(new THREE.CylinderGeometry(d.od/2+0.005,d.od/2+0.009,0.009,40),
+    { const seat=new THREE.Mesh(new THREE.CylinderGeometry(d.od/2+0.004,d.od/2+0.006,0.005,40),
         new THREE.MeshPhongMaterial({color:0xE2DDD3,shininess:6}));
       seat.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),n);
-      seat.position.copy(c).add(n.clone().multiplyScalar((S.wallT||0.012)+0.0045));   // seat on the OUTER face
+      seat.position.copy(c).add(n.clone().multiplyScalar((S.wallT||0.012)+0.0025));   // slim seat ON the outer face (pin #6)
       seat.userData.tag='seat'; g.add(seat);
     }
     /* driver body: CLEAN PARAMETRIC SILHOUETTE (his call: approximate the outer

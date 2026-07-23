@@ -274,10 +274,10 @@ function rebuild(){
       tap.applyMatrix4(mB); tap.userData.tag='port'; tap.userData.kind=d.kind; g.add(tap);
     }
     /* printed seat: FLUSH pad under the flange (pin #2: proud collars read as rings) */
-    { const seat=new THREE.Mesh(new THREE.CylinderGeometry(d.od/2+0.005,d.od/2+0.009,0.009,40),
+    { const seat=new THREE.Mesh(new THREE.CylinderGeometry(d.od/2+0.004,d.od/2+0.006,0.005,40),
         new THREE.MeshPhongMaterial({color:0xE2DDD3,shininess:6}));
       seat.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),n);
-      seat.position.copy(c).add(n.clone().multiplyScalar((S.wallT||0.012)+0.0045));   // seat on the OUTER face
+      seat.position.copy(c).add(n.clone().multiplyScalar((S.wallT||0.012)+0.0025));   // slim seat ON the outer face (pin #6)
       seat.userData.tag='seat'; g.add(seat);
     }
     /* driver body: CLEAN PARAMETRIC SILHOUETTE (his call: approximate the outer
