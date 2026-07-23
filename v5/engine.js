@@ -156,19 +156,23 @@ function profile(S){
 function stations(S){
   const pr=profile(S);
   const ar=Math.tan(d2r(S.covV/2))/Math.tan(d2r(S.covH/2));   // vertical/horizontal
+  const morph=(x)=>{ if(S.style==='angular') return S.seN;
+    const t=Math.min(1, x/(0.45*pr.depth)), s=t*t*(3-2*t);
+    return 2+(S.seN-2)*s; };                             // M5/pin #20: ROUND at the CD exit -> the chosen shape (ATH canon)
   return { form:'se', n:S.seN, style:S.style,
-           pts:pr.pts.map(p=>({x:p.x, a:p.h, b:(p.v!==undefined)?p.v:p.h*ar, roll:p.roll})),
+           pts:pr.pts.map(p=>({x:p.x, a:p.h, b:(p.v!==undefined)?p.v:p.h*ar, roll:p.roll, n:morph(p.x)})),
            depth:pr.depth, rollR:pr.rollR, throat:S.throat*IN/2, ar, xBreak:pr.xBreak, slopeCos:pr.slopeCos, xAdapter:pr.xAdapter };
 }
 function dimsAt(st,x){
   const P=st.pts;
   if(x<=P[0].x) return {a:P[0].a,b:P[0].b};
   for(let i=1;i<P.length;i++){ if(P[i].x>=x){ const f=(x-P[i-1].x)/((P[i].x-P[i-1].x)||1e-9);
-    return {a:P[i-1].a+(P[i].a-P[i-1].a)*f, b:P[i-1].b+(P[i].b-P[i-1].b)*f}; } }
-  return {a:P[P.length-1].a,b:P[P.length-1].b};
+    return {a:P[i-1].a+(P[i].a-P[i-1].a)*f, b:P[i-1].b+(P[i].b-P[i-1].b)*f,
+            n:(P[i-1].n!==undefined)? P[i-1].n+(P[i].n-P[i-1].n)*f : undefined}; } }
+  const q=P[P.length-1]; return {a:q.a,b:q.b,n:q.n};
 }
 /* surface point + outward normal at station x, azimuth phi */
-function surfPt(st,x,phi){ const d=dimsAt(st,x); const [y,z]=sePoint(d.a,d.b,st.n,phi); return [x,y,z]; }
+function surfPt(st,x,phi){ const d=dimsAt(st,x); const [y,z]=sePoint(d.a,d.b,(d.n!==undefined)?d.n:st.n,phi); return [x,y,z]; }
 function surfN(st,x,phi){
   const e=Math.max(1e-4,st.depth*2e-3);
   const p0=surfPt(st,Math.max(0,x-e),phi), p1=surfPt(st,Math.min(st.depth,x+e),phi);
@@ -188,7 +192,7 @@ function surfN(st,x,phi){
    2way: CD at apex + nW woofers on facet seats at the λ/4 station, slot under each.
    3way: CD + nM mids ringing the apex insert + nW woofers further out.        */
 function perimeterAt(st,x){
-  const d=dimsAt(st,x), ring=seRing(d.a,d.b,st.n,64,st.style);
+  const d=dimsAt(st,x), ring=seRing(d.a,d.b,(d.n!==undefined)?d.n:st.n,64,st.style);
   let L=0; for(let i=0;i<ring.length;i++){ const j=(i+1)%ring.length;
     L+=Math.hypot(ring[j][0]-ring[i][0],ring[j][1]-ring[i][1]); }
   return L;
@@ -196,7 +200,7 @@ function perimeterAt(st,x){
 /* smallest station whose PLACED ring truly clears: equal-arc seats, measured chords.
    No heuristic factors - construct the candidate and measure it (v5 discipline). */
 function ringSeats(st,x,n,K,off){
-  const d=dimsAt(st,x), ring=seRing(d.a,d.b,st.n,K,st.style);
+  const d=dimsAt(st,x), ring=seRing(d.a,d.b,(d.n!==undefined)?d.n:st.n,K,st.style);
   const o=Math.round((off||0)*K);
   const out=[]; for(let k=0;k<n;k++) out.push(ring[(Math.round(k*K/n)+o)%K]);
   return out;
@@ -204,17 +208,17 @@ function ringSeats(st,x,n,K,off){
 /* WALL-PAIR seats (his pin #1: 'like how danley does it'): wide-format horns put
    woofers in rows on the TOP/BOTTOM walls; tall formats use the sides. */
 function pairSeats(st,x,n,vertical){
-  const d=dimsAt(st,x);
+  const d=dimsAt(st,x), nn=(d.n!==undefined)?d.n:st.n;
   const nT=Math.ceil(n/2), nB=n-nT, out=[];
   const put=(count,sgn)=>{
     for(let i=0;i<count;i++){
       const t=count===1?0:((i/(count-1))-0.5)*2;
       let y,z;
       if(vertical){ z=t*d.b*0.60;
-        y=sgn*d.a*Math.pow(Math.max(0,1-Math.pow(Math.abs(z/d.b),st.n)),1/st.n); }
+        y=sgn*d.a*Math.pow(Math.max(0,1-Math.pow(Math.abs(z/d.b),nn)),1/nn); }
       else{ y=t*d.a*0.60;
-        z=sgn*d.b*Math.pow(Math.max(0,1-Math.pow(Math.abs(y/d.a),st.n)),1/st.n); }
-      const p=[y,z]; p.param=paramFor(d.a,d.b,st.n,y,z);   // proven normals via surfN
+        z=sgn*d.b*Math.pow(Math.max(0,1-Math.pow(Math.abs(y/d.a),nn)),1/nn); }
+      const p=[y,z]; p.param=paramFor(d.a,d.b,nn,y,z);   // proven normals via surfN
       out.push(p);
     } };
   put(nT,1); put(nB,-1);
@@ -476,7 +480,7 @@ function layout(S,st){
     S.fxDerived={hi: fxCo, lo: fxCo};
     const sdC=S.sdC|| (S.sdW||150);
     const apC=sdC/Math.max(4,Math.min(8, 17/(2*Math.PI*fxCo*((S.xmC||S.xmW||4)/1000)) ))/nT;   // cm^2 per slot, velocity-clamped CR
-    const saC=Math.sqrt(apC*1e-4*3)/2, sbC=Math.sqrt(apC*1e-4/3)/2;
+    const rC=Math.sqrt(apC*1e-4/Math.PI); const saC=rC, sbC=rC;   // Reference D: ROUND holes through the dish face
     for(const [a2,p] of taps){ const nrm=surfN(st,xT,a2);
       out.push({kind:'coaxtap', x:xT, phi:a2, center:p, normal:nrm, od:0.02, dp:0,
         tap:p, seatR:sbC+0.004, slot:{sa:saC, sb:sbC, ap:apC, radial:true}}); }
@@ -640,7 +644,7 @@ const CX={ add:(x,y)=>[x[0]+y[0],x[1]+y[1]], mul:(x,y)=>[x[0]*y[0]-x[1]*y[1],x[0
   div:(x,y)=>{const d=y[0]*y[0]+y[1]*y[1]||1e-30;return [(x[0]*y[0]+x[1]*y[1])/d,(x[1]*y[0]-x[0]*y[1])/d];},
   inv:x=>CX.div([1,0],x), abs:x=>Math.hypot(x[0],x[1]), scale:(x,k)=>[x[0]*k,x[1]*k] };
 function areaAt(st,x){
-  const d=dimsAt(st,x), ring=seRing(d.a,d.b,st.n,48,st.style);
+  const d=dimsAt(st,x), ring=seRing(d.a,d.b,(d.n!==undefined)?d.n:st.n,48,st.style);
   let A=0; for(let i=0;i<ring.length;i++){ const j=(i+1)%ring.length;
     A+=ring[i][0]*ring[j][1]-ring[j][0]*ring[i][1]; }
   return Math.abs(A)/2;

@@ -217,7 +217,7 @@ function rebuild(){
   window.__ev=ev; window.__solved=r;
   const M=64, wallT=0.008;
   /* horn inner surface (single smooth print) */
-  const rings=st.pts.map(p=>MEH2.seRing(p.a,p.b,st.n,M));
+  const rings=st.pts.map(p=>MEH2.seRing(p.a,p.b,(p.n!==undefined)?p.n:st.n,M));   // M5: round throat morphs to the shape
   const pos=[], idx=[];
   st.pts.forEach((p,i)=>{ rings[i].forEach(q=>pos.push(p.x,q[1],q[0])); });
   for(let i=0;i<st.pts.length-1;i++) for(let j=0;j<M;j++){
@@ -249,7 +249,7 @@ function rebuild(){
     outer.userData.tag='shell'; g.add(outer);
     /* lip underside: outer pre-roll edge -> the roll tip ring */
     { const pl=pre[pre.length-1], tip=st.pts[st.pts.length-1];
-      const ro=MEH2.offsetRing(st,pl.x,wt,M), rt=MEH2.seRing(tip.a,tip.b,st.n,M);
+      const ro=MEH2.offsetRing(st,pl.x,wt,M), rt=MEH2.seRing(tip.a,tip.b,(tip.n!==undefined)?tip.n:st.n,M);
       const rp=[], rx=[];
       ro.forEach(q=>rp.push(pl.x,q[1],q[0])); rt.forEach(q=>rp.push(tip.x,q[1],q[0]));
       for(let j=0;j<M;j++){ const a2=j,b3=(j+1)%M,c2=M+j,d3=M+(j+1)%M; rx.push(a2,c2,b3, b3,c2,d3); }
@@ -278,10 +278,11 @@ function rebuild(){
       const nC=P3(d.normal);
       const rad=rad0.clone().sub(nC.clone().multiplyScalar(rad0.dot(nC))).normalize();   // radial, in the wall plane
       const tan=nC.clone().cross(rad);
-      const sp=new THREE.Shape(); const r2=0.9;
+      const sp=new THREE.Shape(); sp.absarc(0,0,1,0,Math.PI*2,false); const r2=0;   // Reference D: round tap holes
+      if(false){
       sp.moveTo(-1+r2,-1); sp.lineTo(1-r2,-1); sp.quadraticCurveTo(1,-1,1,-1+r2);
       sp.lineTo(1,1-r2); sp.quadraticCurveTo(1,1,1-r2,1); sp.lineTo(-1+r2,1);
-      sp.quadraticCurveTo(-1,1,-1,1-r2); sp.lineTo(-1,-1+r2); sp.quadraticCurveTo(-1,-1,-1+r2,-1);
+      sp.quadraticCurveTo(-1,1,-1,1-r2); sp.lineTo(-1,-1+r2); sp.quadraticCurveTo(-1,-1,-1+r2,-1); }
       const tap=new THREE.Mesh(new THREE.ShapeGeometry(sp,8),
         new THREE.MeshBasicMaterial({color:0x0d0c0b,side:THREE.DoubleSide}));
       const mB=new THREE.Matrix4().makeBasis(rad.clone().multiplyScalar(sa),tan.clone().multiplyScalar(sb),nC);
