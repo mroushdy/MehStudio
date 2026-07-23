@@ -12,6 +12,11 @@ Last updated: 2026-07-23 (M2+gate landed). v4 frozen at build 83. All work is v5
 7. Driver preset library (datasheet dims incl. Sd/Vtc/xm) + custom sliders
 8. Parametric driver silhouettes (his call; CAD retired, -850KB)
 9. CLASSIC ANGULAR = true flat panels (rect + 45deg chamfers, straight cone)
+10. PIN #9: facet-aware ANGULAR placement - facetsAt/facetN panel model; ring
+    seats distributed arc-uniformly over the BIG-panel perimeter (chamfers
+    excluded, order-preserving); pairs rows filtered to their OWN walls by
+    facet normal; slots lie flat on panels. Node-angular blind spot fixed
+    (style rides on stations; seRing global-S sniff retired).
 
 
 ## MEH COMPLETENESS (his correction 2026-07-23: "a lot missing from making this MEH")
