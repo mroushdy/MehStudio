@@ -401,7 +401,9 @@ function layout(S,st){
       const p=[x,q[0],q[1]];
       const nrm=(q.facet!==undefined)? facetN(st,x,q.facet)
               : surfN(st,x,(q.param!==undefined)?q.param:Math.atan2(q[1],q[0]));   // ONE proven normal path per style
-      out.push({kind, x, phi:Math.atan2(q[1],q[0]), center:p, normal:nrm, od, dp, tap:p, seatR:od/2+0.011, facet:q.facet});
+      const drv={kind, x, phi:Math.atan2(q[1],q[0]), center:p, normal:nrm, od, dp, tap:p, seatR:od/2+0.011, facet:q.facet};
+      if(S.mount==='axial') drv.mountN=[-1,0,0];               // pin #5: spot-face land - body axis parallel to the horn axis
+      out.push(drv);
     }
   };
   if(S.topo!=='1way' && xW!=null){
@@ -410,8 +412,10 @@ function layout(S,st){
       const p=[xW,q[0],q[1]];
       const nrm=(q.facet!==undefined)? facetN(st,xW,q.facet)
               : surfN(st,xW,(q.param!==undefined)?q.param:Math.atan2(q[1],q[0]));   // PROVEN normal per style
-      out.push({kind:'woof', x:xW, phi:Math.atan2(q[1],q[0]), center:p, normal:nrm,
-        od:S.odW*CM, dp:S.dpW*CM, tap:p, seatR:S.odW*CM/2+0.011, facet:q.facet});
+      const drv={kind:'woof', x:xW, phi:Math.atan2(q[1],q[0]), center:p, normal:nrm,
+        od:S.odW*CM, dp:S.dpW*CM, tap:p, seatR:S.odW*CM/2+0.011, facet:q.facet};
+      if(S.mount==='axial') drv.mountN=[-1,0,0];               // pin #5: spot-face land
+      out.push(drv);
     }
   }
   if(S.topo==='3way' && xM!=null) placeRing('mid', xM, (S.nM|0)||4, S.odM*CM, S.dpM*CM, 0, modeM);
@@ -466,8 +470,20 @@ function acoustics(S,L,st){
     add(kind.toUpperCase(),'Port velocity at band low edge ('+fLow+' Hz)',vel.toFixed(1)+' m/s',vel<=17.2,vel<=20,'compendium: the real port-area criterion, evaluated at the band bottom');
     /* REAL port length: print wall + 0.85r end correction (matches the response network) */
     const lpt=(S.wallT||0.012)+0.85*Math.sqrt(ap*1e-4/Math.PI);
-    const fLP=C/(2*Math.PI)*Math.sqrt((ap*1e-4)/((vtc*1e-6)*lpt));
-    add(kind.toUpperCase(),'Chamber acoustic low-pass',Math.round(fLP)+' Hz',fLP>=1.2*fx,fLP>=fx,'Vtc+tap Helmholtz (real wall + end-corrected port) must clear the crossover ('+fx+' Hz)');
+    /* pin #5: the axial land is printed SOLID - the tap port runs THROUGH it, so
+       the port LENGTHENS by the land's local thickness (~0.7*seatR*tan(tilt));
+       the front chamber volume stays the driver's own Vtc */
+    let lptEff=lpt, landed=false;
+    if(S.mount==='axial'){
+      let mx=0;
+      for(const d of drs){ if(!d.mountN) continue;
+        const ct=Math.abs(d.normal[0]*d.mountN[0]+d.normal[1]*d.mountN[1]+d.normal[2]*d.mountN[2]);
+        mx=Math.max(mx, Math.tan(Math.acos(Math.min(1,ct)))); }
+      if(mx>0){ lptEff=lpt + 0.7*(((drs[0].seatR)||0.05))*mx; landed=true; }
+    }
+    const fLP=C/(2*Math.PI)*Math.sqrt((ap*1e-4)/((vtc*1e-6)*lptEff));
+    add(kind.toUpperCase(),'Chamber acoustic low-pass',Math.round(fLP)+' Hz',fLP>=1.2*fx,fLP>=fx,
+      (landed?'tap runs THROUGH the solid axial land (port lengthened ~0.7*seatR*tan(tilt)) - ':'')+'Vtc+tap Helmholtz (real wall + end-corrected port) must clear the crossover ('+fx+' Hz)');
     /* ---- M2: the tap placement/size laws (US 8,284,976 / Waslo / Hinson) ---- */
     if(st && drs[0] && drs[0].x!==undefined){
       const K=kind.toUpperCase(), xT=drs[0].x, Astn=areaAt(st,xT), lam=C/fx;

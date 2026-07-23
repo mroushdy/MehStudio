@@ -12,7 +12,12 @@ Last updated: 2026-07-23 (M2+gate landed). v4 frozen at build 83. All work is v5
 7. Driver preset library (datasheet dims incl. Sd/Vtc/xm) + custom sliders
 8. Parametric driver silhouettes (his call; CAD retired, -850KB)
 9. CLASSIC ANGULAR = true flat panels (rect + 45deg chamfers, straight cone)
-10. PIN #9: facet-aware ANGULAR placement - facetsAt/facetN panel model; ring
+10. PIN #5: AXIAL SPOT-FACE LANDS (JW print canon) - DRIVER MOUNT select:
+    flush (tilts with the wall, Danley) vs axial (printed wedge land keeps
+    every body parallel to the horn axis). The land is SOLID: the tap port
+    runs through it, so the Helmholtz law lengthens Lpt by ~0.7*seatR*tan(tilt)
+    (stated in the row). Gate lattice exercises axial states.
+10b. PIN #9: facet-aware ANGULAR placement - facetsAt/facetN panel model; ring
     seats distributed arc-uniformly over the BIG-panel perimeter (chamfers
     excluded, order-preserving); pairs rows filtered to their OWN walls by
     facet normal; slots lie flat on panels. Node-angular blind spot fixed

@@ -77,6 +77,11 @@ select{width:100%;font-family:var(--mono);font-size:11px;background:var(--paper)
   <input type="range" id="odW" min="8" max="46" step="1" value="14">
   <label>WOOFER COUNT <span class="val" id="vNW"></span></label>
   <input type="range" id="nW" min="2" max="8" step="1" value="6">
+  <label>DRIVER MOUNT</label>
+  <select id="mountSel">
+    <option value="flush" selected>flush on the wall — tilts with it (Danley)</option>
+    <option value="axial">axial spot-face lands — bodies stay straight (print canon)</option>
+  </select>
   <label>WOOFER PLACEMENT</label>
   <select id="placeW">
     <option value="auto" selected>auto — smart (coverage-driven)</option>
@@ -513,7 +518,9 @@ function layout(S,st){
       const p=[x,q[0],q[1]];
       const nrm=(q.facet!==undefined)? facetN(st,x,q.facet)
               : surfN(st,x,(q.param!==undefined)?q.param:Math.atan2(q[1],q[0]));   // ONE proven normal path per style
-      out.push({kind, x, phi:Math.atan2(q[1],q[0]), center:p, normal:nrm, od, dp, tap:p, seatR:od/2+0.011, facet:q.facet});
+      const drv={kind, x, phi:Math.atan2(q[1],q[0]), center:p, normal:nrm, od, dp, tap:p, seatR:od/2+0.011, facet:q.facet};
+      if(S.mount==='axial') drv.mountN=[-1,0,0];               // pin #5: spot-face land - body axis parallel to the horn axis
+      out.push(drv);
     }
   };
   if(S.topo!=='1way' && xW!=null){
@@ -522,8 +529,10 @@ function layout(S,st){
       const p=[xW,q[0],q[1]];
       const nrm=(q.facet!==undefined)? facetN(st,xW,q.facet)
               : surfN(st,xW,(q.param!==undefined)?q.param:Math.atan2(q[1],q[0]));   // PROVEN normal per style
-      out.push({kind:'woof', x:xW, phi:Math.atan2(q[1],q[0]), center:p, normal:nrm,
-        od:S.odW*CM, dp:S.dpW*CM, tap:p, seatR:S.odW*CM/2+0.011, facet:q.facet});
+      const drv={kind:'woof', x:xW, phi:Math.atan2(q[1],q[0]), center:p, normal:nrm,
+        od:S.odW*CM, dp:S.dpW*CM, tap:p, seatR:S.odW*CM/2+0.011, facet:q.facet};
+      if(S.mount==='axial') drv.mountN=[-1,0,0];               // pin #5: spot-face land
+      out.push(drv);
     }
   }
   if(S.topo==='3way' && xM!=null) placeRing('mid', xM, (S.nM|0)||4, S.odM*CM, S.dpM*CM, 0, modeM);
@@ -578,8 +587,20 @@ function acoustics(S,L,st){
     add(kind.toUpperCase(),'Port velocity at band low edge ('+fLow+' Hz)',vel.toFixed(1)+' m/s',vel<=17.2,vel<=20,'compendium: the real port-area criterion, evaluated at the band bottom');
     /* REAL port length: print wall + 0.85r end correction (matches the response network) */
     const lpt=(S.wallT||0.012)+0.85*Math.sqrt(ap*1e-4/Math.PI);
-    const fLP=C/(2*Math.PI)*Math.sqrt((ap*1e-4)/((vtc*1e-6)*lpt));
-    add(kind.toUpperCase(),'Chamber acoustic low-pass',Math.round(fLP)+' Hz',fLP>=1.2*fx,fLP>=fx,'Vtc+tap Helmholtz (real wall + end-corrected port) must clear the crossover ('+fx+' Hz)');
+    /* pin #5: the axial land is printed SOLID - the tap port runs THROUGH it, so
+       the port LENGTHENS by the land's local thickness (~0.7*seatR*tan(tilt));
+       the front chamber volume stays the driver's own Vtc */
+    let lptEff=lpt, landed=false;
+    if(S.mount==='axial'){
+      let mx=0;
+      for(const d of drs){ if(!d.mountN) continue;
+        const ct=Math.abs(d.normal[0]*d.mountN[0]+d.normal[1]*d.mountN[1]+d.normal[2]*d.mountN[2]);
+        mx=Math.max(mx, Math.tan(Math.acos(Math.min(1,ct)))); }
+      if(mx>0){ lptEff=lpt + 0.7*(((drs[0].seatR)||0.05))*mx; landed=true; }
+    }
+    const fLP=C/(2*Math.PI)*Math.sqrt((ap*1e-4)/((vtc*1e-6)*lptEff));
+    add(kind.toUpperCase(),'Chamber acoustic low-pass',Math.round(fLP)+' Hz',fLP>=1.2*fx,fLP>=fx,
+      (landed?'tap runs THROUGH the solid axial land (port lengthened ~0.7*seatR*tan(tilt)) - ':'')+'Vtc+tap Helmholtz (real wall + end-corrected port) must clear the crossover ('+fx+' Hz)');
     /* ---- M2: the tap placement/size laws (US 8,284,976 / Waslo / Hinson) ---- */
     if(st && drs[0] && drs[0].x!==undefined){
       const K=kind.toUpperCase(), xT=drs[0].x, Astn=areaAt(st,xT), lam=C/fx;
@@ -976,18 +997,27 @@ function rebuild(){
       mB.setPosition(c.clone().add(n.clone().multiplyScalar(-0.0015)));   // pin #3: the tap opens on the INNER face - visible through the mouth
       tap.applyMatrix4(mB); tap.userData.tag='port'; tap.userData.kind=d.kind; g.add(tap);
     }
-    /* printed seat: FLUSH pad under the flange (pin #2: proud collars read as rings) */
-    { const seat=new THREE.Mesh(new THREE.CylinderGeometry(d.od/2+0.004,d.od/2+0.006,0.005,40),
-        new THREE.MeshPhongMaterial({color:0xE2DDD3,shininess:6}));
-      seat.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),n);
-      seat.position.copy(c).add(n.clone().multiplyScalar((S.wallT||0.012)+0.0025));   // slim seat ON the outer face (pin #6)
-      seat.userData.tag='seat'; g.add(seat);
-    }
-    /* driver body: CLEAN PARAMETRIC SILHOUETTE (his call: approximate the outer
-       shapes, not literal CAD). Smooth lathe from the preset's true dimensions. */
-    { const body=driverBody(d.od, d.dp, (d.kind==='mid'? MPRE[S.mPre] : WPRE[S.wPre])||{});
-      body.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),n);
-      body.position.copy(c).add(n.clone().multiplyScalar((S.wallT||0.012)+0.004));   // flange on the outer face; tap runs through the wall
+    /* printed seat + body: FLUSH rides the wall normal; AXIAL (pin #5) rides the
+       spot-face land - a printed wedge keeps the body parallel to the horn axis */
+    { const mN=d.mountN? P3(d.mountN) : n;
+      const ct=Math.max(0.15,Math.abs(n.dot(mN)));
+      const wedge=d.mountN? (d.seatR||d.od/2)*Math.tan(Math.acos(Math.min(1,ct))) : 0;
+      const base=c.clone().add(n.clone().multiplyScalar(S.wallT||0.012));
+      if(d.mountN){ const land=new THREE.Mesh(
+          new THREE.CylinderGeometry(d.od/2+0.004, d.od/2+0.007, Math.max(0.006,wedge), 40),
+          new THREE.MeshPhongMaterial({color:0xE2DDD3,shininess:6}));
+        land.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),mN);
+        land.position.copy(base).add(mN.clone().multiplyScalar(Math.max(0.006,wedge)/2));
+        land.userData.tag='seat'; g.add(land);
+      } else { const seat=new THREE.Mesh(new THREE.CylinderGeometry(d.od/2+0.004,d.od/2+0.006,0.005,40),
+          new THREE.MeshPhongMaterial({color:0xE2DDD3,shininess:6}));
+        seat.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),n);
+        seat.position.copy(base).add(n.clone().multiplyScalar(0.0025));   // slim seat ON the outer face (pin #6)
+        seat.userData.tag='seat'; g.add(seat);
+      }
+      const body=driverBody(d.od, d.dp, (d.kind==='mid'? MPRE[S.mPre] : WPRE[S.wPre])||{});
+      body.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),mN);
+      body.position.copy(base).add(mN.clone().multiplyScalar(d.mountN? Math.max(0.006,wedge)+0.002 : 0.004));
       body.traverse(o=>o.userData.tag='driver'); g.add(body);
     }
   }
@@ -1096,6 +1126,8 @@ function wire(){
   document.getElementById('bXray').onclick=()=>{ V3D.xray=!V3D.xray; rebuild(); };
   { const el=document.getElementById('placeW'); el.value=S.placeW||'auto';
     el.onchange=()=>{ S.placeW=el.value; save(); rebuild(); }; }
+  { const el=document.getElementById('mountSel'); el.value=S.mount||'flush';
+    el.onchange=()=>{ S.mount=el.value; save(); rebuild(); }; }
 }
 /* ---------------- bug pins (proven v3 module; bare-scope safe) ---------------- */
 window.BUGPINS=(function(){

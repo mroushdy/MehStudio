@@ -43,7 +43,8 @@ for(const style of ['smooth','angular'])
 for(const [covH,covV] of [[90,60],[60,60],[120,60],[60,90]])
 for(const placeW of (topo==='2way'?['auto','ring','pairsH','pairsV']:['auto']))
 for(const wallT of (placeW==='auto'?[0.008,0.02]:[0.012]))
-  lattice.push(mk({topo,seN,style,covH,covV,placeW,wallT,
+for(const mount of ((placeW==='auto'&&wallT===0.02)?['flush','axial']:['flush']))
+  lattice.push(mk({topo,seN,style,covH,covV,placeW,wallT,mount,
     _w: covH>=120?'w8':(seN>=12?'hpl10':'w5'), _m: topo==='3way'?'m4':'m3'}));
 
 for(const S of lattice){
@@ -70,6 +71,7 @@ for(const S of lattice){
   /* layout */
   try{ L=MEH2.layout(S,st); }catch(e){ ck(false,tag+' layout threw: '+e.message); continue; }
   for(const d of L){
+    if(S.mount==='axial'&&d.kind!=='coaxtap') ck(!!d.mountN&&Math.abs(d.mountN[0]+1)<1e-9, tag+' axial mount lost its land axis');
     ck(d.center.every(fin)&&d.normal.every(fin)&&d.tap.every(fin), tag+' non-finite driver fields');
     const nl=Math.hypot(...d.normal); ck(Math.abs(nl-1)<0.01, tag+' normal not unit ('+nl.toFixed(3)+')');
     const off=Math.hypot(d.tap[0]-d.center[0],d.tap[1]-d.center[1],d.tap[2]-d.center[2]);
