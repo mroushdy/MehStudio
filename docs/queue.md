@@ -16,7 +16,7 @@ Last updated: 2026-07-23 (late). v4 frozen at build 83. All work is v5.
 
 ## MEH COMPLETENESS (his correction 2026-07-23: "a lot missing from making this MEH")
 This list OUTRANKS A-I. The physics and layouts that make it a MEH:
-M1. RESPONSE PREVIEW: port v4's transmission-line network (horn = two-port ladder,
+M1. [DONE] RESPONSE PREVIEW: ported v4's transmission-line network (horn = two-port ladder,
     taps = Norton sources through chamber compliance + port mass). The flagship gap.
 M2. FULL TAP LAW: Lpt through the wall + end correction, real Helmholtz from real
     geometry, taps-vs-station-area % (HF tolerance), entry circumference < lambda

@@ -12,7 +12,7 @@ header{display:flex;flex-wrap:nowrap;border-bottom:1px solid var(--gridmaj);alig
 .ttl{padding:14px 20px;flex:1 1 300px;min-width:0;}
 .eyebrow{font-size:9px;letter-spacing:.22em;color:var(--faint);margin-bottom:4px;text-transform:uppercase;}
 h1{margin:0;font-weight:600;font-size:18px;letter-spacing:.04em;}
-h1 .acc{color:var(--acc);}
+h1 .acc{color:var(--ink);}
 .brand{margin-left:auto;padding:10px 20px;text-align:right;flex:0 0 auto;white-space:nowrap;font-size:9px;letter-spacing:.18em;color:var(--faint);text-transform:uppercase;line-height:1.7;}
 .cols{display:flex;flex-wrap:wrap;}
 aside{flex:0 0 268px;min-width:244px;padding:14px 16px 12px;border-right:1px solid var(--line);background:var(--panel);position:sticky;top:0;max-height:100vh;overflow-y:auto;align-self:flex-start;}
@@ -23,10 +23,10 @@ main.viewcol{flex:1 1 460px;min-width:300px;}
 .seg{display:flex;gap:0;margin-bottom:10px;border:1px solid var(--line);}
 .seg button{flex:1;background:var(--paper);border:none;border-right:1px solid var(--line);color:var(--ink);padding:7px 2px;font-family:var(--mono);font-weight:600;font-size:10px;letter-spacing:.06em;cursor:pointer;}
 .seg button:last-child{border-right:none;}
-.seg button.on{background:var(--acc);color:#fff;}
+.seg button.on{background:var(--ink);color:#fff;}
 label{display:block;color:var(--faint);font-size:10px;letter-spacing:.06em;margin-top:10px;text-transform:uppercase;}
 .val{float:right;color:var(--ink);font-size:11px;}
-input[type=range]{width:100%;accent-color:var(--acc);height:2px;}
+input[type=range]{width:100%;accent-color:var(--ink);height:2px;}
 select{width:100%;font-family:var(--mono);font-size:11px;background:var(--paper);border:1px solid var(--line);color:var(--ink);padding:5px 6px;margin-top:3px;}
 #v3dwrap{position:relative;min-height:520px;}
 #v3d{position:absolute;inset:0;}
@@ -93,6 +93,10 @@ select{width:100%;font-family:var(--mono);font-size:11px;background:var(--paper)
   <div id="rows"></div>
   <div id="note"></div>
   <div id="dims"></div>
+</div>
+<div id="chartwrap" style="border-top:1px solid var(--gridmaj);padding:10px 14px;background:var(--paper)">
+  <div class="sect" style="border-top:none;padding-top:0;margin:0 0 6px">predicted response — sections + LR4 sum at the derived crossovers (per-section normalized)</div>
+  <canvas id="respChart" width="1000" height="190" style="width:100%;height:190px;display:block"></canvas>
 </div></main>
 </div></div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -268,7 +272,39 @@ function rebuild(){
     (st.n<=2.4?'round':st.n>=10?'square':'squircle')+' · '+r.S.mouthW+'″ mouth · '+(st.depth/MEH2.IN).toFixed(1)+'″ deep · XO '
     +(S.topo==='3way'&&r.S.fxDerived?r.S.fxDerived.hi+' / ':'')+(r.S.fxDerived?r.S.fxDerived.lo:'—')+' Hz';
   if(window.BUGPINS)BUGPINS.redraw();
+  drawResponse(r);
   render3d();
+}
+function drawResponse(r){
+  const cv=document.getElementById('respChart'); if(!cv) return;
+  const ctx=cv.getContext('2d'), W=cv.width, H=cv.height;
+  ctx.clearRect(0,0,W,H);
+  let R; try{ R=MEH2.response(r.S, r.ev); }catch(e){ return; }
+  const F0=100,F1=16000, X=f=>40+(W-52)*Math.log(f/F0)/Math.log(F1/F0);
+  const dB0=6, dB1=-42, Y=v=>10+(H-32)*(dB0-Math.max(dB1,Math.min(dB0,v)))/(dB0-dB1);
+  ctx.strokeStyle='#F0F0F0'; ctx.lineWidth=1; ctx.font='8px ui-monospace,monospace'; ctx.fillStyle='#A6A6A6';
+  for(const fq of [100,200,500,1000,2000,5000,10000]){ const x=X(fq);
+    ctx.beginPath(); ctx.moveTo(x,10); ctx.lineTo(x,H-22); ctx.stroke();
+    ctx.fillText(fq>=1000?(fq/1000)+'k':fq, x-8, H-10); }
+  for(const db of [0,-12,-24,-36]){ const y=Y(db);
+    ctx.strokeStyle=db===0?'#E2E2E2':'#F0F0F0';
+    ctx.beginPath(); ctx.moveTo(40,y); ctx.lineTo(W-12,y); ctx.stroke();
+    ctx.fillText(db, 14, y+3); }
+  const plot=(arr,style,wd,dash)=>{ if(!arr) return;
+    ctx.strokeStyle=style; ctx.lineWidth=wd; ctx.setLineDash(dash||[]);
+    ctx.beginPath();
+    arr.forEach((v,i)=>{ const x=X(R.f[i]), y=Y(v); i?ctx.lineTo(x,y):ctx.moveTo(x,y); });
+    ctx.stroke(); ctx.setLineDash([]); };
+  plot(R.hf,  '#B9B6B0',1,[3,3]);
+  plot(R.mid, '#8a877f',1,[3,3]);
+  plot(R.woof,'#6b6963',1,[3,3]);
+  plot(R.sum, '#1C1C1C',1.6);
+  for(const fx of [R.fxHi, R.fxLo]){ if(!fx||fx<F0||fx>F1) continue;
+    const x=X(fx); ctx.strokeStyle='#E2E2E2'; ctx.setLineDash([2,3]);
+    ctx.beginPath(); ctx.moveTo(x,10); ctx.lineTo(x,H-22); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillText('XO '+fx, x+3, 18); }
+  ctx.fillStyle='#1C1C1C'; ctx.fillText('sum', W-40, 16);
+  ctx.fillStyle='#8a877f'; ctx.fillText('sections', W-90, 16);
 }
 /* ---------------- UI wiring ---------------- */
 function save(){ try{ localStorage.setItem('meh5_state',JSON.stringify(S)); }catch(e){} }
