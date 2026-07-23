@@ -13,7 +13,29 @@ Last updated: 2026-07-23 (late). v4 frozen at build 83. All work is v5.
 8. Parametric driver silhouettes (his call; CAD retired, -850KB)
 9. CLASSIC ANGULAR = true flat panels (rect + 45deg chamfers, straight cone)
 
-## REMAINING (build order)
+
+## MEH COMPLETENESS (his correction 2026-07-23: "a lot missing from making this MEH")
+This list OUTRANKS A-I. The physics and layouts that make it a MEH:
+M1. RESPONSE PREVIEW: port v4's transmission-line network (horn = two-port ladder,
+    taps = Norton sources through chamber compliance + port mass). The flagship gap.
+M2. FULL TAP LAW: Lpt through the wall + end correction, real Helmholtz from real
+    geometry, taps-vs-station-area % (HF tolerance), entry circumference < lambda
+    (US 8,284,976).
+M3. PATH-LENGTH BALANCE (Heinz US5526456, the founding canon): per-driver path to
+    throat, section phase alignment at XO, common acoustic center check.
+M4. COVERAGE TRUTH: Keele mouth law per plane, pattern-loss frequency, waistbanding
+    warnings; coverage currently only sets wall angle.
+M5. THROAT SIDE: CD throat adapter Vtc/Atc, exit-angle match, coax entrance geometry.
+M6. BAND ARCHITECTURE: real sub-XO choice with displacement math (80 Hz is an
+    assumption today); 4-way question parked explicitly.
+M7. LAYOUT DIALECTS beyond the ring: walls / seams / corner boards (SH96) /
+    knuckle passages / remote bandpass (Solana). The ring is ONE dialect.
+M8. PROVEN-BUILD PRESETS: SH50-class, SH96-class, arda-class, JMOD-class one-click
+    bundles with driver sets.
+M9. ENCLOSURE REALITY: rear chamber volumes, magnet clearance at angle, the box.
+M10. FULL T/S per preset (Fs Qts Re Le...) + Hornresp ME2 export.
+
+## REMAINING TOOLING (A-I, under the M-list)
 A. EXPORTS (port Horn Studio's proven writers): STL solid with wall thickness;
    watertight NURBS STEP; panel-layout export for ANGULAR (flat parts + angles);
    AKABAK BEM mesh bridge. Export gate = artifact_test pattern (real buttons,
