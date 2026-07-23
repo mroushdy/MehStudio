@@ -1876,8 +1876,8 @@ function mesh3dInner(ev){
     const MSP=MEH.mountSpec(S,d.kind);
     const kd=d.kind==='mid'?{p3:S.p3M,fs:S.fshM,rb:S.rbsM,fl:(S.flM||1.0)*10}:{p3:S.p3W,fs:S.fshW,rb:S.rbsW,fl:(S.flW||1.0)*10};
     if(st.form==='rect' && (d.kind==='mid'?S.plM:S.plW)==='diagonal'){
-      const bh=Math.max(0.010,(d.stand||0.012))*sc;
-      const blk=new THREE.Mesh(new THREE.BoxGeometry(R*2.0, bh, R*2.0),
+      const bh=Math.max(0.010,(d.stand||0.012))*sc;   // his pin #1: the seat matches the DRIVER, not a box
+      const blk=new THREE.Mesh(new THREE.CylinderGeometry(R*1.06, R*1.12, bh, 36),
         new THREE.MeshPhongMaterial({color:0xd9d5cc, shininess:6}));
       blk.position.y=-bh/2+0.0008*sc; sub.add(blk);
     }
@@ -3039,7 +3039,7 @@ window.BUGPINS=(function(){
     resolve:(id,note)=>{ const p=pins.find(q=>q.id===id); if(p){p.done=true;p.fix=note||'';save();redraw();} },
     clear:()=>{ pins=[]; save(); redraw(); } };
 })();
-window.MEH_BUILD=81;
+window.MEH_BUILD=82;
 window.persistS=function(){
   try{
     const ca=window.curArch||'unity';
