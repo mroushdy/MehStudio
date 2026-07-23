@@ -1,5 +1,5 @@
 # MEH STUDIO — STANDING QUEUE (versioned; update on every landed item)
-Last updated: 2026-07-23 (late). v4 frozen at build 83. All work is v5.
+Last updated: 2026-07-23 (M2+gate landed). v4 frozen at build 83. All work is v5.
 
 ## DONE (v5 core, ~one day old)
 1. Form engine: ONE superellipse family, ATH profile, mouth roll-back
@@ -18,9 +18,15 @@ Last updated: 2026-07-23 (late). v4 frozen at build 83. All work is v5.
 This list OUTRANKS A-I. The physics and layouts that make it a MEH:
 M1. [DONE] RESPONSE PREVIEW: ported v4's transmission-line network (horn = two-port ladder,
     taps = Norton sources through chamber compliance + port mass). The flagship gap.
-M2. FULL TAP LAW: Lpt through the wall + end correction, real Helmholtz from real
-    geometry, taps-vs-station-area % (HF tolerance), entry circumference < lambda
-    (US 8,284,976).
+M2. [DONE] FULL TAP LAW (docs/tap_laws.md): lambda/4 null margin BUILT INTO the
+    derived XO (1.2x, v4 law - was previously derived ON the null); entry
+    circumference <= 1 lambda (US 8,284,976); taps-vs-station-area % (mids 20 /
+    woofs 50, CoSyne 43 clean); any-pair spacing lambda/4 strict for MIDS,
+    ~1.5x tolerated for woofer sections (SH96 canon); cone dia vs lambda/2;
+    Helmholtz with REAL Lpt (print wall + 0.85r end correction) in the law rows
+    AND the response network; same laws applied to the 1way coax tap ring.
+    Solver loop-bound off-by-one fixed (cap-growth now returns its clean state).
+    Default state = verified-clean canon (2way 4x6.5 on the DCX coax).
 M3. PATH-LENGTH BALANCE (Heinz US5526456, the founding canon): per-driver path to
     throat, section phase alignment at XO, common acoustic center check.
 M4. COVERAGE TRUTH: Keele mouth law per plane, pattern-loss frequency, waistbanding
@@ -47,11 +53,14 @@ C. MAX SPL TILE (Thuras/Makarski from Horn Studio): the geometry's distortion
    ceiling, computed from v5's area law. Plus cutoff/loading estimate tiles.
 D. REPORTS PANEL: path-length table, Vtc totals, Hornresp ME2 export text,
    panel cut list (angular), print bed split hints (smooth).
-E. V5 ORACLE BATTERY: INSPECT laws rebuilt on the v5 scene; look.js adapted;
-   full lattice sweep (topology x form x style x presets x counts x sizes);
-   acceptance tests as permanent laws (pins #4 taps-under-drivers structural,
-   #10 count-changes never break geometry, #11 rings never lines); marker
-   bijection; provenance census.
+E. V5 ORACLE BATTERY [GATE LANDED - v5/gate.js: 14,415 checks over a 216-state
+   lattice (topology x form x style x coverage x placement x wall x drivers):
+   station/area/ring/layout/normal/tap invariants, XO sanity + null margin,
+   law-row wellformedness, response finiteness, solve determinism, canonical
+   matrix expectations (v5/test_matrix.js), assembly + branding + monochrome
+   checks. Horn Studio's every-push ritual now applies: NO push without
+   `node gate.js` ALL PASS. Still to add: INSPECT-on-scene (3D mesh census via
+   look5.js), goldens, provenance census]. look5.js = the v5 coding eyes.
 F. DEPLOY RITUAL v5: gates + goldens + ok-count reconciliation (Horn Studio
    resume rule) + auto-reload his tab on every push.
 G. SUPERFORMULA unique mouths (shape slider extension past square).

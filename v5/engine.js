@@ -208,8 +208,11 @@ function layout(S,st){
   const xM0=xForSeats(st,(S.nM|0)||4,seatM,0.012,'ring',0);
   const xW0=xForSeats(st,(S.nW|0)||2,seatW,(S.topo==='3way'&&xM0!=null)?(xM0+seatM+seatW+0.008):0.02,modeW,offW);
   const xM=xM0, xW=xW0;
-  S.fxDerived={ hi: xM!=null? Math.round(C/(4*((S.topo==='3way'?xM:xW||st.depth)+S.cdDepth*IN))) : null,
-                lo: xW!=null? Math.round(C/(4*(xW+S.cdDepth*IN))) : null };
+  /* v4 LAW: the tap->diaphragm path makes a lambda/4 reflection NULL at C/(4*path);
+     cross 1.2x BELOW it so the notch stays clear of the LR4 corner. */
+  const XOK=1/1.2;
+  S.fxDerived={ hi: xM!=null? Math.round(XOK*C/(4*((S.topo==='3way'?xM:xW||st.depth)+S.cdDepth*IN))) : null,
+                lo: xW!=null? Math.round(XOK*C/(4*(xW+S.cdDepth*IN))) : null };
   const place=(kind,x,phi,od,dp)=>{
     const p=surfPt(st,x,phi), n=surfN(st,x,phi);
     out.push({kind, x, phi, center:p, normal:n, od, dp,
@@ -243,7 +246,8 @@ function layout(S,st){
     const rT=Math.max(S.td*IN*0.5+0.014, (S.coaxRing||4.5)*CM);
     const apC=(S.sdC||150)/Math.max(4,Math.min(8, 17/(2*Math.PI*((S.fxDerived&&S.fxDerived.lo)||S.fxC||300)*((S.xmC||4)/1000)) ))/nT;   // cm^2 per slot, velocity-clamped CR
     const saC=Math.sqrt(apC*1e-4*3)/2, sbC=Math.sqrt(apC*1e-4/3)/2;
-    S.fxDerived={hi: Math.round(C/(4*(rT+S.cdDepth*IN))), lo: Math.round(C/(4*(rT+S.cdDepth*IN)))};   // coax XO from the tap path
+    const fxCo=Math.round((1/1.2)*C/(4*(rT+S.cdDepth*IN)));   // coax XO 1.2x below the tap-path null (v4 law)
+    S.fxDerived={hi: fxCo, lo: fxCo};
     for(let k=0;k<nT;k++){ const a2=(k+0.5)/nT*2*Math.PI;
       const p=[0.004, rT*Math.cos(a2), rT*Math.sin(a2)];
       out.push({kind:'coaxtap', x:0.004, phi:a2, center:p, normal:[-1,0,0], od:0.02, dp:0,
@@ -258,7 +262,7 @@ function layout(S,st){
    from Sd at the band center. Port velocity cap 17 m/s (corpus). Front chamber
    Vtc + tap = Helmholtz low-pass; must clear the derived XO by 1.2x. Slot canon:
    slim 3:1 stadium, area exactly Ap/driver. */
-function acoustics(S,L){
+function acoustics(S,L,st){
   const out={rows:[]};
   const add=(sec,name,val,ok,warn,why)=>out.rows.push({sec,name,val,st:ok?'ok':(warn?'warn':'fail'),why});
   const kinds=[];
@@ -279,9 +283,58 @@ function acoustics(S,L){
       crVel<band[0]?'the 17 m/s velocity limit wants CR below the compression band - the driver excursion is too large for this duty':'derived from the 17 m/s limit, clamped to the band');
     const vel=cr*2*Math.PI*fLow*(xm/1000);
     add(kind.toUpperCase(),'Port velocity at band low edge ('+fLow+' Hz)',vel.toFixed(1)+' m/s',vel<=17.2,vel<=20,'compendium: the real port-area criterion, evaluated at the band bottom');
-    const lpt=0.02;                                      // effective tap length (print wall + end corr) - refine with wall thickness
+    /* REAL port length: print wall + 0.85r end correction (matches the response network) */
+    const lpt=(S.wallT||0.012)+0.85*Math.sqrt(ap*1e-4/Math.PI);
     const fLP=C/(2*Math.PI)*Math.sqrt((ap*1e-4)/((vtc*1e-6)*lpt));
-    add(kind.toUpperCase(),'Chamber acoustic low-pass',Math.round(fLP)+' Hz',fLP>=1.2*fx,fLP>=fx,'Vtc+tap Helmholtz must clear the crossover ('+fx+' Hz)');
+    add(kind.toUpperCase(),'Chamber acoustic low-pass',Math.round(fLP)+' Hz',fLP>=1.2*fx,fLP>=fx,'Vtc+tap Helmholtz (real wall + end-corrected port) must clear the crossover ('+fx+' Hz)');
+    /* ---- M2: the tap placement/size laws (US 8,284,976 / Waslo / Hinson) ---- */
+    if(st && drs[0] && drs[0].x!==undefined){
+      const K=kind.toUpperCase(), xT=drs[0].x, Astn=areaAt(st,xT), lam=C/fx;
+      const fNull=C/(4*(xT+S.cdDepth*IN));
+      add(K,'\u03bb/4 reflection null vs crossover',Math.round(fNull)+' vs '+fx+' Hz',
+        fNull>=1.19*fx, fNull>=fx,
+        'sound entering the tap reflects off the throat; the null must stay \u22651.2\u00d7 above the XO (Hinson/v4 law) - the derived XO builds this in');
+      const eLam=Math.sqrt(4*Math.PI*Astn)/lam;
+      add(K,'Entry size - local circumference vs \u03bb (US 8,284,976)',eLam.toFixed(2)+' \u03bb',
+        eLam<=1.0, eLam<=1.3,
+        'patent: enter where the horn is \u22641 wavelength around at the band top ('+fx+' Hz)');
+      const tf=(drs.length*ap*1e-4)/Astn, tfOK=kind==='mid'?0.20:0.50, tfWarn=kind==='mid'?0.30:0.70;
+      add(K,'Taps vs horn area at station',(tf*100).toFixed(0)+'%',
+        tf<=tfOK, tf<=tfWarn,
+        kind==='mid'?'practice: \u226420% protects the HF wavefront (patent ideal is full area match - the tension is the design)':'far from the throat the wavefront tolerates more; CoSyne measured clean at 43%');
+      let spread=0;
+      for(let i=0;i<drs.length;i++)for(let j=i+1;j<drs.length;j++){
+        const a2=drs[i].tap,b2=drs[j].tap;
+        spread=Math.max(spread,Math.hypot(a2[0]-b2[0],a2[1]-b2[1],a2[2]-b2[2])); }
+      if(drs.length>1){ const sLam=spread/(lam/4);
+        const okS=kind==='mid'?1.0:1.5, wnS=kind==='mid'?1.2:2.0;   // v4 canon: strict for mids; SH96 woofer taps measure ~1.5x
+        add(K,'Any-pair tap spacing (radiate as one driver)',(spread*1000).toFixed(0)+' mm = '+sLam.toFixed(2)+'\u00d7\u03bb/4',
+          sLam<=okS, sLam<=wnS,
+          kind==='mid'?'Waslo/Hinson: every mid tap within \u03bb/4 of every other at '+fx+' Hz, or they stop summing as one source'
+                      :'woofer sections tolerate more spread (SH96 canon ~1.5\u00d7\u03bb/4 at its XO); past 2\u00d7 the section combs'); }
+      const coneD=2*Math.sqrt(sd*1e-4/Math.PI), fCone=C/(2*coneD);
+      add(K,'Cone dia vs \u03bb/2 at band top',Math.round(fCone)+' Hz max',
+        fCone>=fx, fCone>=0.85*fx,
+        'path spread across the cone cancels above c/(2\u00b7D); pick smaller cones or lower the XO');
+    }
+  }
+  /* ---- M2 for the 1-way coax cone section (same laws on the plate tap ring) ---- */
+  if(S.topo==='1way' && st){
+    const taps=L.filter(d=>d.kind==='coaxtap');
+    const fx=S.fxDerived&&S.fxDerived.lo;
+    if(taps.length&&fx){
+      const lam=C/fx, rT=Math.hypot(taps[0].tap[1],taps[0].tap[2]);
+      const spread=2*rT, sLam=spread/(lam/4);
+      add('COAX','Tap-ring diameter vs \u03bb/4',(spread*1000).toFixed(0)+' mm = '+sLam.toFixed(2)+'\u00d7\u03bb/4',
+        sLam<=1.0, sLam<=1.2,'the cone slots across the plate must stay within \u03bb/4 at '+fx+' Hz');
+      const fNull=C/(4*(rT+S.cdDepth*IN));
+      add('COAX','\u03bb/4 reflection null vs crossover',Math.round(fNull)+' vs '+fx+' Hz',
+        fNull>=1.19*fx, fNull>=fx,'derived XO builds the 1.2\u00d7 margin in');
+      const ap=taps[0].slot?taps[0].slot.ap:0, vtc=(S.vtcC||60);
+      if(ap>0){ const lpt=(S.wallT||0.012)+0.85*Math.sqrt(ap*1e-4/Math.PI);
+        const fLP=C/(2*Math.PI)*Math.sqrt((taps.length*ap*1e-4)/((vtc*1e-6)*lpt));
+        add('COAX','Chamber acoustic low-pass',Math.round(fLP)+' Hz',fLP>=1.2*fx,fLP>=fx,'coax front chamber + plate slots must clear the crossover'); }
+    }
   }
   /* XO ceilings: CD reach (by exit size) and mid reach */
   if(S.fxDerived){
@@ -311,7 +364,7 @@ function evaluate(S){
   if(S.fxDerived&&S.fxDerived.lo)
     add('XO','Derived crossover (from landed geometry)', (S.topo==='3way'? S.fxDerived.hi+' / ':'')+S.fxDerived.lo+' Hz',
       (S.fxDerived.lo<= (S.topo==='3way'?S.fxLo:S.fxHi)*1.35), true, 'XO falls out of the path length; ceiling from the driver choice');
-  const ac=acoustics(S,L); rows.push(...ac.rows);
+  const ac=acoustics(S,L,st); rows.push(...ac.rows);
   return {st, layout:L, rows, fails:rows.filter(r=>r.st==='fail').length};
 }
 
@@ -414,7 +467,7 @@ function response(S,ev){
    the v4 principle, clean-roomed). Returns the settled state + evaluation. ---- */
 function solve(S0){
   const S={...S0};
-  for(let it=0;it<40;it++){
+  for(let it=0;it<120;it++){                        // must outlast (cap - start)/step
     const ev=evaluate(S);
     if(!ev.fails) return {S, ev, grown:S.mouthW-S0.mouthW};
     S.mouthW=+(S.mouthW+1).toFixed(2);
