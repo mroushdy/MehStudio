@@ -88,25 +88,27 @@ document.getElementById('bno').textContent=MEH_BUILD;
 "use strict";
 /* ---------------- driver presets (v4 datasheets; mesh = true CAD, meshApprox = nearest body) ---------------- */
 const WPRE={
-  w65:{name:'6.5\u2033 woofer', od:16.7, dp:8.5, meshApprox:'BC_8MDN51'},
-  w8:{name:'8\u2033 woofer', od:21.0, dp:10, meshApprox:'BC_8MDN51'},
-  mdn8:{name:'B&C 8MDN51 (true CAD)', od:22.0, dp:10.5, mesh:'BC_8MDN51'},
-  hpl10:{name:'B&C 10HPL64 (true CAD)', od:26.1, dp:12.2, mesh:'BC_10HPL64'},
-  ndl12:{name:'B&C 12NDL76 (true CAD)', od:31.5, dp:14, mesh:'BC_12NDL76'},
-  es12:{name:'18Sound 12LW1400 (true CAD)', od:32.2, dp:15, mesh:'ES_12LW1400'},
-  w15:{name:'15\u2033 woofer', od:39.0, dp:17, meshApprox:'BC_18SW115'},
-  sw18:{name:'B&C 18SW115 (true CAD)', od:46.0, dp:22, mesh:'BC_18SW115'},
-  pzb18:{name:'B&C 18PZB100 (true CAD)', od:46.0, dp:20, mesh:'BC_18PZB100'}};
+  w65:{name:'6.5\u2033 woofer', od:16.7, dp:8.5, sd:132, vtc:45, xm:5, meshApprox:'BC_8MDN51'},
+  w8:{name:'8\u2033 woofer', od:21.0, dp:10, sd:220, vtc:80, xm:6.5, meshApprox:'BC_8MDN51'},
+  mdn8:{name:'B&C 8MDN51 (true CAD)', od:22.0, dp:10.5, sd:232, vtc:85, xm:6, mesh:'BC_8MDN51'},
+  hpl10:{name:'B&C 10HPL64 (true CAD)', od:26.1, dp:12.2, sd:330, vtc:130, xm:8, mesh:'BC_10HPL64'},
+  ndl12:{name:'B&C 12NDL76 (true CAD)', od:31.5, dp:14, sd:522, vtc:180, xm:9, mesh:'BC_12NDL76'},
+  es12:{name:'18Sound 12LW1400 (true CAD)', od:32.2, dp:15, sd:530, vtc:190, xm:9.5, mesh:'ES_12LW1400'},
+  w15:{name:'15\u2033 woofer', od:39.0, dp:17, sd:855, vtc:320, xm:10, meshApprox:'BC_18SW115'},
+  sw18:{name:'B&C 18SW115 (true CAD)', od:46.0, dp:22, sd:1210, vtc:450, xm:14, mesh:'BC_18SW115'},
+  pzb18:{name:'B&C 18PZB100 (true CAD)', od:46.0, dp:20, sd:1150, vtc:420, xm:9, mesh:'BC_18PZB100'}};
 const MPRE={
-  m3:{name:'3\u2033 mid', od:9.3, dp:6.2, meshApprox:'BC_8MDN51'},
-  m4:{name:'4\u2033 mid', od:10.3, dp:6.5, meshApprox:'BC_8MDN51'},
-  bc5:{name:'B&C 5\u2033 sealed', od:15.7, dp:8.2, meshApprox:'BC_8MDN51'},
-  mdn8m:{name:'B&C 8MDN51 (true CAD)', od:22.0, dp:10.5, mesh:'BC_8MDN51'}};
+  m3:{name:'3\u2033 mid', od:9.3, dp:6.2, sd:31, vtc:25, xm:2.5, meshApprox:'BC_8MDN51'},
+  m4:{name:'4\u2033 mid', od:10.3, dp:6.5, sd:50, vtc:40, xm:3, meshApprox:'BC_8MDN51'},
+  bc5:{name:'B&C 5\u2033 sealed', od:15.7, dp:8.2, sd:90, vtc:55, xm:4, meshApprox:'BC_8MDN51'},
+  mdn8m:{name:'B&C 8MDN51 (true CAD)', od:22.0, dp:10.5, sd:232, vtc:85, xm:6, mesh:'BC_8MDN51'}};
 /* ---------------- state ---------------- */
 const S={topo:'2way', style:'smooth', wPre:'w8', mPre:'m4', seN:6, covH:90, covV:60, mouthW:24, mouthCap:64, throat:1.4, rollR:2,
   fxHi:900, fxLo:300, cdDepth:1.7, td:1.4, coaxRing:4.5,
   nW:6, odW:14, dpW:7, nM:4, odM:10, dpM:6};
 try{ Object.assign(S, JSON.parse(localStorage.getItem('meh5_state')||'{}')); }catch(e){}
+{ const P=WPRE[S.wPre]; if(P){S.sdW=P.sd;S.vtcW=P.vtc;S.xmW=P.xm;}
+  const Q=MPRE[S.mPre]; if(Q){S.sdM=Q.sd;S.vtcM=Q.vtc;S.xmM=Q.xm;} }
 /* ---------------- 3D ---------------- */
 const V3D={yaw:0.6,pitch:0.28,dist:1.9,spin:false,xray:false};
 function init3d(){
@@ -183,7 +185,7 @@ function rebuild(){
     /* stadium slot under the driver: long axis along flow */
     { const u=new THREE.Vector3(1,0,0).sub(n.clone().multiplyScalar(n.x)).normalize();  // flow dir on surface
       const v=n.clone().cross(u).normalize();
-      const sa=Math.min(d.od*0.34,0.055), sb=sa/3;
+      const sa=(d.slot&&d.slot.sa)||Math.min(d.od*0.34,0.055), sb=(d.slot&&d.slot.sb)||sa/3;   // AREA-TRUE from the CR law
       const sp=new THREE.Shape(); const r2=0.9;
       sp.moveTo(-1+r2,-1); sp.lineTo(1-r2,-1); sp.quadraticCurveTo(1,-1,1,-1+r2);
       sp.lineTo(1,1-r2); sp.quadraticCurveTo(1,1,1-r2,1); sp.lineTo(-1+r2,1);
@@ -200,24 +202,40 @@ function rebuild(){
       seat.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),n);
       seat.position.copy(c).add(n.clone().multiplyScalar(0.0115));   // fully outside the shell seat.userData.tag='seat'; g.add(seat);
     }
-    /* driver body: simple can + REAL CAD overlay (v4 convention: CAD over solid) */
+    /* driver body: the REAL CAD mesh IS the driver (his mandate: look like the models).
+       The crude can draws ONLY when no CAD exists for the preset (custom sliders). */
     { const body=new THREE.Group();
       const PRE=(d.kind==='mid'? MPRE[S.mPre] : WPRE[S.wPre])||null;
       const MK=PRE&&(PRE.mesh||PRE.meshApprox);
+      let usedCAD=false;
       if(MK && window.CADM && CADM[MK] && typeof cadMesh==='function'){
-        const cm=cadMesh(MK,0x8f8d87), MM2=CADM[MK];
-        const kr=PRE.mesh?1:(PRE.od*10)/((MM2.bb1[0]-MM2.bb0[0])||1), kz=PRE.mesh?1:(PRE.dp*10)/((MM2.bb1[2]-MM2.bb0[2])||1);
-        cm.scale.set(kr/1000,kz/1000,kr/1000); body.add(cm);
+        const cm=cadMesh(MK,0x9a9895), MM2=CADM[MK];
+        const kr=PRE.mesh?1:(d.od*100*10)/((MM2.bb1[0]-MM2.bb0[0])||1), kz=PRE.mesh?1:(d.dp*100*10)/((MM2.bb1[2]-MM2.bb0[2])||1);
+        cm.scale.set(kr/1000,kz/1000,kr/1000);
+        cm.position.y=0.012;                       // flange lands on the printed seat lip
+        body.add(cm); usedCAD=true;
+        /* solid core UNDER the CAD shell (v4 law: open decimated shells read like glass) */
+        const core=new THREE.Mesh(new THREE.CylinderGeometry(d.od/2*0.90,d.od*0.30,d.dp*0.80,24),
+          new THREE.MeshPhongMaterial({color:0x8f8d87,shininess:8}));
+        core.position.y=0.012+d.dp*0.40; body.add(core);
+        const coreMag=new THREE.Mesh(new THREE.CylinderGeometry(d.od*0.29,d.od*0.29,d.dp*0.22,24),
+          new THREE.MeshPhongMaterial({color:0x7b7a76,shininess:18}));
+        coreMag.position.y=0.012+d.dp*0.80+d.dp*0.10; body.add(coreMag);
+        const gk=new THREE.Mesh(new THREE.TorusGeometry(d.od/2*0.99,0.004,8,42),
+          new THREE.MeshPhongMaterial({color:0x2e2c29,shininess:5}));
+        gk.rotation.x=Math.PI/2; gk.position.y=0.012; body.add(gk);   // gasket under the flange
       }
-      const fl=new THREE.Mesh(new THREE.CylinderGeometry(d.od/2,d.od/2,0.008,36),
-        new THREE.MeshPhongMaterial({color:0x8f8d87,shininess:16}));
-      fl.position.y=0.018; body.add(fl);
-      const bask=new THREE.Mesh(new THREE.CylinderGeometry(d.od/2*0.94,d.od*0.30,d.dp*0.62,24),
-        new THREE.MeshPhongMaterial({color:0x9c9a95,shininess:10}));
-      bask.position.y=0.018+d.dp*0.31; body.add(bask);
-      const mag=new THREE.Mesh(new THREE.CylinderGeometry(d.od*0.30,d.od*0.30,d.dp*0.30,24),
-        new THREE.MeshPhongMaterial({color:0x7b7a76,shininess:20}));
-      mag.position.y=0.018+d.dp*0.62+d.dp*0.15; body.add(mag);
+      if(!usedCAD){
+        const fl=new THREE.Mesh(new THREE.CylinderGeometry(d.od/2,d.od/2,0.008,36),
+          new THREE.MeshPhongMaterial({color:0x8f8d87,shininess:16}));
+        fl.position.y=0.018; body.add(fl);
+        const bask=new THREE.Mesh(new THREE.CylinderGeometry(d.od/2*0.94,d.od*0.30,d.dp*0.62,24),
+          new THREE.MeshPhongMaterial({color:0x9c9a95,shininess:10}));
+        bask.position.y=0.018+d.dp*0.31; body.add(bask);
+        const mag=new THREE.Mesh(new THREE.CylinderGeometry(d.od*0.30,d.od*0.30,d.dp*0.30,24),
+          new THREE.MeshPhongMaterial({color:0x7b7a76,shininess:20}));
+        mag.position.y=0.018+d.dp*0.62+d.dp*0.15; body.add(mag);
+      }
       body.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),n);
       body.position.copy(c).add(n.clone().multiplyScalar(0.004)); body.userData.tag='driver'; body.traverse(o=>o.userData.tag='driver'); g.add(body);
     }
@@ -268,10 +286,10 @@ function wire(){
     el.value=cur; };
   fillPre('wPre',WPRE,S.wPre); fillPre('mPre',MPRE,S.mPre);
   document.getElementById('wPre').onchange=e=>{ S.wPre=e.target.value;
-    if(WPRE[S.wPre]){ S.odW=WPRE[S.wPre].od; S.dpW=WPRE[S.wPre].dp; document.getElementById('odW').value=S.odW; }
+    const P=WPRE[S.wPre]; if(P){ S.odW=P.od; S.dpW=P.dp; S.sdW=P.sd; S.vtcW=P.vtc; S.xmW=P.xm; document.getElementById('odW').value=S.odW; }
     save(); rebuild(); };
   document.getElementById('mPre').onchange=e=>{ S.mPre=e.target.value;
-    if(MPRE[S.mPre]){ S.odM=MPRE[S.mPre].od; S.dpM=MPRE[S.mPre].dp; document.getElementById('odM').value=S.odM; }
+    const P=MPRE[S.mPre]; if(P){ S.odM=P.od; S.dpM=P.dp; S.sdM=P.sd; S.vtcM=P.vtc; S.xmM=P.xm; document.getElementById('odM').value=S.odM; }
     save(); rebuild(); };
   document.querySelectorAll('#segStyle button').forEach(b=>{
     if(b.dataset.v===S.style){document.querySelectorAll('#segStyle button').forEach(x=>x.classList.remove('on'));b.classList.add('on');}

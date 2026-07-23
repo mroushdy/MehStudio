@@ -176,6 +176,44 @@ function layout(S,st){
   return out;
 }
 
+/* ---- ACOUSTIC LAWS (ported from v4's sourced corpus) ----
+   CR bands (Waslo calc sheet): mids 4..8:1, woofers 2.5..6:1 - Ap auto-derived
+   from Sd at the band center. Port velocity cap 17 m/s (corpus). Front chamber
+   Vtc + tap = Helmholtz low-pass; must clear the derived XO by 1.2x. Slot canon:
+   slim 3:1 stadium, area exactly Ap/driver. */
+function acoustics(S,L){
+  const out={rows:[]};
+  const add=(sec,name,val,ok,warn,why)=>out.rows.push({sec,name,val,st:ok?'ok':(warn?'warn':'fail'),why});
+  const kinds=[];
+  /* v4 SOURCED LAW (compendium): peak port velocity = CR * 2pi * fLOW * xm at the
+     BAND'S LOW EDGE (woofers run to the sub XO ~80 Hz; mids to their lower XO).
+     Ap derives FROM the 17 m/s limit, clamped into the CR band (w 2.5-6, m 4-8). */
+  if(S.topo!=='1way') kinds.push(['woof', S.sdW||300, S.vtcW||150, S.xmW||7, [2.5,6.0], S.subXO||80, S.fxDerived&&S.fxDerived.lo]);
+  if(S.topo==='3way') kinds.push(['mid', S.sdM||50, S.vtcM||40, S.xmM||3, [4.0,8.0], S.fxDerived&&S.fxDerived.lo, S.fxDerived&&S.fxDerived.hi]);
+  for(const [kind,sd,vtc,xm,band,fLow,fx] of kinds){
+    const drs=L.filter(d=>d.kind===kind); if(!drs.length||!fx||!fLow) continue;
+    const crVel=17/(2*Math.PI*fLow*(xm/1000));           // CR the velocity limit allows
+    const cr=Math.max(band[0], Math.min(band[1], crVel));
+    const ap=sd/cr;                                      // cm^2 per driver
+    for(const d of drs){ const saM=Math.sqrt(ap*1e-4*3)/2, sbM=Math.sqrt(ap*1e-4/3)/2;
+      d.slot={sa:saM, sb:sbM, ap:ap}; }
+    add(kind.toUpperCase(),'Compression ratio Sd/Ap',cr.toFixed(1)+':1',
+      crVel>=band[0], crVel>=band[0]*0.8,
+      crVel<band[0]?'the 17 m/s velocity limit wants CR below the compression band - the driver excursion is too large for this duty':'derived from the 17 m/s limit, clamped to the band');
+    const vel=cr*2*Math.PI*fLow*(xm/1000);
+    add(kind.toUpperCase(),'Port velocity at band low edge ('+fLow+' Hz)',vel.toFixed(1)+' m/s',vel<=17.2,vel<=20,'compendium: the real port-area criterion, evaluated at the band bottom');
+    const lpt=0.02;                                      // effective tap length (print wall + end corr) - refine with wall thickness
+    const fLP=C/(2*Math.PI)*Math.sqrt((ap*1e-4)/((vtc*1e-6)*lpt));
+    add(kind.toUpperCase(),'Chamber acoustic low-pass',Math.round(fLP)+' Hz',fLP>=1.2*fx,fLP>=fx,'Vtc+tap Helmholtz must clear the crossover ('+fx+' Hz)');
+  }
+  /* XO ceilings: CD reach (by exit size) and mid reach */
+  if(S.fxDerived){
+    const cdReach=S.td>=1.35?550:S.td>=0.95?900:1200;
+    const top=(S.topo==='3way'?S.fxDerived.hi:S.fxDerived.lo);
+    if(top) add('XO','CD reaches the derived crossover',top+' vs '+cdReach+' Hz floor',top>=cdReach*0.9,top>=cdReach*0.75,'a '+S.td+'\u2033 exit CD wants to cross at or above its floor');
+  }
+  return out;
+}
 /* ---- fit & physics checks (carried laws; expanded per rebuild) ---- */
 function evaluate(S){
   const st=stations(S), L=layout(S,st), rows=[];
@@ -196,6 +234,7 @@ function evaluate(S){
   if(S.fxDerived&&S.fxDerived.lo)
     add('XO','Derived crossover (from landed geometry)', (S.topo==='3way'? S.fxDerived.hi+' / ':'')+S.fxDerived.lo+' Hz',
       (S.fxDerived.lo<= (S.topo==='3way'?S.fxLo:S.fxHi)*1.35), true, 'XO falls out of the path length; ceiling from the driver choice');
+  const ac=acoustics(S,L); rows.push(...ac.rows);
   return {st, layout:L, rows, fails:rows.filter(r=>r.st==='fail').length};
 }
 
