@@ -85,7 +85,7 @@ footer{padding:10px 20px;font-family:var(--mono);font-size:9px;letter-spacing:.1
 <div class="cols">
 <aside id="params"></aside>
 <main>
-  <div class="card"><h2>3-D model — drag to rotate · scroll to zoom · drivers turn red when they collide · amber = inside build tolerance (tight)</h2><div id="v3d"><button id="v3dmode" class="act" style="position:absolute;left:8px;top:8px;z-index:2;">View: assembly</button><button id="v3dinspect" class="act" style="position:absolute;left:8px;top:44px;z-index:2;">Inspect</button><div id="insppanel" style="display:none;position:absolute;right:8px;top:8px;bottom:8px;width:270px;overflow:auto;background:rgba(255,255,255,0.96);border:1px solid #999;z-index:3;font-size:11px;padding:8px;"></div><div id="v3dnote"></div></div></div>
+  <div class="card"><h2>3-D model — drag to rotate · scroll to zoom · drivers turn red when they collide · amber = inside build tolerance (tight)</h2><div id="v3d"><button id="v3dmode" class="act" style="position:absolute;left:8px;top:8px;z-index:2;">View: assembly</button><button id="v3dinspect" class="act" style="position:absolute;left:8px;top:44px;z-index:2;">Inspect</button><button id="v3dpin" class="act" style="position:absolute;left:8px;top:80px;z-index:2;">Pin a bug</button><div id="insppanel" style="display:none;position:absolute;right:8px;top:8px;bottom:8px;width:270px;overflow:auto;background:rgba(255,255,255,0.96);border:1px solid #999;z-index:3;font-size:11px;padding:8px;"></div><div id="v3dnote"></div></div></div>
   <div class="card"><h2>Acoustic network — the numbers behind the picture</h2><div id="network" class="note" style="font-size:11px;"></div></div>
   <div class="card"><h2>Profile — horizontal plane above axis · vertical plane below</h2><div id="profile"></div></div>
   <div class="card"><h2>Mouth view — flares, taps, drivers</h2><div id="mouth"></div></div>
@@ -2995,6 +2995,30 @@ window.BUGPINS=(function(){
     document.getElementById('bugpin-ok').onclick=()=>fin(true);
     document.getElementById('bugpin-no').onclick=()=>fin(false);
     txt.onkeydown=(e)=>{ if(e.key==='Enter')fin(true); if(e.key==='Escape')fin(false); }; };
+  window.__pinMode=false;
+  const arm=(on)=>{ window.__pinMode=on;
+    const b=document.getElementById('v3dpin');
+    if(b){ b.textContent=on?'Click the model\u2026':'Pin a bug'; b.style.background=on?'#FF2D00':''; b.style.color=on?'#fff':''; }
+    if(window.V3D&&V3D.renderer) V3D.renderer.domElement.style.cursor=on?'crosshair':''; };
+  document.addEventListener('DOMContentLoaded',()=>{ const b=document.getElementById('v3dpin');
+    if(b) b.onclick=()=>arm(!window.__pinMode); });
+  { const b=document.getElementById('v3dpin'); if(b) b.onclick=()=>arm(!window.__pinMode); }
+  document.addEventListener('keydown',(e)=>{ if(e.key==='Escape'&&window.__pinMode) arm(false); });
+  const dropAt=(e)=>{
+    const cv=V3D.renderer.domElement;
+    const r=cv.getBoundingClientRect();
+    const nd=new THREE.Vector2(((e.clientX-r.left)/r.width)*2-1, -((e.clientY-r.top)/r.height)*2+1);
+    const rc=new THREE.Raycaster(); rc.setFromCamera(nd,V3D.camera);
+    const hits=rc.intersectObjects(V3D.scene.children,true).filter(h=>h.object.isMesh&&h.object.userData.tag!=='bugpin'&&!(h.object.material&&h.object.material.transparent));
+    if(!hits.length) return false;
+    const sc=window.__sc||1, hp=hits[0].point;
+    ui(e.clientX,e.clientY,[hp.x/sc,hp.z/sc,hp.y/sc]); return true; };
+  document.addEventListener('click',(e)=>{
+    if(!window.__pinMode||!window.V3D||!V3D.renderer) return;
+    if(e.target!==V3D.renderer.domElement) return;
+    e.preventDefault(); e.stopPropagation();
+    if(dropAt(e)) arm(false);
+  },true);
   document.addEventListener('contextmenu',(e)=>{
     if(!window.V3D||!V3D.renderer) return;
     const cv=V3D.renderer.domElement; if(e.target!==cv) return;
@@ -3015,7 +3039,7 @@ window.BUGPINS=(function(){
     resolve:(id,note)=>{ const p=pins.find(q=>q.id===id); if(p){p.done=true;p.fix=note||'';save();redraw();} },
     clear:()=>{ pins=[]; save(); redraw(); } };
 })();
-window.MEH_BUILD=80;
+window.MEH_BUILD=81;
 window.persistS=function(){
   try{
     const ca=window.curArch||'unity';
