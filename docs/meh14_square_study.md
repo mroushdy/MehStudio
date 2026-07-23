@@ -23,7 +23,13 @@ not runnable, but the code reads. What v1.4 has that v5 does not:
 6. Driver preset schema carries frame shape/bolt data (`fshape:'square'`,
    bolt circle, p3 profile polylines) — richer than v5's silhouettes.
 
-## OPEN QUESTION FOR MARWAN
+## RESOLVED (Marwan: "The look") — LANDED build 512
+The 14 square-family LOOK ported to v5 angular: paper-white palette
+(0xE7E7E3/0xF5F5F2), crease lines 0xC9C9C6, the 100 mm MOUTH BAFFLE plate,
+throat-end closure, the ghosted CABINET box + edges, CD snout taper.
+Items (1),(2),(4) from the list below stay queued as functional ports.
+
+## the original question
 "Much better" needs one specific: is it (1) the independent W×H mouths,
 (2) the port-placement dialect list, (4) the centerline-first walk, or the
 overall drawn look? Pin it in the app or reply, and that lands next.

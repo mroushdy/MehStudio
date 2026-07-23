@@ -137,7 +137,7 @@ select{width:100%;font-family:var(--mono);font-size:11px;background:var(--paper)
 <script>
 /*__ENGINE__*/
 /*__CAD__*/
-window.MEH_BUILD=511;
+window.MEH_BUILD=512;
 document.getElementById('bno').textContent=MEH_BUILD;
 "use strict";
 /* ---------------- driver presets (v4 datasheets; mesh = true CAD, meshApprox = nearest body) ---------------- */
@@ -306,7 +306,10 @@ function rebuild(){
     const FS=SP.map(p=>MEH2.facetsAt(st,p.x));
     const OS=SP.map(p=>MEH2.offsetVerts(st,p.x,wt));
     const NV=FS[0].length, NS=SP.length;
-    const mat=(col,op)=>new THREE.MeshPhongMaterial({color:col,shininess:4,side:THREE.DoubleSide,
+    /* THE LOOK (Marwan's call, ported from meh_studio_14): paper-white walls,
+       crease lines, a mouth BAFFLE framing the horn, a closed throat end and
+       the ghosted cabinet box - the square family reads as a real build. */
+    const mat=(col,op,sh)=>new THREE.MeshPhongMaterial({color:col,specular:0x1a1a1a,shininess:sh||8,side:THREE.DoubleSide,
       flatShading:true,transparent:V3D.xray,opacity:V3D.xray?op:1});
     const plates=(get,mt)=>{ const pos=[],idx=[]; let base=0;
       for(let i=0;i<NV;i++){
@@ -319,8 +322,8 @@ function rebuild(){
       gg.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));
       gg.setIndex(idx); gg.computeVertexNormals();
       const m=new THREE.Mesh(gg,mt); m.userData.tag='shell'; g.add(m); return m; };
-    plates((j,i)=>[FS[j][i].p, FS[j][i].q], mat(0xE6DFD2,0.35));            // inner plates
-    plates((j,i)=>[OS[j][i], OS[j][(i+1)%NV]], mat(0xDDD6C7,0.25));         // outer plates
+    plates((j,i)=>[FS[j][i].p, FS[j][i].q], mat(0xE7E7E3,0.35,8));          // inner plates (14 palette)
+    plates((j,i)=>[OS[j][i], OS[j][(i+1)%NV]], mat(0xF5F5F2,0.25,16));      // outer plates
     /* mouth face: the printed front closes flat between inner and outer edges */
     { const jm=NS-1, pos=[],idx=[];
       for(let i=0;i<NV;i++){ const a=FS[jm][i].p, b=FS[jm][i].q, A=OS[jm][i], B=OS[jm][(i+1)%NV];
@@ -347,8 +350,44 @@ function rebuild(){
         push(SP[j].x,OS[j][i],   SP[j].x,OS[j][(i+1)%NV]); }
       const lg=new THREE.BufferGeometry();
       lg.setAttribute('position',new THREE.Float32BufferAttribute(ep,3));
-      const seams=new THREE.LineSegments(lg,new THREE.LineBasicMaterial({color:0x8a877f}));
+      const seams=new THREE.LineSegments(lg,new THREE.LineBasicMaterial({color:0xC9C9C6}));
       seams.userData.tag='shell'; g.add(seams); }
+    /* mouth BAFFLE plate - anchors the mouth plane like a real build (14 canon) */
+    { const jm=NS-1, brd=0.10;
+      const OB=MEH2.offsetVerts(st,SP[jm].x,wt+brd);
+      const pos=[],idx=[];
+      for(let i=0;i<NV;i++){ const A=OS[jm][i], B=OS[jm][(i+1)%NV], A2=OB[i], B2=OB[(i+1)%NV];
+        const b0=pos.length/3;
+        pos.push(SP[jm].x,A[1],A[0], SP[jm].x,B[1],B[0], SP[jm].x,A2[1],A2[0], SP[jm].x,B2[1],B2[0]);
+        idx.push(b0,b0+2,b0+1, b0+1,b0+2,b0+3); }
+      const bg=new THREE.BufferGeometry();
+      bg.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));
+      bg.setIndex(idx); bg.computeVertexNormals();
+      const baf=new THREE.Mesh(bg,mat(0xF5F5F2,0.2,16)); baf.userData.tag='shell'; g.add(baf);
+      const be=[]; for(let i=0;i<NV;i++){ const A2=OB[i],B2=OB[(i+1)%NV];
+        be.push(SP[jm].x,A2[1],A2[0], SP[jm].x,B2[1],B2[0]); }
+      const beg=new THREE.BufferGeometry(); beg.setAttribute('position',new THREE.Float32BufferAttribute(be,3));
+      const bl=new THREE.LineSegments(beg,new THREE.LineBasicMaterial({color:0xC2C2BF}));
+      bl.userData.tag='shell'; g.add(bl); }
+    /* throat-end closure - the shell reads solid from behind */
+    { const pos=[],idx=[];
+      for(let i=0;i<NV;i++){ const A=FS[0][i].p, B=FS[0][i].q, A2=OS[0][i], B2=OS[0][(i+1)%NV];
+        const b0=pos.length/3;
+        pos.push(SP[0].x,A[1],A[0], SP[0].x,B[1],B[0], SP[0].x,A2[1],A2[0], SP[0].x,B2[1],B2[0]);
+        idx.push(b0,b0+2,b0+1, b0+1,b0+2,b0+3); }
+      const tg2=new THREE.BufferGeometry();
+      tg2.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));
+      tg2.setIndex(idx); tg2.computeVertexNormals();
+      const tc=new THREE.Mesh(tg2,mat(0xF5F5F2,0.2,16)); tc.userData.tag='shell'; g.add(tc); }
+    /* the ghosted CABINET box + edges (14's rect-family signature) */
+    { const jm=NS-1, OB=MEH2.offsetVerts(st,SP[jm].x,wt+0.10);
+      let my=0,mz=0; for(const v of OB){ my=Math.max(my,Math.abs(v[0])); mz=Math.max(mz,Math.abs(v[1])); }
+      const bx=SP[jm].x-SP[0].x+0.06;
+      const boxG=new THREE.BoxGeometry(bx, 2*mz, 2*my);
+      const box=new THREE.Mesh(boxG,new THREE.MeshPhongMaterial({color:0xD8D8D4,transparent:true,opacity:0.12,depthWrite:false}));
+      box.position.set(SP[0].x+bx/2-0.06,0,0); box.userData.tag='ghost'; g.add(box);
+      const edges=new THREE.LineSegments(new THREE.EdgesGeometry(boxG),new THREE.LineBasicMaterial({color:0xC2C2BF}));
+      edges.position.copy(box.position); edges.userData.tag='ghost'; g.add(edges); }
   } else {
   /* horn inner surface (single smooth print) */
   const rings=st.pts.map(p=>MEH2.seRing(p.a,p.b,(p.n!==undefined)?p.n:st.n,M));   // M5: round throat morphs to the shape
@@ -551,7 +590,11 @@ function rebuild(){
   } else {
     const cd=new THREE.Mesh(new THREE.CylinderGeometry(0.065,0.075,S.cdDepth*MEH2.IN,28),
       new THREE.MeshPhongMaterial({color:0x8a8a88,shininess:18}));
-    cd.rotation.z=Math.PI/2; cd.position.x=st.pts[0].x-S.cdDepth*MEH2.IN/2-0.004; cd.userData.tag='driver'; g.add(cd); }
+    cd.rotation.z=Math.PI/2; cd.position.x=st.pts[0].x-S.cdDepth*MEH2.IN/2-0.004; cd.userData.tag='driver'; g.add(cd);
+    /* snout taper into the throat (14's detail) */
+    const sn=new THREE.Mesh(new THREE.CylinderGeometry(S.td*MEH2.IN/2, S.td*MEH2.IN/2*1.4, 0.02, 24),
+      new THREE.MeshPhongMaterial({color:0x8a8a88,shininess:16}));
+    sn.rotation.z=-Math.PI/2; sn.position.x=st.pts[0].x-0.012; sn.userData.tag='driver'; g.add(sn); }
   V3D.scene.add(g);
   V3D.bnd=Math.max(st.depth, st.pts[st.pts.length-1].a)*1.1;
   /* HUD rows */
