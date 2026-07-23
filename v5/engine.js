@@ -102,10 +102,23 @@ function perimeterAt(st,x){
     L+=Math.hypot(ring[j][0]-ring[i][0],ring[j][1]-ring[i][1]); }
   return L;
 }
-/* smallest station whose ring hosts n seats (printed law: seat pitch = 2*seatR+8mm) */
-function xForRing(st,n,seatR,xMin){
-  const need=n*(2*seatR+0.008)*1.13;   // arc>chord: ring pitch by arc must leave chord clearance
-  for(let x=xMin;x<=st.depth;x+=st.depth/96){ if(perimeterAt(st,x)>=need) return x; }
+/* smallest station whose PLACED ring truly clears: equal-arc seats, measured chords.
+   No heuristic factors - construct the candidate and measure it (v5 discipline). */
+function ringSeats(st,x,n,K,off){
+  const d=dimsAt(st,x), ring=seRing(d.a,d.b,st.n,K);
+  const o=Math.round((off||0)*K);
+  const out=[]; for(let k=0;k<n;k++) out.push(ring[(Math.round(k*K/n)+o)%K]);
+  return out;
+}
+function xForRing(st,n,seatR,xMin,off){
+  const K=n*48;
+  for(let x=xMin;x<=st.depth;x+=st.depth/128){
+    const seats=ringSeats(st,x,n,K,off);
+    let ok=true;
+    for(let k=0;k<n;k++){ const a2=seats[k], b2=seats[(k+1)%n];
+      if(Math.hypot(a2[0]-b2[0],a2[1]-b2[1]) < 2*seatR+0.008){ ok=false; break; } }
+    if(ok) return x;
+  }
   return null;                                  // does not fit anywhere - horn must grow
 }
 function layout(S,st){
@@ -114,8 +127,9 @@ function layout(S,st){
      drivers sit at the smallest station whose ring fits them; the crossover
      falls out of the path length. fxHi/fxLo become CEILINGS to respect. */
   const seatW=S.odW*CM/2+0.011, seatM=S.odM*CM/2+0.011;
-  const xM0=xForRing(st,(S.nM|0)||4,seatM,0.012);
-  const xW0=xForRing(st,(S.nW|0)||2,seatW,(S.topo==='3way'&&xM0!=null)?(xM0+seatM+seatW+0.008):0.02);
+  const offW=0;   // no stagger by default; a cross-ring law may reintroduce it WITH the verifier knowing
+  const xM0=xForRing(st,(S.nM|0)||4,seatM,0.012,0);
+  const xW0=xForRing(st,(S.nW|0)||2,seatW,(S.topo==='3way'&&xM0!=null)?(xM0+seatM+seatW+0.008):0.02,offW);
   const xM=xM0, xW=xW0;
   S.fxDerived={ hi: xM!=null? Math.round(C/(4*((S.topo==='3way'?xM:xW||st.depth)+S.cdDepth*IN))) : null,
                 lo: xW!=null? Math.round(C/(4*(xW+S.cdDepth*IN))) : null };
@@ -125,14 +139,30 @@ function layout(S,st){
       tap:p,                                    // PRINTED LAW: the tap IS under the driver
       seatR:od/2+0.011});
   };
-  if(S.topo!=='1way' && xW!=null){
-    const nW=S.nW|0||2;
-    for(let k=0;k<nW;k++) place('woof', xW, Math.PI/nW*(1+2*k)- (nW===2?0:Math.PI/2), S.odW*CM, S.dpW*CM);
-  }
-  if(S.topo==='3way' && xM!=null){
-    const nM=S.nM|0||4;
-    for(let k=0;k<nM;k++) place('mid', xM, Math.PI/nM*(1+2*k), S.odM*CM, S.dpM*CM);
-  }
+  /* seats at uniform ARC positions (uniform azimuth bunches on flattened superellipses) */
+  const placeRing=(kind,x,nSeats,od,dp,arcOffset)=>{
+    /* EXACT ring points (sePoint's phi is a PARAMETER, not azimuth - round-tripping
+       through atan2 re-bunches seats; found by trace). Normals numerically. */
+    const K=nSeats*48, d0=dimsAt(st,x);
+    const e=Math.max(1e-4,st.depth*2e-3), d1=dimsAt(st,Math.min(st.depth,x+e));
+    const ring=ringSeats(st,x,nSeats,K,arcOffset||0);
+    const full=seRing(d0.a,d0.b,st.n,K);
+    for(let k=0;k<nSeats;k++){
+      const q=ring[k], p=[x,q[0],q[1]];
+      /* axial tangent: affine per-axis scale to the next station */
+      const u=[e, q[0]*(d1.a/d0.a-1), q[1]*(d1.b/d0.b-1)];
+      /* tangential: neighbor along the full-resolution ring */
+      const ki=(Math.round(k*K/nSeats)+Math.round((arcOffset||0)*K))%K;
+      const qn=full[(ki+1)%K], qp=full[(ki-1+K)%K];
+      const v=[0, qn[0]-qp[0], qn[1]-qp[1]];
+      let nrm=[u[1]*v[2]-u[2]*v[1], u[2]*v[0]-u[0]*v[2], u[0]*v[1]-u[1]*v[0]];
+      const L2=Math.hypot(nrm[0],nrm[1],nrm[2])||1e-9; nrm=nrm.map(c=>c/L2);
+      if(nrm[1]*p[1]+nrm[2]*p[2]<0) nrm=nrm.map(c=>-c);
+      out.push({kind, x, phi:Math.atan2(q[1],q[0]), center:p, normal:nrm, od, dp, tap:p, seatR:od/2+0.011});
+    }
+  };
+  if(S.topo!=='1way' && xW!=null) placeRing('woof', xW, (S.nW|0)||2, S.odW*CM, S.dpW*CM, offW);
+  if(S.topo==='3way' && xM!=null) placeRing('mid', xM, (S.nM|0)||4, S.odM*CM, S.dpM*CM, 0);
   if(S.topo!=='1way' && xW==null) out.missing=true;
   if(S.topo==='3way' && xM==null) out.missing=true;
   if(S.topo==='1way'){
