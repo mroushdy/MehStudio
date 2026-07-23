@@ -3,34 +3,50 @@
 <title>MEH Studio v5 — print-only multiple-entry horn designer</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <style>
-:root{--bg:#141311;--panel:#1c1b19;--ink:#e8e6e1;--faint:#8a877f;--acc:#FF5A1F;--ok:#7fae6a;--warn:#c9a23f;--bad:#c8331d}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:13px/1.5 "SF Mono",Menlo,Consolas,monospace}
-header{padding:14px 20px;border-bottom:1px solid #2a2925;display:flex;justify-content:space-between;align-items:baseline}
-h1{font-size:16px;margin:0;letter-spacing:.14em}
-.tag{color:var(--faint);font-size:10px;letter-spacing:.12em}
-main{display:grid;grid-template-columns:290px 1fr;min-height:calc(100vh - 55px)}
-aside{background:var(--panel);padding:14px;border-right:1px solid #2a2925;overflow-y:auto}
-.sec{color:var(--faint);font-size:10px;letter-spacing:.16em;margin:16px 0 6px}
-.seg{display:flex;gap:4px;margin-bottom:8px}
-.seg button{flex:1;background:#25231f;border:1px solid #3a382f;color:var(--ink);padding:7px 2px;font:600 11px monospace;cursor:pointer}
-.seg button.on{background:var(--acc);border-color:var(--acc);color:#fff}
-label{display:block;color:var(--faint);font-size:10px;letter-spacing:.1em;margin-top:9px}
-input[type=range]{width:100%}
-select,input[type=number]{width:100%;background:#0f0e0d;color:var(--ink);border:1px solid #3a382f;padding:5px;font:12px monospace}
-.val{float:right;color:var(--ink)}
-#v3dwrap{position:relative}
-#v3d{position:absolute;inset:0}
-#hud{position:absolute;left:10px;top:10px;z-index:3;display:flex;flex-direction:column;gap:6px}
-#hud button{background:#25231fdd;border:1px solid #3a382f;color:var(--ink);padding:6px 10px;font:600 10px monospace;cursor:pointer;letter-spacing:.1em}
-#note{position:absolute;left:10px;bottom:10px;color:var(--faint);font-size:11px;z-index:3}
-#dims{position:absolute;right:12px;bottom:10px;color:var(--faint);font-size:11px;z-index:3}
-#rows{position:absolute;right:12px;top:10px;z-index:3;background:#1c1b19cc;padding:8px 10px;border:1px solid #2a2925;max-width:330px}
-#rows div{font-size:10px;margin:2px 0}
+:root{--paper:#FFFFFF;--panel:#FAFAFA;--ink:#1C1C1C;--faint:#A6A6A6;--grid:#F0F0F0;--gridmaj:#E2E2E2;--acc:#C8331D;--line:#E8E8E8;--ok:#4a7a3a;--warn:#a07d1e;--bad:#C8331D;--mono:ui-monospace,'SF Mono',SFMono-Regular,Menlo,Consolas,monospace;}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--mono);font-size:13px;line-height:1.5;}
+#app{min-height:100vh;padding:16px;}
+.frame{border:1px solid var(--gridmaj);max-width:1400px;margin:0 auto;background:var(--paper);}
+header{display:flex;flex-wrap:nowrap;border-bottom:1px solid var(--gridmaj);align-items:center;min-width:0;}
+.ttl{padding:14px 20px;flex:1 1 300px;min-width:0;}
+.eyebrow{font-size:9px;letter-spacing:.22em;color:var(--faint);margin-bottom:4px;text-transform:uppercase;}
+h1{margin:0;font-weight:600;font-size:18px;letter-spacing:.04em;}
+h1 .acc{color:var(--acc);}
+.brand{margin-left:auto;padding:10px 20px;text-align:right;flex:0 0 auto;white-space:nowrap;font-size:9px;letter-spacing:.18em;color:var(--faint);text-transform:uppercase;line-height:1.7;}
+.cols{display:flex;flex-wrap:wrap;}
+aside{flex:0 0 268px;min-width:244px;padding:14px 16px 12px;border-right:1px solid var(--line);background:var(--panel);position:sticky;top:0;max-height:100vh;overflow-y:auto;align-self:flex-start;}
+@media (max-width:900px){ aside{position:static;max-height:none;flex:1 1 100%;border-right:none;border-bottom:1px solid var(--line);} }
+main.viewcol{flex:1 1 460px;min-width:300px;}
+.sect{font-size:9px;letter-spacing:.2em;color:var(--faint);margin:14px 0 8px;padding-top:10px;border-top:1px solid var(--line);text-transform:uppercase;}
+.sect:first-child{margin-top:0;padding-top:0;border-top:none;}
+.seg{display:flex;gap:0;margin-bottom:10px;border:1px solid var(--line);}
+.seg button{flex:1;background:var(--paper);border:none;border-right:1px solid var(--line);color:var(--ink);padding:7px 2px;font-family:var(--mono);font-weight:600;font-size:10px;letter-spacing:.06em;cursor:pointer;}
+.seg button:last-child{border-right:none;}
+.seg button.on{background:var(--acc);color:#fff;}
+label{display:block;color:var(--faint);font-size:10px;letter-spacing:.06em;margin-top:10px;text-transform:uppercase;}
+.val{float:right;color:var(--ink);font-size:11px;}
+input[type=range]{width:100%;accent-color:var(--acc);height:2px;}
+select{width:100%;font-family:var(--mono);font-size:11px;background:var(--paper);border:1px solid var(--line);color:var(--ink);padding:5px 6px;margin-top:3px;}
+#v3dwrap{position:relative;min-height:520px;}
+#v3d{position:absolute;inset:0;}
+#hud{position:absolute;left:12px;top:12px;z-index:3;display:flex;flex-direction:column;gap:6px;}
+#hud button{background:#FFFFFFee;border:1px solid var(--gridmaj);color:var(--ink);padding:6px 10px;font-family:var(--mono);font-weight:600;font-size:9px;cursor:pointer;letter-spacing:.14em;text-transform:uppercase;}
+#note{position:absolute;left:12px;bottom:10px;color:var(--faint);font-size:10px;z-index:3;}
+#dims{position:absolute;right:14px;bottom:10px;color:var(--faint);font-size:10px;z-index:3;letter-spacing:.04em;}
+#rows{position:absolute;right:12px;top:12px;z-index:3;background:#FFFFFFee;padding:8px 12px;border:1px solid var(--gridmaj);max-width:340px;}
+#rows div{font-size:9.5px;margin:2.5px 0;letter-spacing:.02em;}
 .ok{color:var(--ok)}.warn{color:var(--warn)}.fail{color:var(--bad)}
 </style></head><body>
-<header><h1>MEH STUDIO <span style="color:var(--acc)">v5</span></h1>
-<div class="tag">PRINT-ONLY · GEOMETRY FIRST, CROSSOVER DERIVED · BUILD <span id="bno"></span></div></header>
-<main>
+<div id="app"><div class="frame">
+<header>
+  <div class="ttl">
+    <div class="eyebrow">multiple-entry horn · print-only · geometry first, crossover derived</div>
+    <h1>MEH STUDIO <span class="acc">v5</span> <span style="font-size:10px;color:var(--faint);letter-spacing:.1em">· BUILD <span id="bno"></span></span></h1>
+  </div>
+  <div class="brand">companion to horn studio<br>silence please · nyc</div>
+</header>
+<div class="cols">
 <aside>
   <div class="sec">TOPOLOGY</div>
   <div class="seg" id="segTopo">
@@ -68,7 +84,7 @@ select,input[type=number]{width:100%;background:#0f0e0d;color:var(--ink);border:
     <input type="range" id="nM" min="2" max="8" step="1" value="4">
   </div>
 </aside>
-<div id="v3dwrap">
+<main class="viewcol"><div id="v3dwrap">
   <div id="v3d"></div>
   <div id="hud">
     <button id="bPin">PIN A BUG</button>
@@ -77,8 +93,8 @@ select,input[type=number]{width:100%;background:#0f0e0d;color:var(--ink);border:
   <div id="rows"></div>
   <div id="note"></div>
   <div id="dims"></div>
-</div>
-</main>
+</div></main>
+</div></div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 /*__ENGINE__*/
@@ -114,7 +130,7 @@ const V3D={yaw:0.6,pitch:0.28,dist:1.9,spin:false,xray:false};
 function init3d(){
   const host=document.getElementById('v3d');
   V3D.renderer=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});
-  V3D.renderer.setClearColor(0x141311);
+  V3D.renderer.setClearColor(0xFAFAFA);
   host.appendChild(V3D.renderer.domElement);
   V3D.scene=new THREE.Scene();
   V3D.camera=new THREE.PerspectiveCamera(42,1,0.01,50);

@@ -257,6 +257,97 @@ function evaluate(S){
   return {st, layout:L, rows, fails:rows.filter(r=>r.st==='fail').length};
 }
 
+/* ---- RESPONSE PREVIEW (ported from v4: horn = two-port ladder; each tap section a
+   Norton source through chamber compliance + port mass; CD behind its stub; LR4 sum
+   at the DERIVED crossovers). Levels are per-section normalized like v4. ---- */
+const CX={ add:(x,y)=>[x[0]+y[0],x[1]+y[1]], mul:(x,y)=>[x[0]*y[0]-x[1]*y[1],x[0]*y[1]+x[1]*y[0]],
+  div:(x,y)=>{const d=y[0]*y[0]+y[1]*y[1]||1e-30;return [(x[0]*y[0]+x[1]*y[1])/d,(x[1]*y[0]-x[0]*y[1])/d];},
+  inv:x=>CX.div([1,0],x), abs:x=>Math.hypot(x[0],x[1]), scale:(x,k)=>[x[0]*k,x[1]*k] };
+function areaAt(st,x){
+  const d=dimsAt(st,x), ring=seRing(d.a,d.b,st.n,48);
+  let A=0; for(let i=0;i<ring.length;i++){ const j=(i+1)%ring.length;
+    A+=ring[i][0]*ring[j][1]-ring[j][0]*ring[i][1]; }
+  return Math.abs(A)/2;
+}
+function response(S,ev){
+  const st=ev.st, L=ev.layout;
+  const hasW=S.topo!=='1way', hasM=S.topo==='3way';
+  const fxHi=(S.fxDerived&&S.fxDerived.hi)||900, fxLo=(S.fxDerived&&S.fxDerived.lo)||fxHi;
+  const RHO=1.205, NSEG=64, F0=100, F1=16000, NF=120;
+  const Ss=[]; for(let i=0;i<=NSEG;i++) Ss.push(Math.max(1e-6,areaAt(st, st.depth*i/NSEG)));
+  const segL=st.depth/NSEG;
+  const dW=L.find(d=>d.kind==='woof'), dM=L.find(d=>d.kind==='mid');
+  const nodeW=hasW&&dW? Math.max(1,Math.round(dW.x/st.depth*NSEG)) : -1;
+  const nodeM=hasM&&dM? Math.max(1,Math.round(dM.x/st.depth*NSEG)) : -1;
+  const stub={L:Math.max(1e-4,S.cdDepth*IN), Sa:Ss[0]};
+  const LPT_CM=1.2;                                    // print wall + seat floor (refined with B-stage geometry)
+  const mkBr=(ap,vtc,n)=>{ const Ap=n*ap*1e-4, V=n*vtc*1e-6, r=Math.sqrt(ap*1e-4/Math.PI);
+    return {M:RHO*(LPT_CM*1e-2+0.85*r)/Ap, Cc:V/(RHO*C*C)}; };
+  const brW=hasW&&dW&&dW.slot? mkBr(dW.slot.ap,S.vtcW||150,(S.nW|0)||2) : null;
+  const brM=hasM&&dM&&dM.slot? mkBr(dM.slot.ap,S.vtcM||40,(S.nM|0)||4) : null;
+  const f=[],HF=[],MID=[],WOOF=[];
+  for(let i=0;i<NF;i++){
+    const fq=F0*Math.pow(F1/F0,i/(NF-1)); f.push(fq);
+    const w=2*Math.PI*fq, k=w/C;
+    const line=(P,U,Ln,Zc)=>{const cs=Math.cos(k*Ln),sn=Math.sin(k*Ln);
+      return [CX.add(CX.scale(P,cs),CX.mul([0,-Zc*sn],U)),
+              CX.add(CX.scale(U,cs),CX.mul([0,-sn/Zc],P))];};
+    const zline=(Z,Ln,Zc)=>{const t=Math.tan(k*Ln);
+      const num=CX.add(Z,[0,Zc*t]);
+      const den=CX.add([Zc,0],CX.mul([0,t/Zc],CX.mul(Z,[Zc,0])));
+      return CX.scale(CX.div(num,den),Zc);};
+    const Sm=Ss[NSEG], am=Math.sqrt(Sm/Math.PI), ka=k*am;
+    const Zrad=CX.scale(CX.div([ka*ka/2,0.85*ka],[1+ka*ka/2,0.85*ka]), RHO*C/Sm);
+    const ZbrOf=br=>[0, w*br.M-1/(w*br.Cc)];
+    const YbrOf=br=>CX.inv(ZbrOf(br));
+    const Zm=new Array(NSEG+1); Zm[NSEG]=Zrad;
+    for(let j=NSEG-1;j>=0;j--){ let Z=zline(Zm[j+1],segL,RHO*C/Ss[j]);
+      if(j===nodeM&&brM) Z=CX.inv(CX.add(CX.inv(Z),YbrOf(brM)));
+      if(j===nodeW&&brW) Z=CX.inv(CX.add(CX.inv(Z),YbrOf(brW)));
+      Zm[j]=Z; }
+    const Zt=new Array(NSEG+1);
+    { const t=Math.tan(k*stub.L), Zcs=RHO*C/stub.Sa;
+      Zt[0]= Math.abs(t)<1e-9? [1e9,0] : [0,-Zcs/t];
+      for(let j=1;j<=NSEG;j++){ let Z=zline(Zt[j-1],segL,RHO*C/Ss[j-1]);
+        if(j===nodeM&&brM) Z=CX.inv(CX.add(CX.inv(Z),YbrOf(brM)));
+        if(j===nodeW&&brW) Z=CX.inv(CX.add(CX.inv(Z),YbrOf(brW)));
+        Zt[j]=Z; } }
+    const mouthFrom=(node,P,U,skip)=>{
+      for(let j=node;j<NSEG;j++){
+        if(j===nodeM&&brM&&skip!=='mid'&&j!==node) U=CX.add(U,CX.scale(CX.mul(P,YbrOf(brM)),-1));
+        if(j===nodeW&&brW&&skip!=='woof'&&j!==node) U=CX.add(U,CX.scale(CX.mul(P,YbrOf(brW)),-1));
+        [P,U]=line(P,U,segL,RHO*C/Ss[j]);
+      }
+      return U; };
+    const drive=(node,br,skip)=>{
+      const Ud=[0,-1/w];
+      const Znode=CX.inv(CX.add(CX.inv(Zm[node]),CX.inv(Zt[node])));
+      const ZC=[0,-1/(w*br.Cc)], ZM=[0,w*br.M];
+      const Uin=CX.mul(Ud, CX.div(ZC, CX.add(ZC,CX.add(ZM,Znode))));
+      const Pn=CX.mul(Uin,Znode);
+      const Um=CX.div(Pn,Zm[node]);
+      return CX.abs(CX.scale(mouthFrom(node,Pn,Um,skip),w)); };
+    { const Ud=[0,-1/w], Zcs=RHO*C/stub.Sa;
+      const Zdia=zline(Zm[0],stub.L,Zcs);
+      let P=CX.mul(Ud,Zdia), U=Ud;
+      [P,U]=line(P,U,stub.L,Zcs);
+      HF.push(CX.abs(CX.scale(mouthFrom(0,P,U,'hf'),w))); }
+    MID.push(hasM&&brM?drive(nodeM,brM,'mid'):0);
+    WOOF.push(hasW&&brW?drive(nodeW,brW,'woof'):0);
+  }
+  const dB=arr=>{const mx=Math.max(1e-30,...arr); return arr.map(v=>20*Math.log10((v||1e-30)/mx));};
+  const hf=dB(HF), mid=hasM?dB(MID):null, woof=hasW?dB(WOOF):null;
+  const lr4lp=x=>{const H2=CX.div([1,0],[1-x*x,Math.SQRT2*x]);return CX.mul(H2,H2);};
+  const lr4hp=x=>{const ix=1/Math.max(1e-9,x);const H2=CX.div([1,0],[1-ix*ix,Math.SQRT2*ix]);return CX.mul(H2,H2);};
+  const sum=f.map((fq,i)=>{
+    let acc=[0,0];
+    const add2=(curve,H)=>{if(!curve)return;acc=CX.add(acc,CX.scale(H,Math.pow(10,curve[i]/20)));};
+    add2(hf,lr4hp(fq/fxHi));
+    if(hasM) add2(mid,CX.mul(lr4lp(fq/fxHi),lr4hp(fq/fxLo)));
+    if(hasW) add2(woof,lr4lp(fq/(hasM?fxLo:fxHi)));
+    return 20*Math.log10(CX.abs(acc)+1e-12); });
+  return {f,hf,mid,woof,sum,fxHi,fxLo};
+}
 /* ---- SOLVE: grow the horn until every law passes (throat-invariant growth;
    the v4 principle, clean-roomed). Returns the settled state + evaluation. ---- */
 function solve(S0){
@@ -273,6 +364,6 @@ function solve(S0){
   return {S, ev:evaluate(S), infeasible:true};
 }
 
-return {C,IN,CM, sePoint,seRing, profile, stations, dimsAt, surfPt, surfN, layout, evaluate, solve};
+return {C,IN,CM, sePoint,seRing, profile, stations, dimsAt, surfPt, surfN, layout, evaluate, solve, response, areaAt};
 })();
 if(typeof module!=='undefined') module.exports=MEH2;
