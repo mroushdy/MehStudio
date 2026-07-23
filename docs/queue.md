@@ -48,8 +48,14 @@ M4. COVERAGE TRUTH: Keele mouth law per plane, pattern-loss frequency, waistband
 M5. THROAT SIDE: CD throat adapter Vtc/Atc, exit-angle match, coax entrance geometry.
 M6. BAND ARCHITECTURE: real sub-XO choice with displacement math (80 Hz is an
     assumption today); 4-way question parked explicitly.
-M7. LAYOUT DIALECTS beyond the ring: walls / seams / corner boards (SH96) /
-    knuckle passages / remote bandpass (Solana). The ring is ONE dialect.
+M7. LAYOUT DIALECTS [PLACEMENT MATRIX LANDED - docs/placement_matrix.md is
+    LAW, gate-asserted: 2 woofers -> the long-axis Danley line (pin #14); mids
+    perpendicular (2) / square DIAG diamond (4; chamfer boards on angular =
+    SH50+v4 canon) / coverage rows (pin #9 era); measured 3D obstacle
+    clearance replaced the radii-sum heuristic (2x12in states: 65in-cap ->
+    42in clean); crease exclusion by true axial footprint; velocity-first CR
+    grading]. Still open: SH96 corner boards as a WOOFER dialect, knuckle
+    passages, remote bandpass (Solana).
 M8. PROVEN-BUILD PRESETS: SH50-class, SH96-class, arda-class, JMOD-class one-click
     bundles with driver sets.
 M9. ENCLOSURE REALITY: rear chamber volumes, magnet clearance at angle, the box.
