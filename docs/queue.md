@@ -1,9 +1,9 @@
 # MEH STUDIO — STANDING QUEUE (versioned; update on every landed item)
-Last updated: 2026-07-23 (build 504: coax CAD study - parametric coaxBody from
-the B&C 6FHX51 .3dm measurements, dish/tap-ring/adapter all DERIVE from the
-chosen driver (horn grows to host it), BMS 5in mini + 6FHX51 true-CAD presets.
-Build 503: Reference D 1-way from photo study; 2-WAY renamed 2-WAY COAX.
-See printed_mounts_spec.md for both studies). v4 frozen at build 83.
+Last updated: 2026-07-23 (build 505: M3 path-length balance LANDED + true-CAD
+coax silhouette (contiguous basket/motor/horn-tube/tweeter stack per the 6FHX51
+measurements - his "still does not look right" fix) + M4 informational row.
+Build 504: coax CAD study, driver-derived dish. Build 503: Reference D 1-way;
+2-WAY COAX rename. See printed_mounts_spec.md). v4 frozen at build 83.
 
 ## BUILD 502 PIN SWEEP (all 7 open pins resolved; sourced from diyaudio 339799
 ## + Synergy Calc V5 + Danley canon)
@@ -72,10 +72,17 @@ M2. [DONE] FULL TAP LAW (docs/tap_laws.md): lambda/4 null margin BUILT INTO the
     AND the response network; same laws applied to the 1way coax tap ring.
     Solver loop-bound off-by-one fixed (cap-growth now returns its clean state).
     Default state = verified-clean canon (2way 4x6.5 on the DCX coax).
-M3. PATH-LENGTH BALANCE (Heinz US5526456, the founding canon): per-driver path to
-    throat, section phase alignment at XO, common acoustic center check.
-M4. COVERAGE TRUTH: Keele mouth law per plane, pattern-loss frequency, waistbanding
-    warnings; coverage currently only sets wall angle.
+M3. [DONE build 505] PATH-LENGTH BALANCE (Heinz US5526456, the founding canon):
+    PATH law rows - (a) equal section paths: every driver of a section rides ONE
+    station (structural since the build-502 tap rework; asserted ≤λ/20 spread);
+    (b) common acoustic center vs the section above, read as PHASE at that
+    crossover (ok ≤76° - the LR4-corner bound the null margin implies; warn
+    ≤105°); covers CD-vs-woofs (2way), CD-vs-mids + mids-vs-woofs (3way - the
+    woof-vs-mid spacing had NO other guard), and the 1way cone-vs-CD slant.
+M4. COVERAGE TRUTH [PARTIAL build 505: 'Pattern floor vs the low crossover' row
+    states where directivity walks toward omni relative to the horn's low XO -
+    INFORMATIONAL only (no grade) until thresholds have canon; Keele floors per
+    plane were pin #16]. Still open: waistbanding warnings, graded tiers.
 M5. THROAT SIDE [1WAY ADAPTER LANDED - pin #21: the horn starts AT the CD exit,
     38-deg snout to the coax cone's tap ring (slots ON the adapter wall, XO from
     the worst tap's SLANT path), coax unit drawn at the chosen woofer's size.

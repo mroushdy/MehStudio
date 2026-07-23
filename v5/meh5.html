@@ -782,6 +782,43 @@ function acoustics(S,L,st){
         true);   // a bigger mouth genuinely fixes this one
     }
   }
+  /* ---- M3: PATH-LENGTH BALANCE (Heinz US5526456, the founding canon) ----
+     Every driver of a section shares ONE station (structural in v5 - the pins
+     22-27 rework made even straddling pairs equal-path), and adjacent sections
+     should share an acoustic center: the offset between a section's station and
+     the section above it reads as PHASE at the crossover. The λ/4 null law
+     bounds the CD offset at ~76°; the 3-way woof-vs-mid spacing has no other
+     guard - THIS row is it. */
+  if(S.fxDerived&&st){
+    const secs=[];
+    if(S.topo!=='1way'){ const dW=L.filter(d=>d.kind==='woof');
+      if(dW.length&&S.fxDerived.lo) secs.push(['WOOF',dW,S.fxDerived.lo]); }
+    if(S.topo==='3way'){ const dM=L.filter(d=>d.kind==='mid');
+      if(dM.length&&S.fxDerived.hi) secs.push(['MID',dM,S.fxDerived.hi]); }
+    for(const [K,drs,fx] of secs){
+      let mn=1e9,mx=-1e9;
+      for(const d of drs){ mn=Math.min(mn,d.x); mx=Math.max(mx,d.x); }
+      const lam=C/fx;
+      add('PATH','Equal section paths ('+K.toLowerCase()+'s, US5526456)',((mx-mn)*1000).toFixed(1)+' mm spread',
+        (mx-mn)<=lam/20, (mx-mn)<=lam/10,
+        'Heinz: every driver of a section rides ONE station, so all its taps share the throat path - structural in v5');
+      const upper=(K==='WOOF'&&S.topo==='3way')? {x:(L.find(d=>d.kind==='mid')||{x:0}).x, name:'the mids'}
+                                               : {x:-S.cdDepth*IN, name:'the CD'};
+      const off=drs[0].x-upper.x, deg=off/lam*360;
+      add('PATH','Common acoustic center vs '+upper.name,(off*1000).toFixed(0)+' mm = '+Math.round(deg)+'° at '+fx+' Hz',
+        Math.abs(deg)<=76, Math.abs(deg)<=105,
+        'Heinz US5526456: sections should share an acoustic center; the derived-XO null margin bounds the CD offset, and LR4 absorbs ≤~76° at the corner');
+    }
+    if(S.topo==='1way'&&S.fxDerived.lo){
+      const tp=L.find(d=>d.kind==='coaxtap');
+      if(tp){ const rT2=Math.hypot(tp.tap[1],tp.tap[2]);
+        const Ls=Math.hypot(tp.x, rT2-st.throat)+S.cdDepth*IN;
+        const lam=C/S.fxDerived.lo, deg=Ls/lam*360;
+        add('PATH','Common acoustic center (cone vs CD)',(Ls*1000).toFixed(0)+' mm = '+Math.round(deg)+'° at '+S.fxDerived.lo+' Hz',
+          Math.abs(deg)<=76, Math.abs(deg)<=105,
+          'the coax cone enters on the dish face a slant-path behind the CD diaphragm; the derived XO keeps this inside the LR4 corner'); }
+    }
+  }
   /* PIN #16 (M4 down payment): Keele pattern-control floors per plane -
      wnom = kk/(theta*Fc), kk = 25306 Hz*deg*m (Synergy Calc sheet). Below these
      frequencies the wall angle stops steering and the pattern widens toward omni. */
@@ -790,6 +827,15 @@ function acoustics(S,L,st){
     const FcV=Math.round(KK/(S.covV*Math.max(0.05,2*mo.b)));
     add('PATTERN','Coverage control holds down to (H / V)',FcH+' / '+FcV+' Hz',true,true,
       'Keele: mouth = 25306/(angle*Fc). Wider angle OR bigger mouth -> control lower. The classic shapes (90x60, 110x70...) are this trade struck at equal H/V floors');
+    /* M4 (informational for now - thresholds need canon before they can grade):
+       where the pattern floor sits relative to the LOWEST horn crossover. In a
+       MEH the horn keeps loading below Fc, but directivity walks toward omni. */
+    if(S.fxDerived&&S.fxDerived.lo){
+      const fx=S.fxDerived.lo, worst=Math.max(FcH,FcV);
+      add('PATTERN','Pattern floor vs the low crossover',worst+' vs '+fx+' Hz'+(worst>fx?' — widens below '+worst+' Hz':''),
+        true,true,
+        'below the floor the wall angle stops steering (the sections still sum - a MEH keeps loading); grow the mouth to push the floor down');
+    }
   }
   /* XO ceilings: CD reach (by exit size) and mid reach */
   if(S.fxDerived){
@@ -1011,7 +1057,7 @@ return {C,IN,CM, sePoint,seRing, profile, stations, dimsAt, surfPt, surfN, layou
 if(typeof module!=='undefined') module.exports=MEH2;
 
 /* parametric */
-window.MEH_BUILD=504;
+window.MEH_BUILD=505;
 document.getElementById('bno').textContent=MEH_BUILD;
 "use strict";
 /* ---------------- driver presets (v4 datasheets; mesh = true CAD, meshApprox = nearest body) ---------------- */
@@ -1122,33 +1168,41 @@ function coaxBody(od,dp){
       const bolt=new THREE.Mesh(new THREE.CylinderGeometry(R*0.055,R*0.055,od*0.06,10),DRK);
       bolt.position.set(sx*s*0.84, od*0.028, sz*s*0.84); g.add(bolt); }
   }
-  /* proportions MEASURED from the B&C 6FHX51 CAD (2026-07-23, .3dm layer boxes,
-     od-relative): gasket .97 · surround .95 · cone .72 wide x .14 deep · HF horn
-     mouth .60 SLIGHTLY PROUD of the face, throat .15 at depth .53 · woofer
-     magnet Ø.72 at .27-.44 · tweeter stack to .63. Depths scale to declared dp. */
-  const sy=Math.max(0.6, dp/(0.63*od));   // honor the state's depth
+  /* SILHOUETTE MEASURED from the B&C 6FHX51 CAD (.3dm layer boxes, od-relative,
+     y = depth behind the mounting face). EVERYTHING IS CONTIGUOUS - basket
+     tapers into the motor, the HF horn tube runs THROUGH the pole bore to its
+     flange, the tweeter stack sits right behind it (no floating parts). */
+  const sy=Math.max(0.55, dp/(0.634*od));   // honor the state's depth
   const Y=f=>od*f*sy;
-  /* gasket + surround + cone */
-  { const gk=new THREE.Mesh(new THREE.TorusGeometry(R*0.94,R*0.028,10,44),DRK);
-    gk.rotation.x=Math.PI/2; gk.position.y=od*0.012; g.add(gk);
-    const sur=new THREE.Mesh(new THREE.TorusGeometry(R*0.83,R*0.058,10,44),DRK);
-    sur.rotation.x=Math.PI/2; sur.position.y=od*0.03; g.add(sur);
-    const cone=[[R*0.80,od*0.045],[R*0.55,Y(0.09)],[R*0.36,Y(0.14)]]
+  /* basket: front plate ring -> arm taper -> motor top (one dark shell) */
+  { const bas=[[R*0.985,-od*0.02],[R*0.985,od*0.02],[R*0.90,od*0.03],[R*0.82,Y(0.06)],[R*0.72,Y(0.14)],[R*0.62,Y(0.23)],[R*0.42,Y(0.235)]]
+      .map(p=>new THREE.Vector2(p[0],p[1]));
+    g.add(new THREE.Mesh(new THREE.LatheGeometry(bas,44),BLK));
+    const gk=new THREE.Mesh(new THREE.TorusGeometry(R*0.945,R*0.024,10,44),DRK);
+    gk.rotation.x=Math.PI/2; gk.position.y=-od*0.012; g.add(gk); }
+  /* surround + the narrow exposed cone ring (the HF horn owns the center) */
+  { const sur=new THREE.Mesh(new THREE.TorusGeometry(R*0.845,R*0.052,10,44),DRK);
+    sur.rotation.x=Math.PI/2; sur.position.y=od*0.008; g.add(sur);
+    const cone=[[R*0.80,od*0.02],[R*0.56,Y(0.10)],[R*0.42,Y(0.145)]]
       .map(p=>new THREE.Vector2(p[0],p[1]));
     g.add(new THREE.Mesh(new THREE.LatheGeometry(cone,44),BLK)); }
-  /* the METAL HF HORN filling the cone center - mouth 0.60·od, proud of the
-     face, flaring back to the 1in throat (the CAD's Horn_04) */
-  { const thr=[[R*0.60,-od*0.030],[R*0.585,0.0],[R*0.44,Y(0.10)],[R*0.26,Y(0.28)],[R*0.16,Y(0.42)],[R*0.15,Y(0.53)]]
+  /* woofer motor: cylinder right where the basket lands (CAD: .239-.441) */
+  { const mo=new THREE.Mesh(new THREE.CylinderGeometry(R*0.687,R*0.717,Y(0.20),30),DRK);
+    mo.position.y=Y(0.34); g.add(mo); }
+  /* the METAL HF HORN (CAD Horn_04): mouth Ø.63·od PROUD of the face, necking
+     to its tube Ø.42·od which runs through the pole bore to the rear flange */
+  { const thr=[[R*0.630,-Y(0.099)],[R*0.615,-Y(0.06)],[R*0.46,Y(0.005)],[R*0.30,Y(0.055)],[R*0.215,Y(0.10)],
+      [R*0.213,Y(0.44)],[R*0.248,Y(0.445)],[R*0.248,Y(0.532)]]
       .map(p=>new THREE.Vector2(p[0],p[1]));
     g.add(new THREE.Mesh(new THREE.LatheGeometry(thr,44),MET));
-    const dk=new THREE.Mesh(new THREE.CircleGeometry(R*0.145,24),DRK);
-    dk.rotation.x=-Math.PI/2; dk.position.y=Y(0.525); g.add(dk); }
-  /* woofer magnet ring + tweeter motor behind (CAD stack) */
-  { const mo=new THREE.Mesh(new THREE.CylinderGeometry(R*0.70,R*0.72,Y(0.17),30),DRK);
-    mo.position.y=Y(0.355); g.add(mo);
-    const pot=new THREE.Mesh(new THREE.CylinderGeometry(R*0.27,R*0.28,Y(0.10),24),
+    const dk=new THREE.Mesh(new THREE.CircleGeometry(R*0.208,26),DRK);
+    dk.rotation.x=-Math.PI/2; dk.position.y=-Y(0.095); g.add(dk); }
+  /* tweeter CD stack right behind the horn flange (CAD: .547-.634) */
+  { const pot=new THREE.Mesh(new THREE.CylinderGeometry(R*0.140,R*0.140,Y(0.088),24),DRK);
+    pot.position.y=Y(0.585); g.add(pot);
+    const cap=new THREE.Mesh(new THREE.CylinderGeometry(R*0.10,R*0.12,Y(0.02),20),
       new THREE.MeshPhongMaterial({color:0x8a8a88,shininess:20}));
-    pot.position.y=Y(0.58); g.add(pot); }
+    cap.position.y=Y(0.64); g.add(cap); }
   return g;
 }
 /* scene axes: (x,z,y) like v4 — model x = depth axis points at the viewer-front */

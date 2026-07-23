@@ -653,6 +653,43 @@ function acoustics(S,L,st){
         true);   // a bigger mouth genuinely fixes this one
     }
   }
+  /* ---- M3: PATH-LENGTH BALANCE (Heinz US5526456, the founding canon) ----
+     Every driver of a section shares ONE station (structural in v5 - the pins
+     22-27 rework made even straddling pairs equal-path), and adjacent sections
+     should share an acoustic center: the offset between a section's station and
+     the section above it reads as PHASE at the crossover. The λ/4 null law
+     bounds the CD offset at ~76°; the 3-way woof-vs-mid spacing has no other
+     guard - THIS row is it. */
+  if(S.fxDerived&&st){
+    const secs=[];
+    if(S.topo!=='1way'){ const dW=L.filter(d=>d.kind==='woof');
+      if(dW.length&&S.fxDerived.lo) secs.push(['WOOF',dW,S.fxDerived.lo]); }
+    if(S.topo==='3way'){ const dM=L.filter(d=>d.kind==='mid');
+      if(dM.length&&S.fxDerived.hi) secs.push(['MID',dM,S.fxDerived.hi]); }
+    for(const [K,drs,fx] of secs){
+      let mn=1e9,mx=-1e9;
+      for(const d of drs){ mn=Math.min(mn,d.x); mx=Math.max(mx,d.x); }
+      const lam=C/fx;
+      add('PATH','Equal section paths ('+K.toLowerCase()+'s, US5526456)',((mx-mn)*1000).toFixed(1)+' mm spread',
+        (mx-mn)<=lam/20, (mx-mn)<=lam/10,
+        'Heinz: every driver of a section rides ONE station, so all its taps share the throat path - structural in v5');
+      const upper=(K==='WOOF'&&S.topo==='3way')? {x:(L.find(d=>d.kind==='mid')||{x:0}).x, name:'the mids'}
+                                               : {x:-S.cdDepth*IN, name:'the CD'};
+      const off=drs[0].x-upper.x, deg=off/lam*360;
+      add('PATH','Common acoustic center vs '+upper.name,(off*1000).toFixed(0)+' mm = '+Math.round(deg)+'° at '+fx+' Hz',
+        Math.abs(deg)<=76, Math.abs(deg)<=105,
+        'Heinz US5526456: sections should share an acoustic center; the derived-XO null margin bounds the CD offset, and LR4 absorbs ≤~76° at the corner');
+    }
+    if(S.topo==='1way'&&S.fxDerived.lo){
+      const tp=L.find(d=>d.kind==='coaxtap');
+      if(tp){ const rT2=Math.hypot(tp.tap[1],tp.tap[2]);
+        const Ls=Math.hypot(tp.x, rT2-st.throat)+S.cdDepth*IN;
+        const lam=C/S.fxDerived.lo, deg=Ls/lam*360;
+        add('PATH','Common acoustic center (cone vs CD)',(Ls*1000).toFixed(0)+' mm = '+Math.round(deg)+'° at '+S.fxDerived.lo+' Hz',
+          Math.abs(deg)<=76, Math.abs(deg)<=105,
+          'the coax cone enters on the dish face a slant-path behind the CD diaphragm; the derived XO keeps this inside the LR4 corner'); }
+    }
+  }
   /* PIN #16 (M4 down payment): Keele pattern-control floors per plane -
      wnom = kk/(theta*Fc), kk = 25306 Hz*deg*m (Synergy Calc sheet). Below these
      frequencies the wall angle stops steering and the pattern widens toward omni. */
@@ -661,6 +698,15 @@ function acoustics(S,L,st){
     const FcV=Math.round(KK/(S.covV*Math.max(0.05,2*mo.b)));
     add('PATTERN','Coverage control holds down to (H / V)',FcH+' / '+FcV+' Hz',true,true,
       'Keele: mouth = 25306/(angle*Fc). Wider angle OR bigger mouth -> control lower. The classic shapes (90x60, 110x70...) are this trade struck at equal H/V floors');
+    /* M4 (informational for now - thresholds need canon before they can grade):
+       where the pattern floor sits relative to the LOWEST horn crossover. In a
+       MEH the horn keeps loading below Fc, but directivity walks toward omni. */
+    if(S.fxDerived&&S.fxDerived.lo){
+      const fx=S.fxDerived.lo, worst=Math.max(FcH,FcV);
+      add('PATTERN','Pattern floor vs the low crossover',worst+' vs '+fx+' Hz'+(worst>fx?' — widens below '+worst+' Hz':''),
+        true,true,
+        'below the floor the wall angle stops steering (the sections still sum - a MEH keeps loading); grow the mouth to push the floor down');
+    }
   }
   /* XO ceilings: CD reach (by exit size) and mid reach */
   if(S.fxDerived){
