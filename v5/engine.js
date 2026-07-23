@@ -39,16 +39,25 @@ function panelRing(a,b,n,M){
 /* perimeter-parameterized ring (uniform arc spacing matters for clean meshes) */
 function seRing(a,b,n,M){
   if(typeof S!=='undefined'&&S&&S.style==='angular') return panelRing(a,b,n,M);
-  const raw=[]; let L=0;
-  for(let i=0;i<=M*4;i++){ raw.push(sePoint(a,b,n,i/(M*4)*2*Math.PI)); }
+  const raw=[], rawT=[]; let L=0;
+  for(let i=0;i<=M*4;i++){ const t=i/(M*4)*2*Math.PI; raw.push(sePoint(a,b,n,t)); rawT.push(t); }
   const seg=[0]; for(let i=1;i<raw.length;i++){ L+=Math.hypot(raw[i][0]-raw[i-1][0],raw[i][1]-raw[i-1][1]); seg.push(L); }
   const out=[]; let j=0;
   for(let i=0;i<M;i++){ const t=i/M*L;
     while(seg[j+1]<t && j<seg.length-2) j++;
     const f=(t-seg[j])/((seg[j+1]-seg[j])||1e-9);
-    out.push([raw[j][0]+(raw[j+1][0]-raw[j][0])*f, raw[j][1]+(raw[j+1][1]-raw[j][1])*f]);
+    const p=[raw[j][0]+(raw[j+1][0]-raw[j][0])*f, raw[j][1]+(raw[j+1][1]-raw[j][1])*f];
+    p.param=rawT[j]+(rawT[j+1]-rawT[j])*f;      // TRUE surface parameter rides along (normals via surfN)
+    out.push(p);
   }
   return out;
+}
+/* param for an arbitrary (y,z) target on the superellipse: nearest on a fine sweep */
+function paramFor(aH,bH,n,y,z){
+  let best=0,bd=1e9;
+  for(let i=0;i<720;i++){ const t=i/720*2*Math.PI, p=sePoint(aH,bH,n,t);
+    const d=Math.hypot(p[0]-y,p[1]-z); if(d<bd){bd=d;best=t;} }
+  return best;
 }
 
 /* ---- ATH-style flare profile (curvature-continuous):
@@ -137,13 +146,14 @@ function pairSeats(st,x,n,vertical){
   const nT=Math.ceil(n/2), nB=n-nT, out=[];
   const put=(count,sgn)=>{
     for(let i=0;i<count;i++){
-      const t=count===1?0:((i/(count-1))-0.5)*2;         // spread across the flat of the wall
-      if(vertical){ const z=t*d.b*0.60;
-        const y=sgn*d.a*Math.pow(Math.max(0,1-Math.pow(Math.abs(z/d.b),st.n)),1/st.n);
-        out.push([y,z]); }
-      else{ const y=t*d.a*0.60;
-        const z=sgn*d.b*Math.pow(Math.max(0,1-Math.pow(Math.abs(y/d.a),st.n)),1/st.n);
-        out.push([y,z]); }
+      const t=count===1?0:((i/(count-1))-0.5)*2;
+      let y,z;
+      if(vertical){ z=t*d.b*0.60;
+        y=sgn*d.a*Math.pow(Math.max(0,1-Math.pow(Math.abs(z/d.b),st.n)),1/st.n); }
+      else{ y=t*d.a*0.60;
+        z=sgn*d.b*Math.pow(Math.max(0,1-Math.pow(Math.abs(y/d.a),st.n)),1/st.n); }
+      const p=[y,z]; p.param=paramFor(d.a,d.b,st.n,y,z);   // proven normals via surfN
+      out.push(p);
     } };
   put(nT,1); put(nB,-1);
   return out;
@@ -191,38 +201,17 @@ function layout(S,st){
   };
   /* seats at uniform ARC positions (uniform azimuth bunches on flattened superellipses) */
   const placeRing=(kind,x,nSeats,od,dp,arcOffset)=>{
-    /* EXACT ring points (sePoint's phi is a PARAMETER, not azimuth - round-tripping
-       through atan2 re-bunches seats; found by trace). Normals numerically. */
-    const K=nSeats*48, d0=dimsAt(st,x);
-    const e=Math.max(1e-4,st.depth*2e-3), d1=dimsAt(st,Math.min(st.depth,x+e));
-    const ring=ringSeats(st,x,nSeats,K,arcOffset||0);
-    const full=seRing(d0.a,d0.b,st.n,K);
-    for(let k=0;k<nSeats;k++){
-      const q=ring[k], p=[x,q[0],q[1]];
-      /* axial tangent: affine per-axis scale to the next station */
-      const u=[e, q[0]*(d1.a/d0.a-1), q[1]*(d1.b/d0.b-1)];
-      /* tangential: neighbor along the full-resolution ring */
-      const ki=(Math.round(k*K/nSeats)+Math.round((arcOffset||0)*K))%K;
-      const qn=full[(ki+1)%K], qp=full[(ki-1+K)%K];
-      const v=[0, qn[0]-qp[0], qn[1]-qp[1]];
-      let nrm=[u[1]*v[2]-u[2]*v[1], u[2]*v[0]-u[0]*v[2], u[0]*v[1]-u[1]*v[0]];
-      const L2=Math.hypot(nrm[0],nrm[1],nrm[2])||1e-9; nrm=nrm.map(c=>c/L2);
-      if(nrm[1]*p[1]+nrm[2]*p[2]<0) nrm=nrm.map(c=>-c);
+    for(const q of seatsFor(st,x,nSeats,'ring',arcOffset||0)){
+      const p=[x,q[0],q[1]];
+      const nrm=surfN(st,x,(q.param!==undefined)?q.param:Math.atan2(q[1],q[0]));   // ONE proven normal path
       out.push({kind, x, phi:Math.atan2(q[1],q[0]), center:p, normal:nrm, od, dp, tap:p, seatR:od/2+0.011});
     }
   };
   if(S.topo!=='1way' && xW!=null){
     const seats=seatsFor(st,xW,(S.nW|0)||2,modeW,offW);
-    const d0=dimsAt(st,xW), e2=Math.max(1e-4,st.depth*2e-3), d1=dimsAt(st,Math.min(st.depth,xW+e2));
     for(const q of seats){
       const p=[xW,q[0],q[1]];
-      const u=[e2, q[0]*(d1.a/d0.a-1), q[1]*(d1.b/d0.b-1)];
-      const eps=0.004;
-      const qn=[q[0]+(-q[1])*eps/(Math.hypot(q[0],q[1])||1), q[1]+(q[0])*eps/(Math.hypot(q[0],q[1])||1)];
-      const v=[0, qn[0]-q[0], qn[1]-q[1]];
-      let nrm=[u[1]*v[2]-u[2]*v[1], u[2]*v[0]-u[0]*v[2], u[0]*v[1]-u[1]*v[0]];
-      const L2=Math.hypot(nrm[0],nrm[1],nrm[2])||1e-9; nrm=nrm.map(cc=>cc/L2);
-      if(nrm[1]*p[1]+nrm[2]*p[2]<0) nrm=nrm.map(cc=>-cc);
+      const nrm=surfN(st,xW,(q.param!==undefined)?q.param:Math.atan2(q[1],q[0]));   // PROVEN normal
       out.push({kind:'woof', x:xW, phi:Math.atan2(q[1],q[0]), center:p, normal:nrm,
         od:S.odW*CM, dp:S.dpW*CM, tap:p, seatR:S.odW*CM/2+0.011});
     }
@@ -325,7 +314,7 @@ function response(S,ev){
   const nodeW=hasW&&dW? Math.max(1,Math.round(dW.x/st.depth*NSEG)) : -1;
   const nodeM=hasM&&dM? Math.max(1,Math.round(dM.x/st.depth*NSEG)) : -1;
   const stub={L:Math.max(1e-4,S.cdDepth*IN), Sa:Ss[0]};
-  const LPT_CM=1.2;                                    // print wall + seat floor (refined with B-stage geometry)
+  const LPT_CM=((S.wallT||0.012)+0.009)*100;           // REAL port length: print wall + seat pad (B-stage: geometry-true)
   const mkBr=(ap,vtc,n)=>{ const Ap=n*ap*1e-4, V=n*vtc*1e-6, r=Math.sqrt(ap*1e-4/Math.PI);
     return {M:RHO*(LPT_CM*1e-2+0.85*r)/Ap, Cc:V/(RHO*C*C)}; };
   const brW=hasW&&dW&&dW.slot? mkBr(dW.slot.ap,S.vtcW||150,(S.nW|0)||2) : null;

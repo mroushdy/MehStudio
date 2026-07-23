@@ -40,7 +40,7 @@ A. EXPORTS (port Horn Studio's proven writers): STL solid with wall thickness;
    watertight NURBS STEP; panel-layout export for ANGULAR (flat parts + angles);
    AKABAK BEM mesh bridge. Export gate = artifact_test pattern (real buttons,
    real blobs, real files).
-B. TRUE PRINTED-PART GEOMETRY: wall thickness on the shell; seat+slot as one
+B. TRUE PRINTED-PART GEOMETRY [shell wall DONE - real thickness, outer-face mounts, Lpt geometry-true in the Helmholtz law; ONE proven normal path via carried surface params]: seat+slot as one
    solid insert; CD apex insert (Reference B/C: bore + tap ring + bolt circle);
    bandpass chamber housings; 1way coax full part.
 C. MAX SPL TILE (Thuras/Makarski from Horn Studio): the geometry's distortion

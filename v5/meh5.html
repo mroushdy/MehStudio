@@ -66,6 +66,8 @@ select{width:100%;font-family:var(--mono);font-size:11px;background:var(--paper)
   <input type="range" id="covV" min="30" max="120" step="5" value="60">
   <label>MOUTH ROLL RADIUS [in] <span class="val" id="vRoll"></span></label>
   <input type="range" id="rollR" min="0.5" max="4" step="0.25" value="2">
+  <label>PRINT WALL [mm] <span class="val" id="vWall"></span></label>
+  <input type="range" id="wallmm" min="6" max="25" step="1" value="12">
   <div class="sec">DRIVERS</div>
   <label>COMPRESSION DRIVER</label>
   <select id="cdSel"><option value="de500">1&Prime; CD (to ~900 Hz)</option><option value="de900" selected>1.4&Prime; CD (to ~550 Hz)</option><option value="dcx464">1.4&Prime; COAX DCX464 (to ~300 Hz)</option></select>
@@ -142,16 +144,25 @@ function panelRing(a,b,n,M){
 /* perimeter-parameterized ring (uniform arc spacing matters for clean meshes) */
 function seRing(a,b,n,M){
   if(typeof S!=='undefined'&&S&&S.style==='angular') return panelRing(a,b,n,M);
-  const raw=[]; let L=0;
-  for(let i=0;i<=M*4;i++){ raw.push(sePoint(a,b,n,i/(M*4)*2*Math.PI)); }
+  const raw=[], rawT=[]; let L=0;
+  for(let i=0;i<=M*4;i++){ const t=i/(M*4)*2*Math.PI; raw.push(sePoint(a,b,n,t)); rawT.push(t); }
   const seg=[0]; for(let i=1;i<raw.length;i++){ L+=Math.hypot(raw[i][0]-raw[i-1][0],raw[i][1]-raw[i-1][1]); seg.push(L); }
   const out=[]; let j=0;
   for(let i=0;i<M;i++){ const t=i/M*L;
     while(seg[j+1]<t && j<seg.length-2) j++;
     const f=(t-seg[j])/((seg[j+1]-seg[j])||1e-9);
-    out.push([raw[j][0]+(raw[j+1][0]-raw[j][0])*f, raw[j][1]+(raw[j+1][1]-raw[j][1])*f]);
+    const p=[raw[j][0]+(raw[j+1][0]-raw[j][0])*f, raw[j][1]+(raw[j+1][1]-raw[j][1])*f];
+    p.param=rawT[j]+(rawT[j+1]-rawT[j])*f;      // TRUE surface parameter rides along (normals via surfN)
+    out.push(p);
   }
   return out;
+}
+/* param for an arbitrary (y,z) target on the superellipse: nearest on a fine sweep */
+function paramFor(aH,bH,n,y,z){
+  let best=0,bd=1e9;
+  for(let i=0;i<720;i++){ const t=i/720*2*Math.PI, p=sePoint(aH,bH,n,t);
+    const d=Math.hypot(p[0]-y,p[1]-z); if(d<bd){bd=d;best=t;} }
+  return best;
 }
 
 /* ---- ATH-style flare profile (curvature-continuous):
@@ -240,13 +251,14 @@ function pairSeats(st,x,n,vertical){
   const nT=Math.ceil(n/2), nB=n-nT, out=[];
   const put=(count,sgn)=>{
     for(let i=0;i<count;i++){
-      const t=count===1?0:((i/(count-1))-0.5)*2;         // spread across the flat of the wall
-      if(vertical){ const z=t*d.b*0.60;
-        const y=sgn*d.a*Math.pow(Math.max(0,1-Math.pow(Math.abs(z/d.b),st.n)),1/st.n);
-        out.push([y,z]); }
-      else{ const y=t*d.a*0.60;
-        const z=sgn*d.b*Math.pow(Math.max(0,1-Math.pow(Math.abs(y/d.a),st.n)),1/st.n);
-        out.push([y,z]); }
+      const t=count===1?0:((i/(count-1))-0.5)*2;
+      let y,z;
+      if(vertical){ z=t*d.b*0.60;
+        y=sgn*d.a*Math.pow(Math.max(0,1-Math.pow(Math.abs(z/d.b),st.n)),1/st.n); }
+      else{ y=t*d.a*0.60;
+        z=sgn*d.b*Math.pow(Math.max(0,1-Math.pow(Math.abs(y/d.a),st.n)),1/st.n); }
+      const p=[y,z]; p.param=paramFor(d.a,d.b,st.n,y,z);   // proven normals via surfN
+      out.push(p);
     } };
   put(nT,1); put(nB,-1);
   return out;
@@ -294,38 +306,17 @@ function layout(S,st){
   };
   /* seats at uniform ARC positions (uniform azimuth bunches on flattened superellipses) */
   const placeRing=(kind,x,nSeats,od,dp,arcOffset)=>{
-    /* EXACT ring points (sePoint's phi is a PARAMETER, not azimuth - round-tripping
-       through atan2 re-bunches seats; found by trace). Normals numerically. */
-    const K=nSeats*48, d0=dimsAt(st,x);
-    const e=Math.max(1e-4,st.depth*2e-3), d1=dimsAt(st,Math.min(st.depth,x+e));
-    const ring=ringSeats(st,x,nSeats,K,arcOffset||0);
-    const full=seRing(d0.a,d0.b,st.n,K);
-    for(let k=0;k<nSeats;k++){
-      const q=ring[k], p=[x,q[0],q[1]];
-      /* axial tangent: affine per-axis scale to the next station */
-      const u=[e, q[0]*(d1.a/d0.a-1), q[1]*(d1.b/d0.b-1)];
-      /* tangential: neighbor along the full-resolution ring */
-      const ki=(Math.round(k*K/nSeats)+Math.round((arcOffset||0)*K))%K;
-      const qn=full[(ki+1)%K], qp=full[(ki-1+K)%K];
-      const v=[0, qn[0]-qp[0], qn[1]-qp[1]];
-      let nrm=[u[1]*v[2]-u[2]*v[1], u[2]*v[0]-u[0]*v[2], u[0]*v[1]-u[1]*v[0]];
-      const L2=Math.hypot(nrm[0],nrm[1],nrm[2])||1e-9; nrm=nrm.map(c=>c/L2);
-      if(nrm[1]*p[1]+nrm[2]*p[2]<0) nrm=nrm.map(c=>-c);
+    for(const q of seatsFor(st,x,nSeats,'ring',arcOffset||0)){
+      const p=[x,q[0],q[1]];
+      const nrm=surfN(st,x,(q.param!==undefined)?q.param:Math.atan2(q[1],q[0]));   // ONE proven normal path
       out.push({kind, x, phi:Math.atan2(q[1],q[0]), center:p, normal:nrm, od, dp, tap:p, seatR:od/2+0.011});
     }
   };
   if(S.topo!=='1way' && xW!=null){
     const seats=seatsFor(st,xW,(S.nW|0)||2,modeW,offW);
-    const d0=dimsAt(st,xW), e2=Math.max(1e-4,st.depth*2e-3), d1=dimsAt(st,Math.min(st.depth,xW+e2));
     for(const q of seats){
       const p=[xW,q[0],q[1]];
-      const u=[e2, q[0]*(d1.a/d0.a-1), q[1]*(d1.b/d0.b-1)];
-      const eps=0.004;
-      const qn=[q[0]+(-q[1])*eps/(Math.hypot(q[0],q[1])||1), q[1]+(q[0])*eps/(Math.hypot(q[0],q[1])||1)];
-      const v=[0, qn[0]-q[0], qn[1]-q[1]];
-      let nrm=[u[1]*v[2]-u[2]*v[1], u[2]*v[0]-u[0]*v[2], u[0]*v[1]-u[1]*v[0]];
-      const L2=Math.hypot(nrm[0],nrm[1],nrm[2])||1e-9; nrm=nrm.map(cc=>cc/L2);
-      if(nrm[1]*p[1]+nrm[2]*p[2]<0) nrm=nrm.map(cc=>-cc);
+      const nrm=surfN(st,xW,(q.param!==undefined)?q.param:Math.atan2(q[1],q[0]));   // PROVEN normal
       out.push({kind:'woof', x:xW, phi:Math.atan2(q[1],q[0]), center:p, normal:nrm,
         od:S.odW*CM, dp:S.dpW*CM, tap:p, seatR:S.odW*CM/2+0.011});
     }
@@ -428,7 +419,7 @@ function response(S,ev){
   const nodeW=hasW&&dW? Math.max(1,Math.round(dW.x/st.depth*NSEG)) : -1;
   const nodeM=hasM&&dM? Math.max(1,Math.round(dM.x/st.depth*NSEG)) : -1;
   const stub={L:Math.max(1e-4,S.cdDepth*IN), Sa:Ss[0]};
-  const LPT_CM=1.2;                                    // print wall + seat floor (refined with B-stage geometry)
+  const LPT_CM=((S.wallT||0.012)+0.009)*100;           // REAL port length: print wall + seat pad (B-stage: geometry-true)
   const mkBr=(ap,vtc,n)=>{ const Ap=n*ap*1e-4, V=n*vtc*1e-6, r=Math.sqrt(ap*1e-4/Math.PI);
     return {M:RHO*(LPT_CM*1e-2+0.85*r)/Ap, Cc:V/(RHO*C*C)}; };
   const brW=hasW&&dW&&dW.slot? mkBr(dW.slot.ap,S.vtcW||150,(S.nW|0)||2) : null;
@@ -537,7 +528,7 @@ const MPRE={
   bc5:{name:'B&C 5\u2033 sealed', od:15.7, dp:8.2, sd:90, vtc:55, xm:4, meshApprox:'BC_8MDN51'},
   mdn8m:{name:'B&C 8MDN51 (true CAD)', od:22.0, dp:10.5, sd:232, vtc:85, xm:6, mesh:'BC_8MDN51'}};
 /* ---------------- state ---------------- */
-const S={topo:'2way', style:'smooth', wPre:'w8', mPre:'m4', seN:6, covH:90, covV:60, mouthW:24, mouthCap:64, throat:1.4, rollR:2,
+const S={topo:'2way', style:'smooth', wPre:'w8', mPre:'m4', wallT:0.012, seN:6, covH:90, covV:60, mouthW:24, mouthCap:64, throat:1.4, rollR:2,
   fxHi:900, fxLo:300, cdDepth:1.7, td:1.4, coaxRing:4.5,
   nW:6, odW:14, dpW:7, nM:4, odM:10, dpM:6};
 try{ Object.assign(S, JSON.parse(localStorage.getItem('meh5_state')||'{}')); }catch(e){}
@@ -625,6 +616,35 @@ function rebuild(){
   const horn=new THREE.Mesh(hg,new THREE.MeshPhongMaterial({color:S.style==='angular'?0xE6DFD2:0xEDEAE4,shininess:S.style==='angular'?4:14,side:THREE.DoubleSide,
     flatShading:S.style==='angular',transparent:V3D.xray,opacity:V3D.xray?0.35:1}));
   horn.userData.tag='shell'; g.add(horn);
+  /* OUTER surface + mouth rim: the shell is a PRINTED SOLID with real wall thickness */
+  { const wt=S.wallT||0.012;
+    /* outer wall over the PRE-ROLL stations only (naive +wt offset self-intersects
+       on the curling lip - caught in review); the lip closes outer edge -> roll tip */
+    const pre=st.pts.filter(p=>!p.roll);
+    const posO=[], idxO=[];
+    const ringsO=pre.map(p=>MEH2.seRing(p.a+wt,p.b+wt,st.n,M));
+    pre.forEach((p,i)=>{ ringsO[i].forEach(q=>posO.push(p.x,q[1],q[0])); });
+    for(let i=0;i<pre.length-1;i++) for(let j=0;j<M;j++){
+      const a2=i*M+j, b3=i*M+(j+1)%M, c2=(i+1)*M+j, d3=(i+1)*M+(j+1)%M;
+      idxO.push(a2,b3,c2, b3,d3,c2); }
+    const og=new THREE.BufferGeometry();
+    og.setAttribute('position',new THREE.Float32BufferAttribute(posO,3));
+    og.setIndex(idxO); og.computeVertexNormals();
+    const outer=new THREE.Mesh(og,new THREE.MeshPhongMaterial({color:S.style==='angular'?0xDDD6C7:0xE4E0D8,shininess:S.style==='angular'?4:10,
+      flatShading:S.style==='angular',transparent:V3D.xray,opacity:V3D.xray?0.25:1}));
+    outer.userData.tag='shell'; g.add(outer);
+    /* lip underside: outer pre-roll edge -> the roll tip ring */
+    { const pl=pre[pre.length-1], tip=st.pts[st.pts.length-1];
+      const ro=MEH2.seRing(pl.a+wt,pl.b+wt,st.n,M), rt=MEH2.seRing(tip.a,tip.b,st.n,M);
+      const rp=[], rx=[];
+      ro.forEach(q=>rp.push(pl.x,q[1],q[0])); rt.forEach(q=>rp.push(tip.x,q[1],q[0]));
+      for(let j=0;j<M;j++){ const a2=j,b3=(j+1)%M,c2=M+j,d3=M+(j+1)%M; rx.push(a2,c2,b3, b3,c2,d3); }
+      const rg2=new THREE.BufferGeometry();
+      rg2.setAttribute('position',new THREE.Float32BufferAttribute(rp,3));
+      rg2.setIndex(rx); rg2.computeVertexNormals();
+      const rim=new THREE.Mesh(rg2,new THREE.MeshPhongMaterial({color:0xE0DBD1,shininess:9,side:THREE.DoubleSide}));
+      rim.userData.tag='shell'; g.add(rim); }
+  }
   /* apex insert: printed disc with CD bore (+ coax tap ring for 1way) */
   { const t0=st.pts[0];
     const disc=new THREE.Mesh(new THREE.CircleGeometry(Math.min(t0.a,t0.b)*0.999,48),
@@ -660,14 +680,14 @@ function rebuild(){
     { const seat=new THREE.Mesh(new THREE.CylinderGeometry(d.od/2+0.005,d.od/2+0.009,0.009,40),
         new THREE.MeshPhongMaterial({color:0xE2DDD3,shininess:6}));
       seat.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),n);
-      seat.position.copy(c).add(n.clone().multiplyScalar(0.0045));
+      seat.position.copy(c).add(n.clone().multiplyScalar((S.wallT||0.012)+0.0045));   // seat on the OUTER face
       seat.userData.tag='seat'; g.add(seat);
     }
     /* driver body: CLEAN PARAMETRIC SILHOUETTE (his call: approximate the outer
        shapes, not literal CAD). Smooth lathe from the preset's true dimensions. */
     { const body=driverBody(d.od, d.dp, (d.kind==='mid'? MPRE[S.mPre] : WPRE[S.wPre])||{});
       body.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),n);
-      body.position.copy(c).add(n.clone().multiplyScalar(0.004));
+      body.position.copy(c).add(n.clone().multiplyScalar((S.wallT||0.012)+0.004));   // flange on the outer face; tap runs through the wall
       body.traverse(o=>o.userData.tag='driver'); g.add(body);
     }
   }
@@ -742,7 +762,10 @@ function wire(){
       show(); save(); rebuild(); }; };
   bind('seN','seN',v=>v<=2.4?'round':v>=10?'square':('n='+v));
   bind('mouthW','mouthW',v=>v+'″'); bind('covH','covH',v=>v+'°'); bind('covV','covV',v=>v+'°');
-  bind('rollR','rollR',v=>v+'″'); bind('odW','odW',v=>v+' cm'); bind('nW','nW');
+  bind('rollR','rollR',v=>v+'″');
+  { const el=document.getElementById('wallmm'); el.value=Math.round((S.wallT||0.012)*1000);
+    const show=()=>{ document.getElementById('vWall').textContent=Math.round(S.wallT*1000)+' mm'; }; show();
+    el.oninput=()=>{ S.wallT=(+el.value)/1000; show(); save(); rebuild(); }; } bind('odW','odW',v=>v+' cm'); bind('nW','nW');
   bind('odM','odM',v=>v+' cm'); bind('nM','nM');
   const fillPre=(id,tbl,cur)=>{ const el=document.getElementById(id);
     el.innerHTML=Object.keys(tbl).map(k=>'<option value="'+k+'">'+tbl[k].name+'</option>').join('')+'<option value="custom">custom (sliders)</option>';

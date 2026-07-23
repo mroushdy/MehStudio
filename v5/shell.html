@@ -66,6 +66,8 @@ select{width:100%;font-family:var(--mono);font-size:11px;background:var(--paper)
   <input type="range" id="covV" min="30" max="120" step="5" value="60">
   <label>MOUTH ROLL RADIUS [in] <span class="val" id="vRoll"></span></label>
   <input type="range" id="rollR" min="0.5" max="4" step="0.25" value="2">
+  <label>PRINT WALL [mm] <span class="val" id="vWall"></span></label>
+  <input type="range" id="wallmm" min="6" max="25" step="1" value="12">
   <div class="sec">DRIVERS</div>
   <label>COMPRESSION DRIVER</label>
   <select id="cdSel"><option value="de500">1&Prime; CD (to ~900 Hz)</option><option value="de900" selected>1.4&Prime; CD (to ~550 Hz)</option><option value="dcx464">1.4&Prime; COAX DCX464 (to ~300 Hz)</option></select>
@@ -123,7 +125,7 @@ const MPRE={
   bc5:{name:'B&C 5\u2033 sealed', od:15.7, dp:8.2, sd:90, vtc:55, xm:4, meshApprox:'BC_8MDN51'},
   mdn8m:{name:'B&C 8MDN51 (true CAD)', od:22.0, dp:10.5, sd:232, vtc:85, xm:6, mesh:'BC_8MDN51'}};
 /* ---------------- state ---------------- */
-const S={topo:'2way', style:'smooth', wPre:'w8', mPre:'m4', seN:6, covH:90, covV:60, mouthW:24, mouthCap:64, throat:1.4, rollR:2,
+const S={topo:'2way', style:'smooth', wPre:'w8', mPre:'m4', wallT:0.012, seN:6, covH:90, covV:60, mouthW:24, mouthCap:64, throat:1.4, rollR:2,
   fxHi:900, fxLo:300, cdDepth:1.7, td:1.4, coaxRing:4.5,
   nW:6, odW:14, dpW:7, nM:4, odM:10, dpM:6};
 try{ Object.assign(S, JSON.parse(localStorage.getItem('meh5_state')||'{}')); }catch(e){}
@@ -211,6 +213,35 @@ function rebuild(){
   const horn=new THREE.Mesh(hg,new THREE.MeshPhongMaterial({color:S.style==='angular'?0xE6DFD2:0xEDEAE4,shininess:S.style==='angular'?4:14,side:THREE.DoubleSide,
     flatShading:S.style==='angular',transparent:V3D.xray,opacity:V3D.xray?0.35:1}));
   horn.userData.tag='shell'; g.add(horn);
+  /* OUTER surface + mouth rim: the shell is a PRINTED SOLID with real wall thickness */
+  { const wt=S.wallT||0.012;
+    /* outer wall over the PRE-ROLL stations only (naive +wt offset self-intersects
+       on the curling lip - caught in review); the lip closes outer edge -> roll tip */
+    const pre=st.pts.filter(p=>!p.roll);
+    const posO=[], idxO=[];
+    const ringsO=pre.map(p=>MEH2.seRing(p.a+wt,p.b+wt,st.n,M));
+    pre.forEach((p,i)=>{ ringsO[i].forEach(q=>posO.push(p.x,q[1],q[0])); });
+    for(let i=0;i<pre.length-1;i++) for(let j=0;j<M;j++){
+      const a2=i*M+j, b3=i*M+(j+1)%M, c2=(i+1)*M+j, d3=(i+1)*M+(j+1)%M;
+      idxO.push(a2,b3,c2, b3,d3,c2); }
+    const og=new THREE.BufferGeometry();
+    og.setAttribute('position',new THREE.Float32BufferAttribute(posO,3));
+    og.setIndex(idxO); og.computeVertexNormals();
+    const outer=new THREE.Mesh(og,new THREE.MeshPhongMaterial({color:S.style==='angular'?0xDDD6C7:0xE4E0D8,shininess:S.style==='angular'?4:10,
+      flatShading:S.style==='angular',transparent:V3D.xray,opacity:V3D.xray?0.25:1}));
+    outer.userData.tag='shell'; g.add(outer);
+    /* lip underside: outer pre-roll edge -> the roll tip ring */
+    { const pl=pre[pre.length-1], tip=st.pts[st.pts.length-1];
+      const ro=MEH2.seRing(pl.a+wt,pl.b+wt,st.n,M), rt=MEH2.seRing(tip.a,tip.b,st.n,M);
+      const rp=[], rx=[];
+      ro.forEach(q=>rp.push(pl.x,q[1],q[0])); rt.forEach(q=>rp.push(tip.x,q[1],q[0]));
+      for(let j=0;j<M;j++){ const a2=j,b3=(j+1)%M,c2=M+j,d3=M+(j+1)%M; rx.push(a2,c2,b3, b3,c2,d3); }
+      const rg2=new THREE.BufferGeometry();
+      rg2.setAttribute('position',new THREE.Float32BufferAttribute(rp,3));
+      rg2.setIndex(rx); rg2.computeVertexNormals();
+      const rim=new THREE.Mesh(rg2,new THREE.MeshPhongMaterial({color:0xE0DBD1,shininess:9,side:THREE.DoubleSide}));
+      rim.userData.tag='shell'; g.add(rim); }
+  }
   /* apex insert: printed disc with CD bore (+ coax tap ring for 1way) */
   { const t0=st.pts[0];
     const disc=new THREE.Mesh(new THREE.CircleGeometry(Math.min(t0.a,t0.b)*0.999,48),
@@ -246,14 +277,14 @@ function rebuild(){
     { const seat=new THREE.Mesh(new THREE.CylinderGeometry(d.od/2+0.005,d.od/2+0.009,0.009,40),
         new THREE.MeshPhongMaterial({color:0xE2DDD3,shininess:6}));
       seat.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),n);
-      seat.position.copy(c).add(n.clone().multiplyScalar(0.0045));
+      seat.position.copy(c).add(n.clone().multiplyScalar((S.wallT||0.012)+0.0045));   // seat on the OUTER face
       seat.userData.tag='seat'; g.add(seat);
     }
     /* driver body: CLEAN PARAMETRIC SILHOUETTE (his call: approximate the outer
        shapes, not literal CAD). Smooth lathe from the preset's true dimensions. */
     { const body=driverBody(d.od, d.dp, (d.kind==='mid'? MPRE[S.mPre] : WPRE[S.wPre])||{});
       body.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),n);
-      body.position.copy(c).add(n.clone().multiplyScalar(0.004));
+      body.position.copy(c).add(n.clone().multiplyScalar((S.wallT||0.012)+0.004));   // flange on the outer face; tap runs through the wall
       body.traverse(o=>o.userData.tag='driver'); g.add(body);
     }
   }
@@ -328,7 +359,10 @@ function wire(){
       show(); save(); rebuild(); }; };
   bind('seN','seN',v=>v<=2.4?'round':v>=10?'square':('n='+v));
   bind('mouthW','mouthW',v=>v+'″'); bind('covH','covH',v=>v+'°'); bind('covV','covV',v=>v+'°');
-  bind('rollR','rollR',v=>v+'″'); bind('odW','odW',v=>v+' cm'); bind('nW','nW');
+  bind('rollR','rollR',v=>v+'″');
+  { const el=document.getElementById('wallmm'); el.value=Math.round((S.wallT||0.012)*1000);
+    const show=()=>{ document.getElementById('vWall').textContent=Math.round(S.wallT*1000)+' mm'; }; show();
+    el.oninput=()=>{ S.wallT=(+el.value)/1000; show(); save(); rebuild(); }; } bind('odW','odW',v=>v+' cm'); bind('nW','nW');
   bind('odM','odM',v=>v+' cm'); bind('nM','nM');
   const fillPre=(id,tbl,cur)=>{ const el=document.getElementById(id);
     el.innerHTML=Object.keys(tbl).map(k=>'<option value="'+k+'">'+tbl[k].name+'</option>').join('')+'<option value="custom">custom (sliders)</option>';
