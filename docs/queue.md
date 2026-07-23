@@ -1,5 +1,34 @@
 # MEH STUDIO — STANDING QUEUE (versioned; update on every landed item)
-Last updated: 2026-07-23 (build 515: ONE-HORN coax model - the print REPLACES
+Last updated: 2026-07-23 late (build 518): TOPOLOGY-SWITCH CRASH fixed (leaving
+1way with cdSel='unit' died in coax1way at CDP[...].td — button lit, nothing
+rebuilt, KNOWN BUILD list stayed stale; guard restores dcx464). RENDER TRUTH:
+the smooth-shell viewer now draws MEH2.shellMesh itself (one watertight
+FrontSide solid - the triple-skin draw showed the inner BACKFACE through the
+outer wall = his "semi translucence layer", pins 6/14 local store) and the 1way
+apex draws MEH2.dishMesh itself (REAL tap holes through the face, real bore -
+kills the hole-less dish + fake bore "plug" disc + tap decals; pins 2/5/13).
+NEW COAX LAW ROW 'Tap holes land whole on the dish' (his pin #18: same clamp
+math as dishMesh; if the printable hole is smaller than the law-derived hole
+the row fails instead of the STL lying) - gate 41,111 checks ALL PASS. 1WAY UX
+(his calls, mid-session): KNOWN BUILD hidden on 1way (driver IS the build),
+FORM = ROUND | SQUARE (seN 2/12, the retired bundle values), driver select
+auto-sizes the mouth (mouth = 2.35 x unit OD - the mean of the four retired
+gate-asserted 1way bundles' ratios 2.20-2.42). REFERENCE BATCH 3 studied in
+docs/REFERENCE_LIBRARY_STUDY_3.md (Pavdan box halves, DH350 symmetry-half +
+throat-adapter extraction, Hinson's 44-page MEH writeup incl. tap-chamber
+canon + 17 m/s port limit, PM90 wood/T-nut construction DWG). HIS TAB IS NOW
+LOCAL: localhost:8517/meh5.html - pins live in THAT origin's localStorage
+'meh5_bugpins' (ids 2-18; 2/5/6/13/14/18 resolved b518, echo the rest).
+OPEN LOCAL PINS (the 1way/2way geometry rework, next batch): #3/#9 dish rim =
+driver mounting flange as ONE piece (his photos: the funnel base IS the flange,
+entry much wider - #11), #4 throat must match the coax CD's own loading, #7
+adapter reaches the driver, #8 holes low enough to meet the cone, #10
+round-to-square transition, #12 cone silhouette from datasheet dims, #15 2way
+angular throat should read circular (Waslo round bore in the square plate),
+#16 taps-per choice 1|2 with straddle tied to tap type + placement (refines
+pin-22 X canon), #17 square-max angular should drop the chamfer slivers and
+read as the wooden classic (PM90/liam056 look).
+(build 515: ONE-HORN coax model - the print REPLACES
 the stock horn from the TRUE HF exit (5 B&C datasheets landed: floors, exits,
 dims), corner boards v2 = real diagonal shelves (his teardrop catch), the
 TAP FOOTPRINT system (measured containment + placement re-walk), round taps,

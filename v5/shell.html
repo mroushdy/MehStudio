@@ -60,14 +60,14 @@ select{width:100%;font-family:var(--mono);font-size:11px;background:var(--paper)
   <div class="seg" id="segTopo">
     <button data-v="1way">1-WAY COAX</button><button data-v="2way" class="on">2-WAY COAX</button><button data-v="3way">3-WAY</button>
   </div>
-  <label>KNOWN BUILD — LAND A PROVEN MEH</label>
-  <select id="buildSel"></select>
+  <div id="buildCtl"><label>KNOWN BUILD — LAND A PROVEN MEH</label>
+  <select id="buildSel"></select></div>
   <div class="sec">FORM</div>
   <div class="seg" id="segStyle">
     <button data-v="smooth" class="on">SMOOTH</button><button data-v="angular">CLASSIC ANGULAR</button>
   </div>
-  <label>SHAPE — ROUND ⟷ SQUARE <span class="val" id="vN"></span></label>
-  <input type="range" id="seN" min="2" max="12" step="0.5" value="6">
+  <div id="seNCtl"><label>SHAPE — ROUND ⟷ SQUARE <span class="val" id="vN"></span></label>
+  <input type="range" id="seN" min="2" max="12" step="0.5" value="6"></div>
   <label>MOUTH WIDTH [in] <span class="val" id="vMouth"></span></label>
   <input type="range" id="mouthW" min="10" max="64" step="1" value="24">
   <label>COVERAGE H [°] <span class="val" id="vCovH"></span></label>
@@ -158,7 +158,7 @@ select{width:100%;font-family:var(--mono);font-size:11px;background:var(--paper)
 <script>
 /*__ENGINE__*/
 /*__CAD__*/
-window.MEH_BUILD=516;
+window.MEH_BUILD=518;
 document.getElementById('bno').textContent=MEH_BUILD;
 "use strict";
 /* ---------------- driver presets (v4 datasheets; mesh = true CAD, meshApprox = nearest body) ---------------- */
@@ -423,49 +423,22 @@ function rebuild(){
       const edges=new THREE.LineSegments(new THREE.EdgesGeometry(boxG),new THREE.LineBasicMaterial({color:0xC2C2BF}));
       edges.position.copy(box.position); edges.userData.tag='ghost'; g.add(edges); }
   } else {
-  /* horn inner surface (single smooth print) */
-  const rings=st.pts.map(p=>MEH2.seRing(p.a,p.b,(p.n!==undefined)?p.n:st.n,M));   // M5: round throat morphs to the shape
-  const pos=[], idx=[];
-  st.pts.forEach((p,i)=>{ rings[i].forEach(q=>pos.push(p.x,q[1],q[0])); });
-  for(let i=0;i<st.pts.length-1;i++) for(let j=0;j<M;j++){
-    const a=i*M+j, b2=i*M+(j+1)%M, c=(i+1)*M+j, d2=(i+1)*M+(j+1)%M;
-    idx.push(a,c,b2, b2,c,d2);
-  }
-  const hg=new THREE.BufferGeometry();
-  hg.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));
-  hg.setIndex(idx); hg.computeVertexNormals();
-  const horn=new THREE.Mesh(hg,new THREE.MeshPhongMaterial({color:0xEDEAE4,shininess:14,side:THREE.DoubleSide,
-    transparent:V3D.xray,opacity:V3D.xray?0.35:1}));
-  horn.userData.tag='shell'; g.add(horn);
-  /* OUTER surface + mouth rim: the shell is a PRINTED SOLID with real wall thickness */
-  { const wt=S.wallT||0.012;
-    /* outer wall over the PRE-ROLL stations only (naive +wt offset self-intersects
-       on the curling lip - caught in review); the lip closes outer edge -> roll tip */
-    const pre=st.pts.filter(p=>!p.roll);
-    const posO=[], idxO=[];
-    const ringsO=pre.map(p=>MEH2.offsetRing(st,p.x,wt,M));   // pin #18: true panel offset outside
-    pre.forEach((p,i)=>{ ringsO[i].forEach(q=>posO.push(p.x,q[1],q[0])); });
-    for(let i=0;i<pre.length-1;i++) for(let j=0;j<M;j++){
-      const a2=i*M+j, b3=i*M+(j+1)%M, c2=(i+1)*M+j, d3=(i+1)*M+(j+1)%M;
-      idxO.push(a2,b3,c2, b3,d3,c2); }
-    const og=new THREE.BufferGeometry();
-    og.setAttribute('position',new THREE.Float32BufferAttribute(posO,3));
-    og.setIndex(idxO); og.computeVertexNormals();
-    const outer=new THREE.Mesh(og,new THREE.MeshPhongMaterial({color:0xE4E0D8,shininess:10,
-      transparent:V3D.xray,opacity:V3D.xray?0.25:1}));
-    outer.userData.tag='shell'; g.add(outer);
-    /* lip underside: outer pre-roll edge -> the roll tip ring */
-    { const pl=pre[pre.length-1], tip=st.pts[st.pts.length-1];
-      const ro=MEH2.offsetRing(st,pl.x,wt,M), rt=MEH2.seRing(tip.a,tip.b,(tip.n!==undefined)?tip.n:st.n,M);
-      const rp=[], rx=[];
-      ro.forEach(q=>rp.push(pl.x,q[1],q[0])); rt.forEach(q=>rp.push(tip.x,q[1],q[0]));
-      for(let j=0;j<M;j++){ const a2=j,b3=(j+1)%M,c2=M+j,d3=M+(j+1)%M; rx.push(a2,c2,b3, b3,c2,d3); }
-      const rg2=new THREE.BufferGeometry();
-      rg2.setAttribute('position',new THREE.Float32BufferAttribute(rp,3));
-      rg2.setIndex(rx); rg2.computeVertexNormals();
-      const rim=new THREE.Mesh(rg2,new THREE.MeshPhongMaterial({color:0xE0DBD1,shininess:9,side:THREE.DoubleSide}));
-      rim.userData.tag='shell'; g.add(rim); }
-  }
+  /* the PRINTED SOLID itself - MEH2.shellMesh: inner surface, true-offset
+     outer, lip and throat annulus in ONE watertight FrontSide mesh (the same
+     bytes the STL export ships, gate-asserted). The old triple-skin draw
+     (inner DoubleSide + outer + rim) let the inner BACKFACE show through the
+     outer wall on the roll - his "semi translucence layer" (pins #6/#14). */
+  { const sm=MEH2.shellMesh(S);
+    const pos=new Float32Array(sm.pos.length*3);
+    sm.pos.forEach((p,i)=>{ pos[i*3]=p[0]; pos[i*3+1]=p[2]; pos[i*3+2]=p[1]; });   // engine [x,q0,q1] -> scene [x, y=q1, z=q0]
+    const idx=[];
+    for(const t of sm.tri) idx.push(t[0],t[2],t[1]);                              // the axis swap mirrors - flip winding back
+    const hg=new THREE.BufferGeometry();
+    hg.setAttribute('position',new THREE.BufferAttribute(pos,3));
+    hg.setIndex(idx); hg.computeVertexNormals();
+    const horn=new THREE.Mesh(hg,new THREE.MeshPhongMaterial({color:0xEDEAE4,shininess:12,
+      transparent:V3D.xray,opacity:V3D.xray?0.35:1}));
+    horn.userData.tag='shell'; g.add(horn); }
   }
   /* apex insert: printed plate with CD bore (+ coax tap ring for 1way) -
      polygon plate on ANGULAR (pin #26), disc on smooth */
@@ -474,18 +447,21 @@ function rebuild(){
        printed insert - conical face carrying the tap holes, central snout tube
        for the CD bore, a seam ring where the flange seats on the horn, and on
        ANGULAR the four corner WINGS that bridge dish rim to the square walls. */
-    const dishM=new THREE.MeshPhongMaterial({color:0xD8D3C9,shininess:8,side:THREE.DoubleSide});
-    const NR=48, K=10, pos=[], idx=[];
-    for(let k=0;k<=K;k++){ const x=st.xAdapter*k/K;
-      const r=Math.max(0.004, MEH2.dimsAt(st,x).a*0.998);
-      for(let m=0;m<NR;m++){ const a2=m/NR*2*Math.PI; pos.push(x, r*Math.sin(a2), r*Math.cos(a2)); } }
-    for(let k=0;k<K;k++) for(let m=0;m<NR;m++){
-      const a=k*NR+m, b2=k*NR+(m+1)%NR, c=(k+1)*NR+m, d2=(k+1)*NR+(m+1)%NR;
-      idx.push(a,c,b2, b2,c,d2); }
-    const dg=new THREE.BufferGeometry();
-    dg.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));
-    dg.setIndex(idx); dg.computeVertexNormals();
-    const dish=new THREE.Mesh(dg,dishM); dish.userData.tag='apex'; g.add(dish);
+    /* the REAL printed part (MEH2.dishMesh): conical face with the ACTUAL
+       round tap holes cut through it, bore wall, cone-following back - the
+       same watertight bytes the STL export ships. Kills the fake bore "plug"
+       disc and the hole-less dish face (his pins #2/#5/#13: taps must read
+       as holes all the way through, because they ARE). */
+    const dishM=new THREE.MeshPhongMaterial({color:0xD8D3C9,shininess:8});
+    const dm=MEH2.dishMesh(S);
+    if(dm){ const pos=new Float32Array(dm.pos.length*3);
+      dm.pos.forEach((p,i)=>{ pos[i*3]=p[0]; pos[i*3+1]=p[2]; pos[i*3+2]=p[1]; });
+      const idx=[];
+      for(const t of dm.tri) idx.push(t[0],t[2],t[1]);
+      const dg=new THREE.BufferGeometry();
+      dg.setAttribute('position',new THREE.BufferAttribute(pos,3));
+      dg.setIndex(idx); dg.computeVertexNormals();
+      const dish=new THREE.Mesh(dg,dishM); dish.userData.tag='apex'; g.add(dish); }
     /* seam ring: the dish flange seating on the horn (the dark step in his photos) */
     { const rR=MEH2.dimsAt(st,st.xAdapter).a, sp2=[];
       for(let m=0;m<=64;m++){ const a2=m/64*2*Math.PI; sp2.push(st.xAdapter, rR*Math.sin(a2), rR*Math.cos(a2)); }
@@ -493,22 +469,7 @@ function rebuild(){
       lgg.setAttribute('position',new THREE.Float32BufferAttribute(sp2,3));
       const seam=new THREE.Line(lgg,new THREE.LineBasicMaterial({color:0x6b6963}));
       seam.userData.tag='apex'; g.add(seam); }
-    /* HIS CORRECTION: NO tube, NO floating plate - the dish BACK follows the
-       driver cone with an x-max gap and the part nests directly on the unit */
-    { const rCone=(S.odW||22)*0.01/2, od=(S.odW||22)*0.01;
-      const rB2=Math.max(S.throat*MEH2.IN/2,0.60*rCone), rD2=rCone+0.012;
-      const gap=((S.xmC||S.xmW||4)/1000)+0.002;
-      const coneY=r=>{ const t=Math.max(0,Math.min(1,(0.80*rCone-r)/(0.20*rCone))); return od*(0.03+0.07*t); };
-      const back=r=> (r>=0.80*rCone)? -0.004 : -0.004-(coneY(r)-od*0.03)+Math.min(gap,coneY(r)-od*0.03);
-      const NR=48,K=10, pos=[],idx=[];
-      for(let k=0;k<=K;k++){ const r=rB2+(rD2-rB2)*k/K;
-        for(let m=0;m<NR;m++){ const a2=m/NR*2*Math.PI; pos.push(back(r), r*Math.sin(a2), r*Math.cos(a2)); } }
-      for(let k=0;k<K;k++) for(let m=0;m<NR;m++){
-        const a=k*NR+m,b2=k*NR+(m+1)%NR,c=(k+1)*NR+m,d2=(k+1)*NR+(m+1)%NR; idx.push(a,b2,c, b2,d2,c); }
-      const bgm=new THREE.BufferGeometry();
-      bgm.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));
-      bgm.setIndex(idx); bgm.computeVertexNormals();
-      const bmesh=new THREE.Mesh(bgm,dishM.clone()); bmesh.userData.tag='apex'; g.add(bmesh); }
+    /* dish back + bore wall live inside dishMesh now - nothing hand-drawn */
     /* corner wings (angular): flat vanes from the dish rim to the square corners */
     if(S.style==='angular'){
       const rR=MEH2.dimsAt(st,st.xAdapter).a;
@@ -527,9 +488,7 @@ function rebuild(){
         wing.userData.tag='apex'; g.add(wing);
       }
     }
-    const bore=new THREE.Mesh(new THREE.CircleGeometry(S.td*MEH2.IN/2,32),
-      new THREE.MeshBasicMaterial({color:0x0d0c0b,side:THREE.DoubleSide}));
-    bore.rotation.y=Math.PI/2; bore.position.x=-0.0005; bore.userData.tag='port'; g.add(bore);
+    /* no bore disc: the dishMesh bore is a REAL opening (pin #5 - "the plug") */
   } else { const t0=st.pts[0];
     let plate;
     if(S.style==='angular'){
@@ -554,25 +513,7 @@ function rebuild(){
   /* drivers + printed seats + taps (slot under each driver, along flow) */
   for(const d of ev.layout){
     const n=P3(d.normal), c=P3(d.center);
-    if(d.kind==='coaxtap'){
-      /* pin #8: radial slot ring in the printed apex plate (Reference C look) */
-      const sa=(d.slot&&d.slot.sa)||0.016, sb=(d.slot&&d.slot.sb)||0.006;
-      const rad0=new THREE.Vector3(0,d.center[2],d.center[1]).normalize();
-      const nC=P3(d.normal);
-      const rad=rad0.clone().sub(nC.clone().multiplyScalar(rad0.dot(nC))).normalize();   // radial, in the wall plane
-      const tan=nC.clone().cross(rad);
-      const sp=new THREE.Shape(); sp.absarc(0,0,1,0,Math.PI*2,false); const r2=0;   // Reference D: round tap holes
-      if(false){
-      sp.moveTo(-1+r2,-1); sp.lineTo(1-r2,-1); sp.quadraticCurveTo(1,-1,1,-1+r2);
-      sp.lineTo(1,1-r2); sp.quadraticCurveTo(1,1,1-r2,1); sp.lineTo(-1+r2,1);
-      sp.quadraticCurveTo(-1,1,-1,1-r2); sp.lineTo(-1,-1+r2); sp.quadraticCurveTo(-1,-1,-1+r2,-1); }
-      const tap=new THREE.Mesh(new THREE.ShapeGeometry(sp,8),
-        new THREE.MeshBasicMaterial({color:0x0d0c0b,side:THREE.DoubleSide}));
-      const mB=new THREE.Matrix4().makeBasis(rad.clone().multiplyScalar(sa),tan.clone().multiplyScalar(sb),nC);
-      const cc=new THREE.Vector3(d.center[0], d.center[2], d.center[1]).add(nC.clone().multiplyScalar(-0.0015));
-      mB.setPosition(cc);
-      tap.applyMatrix4(mB); tap.userData.tag='port'; g.add(tap);
-      continue; }
+    if(d.kind==='coaxtap') continue;   // pins #2/#13: the dishMesh carries the REAL holes - no decals over real openings
     /* TAP OPENINGS - CONFORMING patches (his 'better system'): the outline is
        built in the wall frame, then every point is projected onto the actual
        horn surface (smooth) or held in the facet plane (angular - placement
@@ -807,6 +748,12 @@ function coax1way(){
   const show=(id,v)=>{ const e=document.getElementById(id); if(e) e.style.display=v?'':'none'; };
   show('wOnlyCtl',!one); show('odWCtl',!one); show('coaxCtl',one);
   show('rollCtl', S.style!=='angular');                       // flat printed front has no roll
+  /* his call (2026-07-23): on a coax the DRIVER is the build - no proven-build
+     list (it duplicated the driver select), and form is just ROUND | SQUARE */
+  show('buildCtl',!one); show('seNCtl',!one);
+  { const sb=document.querySelectorAll('#segStyle button');
+    if(sb.length===2){ sb[0].textContent=one?'ROUND':'SMOOTH'; sb[1].textContent=one?'SQUARE':'CLASSIC ANGULAR'; } }
+  if(one) S.seN=(S.style==='angular')?12:2;                   // the two 1way forms (retired driver bundles: round ran seN 2, square 12)
   const el=document.getElementById('wPre');
   if(one){
     if(!CXPRE[S.wPre]){ S.wPre='fhx6'; }
@@ -823,7 +770,11 @@ function coax1way(){
     el.innerHTML=Object.keys(WPRE).map(k=>'<option value="'+k+'">'+WPRE[k].name+'</option>').join('')+'<option value="custom">custom (sliders)</option>';
     if(!WPRE[S.wPre]) S.wPre='w65';
     el.value=S.wPre;
-    const P=CDP[S.cdSel||'dcx464'];
+    /* leaving 1way: the state may carry cdSel='unit' (coax presets have no
+       separate CD) - restore a real CD or the whole switch chain dies here */
+    if(!CDP[S.cdSel]) S.cdSel='dcx464';
+    const cds=document.getElementById('cdSel'); if(cds) cds.value=S.cdSel;
+    const P=CDP[S.cdSel];
     S.td=P.td; S.throat=P.td; S.cdFloor=P.floor; S.cdDepth=P.dep;
   }
 }
@@ -862,7 +813,12 @@ function wire(){
   document.getElementById('wPre').onchange=e=>{ S.wPre=e.target.value;
     const P=(S.topo==='1way'?CXPRE:WPRE)[S.wPre];
     if(P){ S.odW=P.od; S.dpW=P.dp; S.sdW=P.sd; S.vtcW=P.vtc; S.xmW=P.xm; document.getElementById('odW').value=S.odW;
-      if(S.topo==='1way'){ S.sdC=P.sd; S.vtcC=P.vtc; S.xmC=P.xm; S.hfExit=P.hfExit||20.1; S.recXO=P.recXO||0; S.cdDepth=0; delete S.hornLen; } }
+      if(S.topo==='1way'){ S.sdC=P.sd; S.vtcC=P.vtc; S.xmC=P.xm; S.hfExit=P.hfExit||20.1; S.recXO=P.recXO||0; S.cdDepth=0; delete S.hornLen;
+        /* his call: the horn RESIZES to the driver. Ratio from the retired
+           gate-asserted 1way bundles: mouth/od = 2.31/2.42/2.20/2.40 - mean 2.35 */
+        S.mouthW=Math.min(S.mouthCap||64, Math.round(2.35*P.od/2.54));
+        const mEl=document.getElementById('mouthW'); if(mEl) mEl.value=S.mouthW;
+        const vm=document.getElementById('vMouth'); if(vm) vm.textContent=S.mouthW+'″'; } }
     save(); rebuild(); };
   document.getElementById('mPre').onchange=e=>{ S.mPre=e.target.value;
     const P=MPRE[S.mPre]; if(P){ S.odM=P.od; S.dpM=P.dp; S.sdM=P.sd; S.vtcM=P.vtc; S.xmM=P.xm; document.getElementById('odM').value=S.odM; }
@@ -871,6 +827,7 @@ function wire(){
     if(b.dataset.v===S.style){document.querySelectorAll('#segStyle button').forEach(x=>x.classList.remove('on'));b.classList.add('on');}
     b.onclick=()=>{ S.style=b.dataset.v;
       document.querySelectorAll('#segStyle button').forEach(x=>x.classList.toggle('on',x===b));
+      if(S.topo==='1way') S.seN=(S.style==='angular')?12:2;   // ROUND | SQUARE are the whole 1way form space
       coax1way(); save(); rebuild(); }; });
   document.getElementById('cdSel').value=S.cdSel||'dcx464';
   document.getElementById('cdSel').onchange=e=>{ S.cdSel=e.target.value; const P=CDP[S.cdSel];

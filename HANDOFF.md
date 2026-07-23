@@ -1,33 +1,41 @@
-# MEH STUDIO v5 HANDOFF (2026-07-23 late, build 517, commit a72d8105b)
+# MEH STUDIO v5 HANDOFF (2026-07-23 night, build 518)
 Repo: github.com/mroushdy/MehStudio (main). Tool: v5/meh5.html (assembled by
-`node v5/assemble.js` = shell.html + engine.js at /*__ENGINE__*/).
-RITUAL: `node v5/gate.js` (40,873 checks / 480 states) MUST pass before any
+`node v5/assemble.js` — run it FROM v5/, it reads shell.html relative).
+RITUAL: `node v5/gate.js` (41,111 checks / 480 states) MUST pass before any
 push; push from a scratch clone with GIT_ASKPASS=~/hs/.secrets/askpass.sh and
-`git -c credential.helper=` (macOS keychain injects stale creds otherwise);
-after push, repin his tab to the commit-pinned rawcdn.githack URL (localStorage
-on that origin carries his state); echo+resolve BUGPINS (markers are ephemeral
-since 516 - the DATA persists in localStorage 'meh5_bugpins').
-Local preview: .claude/launch.json "meh5" serves repo/v5 on :8517.
+`git -c credential.helper=` (macOS keychain injects stale creds otherwise).
 
-STATE: builds 500→517 in one day. Landed: KNOWN BUILD presets (all topologies,
-gate-asserted; SH96 under ruling B, JMOD, one-horn B&C coax presets); the
-ONE-HORN coax model (print REPLACES the stock horn from the true HF exit; 5 B&C
-datasheets in CXPRE); corner boards v2 (real diagonal shelves); the TAP
-FOOTPRINT system (measured containment + placement pad re-walk); round taps;
-X-pair cross-wise straddling (equal throat paths); solver honesty (no
-balloon-to-cap); M3 PATH rows (Heinz); M6 sub-XO + displacement; M8; Max-SPL
-tile (Makarski/Thuras port from Horn Studio.html); exports slice 1-4 (watertight
-shell STL, dish insert with real holes, tap cutters as negative volumes, panel
-SVG); reports panel; the meh_studio_14 LOOK; view modes; relevance UI.
+MARWAN'S TAB MOVED: he now runs http://localhost:8517/meh5.html (another
+session's static server on repo/v5 — reuse it, do NOT start a second one; if
+it died: .claude/launch.json "meh5"). His state AND his bug pins live on the
+localhost:8517 origin — localStorage 'meh5_bugpins' (the old githack-origin
+store is history, all 33 pins there are done). Resolve pins via
+window.BUGPINS.resolve(id,'<hash>: <what>') in that tab, never by rewriting
+the store while he types. After a push, assemble+reload the LOCAL tab; the
+githack repin only matters if he asks for it.
 
-READ FIRST: docs/queue.md (the standing queue - every landed item stamped),
-docs/placement_matrix.md (LAW), docs/tap_laws.md, docs/printed_mounts_spec.md,
-docs/REFERENCE_LIBRARY_STUDY.md + _2.md (18+8 reference builds - the
-auto-split exporter spec lives in _2).
+BUILD 518 (this session): topology-switch crash fixed (cdSel='unit' guard in
+coax1way — the "changing topology does nothing / KNOWN BUILD stale" report);
+viewer now draws the REAL print solids (shellMesh + dishMesh — translucence
+film gone, real tap holes, no fake bore plug; pins 2/5/6/13/14); new COAX law
+row 'Tap holes land whole on the dish' (pin 18); 1way UX: no KNOWN BUILD list,
+FORM = ROUND|SQUARE, driver select auto-sizes mouth (2.35xOD, from the retired
+bundle ratios). Local BUILD counter went 516->518 (517 was pushed from the
+scratch clone last session; keep local = remote from now on).
 
-NEXT: auto-split STL exporter (spec captured in study _2: assembly-coordinate
-segments, cut planes off driver features, per-role orientation, bed matrix,
-mirror dedup + BOM, glued/bolted joints); Solana remote-bandpass dialect
-(alignments in study 1); Hornresp ME2 (needs a sample file from Marwan);
-v4 parity audit (needs the v4 build). Marwan's account hit its monthly spend
-limit today - no subagents; single-threaded work only.
+READ FIRST: docs/queue.md (open-pins block at the top = the next batch: the
+1way/2way GEOMETRY rework, pins 3/4/7-12/15-17 — his reference images show
+the funnel base IS the driver flange, entry wide, kidney taps tight around
+the snout; ground everything in CXPRE datasheet dims + the batch-2/3 measured
+refs, invent nothing). docs/REFERENCE_LIBRARY_STUDY_3.md is new (Pavdan
+halves, DH350 symmetry-half + adapter extraction = the split canon exception,
+Hinson MEH.pdf tap-chamber + 17 m/s port numbers, PM90 wood/T-nut DWG).
+
+NEXT after the pin batch: auto-split STL exporter — spec now spans study _2
+findings + study _3 §6 tiers (symmetry-half with adapter extraction is the
+new tier 3; verify mirror-dedup, never assume). Then Solana remote-bandpass,
+Hornresp ME2 (still needs a sample file), v4 parity audit (needs the v4
+build). Marwan's account: monthly spend limit — no subagents, single-threaded.
+Scratch tooling this session (scratchpad/refs3/): stl_probe.py, venv with
+pypdf+ezdxf, libredwg installed system-wide (dwg2dxf works; pm90.dxf
+converted, block/text layer extracted, entity-level dims still unparsed).

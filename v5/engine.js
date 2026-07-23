@@ -726,6 +726,19 @@ function acoustics(S,L,st){
       add('COAX','Tap ring sits over the coax cone',(rT*1000).toFixed(0)+' vs '+(rCone*1000).toFixed(0)+' mm',
         rT+sa<=rCone*0.95, rT+sa<=rCone*1.05,
         'the plate slots must land on the cone that feeds them');
+      /* his pin #18 (2026-07-23): taps must sit ENTIRELY on the dish face AND
+         open into the driver - never "flying". Same clamp math as dishMesh:
+         if the printable hole is smaller than the law-derived hole, the
+         geometry is lying about its area - fail here, not silently in the STL. */
+      { const rB18=((S.hfExit||20.1)/1000)/2, rDish18=rCone+0.012, N18=taps.length;
+        const rhReq=Math.max(0.004, sa||0.008);
+        const w018=Math.min(Math.max(rhReq*1.6,0.012),(rDish18-rB18)/2*0.6);
+        const rIn18=Math.max(rB18+0.004,rT-w018), rOut18=Math.min(rDish18-0.004,rT+w018);
+        const fitR=Math.min((rT-rIn18)*0.75, (rOut18-rT)*0.75, (Math.PI*rT/N18)*0.6);
+        add('COAX','Tap holes land whole on the dish',
+          'Ø '+(2*rhReq*1000).toFixed(0)+' mm need vs '+(2*Math.max(0,fitR)*1000).toFixed(0)+' mm printable',
+          fitR>=rhReq, fitR>=rhReq*0.9,
+          'every hole must be contained between the bore and the dish rim and clear its neighbors - the derived slot area only counts if it prints whole'); }
       const rDish2=rCone+0.012, hmD=(S.mouthW||24)*IN/2;
       add('COAX','Coax unit vs the horn body','Ø '+(2*rCone/IN).toFixed(1)+'″ unit · '+(2*rDish2/IN).toFixed(1)+'″ dish on a '+(S.mouthW||24)+'″ mouth',
         hmD>=1.25*rDish2, hmD>=1.05*rDish2,
