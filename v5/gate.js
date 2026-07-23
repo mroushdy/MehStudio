@@ -243,6 +243,9 @@ for(const S of lattice){
   ck(sh.includes('/*__ENGINE__*/'), 'shell engine marker missing');
   ck(sh.includes("id=\"placeW\"")||sh.includes("id='placeW'"), 'placement selector missing');
   ck(sh.includes('id="buildSel"')||sh.includes("id='buildSel'"), 'known-build selector missing');
+  ck(sh.includes('id="reports"'), 'reports panel missing (queue D)');
+  ck(sh.includes('id="subXO"'), 'sub-crossover control missing (M6)');
+  ck(sh.includes('id="bStl"'), 'export button missing (queue A)');
   /* M8: preset driver/CD numerics must mirror the shell's datasheet tables */
   { const grab=(re)=>{ const m=sh.match(re); return m? new Function('return '+m[1])() : null; };
     const shW=grab(/const WPRE=([\s\S]*?);\nconst MPRE/), shM=grab(/const MPRE=([\s\S]*?);\nconst CDP/),

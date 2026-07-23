@@ -79,6 +79,8 @@ select{width:100%;font-family:var(--mono);font-size:11px;background:var(--paper)
   <input type="range" id="odW" min="8" max="46" step="1" value="14">
   <label>WOOFER COUNT <span class="val" id="vNW"></span></label>
   <input type="range" id="nW" min="2" max="8" step="1" value="6">
+  <label>SUB CROSSOVER [Hz] <span class="val" id="vSubXO"></span></label>
+  <input type="range" id="subXO" min="60" max="120" step="5" value="80">
   <label>TAPS PER WOOFER</label>
   <select id="npSel">
     <option value="1" selected>one slot under the cone</option>
@@ -125,13 +127,17 @@ select{width:100%;font-family:var(--mono);font-size:11px;background:var(--paper)
 <div id="chartwrap" style="border-top:1px solid var(--gridmaj);padding:10px 14px;background:var(--paper)">
   <div class="sect" style="border-top:none;padding-top:0;margin:0 0 6px">predicted response — sections + LR4 sum at the derived crossovers (per-section normalized)</div>
   <canvas id="respChart" width="1000" height="190" style="width:100%;height:190px;display:block"></canvas>
-</div></main>
+</div>
+<details id="reports" style="border-top:1px solid var(--gridmaj);padding:8px 14px;background:var(--paper)">
+  <summary class="sect" style="border-top:none;padding-top:0;margin:0;cursor:pointer;display:list-item">reports — paths · chambers · cut list · print hints</summary>
+  <div id="repBody" style="font-size:10.5px;line-height:1.7;padding:8px 0"></div>
+</details></main>
 </div></div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 /*__ENGINE__*/
 /*__CAD__*/
-window.MEH_BUILD=508;
+window.MEH_BUILD=509;
 document.getElementById('bno').textContent=MEH_BUILD;
 "use strict";
 /* ---------------- driver presets (v4 datasheets; mesh = true CAD, meshApprox = nearest body) ---------------- */
@@ -156,7 +162,7 @@ const MPRE={
 const CDP={de500:{td:1.0,floor:900,dep:1.2}, de900:{td:1.4,floor:550,dep:1.7}, dcx464:{td:1.4,floor:300,dep:2.4}};
 /* ---------------- state ---------------- */
 const S={topo:'2way', style:'smooth', wPre:'w65', mPre:'m4', cdSel:'dcx464', wallT:0.012, seN:6, covH:90, covV:60, mouthW:24, mouthCap:64, throat:1.4, rollR:2,
-  fxHi:900, fxLo:300, cdDepth:2.4, td:1.4, coaxRing:4.5,
+  fxHi:900, fxLo:300, cdDepth:2.4, td:1.4, coaxRing:4.5, subXO:80,
   nW:4, odW:16.7, dpW:8.5, nM:4, odM:10.3, dpM:6.5};
 try{ Object.assign(S, JSON.parse(localStorage.getItem('meh5_state')||'{}')); }catch(e){}
 { const P=WPRE[S.wPre]; if(P){S.sdW=P.sd;S.vtcW=P.vtc;S.xmW=P.xm;}
@@ -558,7 +564,65 @@ function rebuild(){
     +(S.topo==='3way'&&r.S.fxDerived?r.S.fxDerived.hi+' / ':'')+(r.S.fxDerived?r.S.fxDerived.lo:'—')+' Hz';
   if(window.BUGPINS)BUGPINS.redraw();
   drawResponse(r);
+  drawReports(r);
   render3d();
+}
+/* ---- D. REPORTS: the numbers a builder actually carries to the shop ---- */
+function drawReports(r){
+  const el=document.getElementById('repBody'); if(!el) return;
+  const ev=r.ev, st=ev.st, IN=MEH2.IN, Sx=r.S;
+  const fmt=v=>(v/IN).toFixed(2)+'″';
+  let h='';
+  /* path table (M3 view: throat paths per section) */
+  h+='<b>PATH TABLE</b> (to the throat plane; CD diaphragm sits '+(Sx.cdDepth||0)+'″ behind)<br>';
+  h+='<table style="border-collapse:collapse">';
+  const row=(a,b,c)=>'<tr><td style="padding:0 14px 0 0">'+a+'</td><td style="padding:0 14px 0 0">'+b+'</td><td>'+c+'</td></tr>';
+  h+=row('<i>section</i>','<i>station</i>','<i>path incl. CD depth</i>');
+  h+=row('CD / HF','−'+(Sx.cdDepth||0)+'″','0.00″ (reference)');
+  const secs={};
+  for(const d of ev.layout){ if(d.kind==='coaxtap'||secs[d.kind]) continue; secs[d.kind]=d; }
+  for(const k in secs){ const d=secs[k];
+    const p=(k==='coaxtap'?0:d.x)+(Sx.cdDepth||0)*IN;
+    h+=row(k, fmt(d.x), fmt(p)); }
+  const tp=ev.layout.find(d=>d.kind==='coaxtap');
+  if(tp){ const rT=Math.hypot(tp.tap[1],tp.tap[2]);
+    const Ls=Math.hypot(tp.x,rT-st.throat)+(Sx.cdDepth||0)*IN;
+    h+=row('coax cone (slant)', fmt(tp.x), fmt(Ls)); }
+  h+='</table>';
+  /* chambers */
+  h+='<br><b>FRONT CHAMBERS</b> — ';
+  if(Sx.topo!=='1way') h+='woofers '+((Sx.nW|0)||2)+'×'+(Sx.vtcW||'?')+' = '+(((Sx.nW|0)||2)*(Sx.vtcW||0))+' cm³';
+  if(Sx.topo==='3way') h+=' · mids '+((Sx.nM|0)||4)+'×'+(Sx.vtcM||'?')+' = '+(((Sx.nM|0)||4)*(Sx.vtcM||0))+' cm³';
+  if(Sx.topo==='1way') h+='coax cone Vtc '+(Sx.vtcC||'?')+' cm³ behind the dish';
+  h+='<br>';
+  /* angular cut list / smooth print hints */
+  if(Sx.style==='angular'){
+    h+='<br><b>PANEL CUT LIST</b> (outside faces; verify before cutting — Waslo rule)<br>';
+    const x0=(Sx.topo==='1way'&&st.xAdapter)?st.xAdapter:1e-4;
+    const stns=[x0]; if(st.xBreak!==undefined) stns.push(st.xBreak); stns.push(st.depth-1e-6);
+    const FS2=stns.map(x=>MEH2.facetsAt(st,x));
+    const names=['throat','break','mouth'].slice(0,stns.length-1?3:2);
+    h+='<table style="border-collapse:collapse">'+row('<i>panel</i>','<i>widths '+(stns.length===3?'throat / break / mouth':'throat / mouth')+'</i>','<i>slant length(s)</i>');
+    const NVp=FS2[0].length;
+    for(let i=0;i<NVp;i++){
+      const nm=(FS2[0][i].ch?'chamfer ':'wall ')+i;
+      const ws=FS2.map(F=>fmt(F[i].len)).join(' / ');
+      let sl='';
+      for(let s2=0;s2<stns.length-1;s2++){
+        const A=FS2[s2][i], B=FS2[s2+1][i];
+        const dr=Math.hypot(B.mid[0]-A.mid[0],B.mid[1]-A.mid[1]);
+        sl+=(s2?' + ':'')+fmt(Math.hypot(stns[s2+1]-stns[s2],dr));
+      }
+      h+=row(nm,ws,sl);
+    }
+    h+='</table>';
+  } else {
+    const mo=st.pts[st.pts.length-1];
+    h+='<br><b>PRINT HINTS</b> — mouth '+fmt(2*mo.a)+'×'+fmt(2*mo.b)+', depth '+fmt(st.depth)
+      +' → ~'+Math.max(1,Math.ceil(st.depth/0.25))+' ring segment(s) on a 250 mm-tall printer'
+      +(2*mo.a>0.30?'; mouth exceeds a 300 mm bed — split rings into quarters and key the seams':'')+'<br>';
+  }
+  el.innerHTML=h;
 }
 function drawResponse(r){
   const cv=document.getElementById('respChart'); if(!cv) return;
@@ -652,6 +716,7 @@ function wire(){
     const show=()=>{ document.getElementById('vWall').textContent=Math.round(S.wallT*1000)+' mm'; }; show();
     el.oninput=()=>{ S.wallT=(+el.value)/1000; show(); save(); rebuild(); }; } bind('odW','odW',v=>v+' cm'); bind('nW','nW');
   bind('odM','odM',v=>v+' cm'); bind('nM','nM');
+  bind('subXO','subXO',v=>v+' Hz');   // M6: the sub XO is a real choice (velocity law + displacement ceiling ride it)
   const fillPre=(id,tbl,cur)=>{ const el=document.getElementById(id);
     el.innerHTML=Object.keys(tbl).map(k=>'<option value="'+k+'">'+tbl[k].name+'</option>').join('')+'<option value="custom">custom (sliders)</option>';
     el.value=cur; };

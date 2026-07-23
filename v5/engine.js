@@ -696,6 +696,18 @@ function acoustics(S,L,st){
           'the coax cone enters on the dish face a slant-path behind the CD diaphragm; the derived XO keeps this inside the LR4 corner'); }
     }
   }
+  /* ---- M6: BAND ARCHITECTURE - the sub crossover as a REAL choice. The
+     woofers own everything above subXO; their displacement sets the ceiling
+     there (rho*(2pi f)^2*Vd/(2pi r) half-space, Vd = nW*Sd*xmax). The port
+     velocity law already evaluates at this same edge - one knob, two truths. */
+  if(S.topo!=='1way'&&S.sdW&&S.xmW){
+    const f0=S.subXO||80, Vd=((S.nW|0)||2)*(S.sdW*1e-4)*(S.xmW*1e-3);
+    const pk=1.205*2*Math.PI*f0*f0*Vd;                      // 1 m, half-space, peak
+    const spl=20*Math.log10(pk/Math.SQRT2/2e-5);
+    add('BAND','Displacement ceiling at the sub XO ('+f0+' Hz)',spl.toFixed(0)+' dB / 1 m half-space',
+      true,true,
+      'M6: below this the subs take over; above it the horn woofers are excursion-bound to this SPL - raise the sub XO (or add cone) if the program needs more');
+  }
   /* PIN #16 (M4 down payment): Keele pattern-control floors per plane -
      wnom = kk/(theta*Fc), kk = 25306 Hz*deg*m (Synergy Calc sheet). Below these
      frequencies the wall angle stops steering and the pattern widens toward omni. */

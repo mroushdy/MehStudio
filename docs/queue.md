@@ -91,8 +91,11 @@ M5. THROAT SIDE [1WAY ADAPTER LANDED - pin #21: the horn starts AT the CD exit,
     exit-angle match, 2way/3way round-throat -> shape morph (pin #20 - smooth
     should blend n=2 at the throat into the chosen shape; angular keeps the
     Waslo square throat with the round bore in the plate)].
-M6. BAND ARCHITECTURE: real sub-XO choice with displacement math (80 Hz is an
-    assumption today); 4-way question parked explicitly.
+M6. BAND ARCHITECTURE [LANDED build 509: SUB CROSSOVER slider (60-120 Hz) - the
+    port-velocity law evaluates at it AND the new BAND row states the woofers'
+    displacement ceiling there (rho*(2pi f)^2*Vd/(2pi r) half-space, Vd =
+    nW*Sd*xmax) - one knob, two truths. Informational (no target-SPL input yet).
+    4-way question still parked explicitly.]
 M7. LAYOUT DIALECTS [CORNER BOARDS LANDED build 507: placeW='chamfer' puts the
     WOOFERS on the 45° chamfer boards (batch-2 SH96 canon correction) and
     forces mids to the apex ring; gate lattice sweeps it (408 states), matrix
@@ -142,8 +145,13 @@ B. TRUE PRINTED-PART GEOMETRY [shell wall DONE - real thickness, outer-face moun
    bandpass chamber housings; 1way coax full part.
 C. MAX SPL TILE (Thuras/Makarski from Horn Studio): the geometry's distortion
    ceiling, computed from v5's area law. Plus cutoff/loading estimate tiles.
-D. REPORTS PANEL: path-length table, Vtc totals, Hornresp ME2 export text,
-   panel cut list (angular), print bed split hints (smooth).
+D. REPORTS PANEL [LANDED build 509: collapsible REPORTS under the chart - path
+   table (per-section station + throat path incl. CD depth, the M3 view), front
+   chamber Vtc totals, ANGULAR panel cut list (per-panel widths at throat/break/
+   mouth + slant lengths, chamfers included, "verify before cutting" Waslo rule),
+   smooth print hints (ring segments vs 250mm height, 300mm-bed quarter-split
+   note)]. Still open: Hornresp ME2 export text (needs the real format spec -
+   not inventing it).
 E. V5 ORACLE BATTERY [GATE LANDED - v5/gate.js: 14,415 checks over a 216-state
    lattice (topology x form x style x coverage x placement x wall x drivers):
    station/area/ring/layout/normal/tap invariants, XO sanity + null margin,
