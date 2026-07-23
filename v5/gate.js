@@ -172,7 +172,8 @@ for(const S of lattice){
     const f=r.ev.rows.filter(q=>q.st==='fail').length, w=r.ev.rows.filter(q=>q.st==='warn').length;
     ck(!r.infeasible, tag+' infeasible');
     ck(f===0, tag+' lands with '+f+' fail(s)');
-    ck(w===0, tag+' lands with '+w+' warn(s) - presets must be exemplary');
+    const expW=(b.expectWarns|0)||0;   // ruling B: a preset may DECLARE its canon compromises (SH96)
+    ck(w===expW, tag+' lands with '+w+' warn(s), declared '+expW);
     ck(r.S.mouthW===b.s.mouthW, tag+' mouth grew '+b.s.mouthW+'" -> '+r.S.mouthW+'" (bake the settled size)');
   }
 }

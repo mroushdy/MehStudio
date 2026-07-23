@@ -617,10 +617,16 @@ function acoustics(S,L,st){
         const a2=ports[i],b2=ports[j];
         spread=Math.max(spread,Math.hypot(a2[0]-b2[0],a2[1]-b2[1],a2[2]-b2[2])); }
       if(ports.length>1){ const sLam=spread/(lam/4);
-        const okS=kind==='mid'?1.0:1.5, wnS=kind==='mid'?1.2:2.0;   // v4 canon: strict for mids; SH96 woofer taps measure ~1.5x
+        /* MARWAN'S RULING (2026-07-23, "lets do B"): on the corner-board/apex-
+           ring dialect the mid ring tolerates ~1.5x lambda/4 - the real SH96
+           measures 1.3-1.5x there and ships. Everywhere else the strict Waslo
+           DIY tier stands. */
+        const apexRing=(kind==='mid'&&S.placeW==='chamfer');
+        const okS=kind==='mid'?(apexRing?1.5:1.0):1.5, wnS=kind==='mid'?(apexRing?1.75:1.2):2.0;
         add(K,'Any-pair tap spacing (radiate as one driver)',(spread*1000).toFixed(0)+' mm = '+sLam.toFixed(2)+'\u00d7\u03bb/4',
           sLam<=okS, sLam<=wnS,
-          kind==='mid'?'Waslo/Hinson: every mid tap within \u03bb/4 of every other at '+fx+' Hz, or they stop summing as one source'
+          kind==='mid'?(apexRing?'apex-ring ruling B (2026-07-23): ~1.5\u00d7\u03bb/4 tolerated on the corner-board dialect - the real SH96 measures the same; strict Waslo tier applies elsewhere'
+                                :'Waslo/Hinson: every mid tap within \u03bb/4 of every other at '+fx+' Hz, or they stop summing as one source')
                       :'woofer sections tolerate more spread (SH96 canon ~1.5\u00d7\u03bb/4 at its XO); past 2\u00d7 the section combs'); }
       const coneD=2*Math.sqrt(sd*1e-4/Math.PI)/((np||1)>=2?2:1), fCone=C/(2*coneD);
       add(K,'Cone dia vs \u03bb/2 at band top',Math.round(fCone)+' Hz max',
@@ -1157,6 +1163,10 @@ const BUILDS=(()=>{
      s:{...B,...CDX,...W5,...M4,  topo:'2way',style:'angular',seN:12,covH:90,covV:60,mouthW:24,nW:4,nM:4}},
    ],
    '3way':[
+    {key:'sh96',      name:'SH96-class — corner boards · 4×15″ + 6 mids (ruling B)',
+     expectWarns:2,   // the real SH96's own compromises: woofer spread ~1.67×λ/4, entry ~1.0λ
+     s:{...B,...CDX, topo:'3way',style:'angular',seN:12,covH:90,covV:60,mouthW:58,nW:4,nM:6,fxLo:250,placeW:'chamfer',
+        wPre:'w15',odW:39,dpW:17,sdW:855,vtcW:320,xmW:10, mPre:'m3',odM:9.3,dpM:6.2,sdM:31,vtcM:25,xmM:2.5}},
     {key:'sh50',      name:'SH50-class — 70°×70° square · 4×10″ + 4 mids',
      s:{...B,...CDX,...W10,...M4, topo:'3way',seN:12,covH:70,covV:70,mouthW:24,nW:4,nM:4,fxLo:250}},
     {key:'classic',   name:'classic — 90°×60° · 4×10″ + 4 mids',

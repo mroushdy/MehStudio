@@ -23,11 +23,11 @@ const CASES=[
   ['wide 2way 6x8 120x60 dcx',       drv({...base,...cx,covH:120,covV:60},'w8','m4'), 'clean'],
   ['tall 2way 4x5.25 60x90 dcx',     drv({...base,...cx,covH:60,covV:90,nW:4},'w5','m4'), 'clean'],
   ['2way 6x6.5 on a de900 (honest refusal)', drv({...base},'w65','m4'), 'refuse'],
-  /* M7: corner-board dialect LANDED, but 6 apex-ring mids still break the STRICT
-     mid spacing tier (1.31x) - stays an honest refusal until the mid-tier canon
-     is ruled on (the real SH96 measures ~1.3-1.5x there too). */
-  ['SH96 corner boards 4x15+6mid (strict-mid refusal)',
-    drv({...base,topo:'3way',style:'angular',seN:12,nW:4,nM:6,mouthW:34,fxLo:250,placeW:'chamfer',cdFloor:300},'w15','m3'), 'refuse'],
+  /* RULING B (Marwan, 2026-07-23): apex-ring mids on the corner-board dialect
+     tolerate ~1.5x lambda/4 (the real SH96 measures the same) - the SH96 class
+     now LANDS (with its two declared canon warns). */
+  ['SH96 corner boards 4x15+6mid (ruling B - lands)',
+    drv({...base,topo:'3way',style:'angular',seN:12,nW:4,nM:6,mouthW:34,fxLo:250,placeW:'chamfer',cdFloor:300},'w15','m3'), 'clean'],
 ];
 let bad=0;
 for(const [name,S0,expect] of CASES){
