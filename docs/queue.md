@@ -17,6 +17,15 @@ Last updated: 2026-07-23 (M2+gate landed). v4 frozen at build 83. All work is v5
     excluded, order-preserving); pairs rows filtered to their OWN walls by
     facet normal; slots lie flat on panels. Node-angular blind spot fixed
     (style rides on stations; seRing global-S sniff retired).
+11. PINS #12+#13: CLASSIC ANGULAR is now the TRUE Waslo dual expansion -
+    flare 1 AT the coverage angle, flare 2 = 90+Theta/2 PER PLANE (mouth
+    height derives from the V slopes, D34 relations), FLAT front (no roll;
+    the printed lip closes as the classic baffle face). The break converges
+    onto the landed woofer station (Waslo S3->S4) via a deterministic
+    fixed point inside evaluate. Rect walls place by SYMMETRIC PARTITION
+    (n = 4*base + rem; rem -> top+bottom when wide, sides when tall, odd
+    seat bottom-center; rows centered per wall); seats excluded from the
+    flare-break crease zone.
 
 
 ## MEH COMPLETENESS (his correction 2026-07-23: "a lot missing from making this MEH")

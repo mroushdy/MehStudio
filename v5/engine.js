@@ -88,14 +88,40 @@ function profile(S){
   const ht=(S.topo==='1way')? ((S.coaxRing||4.5)*CM+0.024)   // 1way: the printed APEX PLATE is the throat - flare starts at its edge (his pin #8 / Reference C)
                              : S.throat*IN/2;
   const hm=S.mouthW*IN/2;
+  if(S.style==='angular'){
+    /* PIN #12 - THE CLASSIC SHAPE (Waslo Synergy Calc v5, Main Panels sheet):
+       flare 1 AT the coverage angle; flare 2 = the SECOND EXPANSION
+       Theta2 = 90 + Theta/2, PER PLANE; flat mouth (no roll) - the printed
+       front closes as the classic baffle face. Mouth height DERIVES from the
+       V plane's own two slopes (D34 relations), not a constant aspect. */
+    const thV=d2r(S.covV/2);
+    const th2=d2r(45+S.covH/4), th2V=d2r(45+S.covV/4);
+    const ar0=Math.tan(thV)/Math.tan(th);
+    const vt=ht*ar0;
+    /* the break sits just past the WOOFER station (Waslo: S3 -> S4 IS the second
+       expansion) - layout feeds it back as _breakHint; first pass uses 72% growth.
+       The first flare below the break is break-INDEPENDENT, so the fixed point
+       lands in one iteration. */
+    const xCone=(hm-ht)/Math.tan(th);
+    let x0=(S._breakHint!==undefined)? S._breakHint : 0.72*xCone;
+    x0=Math.max(0.04, Math.min(0.95*xCone, x0));
+    const hb=ht+Math.tan(th)*x0;
+    const depth=x0+(hm-hb)/Math.tan(th2);
+    const pts=[];
+    const N1=Math.max(8,Math.round(30*x0/depth)), N2=Math.max(6,40-N1);
+    for(let i=0;i<=N1;i++){ const x=x0*i/N1;
+      pts.push({x, h:ht+Math.tan(th)*x, v:vt+Math.tan(thV)*x}); }
+    const vb=vt+Math.tan(thV)*x0;
+    for(let j=1;j<=N2;j++){ const x=x0+(depth-x0)*j/N2;
+      pts.push({x, h:hb+Math.tan(th2)*(x-x0), v:vb+Math.tan(th2V)*(x-x0)}); }
+    return {pts, depth, rollR:0, mouthH:hm, xBreak:x0};
+  }
   const depth=Math.max(0.06,(hm-ht)/Math.tan(th));
-  const rollR=(S.style==='angular'? Math.min(S.rollR,0.75) : S.rollR)*IN;   // angular keeps a printable bevel, not a donut
+  const rollR=S.rollR*IN;
   const N=48, pts=[];
   for(let i=0;i<=N;i++){ const t=i/N, x=t*depth;
     const s=t*t*(3-2*t);                        // smoothstep: zero slope at throat, eases to mouth
-    const lin=ht+(hm-ht)*t;
-    const eased=(S.style==='angular')? lin                    // CLASSIC ANGULAR: pure straight cone (his call - the classic look, printed)
-               : ht+(hm-ht)*(0.72*t+0.28*s);     // smooth: mostly conical (pattern control) + eased ends
+    const eased=ht+(hm-ht)*(0.72*t+0.28*s);     // smooth: mostly conical (pattern control) + eased ends
     pts.push({x, h:eased});
   }
   /* roll-back: quarter-torus past the mouth plane, tangent to the last segment */
@@ -113,8 +139,9 @@ function profile(S){
 function stations(S){
   const pr=profile(S);
   const ar=Math.tan(d2r(S.covV/2))/Math.tan(d2r(S.covH/2));   // vertical/horizontal
-  return { form:'se', n:S.seN, style:S.style, pts:pr.pts.map(p=>({x:p.x, a:p.h, b:p.h*ar, roll:p.roll})),
-           depth:pr.depth, rollR:pr.rollR, throat:S.throat*IN/2, ar };
+  return { form:'se', n:S.seN, style:S.style,
+           pts:pr.pts.map(p=>({x:p.x, a:p.h, b:(p.v!==undefined)?p.v:p.h*ar, roll:p.roll})),
+           depth:pr.depth, rollR:pr.rollR, throat:S.throat*IN/2, ar, xBreak:pr.xBreak };
 }
 function dimsAt(st,x){
   const P=st.pts;
@@ -228,6 +255,31 @@ function snapSeats(st,x,pts,seatR,prefer){
    no bunching, panels share seats proportional to their length (SH96 wall rows). */
 function ringSeatsAngular(st,x,n,off,seatR){
   const F=facetsAt(st,x);
+  /* PIN #13 - rect walls get a SYMMETRIC PARTITION, not a blind perimeter walk */
+  if(st.n>7){
+    const wall={};
+    for(let i=0;i<F.length;i++){ const f=F[i]; if(f.ch) continue;
+      if(Math.abs(f.n2[0])>Math.abs(f.n2[1])) wall[f.n2[0]>0?'R':'L']=i;
+      else wall[f.n2[1]>0?'T':'B']=i; }
+    if(wall.T!==undefined&&wall.B!==undefined&&wall.R!==undefined&&wall.L!==undefined){
+      const base=(n/4)|0, rem=n%4;
+      const cnt={T:base,B:base,R:base,L:base};
+      const wide=F[wall.T].len>=F[wall.R].len;
+      if(rem===1) cnt.B++;
+      else if(rem===2){ if(wide){cnt.T++;cnt.B++;} else {cnt.R++;cnt.L++;} }
+      else if(rem===3){ cnt.R++; cnt.L++; cnt.B++; }
+      const out=[];
+      for(const w of ['T','R','B','L']){ const fi=wall[w], f=F[fi], k=cnt[w];
+        for(let i2=0;i2<k;i2++){
+          let t=(i2+0.5)/k*f.len;
+          const m=Math.min(f.len/2,(seatR||0.02)*0.8);
+          t=Math.max(m,Math.min(f.len-m,t));
+          const q=[f.p[0]+f.dir[0]*t, f.p[1]+f.dir[1]*t];
+          q.facet=fi; q.param=Math.atan2(q[1],q[0]); out.push(q);
+        } }
+      return out;
+    }
+  }
   const big=[]; let LB=0;
   for(let i=0;i<F.length;i++) if(!F[i].ch){ big.push({i,start:LB}); LB+=F[i].len; }
   const o=(((off||0)%1)+1)%1;
@@ -268,6 +320,7 @@ function seatsFor(st,x,n,mode,off,seatR){
 function xForSeats(st,n,seatR,xMin,mode,off){
   const xMax=st.depth*0.84;
   for(let x=xMin;x<=xMax;x+=st.depth/128){
+    if(st.xBreak!==undefined && Math.abs(x-st.xBreak)<seatR+0.008) continue;   // no seat straddles the flare-break crease
     const seats=seatsFor(st,x,n,mode,off,seatR);
     let ok=true;
     for(let i=0;i<n&&ok;i++) for(let j=i+1;j<n;j++){
@@ -439,7 +492,19 @@ function acoustics(S,L,st){
 }
 /* ---- fit & physics checks (carried laws; expanded per rebuild) ---- */
 function evaluate(S){
-  const st=stations(S), L=layout(S,st), rows=[];
+  let st=stations(S), L=layout(S,st);
+  /* CLASSIC ANGULAR: converge the flare break onto the landed woofer station
+     (Waslo S3->S4). Internally converged so evaluate stays deterministic. */
+  if(S.style==='angular'){
+    for(let it=0;it<3;it++){
+      const dW=L.filter(d=>d.kind==='woof');
+      if(!dW.length) break;
+      const hint=Math.max(...dW.map(d=>d.x))+dW[0].seatR+0.02;
+      if(Math.abs(hint-(st.xBreak||0))<=0.02) break;
+      S._breakHint=hint; st=stations(S); L=layout(S,st);
+    }
+  }
+  const rows=[];
   const add=(sec,name,val,ok,warn,why)=>rows.push({sec,name,val,st:ok?'ok':(warn?'warn':'fail'),why});
   /* pin #4/#11 acceptance: every driver's tap under its frame; ring even */
   let tapOff=0;
