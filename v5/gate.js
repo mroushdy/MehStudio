@@ -45,7 +45,8 @@ for(const placeW of (topo==='2way'?['auto','ring','pairsH','pairsV','chamfer']: 
 for(const wallT of (placeW==='auto'?[0.008,0.02]:[0.012]))
 for(const mount of ((placeW==='auto'&&wallT===0.02)?['flush','axial']:['flush']))
 for(const np of ((placeW==='auto'&&wallT===0.008)?[1,2]:[1]))          // pins #1/#23/#25: straddling pairs swept too
-  lattice.push(mk({topo,seN,style,covH,covV,placeW,wallT,mount,npW:np,npM:np,
+for(const sh of ((placeW==='auto'&&wallT===0.008&&np===2)?['slot','round']:['slot']))   // round taps (his classic-hole call)
+  lattice.push(mk({topo,seN,style,covH,covV,placeW,wallT,mount,npW:np,npM:np,shW:sh,shM:sh,
     _w: covH>=120?'w8':(seN>=12?'hpl10':'w5'), _m: topo==='3way'?'m4':'m3'}));
 
 for(const S of lattice){

@@ -1,5 +1,11 @@
 # MEH STUDIO — STANDING QUEUE (versioned; update on every landed item)
-Last updated: 2026-07-23 (build 505: M3 path-length balance LANDED + true-CAD
+Last updated: 2026-07-23 (build 515: ONE-HORN coax model - the print REPLACES
+the stock horn from the TRUE HF exit (5 B&C datasheets landed: floors, exits,
+dims), corner boards v2 = real diagonal shelves (his teardrop catch), the
+TAP FOOTPRINT system (measured containment + placement re-walk), round taps,
+view modes, relevance UI. Builds 506-514: exports (STL shell/dish/cutters/
+panel SVG), M3/M4/M6/M7/M8, ruling B, reference-library studies, the 14 look.
+Older: build 505: M3 path-length balance LANDED + true-CAD
 coax silhouette (contiguous basket/motor/horn-tube/tweeter stack per the 6FHX51
 measurements - his "still does not look right" fix) + M4 informational row.
 Build 504: coax CAD study, driver-derived dish. Build 503: Reference D 1-way;

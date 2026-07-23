@@ -94,17 +94,23 @@ function profile(S){
        rim is the driver's mounting flange (the plate follows the cone OUT to
        the frame), the tap ring sits over the cone by construction, and the
        horn grows to host whatever coax is chosen - never the reverse. */
+    /* ONE HORN (his correction #2, 2026-07-23): the driver's stock plastic
+       horn is REMOVED - the print replaces it. Segment 1 copies the stock
+       geometry (conical, TRUE HF exit from the datasheet to the 0.60R mouth
+       at the cone plane, length ~ the driver depth); segment 2 is the dish
+       face carrying the cone taps; segment 3 is the MEH flare. The response
+       ladder, max-SPL and every path law now start at the REAL throat. */
     const rCone=(S.odW||22)*CM/2;
-    const rDish=rCone+0.012;                                   // mounting-plate flange past the frame
-    /* HIS CORRECTION (2026-07-23, pins on build 512): the horn connects
-       DIRECTLY at the coax's own HF-horn mouth ring in the cone center - no
-       tube, no floating plate. The dish's BACK follows the driver cone with
-       an x-max gap (dishBack below); its FRONT is the first flare. */
-    const htC=Math.max(ht, 0.60*rCone);                        // 6FHX51 CAD: HF horn mouth = 0.60R
-    const rP=Math.min(Math.max((S.coaxRing||4.5)*CM, htC+0.012, 0.70*rCone), rCone*0.8); // tap ring on the EXPOSED cone annulus
+    const rDish=rCone+0.012;
+    const rHF=((S.hfExit||20.1)/1000)/2;
+    const Lh=(S.hornLen!==undefined)? S.hornLen : 0.85*((S.dpW||10)*CM);
+    const rSM=0.60*rCone;                                      // stock mouth at the cone plane ("same geometry first")
+    const rP=Math.min(Math.max((S.coaxRing||4.5)*CM, rSM+0.012, 0.70*rCone), rCone*0.8); // tap ring on the EXPOSED cone annulus
     const thA=d2r(38);
-    const La=Math.max(0.01,(rDish-htC)/Math.tan(thA));
-    const xTap=Math.max(0.006,(rP-htC)/Math.tan(thA));         // station whose radius IS the tap ring
+    const La=Lh+Math.max(0.008,(rDish-rSM)/Math.tan(thA));     // adapter = replaced horn + dish face
+    const xTap=Lh+Math.max(0.004,(rP-rSM)/Math.tan(thA));
+    const htC=rHF;                                             // the horn STARTS at the true exit
+    const rAt=x=> x<=Lh? rHF+(rSM-rHF)*x/Lh : rSM+Math.tan(thA)*(x-Lh);
     if(S.style==='angular'){
       /* REFERENCE D (Marwan's build photos, 2026-07-23): the ROUND printed dish
          (nOv:2) drops into a SQUARE straight-walled classic flare - single
@@ -113,8 +119,8 @@ function profile(S){
       const Da=Math.max(0.05,(hm-rDish)/Math.tan(th));
       const depth=La+Da, pts=[];
       const vm=Math.max(hm*Math.tan(d2r(S.covV/2))/Math.tan(th), rDish*1.05);
-      for(let i=0;i<=8;i++){ const x=La*i/8;
-        const r=htC+Math.tan(thA)*x; pts.push({x, h:r, v:r, nOv:2}); }        // the dish is ROUND (his part)
+      for(let i=0;i<=16;i++){ const x=La*i/16;
+        const r=rAt(x); pts.push({x, h:r, v:r, nOv:2}); }                     // replaced horn + ROUND dish
       for(let j=1;j<=32;j++){ const x=La+Da*j/32, t=j/32;
         pts.push({x, h:rDish+Math.tan(th)*(x-La), v:rDish+(vm-rDish)*t}); }   // V flares per-plane from the round rim
       return {pts, depth, rollR:0, mouthH:hm, xAdapter:La, xTap, rBore:htC};
@@ -122,10 +128,10 @@ function profile(S){
     const D2=Math.max(0.05,(hm-rDish)/Math.tan(th));
     const depth=La+D2, pts=[];
     const vmS=Math.max(hm*Math.tan(d2r(S.covV/2))/Math.tan(th), rDish*1.05);
-    for(let i=0;i<=8;i++){ const x=La*i/8;
-      const r=htC+Math.tan(thA)*x; pts.push({x, h:r, v:r, nOv:2}); }          // ROUND dish (his part)
-    for(let j=1;j<=40;j++){ const t=j/40, x=La+D2*t, s=t*t*(3-2*t);
-      pts.push({x, h:rDish+(hm-rDish)*(0.72*t+0.28*s), v:rDish+(vmS-rDish)*(0.72*t+0.28*s)}); }
+    for(let i=0;i<=16;i++){ const x=La*i/16;
+      const r=rAt(x); pts.push({x, h:r, v:r, nOv:2}); }                       // replaced horn + ROUND dish
+    for(let j=1;j<=40;j++){ const t=j/40, x=La+D2*t, s2=t*t*(3-2*t);
+      pts.push({x, h:rDish+(hm-rDish)*(0.72*t+0.28*s2), v:rDish+(vmS-rDish)*(0.72*t+0.28*s2)}); }
     const rollR=S.rollR*IN, M2=10;
     const hEnd=pts[pts.length-1].h, sl=(pts[pts.length-1].h-pts[pts.length-2].h)/(pts[pts.length-1].x-pts[pts.length-2].x);
     const a0=Math.atan(sl);
@@ -435,7 +441,7 @@ function layout(S,st){
   /* GEOMETRY FIRST, XO DERIVED (v4 coax2 canon, now universal):
      drivers sit at the smallest station whose ring fits them; the crossover
      falls out of the path length. fxHi/fxLo become CEILINGS to respect. */
-  const seatW=S.odW*CM/2+0.011, seatM=S.odM*CM/2+0.011;
+  const seatW=S.odW*CM/2+0.011+(S._slotPad||0), seatM=S.odM*CM/2+0.011+(S._slotPad||0);   // _slotPad: the tap-footprint fixed point (his 'better system')
   const offW=0;
   /* DIALECT BY COVERAGE (pin #1): wide format -> woofer PAIRS on top/bottom walls
      (Danley canon); tall -> side pairs; near-square/round -> ring. */
@@ -504,7 +510,46 @@ function layout(S,st){
       out.push(drv);
     }
   };
-  if(S.topo!=='1way' && xW!=null){
+  if(S.topo!=='1way' && modeW==='chamfer'){
+    /* CORNER BOARDS v2 (his teardrop catch + the SH96 interior photo): the
+       boards are SEPARATE 45° shelves SPANNING each corner, sized to the
+       woofer - never the horn's own chamfer sliver. Board plane holds the
+       axis; slots run ALONG the board; the walk finds the smallest station
+       whose corner pocket hosts the chord. */
+    const nB=Math.min(4,(S.nW|0)||4);
+    const need=seatW+0.008;
+    let xB=null, chH=0;
+    for(let x=0.03;x<=st.depth*0.9;x+=st.depth/128){
+      const dm=dimsAt(st,x), k=dm.a+dm.b-Math.SQRT2*need;
+      if(k<Math.max(dm.a,dm.b)+0.005) continue;
+      const ch2=(dm.a+dm.b-k)/Math.SQRT2;                    // = need
+      const mid=[k/2,k/2];
+      let ok=true;
+      if(obsM) for(const o of obsM){
+        for(let c2=0;c2<nB;c2++){ const ph=Math.PI/4+c2*Math.PI/2;
+          const p3=[x, Math.abs(mid[0])*Math.cos(ph)/Math.cos(Math.PI/4)*Math.SQRT2/2*0+ (k/Math.SQRT2)*Math.cos(ph), (k/Math.SQRT2)*Math.sin(ph)];
+          if(Math.hypot(p3[0]-o.p[0],p3[1]-o.p[1],p3[2]-o.p[2])<seatW+o.r+0.008){ ok=false; break; } }
+        if(!ok) break; }
+      if(ok){ xB=x; chH=ch2; break; }
+    }
+    if(xB==null){ out.missing=true; }
+    else for(let c2=0;c2<nB;c2++){
+      const ph=Math.PI/4+c2*Math.PI/2, rC=(dimsAt(st,xB).a+dimsAt(st,xB).b-Math.SQRT2*need)/Math.SQRT2;
+      const p=[xB, rC*Math.cos(ph), rC*Math.sin(ph)];
+      const nrm=[0, Math.cos(ph), Math.sin(ph)];
+      const drv={kind:'woof', x:xB, phi:ph, center:p, normal:nrm,
+        od:S.odW*CM, dp:S.dpW*CM, tap:p, seatR:seatW-0.000,
+        board:{half:need, len:2*seatW+0.04}, onCh:true};
+      drv.flowU=[1,0,0]; drv.crossV=[0, -Math.sin(ph), Math.cos(ph)];
+      if(S.mount==='axial') drv.mountN=[-1,0,0];
+      out.push(drv);
+    }
+    /* the derived XO must ride the BOARD station */
+    if(xB!=null){ const XOK2=1/1.2;
+      S.fxDerived={ hi: (S.topo==='3way'&&xM!=null)? Math.round(XOK2*C/(4*(xM+S.cdDepth*IN))) : Math.round(XOK2*C/(4*(xB+S.cdDepth*IN))),
+                    lo: Math.round(XOK2*C/(4*(xB+S.cdDepth*IN))) }; }
+  }
+  else if(S.topo!=='1way' && xW!=null){
     const seats=seatsFor(st,xW,(S.nW|0)||2,modeWX,offW,seatW);
     for(const q of seats){
       const p=[xW,q[0],q[1]];
@@ -566,9 +611,11 @@ function acoustics(S,L,st){
     const crVel=17/(2*Math.PI*fLow*(xm/1000));           // CR the velocity limit allows
     const cr=Math.max(1.5, Math.min(band[1], crVel));    // below 1.5:1 it stops being a compression tap
     const ap=sd/cr;                                      // cm^2 per driver
+    const shp=(kind==='mid'? S.shM : S.shW)||'slot';       // his call: ROUND is classic for many horns
     for(const d of drs){ const apP=ap/(np||1);              // pin #19: area split across the ports
-      const saM=Math.sqrt(apP*1e-4*3)/2, sbM=Math.sqrt(apP*1e-4/3)/2;
-      d.slot={sa:saM, sb:sbM, ap:ap, np:np||1,
+      const saM=shp==='round'? Math.sqrt(apP*1e-4/Math.PI) : Math.sqrt(apP*1e-4*3)/2;
+      const sbM=shp==='round'? saM : Math.sqrt(apP*1e-4/3)/2;
+      d.slot={sa:saM, sb:sbM, ap:ap, np:np||1, round:shp==='round',
         offm:(np||1)>=2? 0.24*d.od : 0};                    // pins #1/#25: pair straddles CROSS-wise (same station)
     }
     add(kind.toUpperCase(),'Compression ratio Sd/Ap',cr.toFixed(1)+':1',
@@ -784,9 +831,14 @@ function acoustics(S,L,st){
   if(S.fxDerived){
     const top=(S.topo==='3way'?S.fxDerived.hi:S.fxDerived.lo);
     if(S.topo==='1way'&&!S.cdFloor){
-      /* one-unit coax (his correction): the unit's HF crossover floor is a
-         DATASHEET number we have not verified - say so, never invent it */
-      if(top) add('XO','Coax HF floor vs derived crossover',top+' Hz \u2014 floor unverified',
+      /* one-unit coax: the datasheet 'Recommended Crossover' assumes the STOCK
+         horn in free air. With the stock horn REPLACED by the deep MEH horn,
+         loading extends reach - the DCX464/SH50 canon measures ~an octave.
+         Graded warn-only (ok at rec/2), never a refusal: verify by measurement. */
+      if(top&&S.recXO) add('XO','HF reach vs datasheet recommendation',top+' vs '+S.recXO+' Hz stock-horn rec.',
+        top>=S.recXO/2, true,
+        'the octave canon: replaced-horn MEH loading buys ~1 octave under the stock-horn recommendation (DCX464/SH50 precedent) - verify by measurement');
+      else if(top) add('XO','Coax HF floor vs derived crossover',top+' Hz \u2014 floor unverified',
         false, true, 'check the unit datasheet: its minimum crossover must sit at or under the derived XO; v5 refuses to guess');
     } else {
       const cdReach=S.cdFloor||(S.td>=1.35?550:S.td>=0.95?900:1200);   // coax CDs (DCX464) reach ~300
@@ -827,7 +879,57 @@ function evaluate(S){
   if(S.fxDerived&&S.fxDerived.lo)
     add('XO','Derived crossover (from landed geometry)', (S.topo==='3way'? S.fxDerived.hi+' / ':'')+S.fxDerived.lo+' Hz',
       (S.fxDerived.lo<= (S.topo==='3way'?S.fxLo:S.fxHi)*1.35), true, 'XO falls out of the path length; ceiling from the driver choice');
-  const ac=acoustics(S,L,st); rows.push(...ac.rows);
+  let ac=acoustics(S,L,st); rows.push(...ac.rows);
+  /* HIS 'BETTER SYSTEM' (2026-07-23): the TAP FOOTPRINT itself - every outline
+     point of every port (pair offsets, X rotation, round or stadium) - must lie
+     ON its host facet, clear of creases and the flare break. Measured, and if
+     violated the placement re-walks with a pad until the slots truly fit. */
+  const overhang=()=>{
+    let worst=0;
+    for(const d of L){ if((d.kind!=='woof'&&d.kind!=='mid')||!d.slot||!d.flowU||!d.crossV) continue;
+      const np=d.slot.np||1;
+      for(let kp=0;kp<np;kp++){
+        const sgn=(kp===0?-1:1);
+        let ua=d.flowU, va=d.crossV;
+        if(np>=2){ const c=Math.SQRT1_2;
+          ua=[(d.flowU[0]+sgn*d.crossV[0])*c,(d.flowU[1]+sgn*d.crossV[1])*c,(d.flowU[2]+sgn*d.crossV[2])*c];
+          va=[d.normal[1]*ua[2]-d.normal[2]*ua[1], d.normal[2]*ua[0]-d.normal[0]*ua[2], d.normal[0]*ua[1]-d.normal[1]*ua[0]]; }
+        const off=np>=2? sgn*(d.slot.offm||0) : 0;
+        for(let q=0;q<12;q++){ const a2=q/12*2*Math.PI;
+          const pu=Math.cos(a2)*d.slot.sa, pv=Math.sin(a2)*d.slot.sb;
+          const px=d.tap[0]+ua[0]*pu+va[0]*pv+d.crossV[0]*off;
+          const py=d.tap[1]+ua[1]*pu+va[1]*pv+d.crossV[1]*off;
+          const pz=d.tap[2]+ua[2]*pu+va[2]*pv+d.crossV[2]*off;
+          if(st.xBreak!==undefined){ const m=Math.abs(px-st.xBreak);
+            const need=0.004; if(m<need) worst=Math.max(worst, need-m); }
+          if(d.board){ const tv=(py-d.tap[1])*d.crossV[1]+(pz-d.tap[2])*d.crossV[2];
+            const m3=d.board.half-0.003;
+            if(Math.abs(tv)>m3) worst=Math.max(worst,Math.abs(tv)-m3); }
+          if(S.style==='angular'&&d.facet!==undefined){
+            const F=facetsAt(st,Math.max(0.001,Math.min(st.depth-0.001,px)));
+            const f=F[d.facet]; if(!f) continue;
+            const t=(py-f.p[0])*f.dir[0]+(pz-f.p[1])*f.dir[1];
+            const m2=0.003;
+            if(t<m2) worst=Math.max(worst,m2-t);
+            if(t>f.len-m2) worst=Math.max(worst,t-(f.len-m2));
+            const perp=Math.abs((py-f.p[0])*f.n2[0]+(pz-f.p[1])*f.n2[1]);
+            if(perp>0.004) worst=Math.max(worst,perp-0.004);
+          }
+        }
+      }
+    }
+    return worst;
+  };
+  const ov=overhang();
+  if(ov>0.0005&&((S._padIters|0)<8)){
+    /* bump the pad ONCE; solve() re-walks the placement on the same mouth */
+    S._slotPad=(S._slotPad||0)+ov+0.002;
+    S._padIters=(S._padIters|0)+1;
+    S._padBumped=true;
+  } else delete S._padBumped;
+  rows.push({sec:'LAW',name:'Tap footprints on their panels',val:(ov*1000).toFixed(1)+' mm over',
+    st: ov<=0.0005?'ok':(ov<=0.003?'warn':'fail'), grow:false,
+    why:'every port outline point measured against its host facet, the creases and the flare break; the placement re-walks (pad '+(((S._slotPad||0))*1000).toFixed(0)+' mm) until the taps truly fit'});
   return {st, layout:L, rows, fails:rows.filter(r=>r.st==='fail').length};
 }
 
@@ -932,6 +1034,9 @@ function solve(S0){
   const S={...S0};
   for(let it=0;it<120;it++){                        // must outlast (cap - start)/step
     const ev=evaluate(S);
+    /* the tap-footprint pad re-walk (his 'better system') retries on the SAME
+       mouth BEFORE the clean return - a bump means the layout just moved */
+    if(S._padBumped){ delete S._padBumped; continue; }
     if(!ev.fails) return {S, ev, grown:S.mouthW-S0.mouthW};
     /* PIN #27: grow ONLY while a failing law is actually growth-fixable (fit and
        station-area laws carry .grow). Driver-ceiling laws (CD reach, chamber LP,
@@ -1005,11 +1110,14 @@ function dishMesh(S){
   const th38=d2r(38);
   const rCone=(S.odW||22)*CM/2, rDish=rCone+0.012;
   const od=(S.odW||22)*CM;
-  const rB=Math.max(S.throat*IN/2, 0.60*rCone);              // bore = the coax's HF-horn mouth ring (his correction)
+  const rHFm=((S.hfExit||20.1)/1000)/2;
+  const Lhm=(S.hornLen!==undefined)? S.hornLen : 0.85*((S.dpW||10)*CM);
+  const rSMm=0.60*rCone;
+  const rB=rHFm;                                             // ONE HORN: the part starts at the TRUE HF exit
   const rP=Math.hypot(tp[0].tap[1],tp[0].tap[2]);
   let rh=Math.max(0.004,(tp[0].slot&&tp[0].slot.sa)||0.008);
   const N=tp.length, t=S.wallT||0.012;
-  const xOf=r=>(r-rB)/Math.tan(th38);
+  const xOf=r=> r<=rSMm? (r-rHFm)/((rSMm-rHFm)/Lhm) : Lhm+(r-rSMm)/Math.tan(th38);   // replaced horn, then the dish face
   /* HIS CORRECTION: the print's BACK takes the SHAPE OF THE DRIVER CONE with an
      x-max gap - it nests directly on the driver, no tube, no floating plate.
      Cone depths from the 6FHX51 CAD: 0.03od at the cone rim, 0.10od at the
@@ -1018,8 +1126,10 @@ function dishMesh(S){
   const coneY=r=>{ const r0=0.60*rCone, r1=0.80*rCone;
     const tq=Math.max(0,Math.min(1,(r1-r)/(r1-r0)));
     return od*(0.03+0.07*tq); };
-  const dishBack=r=>{ if(r>=0.80*rCone) return -0.004;
-    return -0.004 - (coneY(r)-od*0.03) + Math.min(gap, coneY(r)-od*0.03); };
+  const dishBack=r=>{
+    if(r<rSMm) return xOf(r)-t*1.25;                         // the internal-horn shell wall
+    if(r>=0.80*rCone) return Lhm-0.004;                      // flange seat on the frame
+    return Lhm-0.004 - (coneY(r)-od*0.03) + Math.min(gap, coneY(r)-od*0.03); };
   const w0=Math.min(Math.max(rh*1.6,0.012),(rDish-rB)/2*0.6);
   const rIn=Math.max(rB+0.004,rP-w0), rOut=Math.min(rDish-0.004,rP+w0);
   const COLS=12, NA=N*COLS, NRi=5, NRo=5;
@@ -1082,7 +1192,7 @@ function tapCutters(S){
   for(const d of ev.layout){
     if(d.kind!=='woof'&&d.kind!=='mid') continue;
     if(!d.slot||!d.flowU||!d.crossV) continue;
-    const n=d.normal, u=d.flowU, v=d.crossV;
+    const n=d.normal, u=d.onCh?d.crossV:d.flowU, v=d.onCh?d.flowU:d.crossV;   // corner boards: long axis ALONG the board
     const np=d.slot.np||1;
     for(let kp=0;kp<np;kp++){
       const sgn=(kp===0?-1:1);
@@ -1183,22 +1293,22 @@ const BUILDS=(()=>{
   const CXU={sdC:150,vtcC:60,xmC:4,coaxTaps:6,odC:0.22,dpC:0.11};
   return {
    '1way':[
-    {key:'refd',   name:'Reference D mini — square classic · 5″ coax unit · 70°×70°', expectWarns:1,
-     s:{...B,...M4, topo:'1way',style:'angular',seN:12,covH:70,covV:70,mouthW:14,nW:2,nM:4,coaxTaps:4,
-        cdSel:'unit',td:1.0,throat:1.0,cdFloor:0,cdDepth:2.91,odC:0.148,dpC:0.08,
-        wPre:'cx5',odW:14.8,dpW:8,sdW:75,vtcW:30,xmW:3.5, sdC:75,vtcC:30,xmC:3.5}},
-    {key:'fhx6',   name:'B&C 6FHX51 — square classic · true-CAD coax unit · 70°×70°', expectWarns:1,
+    {key:'fhx6',   name:'B&C 6FHX51 — one-horn square classic · 70°×70°', expectWarns:1,
      s:{...B,...M4, topo:'1way',style:'angular',seN:12,covH:70,covV:70,mouthW:17,nW:2,nM:4,coaxTaps:4,
-        cdSel:'unit',td:1.0,throat:1.0,cdFloor:0,cdDepth:3.29,odC:0.167,dpC:0.12,
-        wPre:'cx65',odW:16.7,dpW:12,sdW:137,vtcW:40,xmW:4, sdC:137,vtcC:40,xmC:4}},
-    {key:'coax90', name:'point source — 90°×60° smooth · 12″ coax unit', expectWarns:1,
+        cdSel:'unit',td:1.0,throat:1.0,cdFloor:0,cdDepth:0,hfExit:20.1,recXO:2500,odC:0.187,dpC:0.122,
+        wPre:'fhx6',odW:18.7,dpW:12.2,sdW:132,vtcW:35,xmW:3.5, sdC:132,vtcC:35,xmC:3.5}},
+    {key:'refd',   name:'Reference D mini — 5″ coax unit · 70°×70° (floors unverified)', expectWarns:1,
+     s:{...B,...M4, topo:'1way',style:'angular',seN:12,covH:70,covV:70,mouthW:14,nW:2,nM:4,coaxTaps:4,
+        cdSel:'unit',td:1.0,throat:1.0,cdFloor:0,cdDepth:0,hfExit:20.1,recXO:0,odC:0.148,dpC:0.08,
+        wPre:'cx5',odW:14.8,dpW:8,sdW:75,vtcW:30,xmW:3.5, sdC:75,vtcC:30,xmC:3.5}},
+    {key:'fhx12',  name:'B&C 12FHX76 — one-horn point source · 90°×60°', expectWarns:1,
      s:{...B,...M4, topo:'1way',seN:6, covH:90,covV:60,mouthW:30,nW:2,nM:4,coaxTaps:6,
-        cdSel:'unit',td:1.0,throat:1.0,cdFloor:0,cdDepth:6.30,odC:0.32,dpC:0.15,
-        wPre:'cx12',odW:32,dpW:15,sdW:530,vtcW:150,xmW:7, sdC:530,vtcC:150,xmC:7}},
-    {key:'coax60', name:'round — 60°×60° · 12″ coax unit', expectWarns:1,
-     s:{...B,...M4, topo:'1way',seN:2, covH:60,covV:60,mouthW:30,nW:2,nM:4,coaxTaps:6,
-        cdSel:'unit',td:1.0,throat:1.0,cdFloor:0,cdDepth:6.30,odC:0.32,dpC:0.15,
-        wPre:'cx12',odW:32,dpW:15,sdW:530,vtcW:150,xmW:7, sdC:530,vtcC:150,xmC:7}},
+        cdSel:'unit',td:1.0,throat:1.0,cdFloor:0,cdDepth:0,hfExit:33,recXO:1200,odC:0.315,dpC:0.169,
+        wPre:'fhx12',odW:31.5,dpW:16.9,sdW:522,vtcW:150,xmW:4.25, sdC:522,vtcC:150,xmC:4.25}},
+    {key:'fhx15',  name:'B&C 15FHX76 — one-horn round · 60°×60°', expectWarns:1,
+     s:{...B,...M4, topo:'1way',seN:2, covH:60,covV:60,mouthW:34,nW:2,nM:4,coaxTaps:6,
+        cdSel:'unit',td:1.0,throat:1.0,cdFloor:0,cdDepth:0,hfExit:33,recXO:1200,odC:0.393,dpC:0.199,
+        wPre:'fhx15',odW:39.3,dpW:19.9,sdW:855,vtcW:250,xmW:4.25, sdC:855,vtcC:250,xmC:4.25}},
    ],
    '2way':[
     {key:'jmod',      name:'JMOD-class — 90°×60° · 2×12″ on the DCX coax (JW Sound manual)',
@@ -1216,7 +1326,7 @@ const BUILDS=(()=>{
    ],
    '3way':[
     {key:'sh96',      name:'SH96-class — corner boards · 4×15″ + 6 mids (ruling B)',
-     expectWarns:2,   // the real SH96's own compromises: woofer spread ~1.67×λ/4, entry ~1.0λ
+     expectWarns:1,   // the one canon compromise left: entry ~1.0λ (corner boards fixed the spread)
      s:{...B,...CDX, topo:'3way',style:'angular',seN:12,covH:90,covV:60,mouthW:58,nW:4,nM:6,fxLo:250,placeW:'chamfer',
         wPre:'w15',odW:39,dpW:17,sdW:855,vtcW:320,xmW:10, mPre:'m3',odM:9.3,dpM:6.2,sdM:31,vtcM:25,xmM:2.5}},
     {key:'sh50',      name:'SH50-class — 70°×70° square · 4×10″ + 4 mids',

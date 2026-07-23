@@ -74,8 +74,8 @@ select{width:100%;font-family:var(--mono);font-size:11px;background:var(--paper)
   <input type="range" id="covH" min="40" max="120" step="5" value="90">
   <label>COVERAGE V [°] <span class="val" id="vCovV"></span></label>
   <input type="range" id="covV" min="30" max="120" step="5" value="60">
-  <label>MOUTH ROLL RADIUS [in] <span class="val" id="vRoll"></span></label>
-  <input type="range" id="rollR" min="0.5" max="4" step="0.25" value="2">
+  <div id="rollCtl"><label>MOUTH ROLL RADIUS [in] <span class="val" id="vRoll"></span></label>
+  <input type="range" id="rollR" min="0.5" max="4" step="0.25" value="2"></div>
   <label>PRINT WALL [mm] <span class="val" id="vWall"></span></label>
   <input type="range" id="wallmm" min="6" max="25" step="1" value="12">
   <div class="sec">DRIVERS</div>
@@ -83,9 +83,11 @@ select{width:100%;font-family:var(--mono);font-size:11px;background:var(--paper)
   <select id="cdSel"><option value="de500">1&Prime; CD (to ~900 Hz)</option><option value="de900">1.4&Prime; CD (to ~550 Hz)</option><option value="dcx464" selected>1.4&Prime; COAX DCX464 (to ~300 Hz)</option></select></div>
   <label id="wLbl">WOOFER / LOW-MID</label>
   <select id="wPre"></select>
-  <label>WOOFER / LOW-MID Ø [cm] <span class="val" id="vOdW"></span></label>
-  <input type="range" id="odW" min="8" max="46" step="1" value="14">
-  <label>WOOFER COUNT <span class="val" id="vNW"></span></label>
+  <div id="odWCtl"><label>WOOFER / LOW-MID Ø [cm] <span class="val" id="vOdW"></span></label>
+  <input type="range" id="odW" min="8" max="46" step="1" value="14"></div>
+  <div id="coaxCtl" style="display:none"><label>TAP HOLES — ROUND, THROUGH THE DISH <span class="val" id="vCoaxTaps"></span></label>
+  <input type="range" id="coaxTaps" min="2" max="8" step="1" value="4"></div>
+  <div id="wOnlyCtl"><label>WOOFER COUNT <span class="val" id="vNW"></span></label>
   <input type="range" id="nW" min="2" max="8" step="1" value="6">
   <label>SUB CROSSOVER [Hz] <span class="val" id="vSubXO"></span></label>
   <input type="range" id="subXO" min="60" max="120" step="5" value="80">
@@ -93,6 +95,11 @@ select{width:100%;font-family:var(--mono);font-size:11px;background:var(--paper)
   <select id="npSel">
     <option value="1" selected>one slot under the cone</option>
     <option value="2">two, straddling — the X toward the corners (Danley canon)</option>
+  </select>
+  <label>WOOFER TAP SHAPE</label>
+  <select id="shSel">
+    <option value="slot" selected>stadium slot — long axis along flow (Waslo)</option>
+    <option value="round">round — the classic hole (drill canon)</option>
   </select>
   <label>DRIVER MOUNT</label>
   <select id="mountSel">
@@ -106,7 +113,7 @@ select{width:100%;font-family:var(--mono);font-size:11px;background:var(--paper)
     <option value="pairsH">rows on top + bottom walls</option>
     <option value="pairsV">rows on the side walls</option>
     <option value="chamfer">corner boards — woofers on the 45° chamfers (SH96 canon)</option>
-  </select>
+  </select></div>
   <div id="midCtl" style="display:none">
     <label>MID</label>
     <select id="mPre"></select>
@@ -119,6 +126,11 @@ select{width:100%;font-family:var(--mono);font-size:11px;background:var(--paper)
       <option value="1" selected>one slot under the cone</option>
       <option value="2">two, straddling — the X toward the corners (Danley canon)</option>
     </select>
+    <label>MID TAP SHAPE</label>
+    <select id="shmSel">
+      <option value="slot" selected>stadium slot — along flow (Waslo)</option>
+      <option value="round">round — the classic hole</option>
+    </select>
   </div>
 </aside>
 <main class="viewcol"><div id="v3dwrap">
@@ -126,6 +138,7 @@ select{width:100%;font-family:var(--mono);font-size:11px;background:var(--paper)
   <div id="hud">
     <button id="bPin">PIN A BUG</button>
     <button id="bXray">X-RAY</button>
+    <button id="bView">VIEW: FULL</button>
     <button id="bStl">EXPORT STL</button>
   </div>
   <div id="rows"></div>
@@ -145,7 +158,7 @@ select{width:100%;font-family:var(--mono);font-size:11px;background:var(--paper)
 <script>
 /*__ENGINE__*/
 /*__CAD__*/
-window.MEH_BUILD=514;
+window.MEH_BUILD=515;
 document.getElementById('bno').textContent=MEH_BUILD;
 "use strict";
 /* ---------------- driver presets (v4 datasheets; mesh = true CAD, meshApprox = nearest body) ---------------- */
@@ -170,13 +183,15 @@ const MPRE={
 /* 1-WAY COAX UNITS (his correction: a coax IS one unit - cone + HF together).
    Numerics are class-representative (6.5in measured from the B&C 6FHX51 CAD);
    hfFloor null = datasheet crossover floor UNVERIFIED - the law row says so. */
+/* datasheet-real B&C coaxes (2026-07-23 drop): od/depth/Sd/exit/recXO from the
+   PDFs; xm = (winding-gap)/2 from their own coil numbers; Vtc still estimated */
 const CXPRE={
-  cx5:{name:'5″ coax unit (BMS CN-class)', od:14.8, dp:8,  sd:75,  vtc:30,  xm:3.5},
-  cx65:{name:'6.5″ coax unit (B&C 6FHX51, true CAD)', od:16.7, dp:12, sd:137, vtc:40, xm:4},
-  cx8:{name:'8″ coax unit (FCX-class)', od:21.0, dp:13, sd:220, vtc:60, xm:5},
-  cx10:{name:'10″ coax unit (FCX-class)', od:26.0, dp:14, sd:330, vtc:90, xm:6},
-  cx12:{name:'12″ coax unit (FHX-class)', od:32.0, dp:15, sd:530, vtc:150, xm:7},
-  cx15:{name:'15″ coax unit (FCX-class)', od:39.0, dp:17, sd:855, vtc:250, xm:8}};
+  cx5:{name:'5″ coax unit (BMS CN-class, floors unverified)', od:14.8, dp:8, sd:75, vtc:30, xm:3.5},
+  fhx6:{name:'B&C 6FHX51 — 6.5″ coax (datasheet + CAD)', od:18.7, dp:12.2, sd:132, vtc:35, xm:3.5, hfExit:20.1, recXO:2500},
+  hcx6:{name:'B&C 6HCX51 — 6.5″ coax (datasheet)', od:18.7, dp:10.4, sd:132, vtc:35, xm:3.5, hfExit:20.1, recXO:2200},
+  fhx12:{name:'B&C 12FHX76 — 12″ coax (datasheet)', od:31.5, dp:16.9, sd:522, vtc:150, xm:4.25, hfExit:33, recXO:1200},
+  hcx12:{name:'B&C 12HCX76 — 12″ coax (datasheet)', od:31.5, dp:16.9, sd:522, vtc:150, xm:4.25, hfExit:33, recXO:1200},
+  fhx15:{name:'B&C 15FHX76 — 15″ coax (datasheet)', od:39.3, dp:19.9, sd:855, vtc:250, xm:4.25, hfExit:33, recXO:1200}};
 const CDP={de500:{td:1.0,floor:900,dep:1.2}, de900:{td:1.4,floor:550,dep:1.7}, dcx464:{td:1.4,floor:300,dep:2.4}};
 /* ---------------- state ---------------- */
 const S={topo:'2way', style:'smooth', wPre:'w65', mPre:'m4', cdSel:'dcx464', wallT:0.012, seN:6, covH:90, covV:60, mouthW:24, mouthCap:64, throat:1.4, rollR:2,
@@ -287,14 +302,15 @@ function coaxBody(od,dp){
   /* woofer motor: cylinder right where the basket lands (CAD: .239-.441) */
   { const mo=new THREE.Mesh(new THREE.CylinderGeometry(R*0.687,R*0.717,Y(0.20),30),DRK);
     mo.position.y=Y(0.34); g.add(mo); }
-  /* the METAL HF HORN (CAD Horn_04): mouth Ø.63·od PROUD of the face, necking
-     to its tube Ø.42·od which runs through the pole bore to the rear flange */
-  { const thr=[[R*0.630,-Y(0.099)],[R*0.615,-Y(0.06)],[R*0.46,Y(0.005)],[R*0.30,Y(0.055)],[R*0.215,Y(0.10)],
-      [R*0.213,Y(0.44)],[R*0.248,Y(0.445)],[R*0.248,Y(0.532)]]
+  /* ONE HORN (his correction): the stock plastic horn is REMOVED - the center
+     is the open cavity down to the HF exit; the PRINTED horn reaches in */
+  { const cav=[[R*0.42,Y(0.145)],[R*0.30,Y(0.22)],[R*0.17,Y(0.36)],[R*0.125,Y(0.48)]]
       .map(p=>new THREE.Vector2(p[0],p[1]));
-    g.add(new THREE.Mesh(new THREE.LatheGeometry(thr,44),MET));
-    const dk=new THREE.Mesh(new THREE.CircleGeometry(R*0.208,26),DRK);
-    dk.rotation.x=-Math.PI/2; dk.position.y=-Y(0.095); g.add(dk); }
+    g.add(new THREE.Mesh(new THREE.LatheGeometry(cav,40),DRK));
+    const ring=new THREE.Mesh(new THREE.TorusGeometry(R*0.125,R*0.018,10,32),MET);
+    ring.rotation.x=Math.PI/2; ring.position.y=Y(0.485); g.add(ring);
+    const dk=new THREE.Mesh(new THREE.CircleGeometry(R*0.115,24),DRK);
+    dk.rotation.x=-Math.PI/2; dk.position.y=Y(0.49); g.add(dk); }
   /* tweeter CD stack right behind the horn flange (CAD: .547-.634) */
   { const pot=new THREE.Mesh(new THREE.CylinderGeometry(R*0.140,R*0.140,Y(0.088),24),DRK);
     pot.position.y=Y(0.585); g.add(pot);
@@ -557,33 +573,56 @@ function rebuild(){
       mB.setPosition(cc);
       tap.applyMatrix4(mB); tap.userData.tag='port'; g.add(tap);
       continue; }
-    /* stadium slot under the driver: long axis along flow */
-    { const u=new THREE.Vector3(1,0,0).sub(n.clone().multiplyScalar(n.x)).normalize();  // flow dir on surface
+    /* TAP OPENINGS - CONFORMING patches (his 'better system'): the outline is
+       built in the wall frame, then every point is projected onto the actual
+       horn surface (smooth) or held in the facet plane (angular - placement
+       guarantees containment now). Round or stadium per section. */
+    { const u=new THREE.Vector3(1,0,0).sub(n.clone().multiplyScalar(n.x)).normalize();
       const v=n.clone().cross(u).normalize();
-      const sa=(d.slot&&d.slot.sa)||Math.min(d.od*0.34,0.055), sb=(d.slot&&d.slot.sb)||sa/3;   // AREA-TRUE from the CR law
-      const sp=new THREE.Shape(); const r2=0.9;
-      sp.moveTo(-1+r2,-1); sp.lineTo(1-r2,-1); sp.quadraticCurveTo(1,-1,1,-1+r2);
-      sp.lineTo(1,1-r2); sp.quadraticCurveTo(1,1,1-r2,1); sp.lineTo(-1+r2,1);
-      sp.quadraticCurveTo(-1,1,-1,1-r2); sp.lineTo(-1,-1+r2); sp.quadraticCurveTo(-1,-1,-1+r2,-1);
+      const sa=(d.slot&&d.slot.sa)||Math.min(d.od*0.34,0.055), sb=(d.slot&&d.slot.sb)||sa/3;
       const np=(d.slot&&d.slot.np)||1;
+      const st2=window.__ev&&__ev.st;
       for(let kp=0;kp<np;kp++){
-        const tg=new THREE.ShapeGeometry(sp,8);
-        const tap=new THREE.Mesh(tg,new THREE.MeshBasicMaterial({color:0x0d0c0b,side:THREE.DoubleSide}));
-        /* pins #1/#23/#25 (Danley corner canon): the pair rides the CROSS
-           direction at ONE station (equal throat paths - the taps live on the
-           orthogonal disc), each slot rotated ±45° so the pair reads as the X
-           toward the wall intersections. Never inline along flow. */
         const sgn=(kp===0?-1:1);
         let ua=u, va=v;
         if(np>=2){ const c45=Math.SQRT1_2;
           ua=u.clone().multiplyScalar(c45).add(v.clone().multiplyScalar(sgn*c45)).normalize();
           va=n.clone().cross(ua).normalize(); }
         const off=np>=2? sgn*((d.slot&&d.slot.offm)||d.od*0.24) : 0;
-        const mB=new THREE.Matrix4().makeBasis(ua.clone().multiplyScalar(sa),va.clone().multiplyScalar(sb),n.clone());
-        mB.setPosition(c.clone().add(n.clone().multiplyScalar(-0.0015)).add(v.clone().multiplyScalar(off)));
-        tap.applyMatrix4(mB); tap.userData.tag='port'; tap.userData.kind=d.kind; g.add(tap);
+        const c0=c.clone().add(v.clone().multiplyScalar(off));
+        const K=24, cx=Math.max(0,sa-sb), pos=[], idx=[];
+        const conform=(P)=>{                    // scene -> model -> surface -> scene
+          if(S.style==='angular'||!st2) return P.add(n.clone().multiplyScalar(-0.0015));
+          const mx=P.x, my=P.z, mz=P.y;
+          const phi=Math.atan2(mz,my);
+          const dd=MEH2.dimsAt(st2,Math.max(0,Math.min(st2.depth,mx)));
+          const sp2=MEH2.sePoint(dd.a,dd.b,(dd.n!==undefined)?dd.n:st2.n,phi);
+          return new THREE.Vector3(mx, sp2[1]*0.9975, sp2[0]*0.9975);
+        };
+        const ctr=conform(c0.clone());
+        pos.push(ctr.x,ctr.y,ctr.z);
+        for(let q=0;q<=K;q++){ const a2=q/K*2*Math.PI;
+          const pu=(Math.abs(Math.cos(a2))>1e-9?Math.sign(Math.cos(a2)):0)*cx + sb*Math.cos(a2);
+          const pv=sb*Math.sin(a2);
+          const P=c0.clone().add(ua.clone().multiplyScalar(pu)).add(va.clone().multiplyScalar(pv));
+          const Q=conform(P);
+          pos.push(Q.x,Q.y,Q.z);
+          if(q>0) idx.push(0,q,q+1);
+        }
+        const tg=new THREE.BufferGeometry();
+        tg.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));
+        tg.setIndex(idx); tg.computeVertexNormals();
+        const tap=new THREE.Mesh(tg,new THREE.MeshBasicMaterial({color:0x0d0c0b,side:THREE.DoubleSide}));
+        tap.userData.tag='port'; tap.userData.kind=d.kind; g.add(tap);
       }
     }
+    /* corner BOARD plate (SH96 shelves): drawn before the seat so the driver
+       reads as mounted on its own diagonal shelf */
+    if(d.board){ const bl=new THREE.Mesh(new THREE.BoxGeometry(d.board.len, 0.018, 2*d.board.half),
+        new THREE.MeshPhongMaterial({color:0xE9E6DE,shininess:6}));
+      bl.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), n);
+      bl.position.copy(c).add(n.clone().multiplyScalar(0.009));
+      bl.userData.tag='seat'; g.add(bl); }
     /* printed seat + body: FLUSH rides the wall normal; AXIAL (pin #5) rides the
        spot-face land - a printed wedge keeps the body parallel to the horn axis */
     { const mN=d.mountN? P3(d.mountN) : n;
@@ -635,6 +674,10 @@ function rebuild(){
   document.getElementById('dims').textContent=
     (st.n<=2.4?'round':st.n>=10?'square':'squircle')+' · '+r.S.mouthW+'″ mouth · '+(st.depth/MEH2.IN).toFixed(1)+'″ deep · XO '
     +(S.topo==='3way'&&r.S.fxDerived?r.S.fxDerived.hi+' / ':'')+(r.S.fxDerived?r.S.fxDerived.lo:'—')+' Hz';
+  /* VIEW MODES (his call): FULL -> NO DRIVERS (mounts+horn) -> HORN ONLY (taps) */
+  g.traverse(o=>{ const t=o.userData&&o.userData.tag;
+    if(t==='driver') o.visible=(V3D.view||'full')==='full';
+    if(t==='seat')   o.visible=(V3D.view||'full')!=='horn'; });
   if(window.BUGPINS)BUGPINS.redraw();
   drawResponse(r);
   drawReports(r);
@@ -757,19 +800,25 @@ function applyBuild(key){ const b=buildTbl().find(x=>x.key===key); if(!b) return
 function coax1way(){
   const cdc=document.getElementById('cdCtl'), lbl=document.getElementById('wLbl');
   if(!cdc||!lbl) return;
-  cdc.style.display=(S.topo==='1way')?'none':'';
-  lbl.textContent=(S.topo==='1way')?'COAX DRIVER — ONE UNIT (cone + HF)':'WOOFER / LOW-MID';
+  const one=(S.topo==='1way');
+  cdc.style.display=one?'none':'';
+  lbl.textContent=one?'COAX DRIVER — ONE UNIT (cone + HF)':'WOOFER / LOW-MID';
+  /* RELEVANCE (his call): hide anything that does not apply */
+  const show=(id,v)=>{ const e=document.getElementById(id); if(e) e.style.display=v?'':'none'; };
+  show('wOnlyCtl',!one); show('odWCtl',!one); show('coaxCtl',one);
+  show('rollCtl', S.style!=='angular');                       // flat printed front has no roll
   const el=document.getElementById('wPre');
-  if(S.topo==='1way'){
-    if(!CXPRE[S.wPre]){ S.wPre='cx65'; }
+  if(one){
+    if(!CXPRE[S.wPre]){ S.wPre='fhx6'; }
     el.innerHTML=Object.keys(CXPRE).map(k=>'<option value="'+k+'">'+CXPRE[k].name+'</option>').join('')+'<option value="custom">custom (sliders)</option>';
     el.value=S.wPre;
     const P=CXPRE[S.wPre];
     if(P){ S.odW=P.od; S.dpW=P.dp; S.sdW=P.sd; S.vtcW=P.vtc; S.xmW=P.xm;
-      S.sdC=P.sd; S.vtcC=P.vtc; S.xmC=P.xm; }
-    /* the HF section IS the unit's own: 1in-class bore, diaphragm ~0.5·od behind
-       the horn-mouth ring (6FHX51 CAD), floor UNVERIFIED until datasheets land */
-    S.td=1.0; S.throat=1.0; S.cdFloor=0; S.cdDepth=+(0.5*S.odW/2.54).toFixed(2);
+      S.sdC=P.sd; S.vtcC=P.vtc; S.xmC=P.xm;
+      S.hfExit=P.hfExit||20.1; S.recXO=P.recXO||0; delete S.hornLen; }
+    /* ONE HORN: the print replaces the stock horn from the TRUE HF exit; the
+       geometry carries the whole path (cdDepth 0), floors from the datasheet */
+    S.td=1.0; S.throat=1.0; S.cdFloor=0; S.cdDepth=0;
   } else {
     el.innerHTML=Object.keys(WPRE).map(k=>'<option value="'+k+'">'+WPRE[k].name+'</option>').join('')+'<option value="custom">custom (sliders)</option>';
     if(!WPRE[S.wPre]) S.wPre='w65';
@@ -804,7 +853,8 @@ function wire(){
     const show=()=>{ document.getElementById('vWall').textContent=Math.round(S.wallT*1000)+' mm'; }; show();
     el.oninput=()=>{ S.wallT=(+el.value)/1000; show(); save(); rebuild(); }; } bind('odW','odW',v=>v+' cm'); bind('nW','nW');
   bind('odM','odM',v=>v+' cm'); bind('nM','nM');
-  bind('subXO','subXO',v=>v+' Hz');   // M6: the sub XO is a real choice (velocity law + displacement ceiling ride it)
+  bind('subXO','subXO',v=>v+' Hz');
+  bind('coaxTaps','coaxTaps');   // 1way: round holes through the dish (2-4 in the reference photos)   // M6: the sub XO is a real choice (velocity law + displacement ceiling ride it)
   const fillPre=(id,tbl,cur)=>{ const el=document.getElementById(id);
     el.innerHTML=Object.keys(tbl).map(k=>'<option value="'+k+'">'+tbl[k].name+'</option>').join('')+'<option value="custom">custom (sliders)</option>';
     el.value=cur; };
@@ -812,7 +862,7 @@ function wire(){
   document.getElementById('wPre').onchange=e=>{ S.wPre=e.target.value;
     const P=(S.topo==='1way'?CXPRE:WPRE)[S.wPre];
     if(P){ S.odW=P.od; S.dpW=P.dp; S.sdW=P.sd; S.vtcW=P.vtc; S.xmW=P.xm; document.getElementById('odW').value=S.odW;
-      if(S.topo==='1way'){ S.sdC=P.sd; S.vtcC=P.vtc; S.xmC=P.xm; S.cdDepth=+(0.5*S.odW/2.54).toFixed(2); } }
+      if(S.topo==='1way'){ S.sdC=P.sd; S.vtcC=P.vtc; S.xmC=P.xm; S.hfExit=P.hfExit||20.1; S.recXO=P.recXO||0; S.cdDepth=0; delete S.hornLen; } }
     save(); rebuild(); };
   document.getElementById('mPre').onchange=e=>{ S.mPre=e.target.value;
     const P=MPRE[S.mPre]; if(P){ S.odM=P.od; S.dpM=P.dp; S.sdM=P.sd; S.vtcM=P.vtc; S.xmM=P.xm; document.getElementById('odM').value=S.odM; }
@@ -821,12 +871,16 @@ function wire(){
     if(b.dataset.v===S.style){document.querySelectorAll('#segStyle button').forEach(x=>x.classList.remove('on'));b.classList.add('on');}
     b.onclick=()=>{ S.style=b.dataset.v;
       document.querySelectorAll('#segStyle button').forEach(x=>x.classList.toggle('on',x===b));
-      save(); rebuild(); }; });
+      coax1way(); save(); rebuild(); }; });
   document.getElementById('cdSel').value=S.cdSel||'dcx464';
   document.getElementById('cdSel').onchange=e=>{ S.cdSel=e.target.value; const P=CDP[S.cdSel];
     S.td=P.td; S.throat=P.td; S.cdFloor=P.floor; S.cdDepth=P.dep; save(); rebuild(); };
   if(S.topo!=='1way'){ const P=CDP[S.cdSel||'dcx464']||CDP.dcx464; S.td=P.td; S.throat=P.td; S.cdFloor=P.floor; S.cdDepth=P.dep; }   // 1way runs on the UNIT's own HF
   document.getElementById('bXray').onclick=()=>{ V3D.xray=!V3D.xray; rebuild(); };
+  document.getElementById('bView').onclick=()=>{           // FULL -> NO DRIVERS -> HORN ONLY
+    V3D.view=V3D.view==='full'||!V3D.view?'nodrv':V3D.view==='nodrv'?'horn':'full';
+    document.getElementById('bView').textContent='VIEW: '+(V3D.view==='full'?'FULL':V3D.view==='nodrv'?'NO DRIVERS':'HORN ONLY');
+    rebuild(); };
   document.getElementById('bStl').onclick=()=>{           // queue A: shell solid + (1way) the dish insert part
     const r=window.__solved||MEH2.solve(S);
     const dl=(mesh,fn)=>{ const blob=new Blob([MEH2.stlBytes(mesh)],{type:'model/stl'});
@@ -870,6 +924,10 @@ function wire(){
     el.onchange=()=>{ S.npW=+el.value; save(); rebuild(); }; }         // pin #23: per-section choice
   { const el=document.getElementById('npmSel'); el.value=String(S.npM||1);
     el.onchange=()=>{ S.npM=+el.value; save(); rebuild(); }; }
+  { const el=document.getElementById('shSel'); el.value=S.shW||'slot';
+    el.onchange=()=>{ S.shW=el.value; save(); rebuild(); }; }
+  { const el=document.getElementById('shmSel'); el.value=S.shM||'slot';
+    el.onchange=()=>{ S.shM=el.value; save(); rebuild(); }; }
   { const el=document.getElementById('buildSel');
     el.onchange=e=>{ if(e.target.value!=='custom') applyBuild(e.target.value); else syncBuilds(); }; }
   syncBuilds();
