@@ -115,6 +115,7 @@ select{width:100%;font-family:var(--mono);font-size:11px;background:var(--paper)
   <div id="hud">
     <button id="bPin">PIN A BUG</button>
     <button id="bXray">X-RAY</button>
+    <button id="bStl">EXPORT STL</button>
   </div>
   <div id="rows"></div>
   <div id="note"></div>
@@ -129,7 +130,7 @@ select{width:100%;font-family:var(--mono);font-size:11px;background:var(--paper)
 <script>
 /*__ENGINE__*/
 /*__CAD__*/
-window.MEH_BUILD=505;
+window.MEH_BUILD=506;
 document.getElementById('bno').textContent=MEH_BUILD;
 "use strict";
 /* ---------------- driver presets (v4 datasheets; mesh = true CAD, meshApprox = nearest body) ---------------- */
@@ -670,6 +671,14 @@ function wire(){
     S.td=P.td; S.throat=P.td; S.cdFloor=P.floor; S.cdDepth=P.dep; save(); rebuild(); };
   { const P=CDP[S.cdSel||'dcx464']; S.td=P.td; S.throat=P.td; S.cdFloor=P.floor; S.cdDepth=P.dep; }
   document.getElementById('bXray').onclick=()=>{ V3D.xray=!V3D.xray; rebuild(); };
+  document.getElementById('bStl').onclick=()=>{           // queue A first slice: the shell solid
+    const r=window.__solved||MEH2.solve(S);
+    const mh=MEH2.shellMesh(r.S);
+    const blob=new Blob([MEH2.stlBytes(mh)],{type:'model/stl'});
+    const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+    a.download='meh5_shell_b'+MEH_BUILD+'.stl'; a.click();
+    setTimeout(()=>URL.revokeObjectURL(a.href),5000);
+    document.getElementById('note').textContent='STL: '+mh.tri.length+' triangles, watertight (gate-asserted) — shell solid; tap cuts + dish part are the next export slices'; };
   { const el=document.getElementById('placeW'); el.value=S.placeW||'auto';
     el.onchange=()=>{ S.placeW=el.value; save(); rebuild(); }; }
   { const el=document.getElementById('mountSel'); el.value=S.mount||'flush';

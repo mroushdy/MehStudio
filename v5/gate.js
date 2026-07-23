@@ -176,6 +176,29 @@ for(const S of lattice){
   }
 }
 
+/* ---------- 2.8 EXPORT GATE (queue A, artifact_test pattern): the shell solid
+   must be WATERTIGHT - every undirected edge shared by exactly two triangles,
+   keyed by position (panels duplicate vertices on purpose) ---------- */
+{
+  for(const topo of Object.keys(MEH2.BUILDS)) for(const b of MEH2.BUILDS[topo]){
+    const tag='[stl '+topo+'/'+b.key+']';
+    const r=MEH2.solve({...b.s});
+    const mh=MEH2.shellMesh(r.S);
+    ck(mh.tri.length>500, tag+' too few triangles');
+    let fin2=true; for(const p of mh.pos) if(!(fin(p[0])&&fin(p[1])&&fin(p[2]))) fin2=false;
+    ck(fin2, tag+' non-finite vertex');
+    const key=i=>{const p=mh.pos[i];return Math.round(p[0]*1e6)+','+Math.round(p[1]*1e6)+','+Math.round(p[2]*1e6);};
+    const em=new Map();
+    for(const t of mh.tri) for(const [a,b2] of [[t[0],t[1]],[t[1],t[2]],[t[2],t[0]]]){
+      const ka=key(a),kb=key(b2); const k=ka<kb?ka+'|'+kb:kb+'|'+ka;
+      em.set(k,(em.get(k)||0)+1); }
+    let bad=0; for(const v of em.values()) if(v!==2) bad++;
+    ck(bad===0, tag+' not watertight ('+bad+' boundary/over-shared edges)');
+    const bytes=MEH2.stlBytes(mh);
+    ck(bytes.byteLength===84+mh.tri.length*50, tag+' STL byte size wrong');
+  }
+}
+
 /* ---------- 3. canonical matrix (subprocess, expectations asserted there) ---------- */
 {
   const {execSync}=require('child_process');

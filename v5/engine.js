@@ -870,6 +870,64 @@ function solve(S0){
   return {S, ev:evaluate(S), infeasible:true};
 }
 
+/* ---- A. EXPORT: the printed shell as a WATERTIGHT triangle soup ----
+   (first slice of the export queue: the horn shell solid - inner surface,
+   true-offset outer, mouth face/lip, throat annulus. Tap cuts and the dish
+   part are the next slices.) The gate asserts edge-manifoldness by position:
+   every undirected edge shared by exactly two triangles = printable. */
+function shellMesh(S){
+  const st=stations(S);
+  const wt=S.wallT||0.012, M=64;
+  const pos=[], tri=[];
+  const P=(x,q)=>{ pos.push([x,q[0],q[1]]); return pos.length-1; };
+  const quad=(a,b,c,d)=>{ tri.push([a,c,b],[b,c,d]); };
+  if(S.style==='angular'){
+    const SPx=(S.topo==='1way'&&st.xAdapter)? st.pts.filter(p=>p.x>=st.xAdapter-1e-9) : st.pts;
+    const FS=SPx.map(p=>facetsAt(st,p.x));
+    const OS=SPx.map(p=>offsetVerts(st,p.x,wt));
+    const NV=FS[0].length, NS=SPx.length;
+    const iIn=[], iOut=[];
+    for(let j=0;j<NS;j++){ iIn.push(FS[j].map(f=>P(SPx[j].x,f.p))); iOut.push(OS[j].map(v=>P(SPx[j].x,v))); }
+    for(let j=0;j<NS-1;j++) for(let i=0;i<NV;i++){
+      quad(iIn[j][i],iIn[j][(i+1)%NV],iIn[j+1][i],iIn[j+1][(i+1)%NV]);
+      quad(iOut[j][(i+1)%NV],iOut[j][i],iOut[j+1][(i+1)%NV],iOut[j+1][i]); }
+    for(let i=0;i<NV;i++){ const jm=NS-1;
+      quad(iIn[jm][(i+1)%NV],iIn[jm][i],iOut[jm][(i+1)%NV],iOut[jm][i]);     // mouth face
+      quad(iIn[0][i],iIn[0][(i+1)%NV],iOut[0][i],iOut[0][(i+1)%NV]); }      // throat annulus
+  } else {
+    const rings=st.pts.map(p=>seRing(p.a,p.b,(p.n!==undefined)?p.n:st.n,M,'smooth'));
+    const pre=st.pts.filter(p=>!p.roll);
+    const ringsO=pre.map(p=>offsetRing(st,p.x,wt,M));
+    const iIn=st.pts.map((p,j)=>rings[j].map(q=>P(p.x,q)));
+    const iOut=pre.map((p,j)=>ringsO[j].map(q=>P(p.x,q)));
+    for(let j=0;j<st.pts.length-1;j++) for(let i=0;i<M;i++)
+      quad(iIn[j][i],iIn[j][(i+1)%M],iIn[j+1][i],iIn[j+1][(i+1)%M]);
+    for(let j=0;j<pre.length-1;j++) for(let i=0;i<M;i++)
+      quad(iOut[j][(i+1)%M],iOut[j][i],iOut[j+1][(i+1)%M],iOut[j+1][i]);
+    const jt=st.pts.length-1, jp=pre.length-1;
+    for(let i=0;i<M;i++){
+      quad(iIn[jt][(i+1)%M],iIn[jt][i],iOut[jp][(i+1)%M],iOut[jp][i]);      // lip: roll tip -> outer edge
+      quad(iIn[0][i],iIn[0][(i+1)%M],iOut[0][i],iOut[0][(i+1)%M]); }        // throat annulus
+  }
+  return {pos, tri};
+}
+/* binary STL bytes from shellMesh (mm units for slicers) */
+function stlBytes(mesh){
+  const n=mesh.tri.length, buf=new ArrayBuffer(84+n*50), dv=new DataView(buf);
+  dv.setUint32(80,n,true);
+  let o=84;
+  for(const t of mesh.tri){
+    const A=mesh.pos[t[0]],B=mesh.pos[t[1]],C2=mesh.pos[t[2]];
+    const u=[B[0]-A[0],B[1]-A[1],B[2]-A[2]], v=[C2[0]-A[0],C2[1]-A[1],C2[2]-A[2]];
+    let nx=u[1]*v[2]-u[2]*v[1], ny=u[2]*v[0]-u[0]*v[2], nz=u[0]*v[1]-u[1]*v[0];
+    const L=Math.hypot(nx,ny,nz)||1e-9; nx/=L;ny/=L;nz/=L;
+    dv.setFloat32(o,nx,true);dv.setFloat32(o+4,ny,true);dv.setFloat32(o+8,nz,true); o+=12;
+    for(const p of [A,B,C2]){ dv.setFloat32(o,p[0]*1000,true);dv.setFloat32(o+4,p[1]*1000,true);dv.setFloat32(o+8,p[2]*1000,true); o+=12; }
+    dv.setUint16(o,0,true); o+=2;
+  }
+  return buf;
+}
+
 /* ---- M8: KNOWN-BUILD PRESETS - the per-topology front door. Each bundle is a
    COMPLETE state: it must solve at its stated mouth with ZERO fails and ZERO
    warns (presets land exemplary, not merely legal - gate-asserted). Driver
@@ -923,6 +981,6 @@ const BUILDS=(()=>{
   };
 })();
 
-return {C,IN,CM, sePoint,seRing, profile, stations, dimsAt, surfPt, surfN, layout, evaluate, solve, response, areaAt, facetsAt, facetN, offsetRing, offsetVerts, BUILDS};
+return {C,IN,CM, sePoint,seRing, profile, stations, dimsAt, surfPt, surfN, layout, evaluate, solve, response, areaAt, facetsAt, facetN, offsetRing, offsetVerts, BUILDS, shellMesh, stlBytes};
 })();
 if(typeof module!=='undefined') module.exports=MEH2;

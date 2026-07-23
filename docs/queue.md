@@ -118,10 +118,14 @@ M9. ENCLOSURE REALITY: rear chamber volumes, magnet clearance at angle, the box.
 M10. FULL T/S per preset (Fs Qts Re Le...) + Hornresp ME2 export.
 
 ## REMAINING TOOLING (A-I, under the M-list)
-A. EXPORTS (port Horn Studio's proven writers): STL solid with wall thickness;
-   watertight NURBS STEP; panel-layout export for ANGULAR (flat parts + angles);
-   AKABAK BEM mesh bridge. Export gate = artifact_test pattern (real buttons,
-   real blobs, real files).
+A. EXPORTS [STL SLICE LANDED build 506: MEH2.shellMesh(S) builds the shell
+   SOLID (inner + true-offset outer + mouth face/lip + throat annulus; angular
+   = exact panel verts, 1way starts at the dish seat), MEH2.stlBytes -> binary
+   STL (mm); EXPORT STL button in the HUD; gate 2.8 asserts WATERTIGHT
+   (every edge shared by exactly 2 triangles, keyed by position) over all 12
+   presets. Note: Horn Studio's writers were NOT available in this handoff -
+   written fresh, gate-proven]. Still open: tap/bore cuts in the solid; the
+   dish insert as its own part; STEP; panel-layout export; AKABAK bridge.
 B. TRUE PRINTED-PART GEOMETRY [shell wall DONE - real thickness, outer-face mounts, Lpt geometry-true in the Helmholtz law; ONE proven normal path via carried surface params]: seat+slot as one
    solid insert; CD apex insert (Reference B/C: bore + tap ring + bolt circle);
    bandpass chamber housings; 1way coax full part.
