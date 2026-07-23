@@ -77,6 +77,17 @@ for(const S of lattice){
     if(d.slot) ck(d.slot.ap>0&&fin(d.slot.ap), tag+' bad slot area');
   }
   if(!L.missing&&S.topo!=='1way') ck(L.filter(d=>d.kind==='woof').length===((S.nW|0)||2), tag+' woofer count wrong');
+  /* pin #9 facet laws: on ANGULAR every seat sits ON a big facet, normal in the panel plane */
+  if(S.style==='angular') for(const d of L){ if(d.facet===undefined) continue;
+    const F2=MEH2.facetsAt(st,d.x), f=F2[d.facet];
+    ck(!f.ch, tag+' seat on a chamfer facet');
+    const rel=[d.center[1]-f.p[0], d.center[2]-f.p[1]];
+    const perp=Math.abs(rel[0]*f.n2[0]+rel[1]*f.n2[1]);
+    ck(perp<=0.001, tag+' seat off its panel ('+(perp*1000).toFixed(1)+'mm)');
+    const dv=[0,f.dir[0],f.dir[1]];
+    const dot=Math.abs(d.normal[0]*dv[0]+d.normal[1]*dv[1]+d.normal[2]*dv[2]);
+    ck(dot<=0.02, tag+' normal tilted across the panel ('+dot.toFixed(3)+')');
+  }
   /* derived XO sanity + the 1.2x null margin by construction */
   if(S.fxDerived&&S.fxDerived.lo){
     ck(S.fxDerived.lo>20&&S.fxDerived.lo<4000, tag+' silly XO lo');
