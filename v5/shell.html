@@ -239,14 +239,14 @@ function rebuild(){
       const tg=new THREE.ShapeGeometry(sp,8);
       const tap=new THREE.Mesh(tg,new THREE.MeshBasicMaterial({color:0x0d0c0b,side:THREE.DoubleSide}));
       const mB=new THREE.Matrix4().makeBasis(u.clone().multiplyScalar(sa),v.clone().multiplyScalar(sb),n.clone());
-      mB.setPosition(c.clone().add(n.clone().multiplyScalar(0.0012)));
+      mB.setPosition(c.clone().add(n.clone().multiplyScalar(-0.0015)));   // pin #3: the tap opens on the INNER face - visible through the mouth
       tap.applyMatrix4(mB); tap.userData.tag='port'; tap.userData.kind=d.kind; g.add(tap);
     }
-    /* printed seat ring conformal on the shell */
-    { const seat=new THREE.Mesh(new THREE.CylinderGeometry(d.seatR,d.seatR*1.15,0.014,36,1,true),
-        new THREE.MeshPhongMaterial({color:0xCFC9BD,shininess:6,side:THREE.DoubleSide}));
+    /* printed seat: FLUSH pad under the flange (pin #2: proud collars read as rings) */
+    { const seat=new THREE.Mesh(new THREE.CylinderGeometry(d.od/2+0.005,d.od/2+0.009,0.009,40),
+        new THREE.MeshPhongMaterial({color:0xE2DDD3,shininess:6}));
       seat.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),n);
-      seat.position.copy(c).add(n.clone().multiplyScalar(0.0115));   // fully outside the shell
+      seat.position.copy(c).add(n.clone().multiplyScalar(0.0045));
       seat.userData.tag='seat'; g.add(seat);
     }
     /* driver body: CLEAN PARAMETRIC SILHOUETTE (his call: approximate the outer
