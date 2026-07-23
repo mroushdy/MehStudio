@@ -197,6 +197,24 @@ for(const S of lattice){
     ck(bad===0, tag+' not watertight ('+bad+' boundary/over-shared edges)');
     const bytes=MEH2.stlBytes(mh);
     ck(bytes.byteLength===84+mh.tri.length*50, tag+' STL byte size wrong');
+    /* slice 3: tap cutters - closed prisms, watertight, one per port */
+    if(topo!=='1way'){
+      const wantPorts=((r.S.nW|0)||2)*((r.S.npW|0)||1) + (topo==='3way'?((r.S.nM|0)||4)*((r.S.npM|0)||1):0);
+      const tc=MEH2.tapCutters(r.S);
+      ck(!!tc, tag+' tap cutters missing');
+      if(tc){ ck(tc.tri.length===wantPorts*104, tag+' cutter count off ('+tc.tri.length+' tris for '+wantPorts+' ports)');   // 26-pt stadium outline: 52 side + 52 cap tris
+        const kt=i=>{const p=tc.pos[i];return Math.round(p[0]*1e6)+','+Math.round(p[1]*1e6)+','+Math.round(p[2]*1e6);};
+        const et=new Map();
+        for(const t of tc.tri) for(const [a,b2] of [[t[0],t[1]],[t[1],t[2]],[t[2],t[0]]]){
+          const ka=kt(a),kb=kt(b2); const k=ka<kb?ka+'|'+kb:kb+'|'+ka;
+          et.set(k,(et.get(k)||0)+1); }
+        let badT=0; for(const v of et.values()) if(v!==2) badT++;
+        ck(badT===0, tag+' cutters not watertight ('+badT+')'); }
+      /* the X-pair variant must also emit clean cutters */
+      const r2=MEH2.solve({...b.s, npW:2});
+      if(!r2.infeasible){ const tc2=MEH2.tapCutters(r2.S);
+        ck(!!tc2&&tc2.tri.length===(((r2.S.nW|0)||2)*2+(topo==='3way'?((r2.S.nM|0)||4)*((r2.S.npM|0)||1):0))*104, tag+' np2 cutter count off'); }
+    }
     /* slice 2: the Reference D dish insert must be its own watertight part */
     if(topo==='1way'){
       const dm=MEH2.dishMesh(r.S);

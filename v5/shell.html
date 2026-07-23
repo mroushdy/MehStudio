@@ -131,7 +131,7 @@ select{width:100%;font-family:var(--mono);font-size:11px;background:var(--paper)
 <script>
 /*__ENGINE__*/
 /*__CAD__*/
-window.MEH_BUILD=507;
+window.MEH_BUILD=508;
 document.getElementById('bno').textContent=MEH_BUILD;
 "use strict";
 /* ---------------- driver presets (v4 datasheets; mesh = true CAD, meshApprox = nearest body) ---------------- */
@@ -681,7 +681,9 @@ function wire(){
     let msg='STL: shell '+n1+' tris';
     if(S.topo==='1way'){ const dm=MEH2.dishMesh(r.S);
       if(dm) msg+=' + dish insert '+dl(dm,'meh5_dish_b'+MEH_BUILD+'.stl')+' tris (real tap holes + bore)'; }
-    document.getElementById('note').textContent=msg+' — watertight (gate-asserted); snout tube/flange/wings and tap cuts in the shell are next slices'; };
+    else { const tc=MEH2.tapCutters(r.S);
+      if(tc) msg+=' + tap cutters '+dl(tc,'meh5_tapcutters_b'+MEH_BUILD+'.stl')+' tris (import as NEGATIVE volumes in the slicer to cut the slots)'; }
+    document.getElementById('note').textContent=msg+' — watertight (gate-asserted); pre-cut shell, snout/flange/wings are next slices'; };
   { const el=document.getElementById('placeW'); el.value=S.placeW||'auto';
     el.onchange=()=>{ S.placeW=el.value; save(); rebuild(); }; }
   { const el=document.getElementById('mountSel'); el.value=S.mount||'flush';

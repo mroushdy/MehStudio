@@ -984,6 +984,50 @@ function dishMesh(S){
   join(ring(rDish,false),ring(rDish,true),false);
   return {pos, tri};
 }
+/* ---- A. EXPORT slice 3: TAP CUTTERS - one closed stadium prism per port,
+   oriented along the wall normal, extending past both faces. Import as
+   NEGATIVE VOLUMES in the slicer (or boolean-subtract in CAD) to cut the
+   real slots into the shell solid; a true pre-cut shell is the next slice.
+   X-pairs carry the ±45° rotation and the cross-wise offsets exactly as
+   rendered/lawed. ---- */
+function tapCutters(S){
+  const ev=evaluate(S);
+  const pos=[], tri=[];
+  const P=(p)=>{ pos.push(p); return pos.length-1; };
+  for(const d of ev.layout){
+    if(d.kind!=='woof'&&d.kind!=='mid') continue;
+    if(!d.slot||!d.flowU||!d.crossV) continue;
+    const n=d.normal, u=d.flowU, v=d.crossV;
+    const np=d.slot.np||1;
+    for(let kp=0;kp<np;kp++){
+      const sgn=(kp===0?-1:1);
+      let ua=u, va=v;
+      if(np>=2){ const c=Math.SQRT1_2;
+        ua=[ (u[0]+sgn*v[0])*c, (u[1]+sgn*v[1])*c, (u[2]+sgn*v[2])*c ];
+        va=[ n[1]*ua[2]-n[2]*ua[1], n[2]*ua[0]-n[0]*ua[2], n[0]*ua[1]-n[1]*ua[0] ]; }
+      const off=np>=2? sgn*(d.slot.offm||d.od*0.24) : 0;
+      const c0=[ d.tap[0]+v[0]*off, d.tap[1]+v[1]*off, d.tap[2]+v[2]*off ];
+      const sa=d.slot.sa, sb=d.slot.sb, K=24;
+      /* stadium outline in (ua,va): straights at ±sb, semicircle ends r=sb */
+      const outline=[];
+      const cx=Math.max(0,sa-sb);
+      for(let i=0;i<=K/2;i++){ const a=-Math.PI/2+Math.PI*i/(K/2); outline.push([cx+sb*Math.cos(a), sb*Math.sin(a)]); }
+      for(let i=0;i<=K/2;i++){ const a=Math.PI/2+Math.PI*i/(K/2); outline.push([-cx+sb*Math.cos(a), sb*Math.sin(a)]); }
+      const z0=-0.012, z1=(S.wallT||0.012)+0.012;   // past both faces
+      const at=(o,z)=>[ c0[0]+ua[0]*o[0]+va[0]*o[1]+n[0]*z,
+                        c0[1]+ua[1]*o[0]+va[1]*o[1]+n[1]*z,
+                        c0[2]+ua[2]*o[0]+va[2]*o[1]+n[2]*z ];
+      const NB=outline.length;
+      const bot=outline.map(o=>P(at(o,z0))), top=outline.map(o=>P(at(o,z1)));
+      for(let i=0;i<NB;i++){ const j=(i+1)%NB;
+        tri.push([bot[i],top[i],bot[j]],[bot[j],top[i],top[j]]); }
+      const cB=P(at([0,0],z0)), cT=P(at([0,0],z1));
+      for(let i=0;i<NB;i++){ const j=(i+1)%NB;
+        tri.push([cB,bot[j],bot[i]],[cT,top[i],top[j]]); }
+    }
+  }
+  return pos.length? {pos, tri} : null;
+}
 /* binary STL bytes from shellMesh (mm units for slicers) */
 function stlBytes(mesh){
   const n=mesh.tri.length, buf=new ArrayBuffer(84+n*50), dv=new DataView(buf);
@@ -1054,6 +1098,6 @@ const BUILDS=(()=>{
   };
 })();
 
-return {C,IN,CM, sePoint,seRing, profile, stations, dimsAt, surfPt, surfN, layout, evaluate, solve, response, areaAt, facetsAt, facetN, offsetRing, offsetVerts, BUILDS, shellMesh, dishMesh, stlBytes};
+return {C,IN,CM, sePoint,seRing, profile, stations, dimsAt, surfPt, surfN, layout, evaluate, solve, response, areaAt, facetsAt, facetN, offsetRing, offsetVerts, BUILDS, shellMesh, dishMesh, tapCutters, stlBytes};
 })();
 if(typeof module!=='undefined') module.exports=MEH2;

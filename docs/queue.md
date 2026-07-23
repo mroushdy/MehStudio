@@ -129,8 +129,14 @@ A. EXPORTS [STL SLICE LANDED build 506: MEH2.shellMesh(S) builds the shell
    STL (mm); EXPORT STL button in the HUD; gate 2.8 asserts WATERTIGHT
    (every edge shared by exactly 2 triangles, keyed by position) over all 12
    presets. Note: Horn Studio's writers were NOT available in this handoff -
-   written fresh, gate-proven]. Still open: tap/bore cuts in the solid; the
-   dish insert as its own part; STEP; panel-layout export; AKABAK bridge.
+   written fresh, gate-proven]. [DISH INSERT LANDED build 507: dishMesh - the
+   Reference D dish as its own watertight part, REAL round tap holes
+   (rect-to-circle patches, no CSG) + bore wall + rim; snout/flange/wings next.]
+   [TAP CUTTERS LANDED build 508: tapCutters - one closed stadium prism per
+   port (X-pairs carry the ±45° rotation + cross offsets), import as NEGATIVE
+   volumes in the slicer to cut the real slots; watertight + count gate-asserted
+   incl. the np2 variant.] Still open: true pre-cut shell (boolean); STEP;
+   panel-layout export; AKABAK bridge.
 B. TRUE PRINTED-PART GEOMETRY [shell wall DONE - real thickness, outer-face mounts, Lpt geometry-true in the Helmholtz law; ONE proven normal path via carried surface params]: seat+slot as one
    solid insert; CD apex insert (Reference B/C: bore + tap ring + bolt circle);
    bandpass chamber housings; 1way coax full part.
