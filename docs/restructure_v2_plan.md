@@ -49,3 +49,20 @@ meeting at each corner (wall pre/post-knee x 2 walls) plus the chamfer band - a
 two-flare artifact. The real fix is the form-axis 'clean pyramid' rect option
 (single flare, st.knee=st.depth, honest Keele waistbanding note) - do it WITH the
 topology/form front door, not as a render hack.
+
+## DIRECTIVE 2026-07-23 (Marwan): PRINT-ONLY + REBUILD FIRST
+- "We should design only for 3D printing and ignore woodworking completely."
+  The construction axis collapses to PRINTED. Wood panel cutting sheets, plywood
+  chamfer boards, two-flare panel construction, corner blocks: all retired. Every
+  surface is printable geometry (References A/B/C + Mother): smooth ATH-profiled
+  flares, printed facet mounts (taps under drivers NATIVE), designed chamber
+  housings for bandpass drivers, conformal seats, mouth roll-back.
+- Strategy agreed: REBUILD FIRST, then bugs. Bug pins #3,5,6,7,8,9 are wood-era
+  rendering artifacts deleted by the rebuild. Pins #4,10,11 are placement-law bugs
+  that become ACCEPTANCE TESTS of the new engine:
+    #4  taps must sit under their drivers (printed facets make this default)
+    #10 port-count changes must never produce broken corner geometry (lattice test)
+    #11 diagonal mids must ring the throat, not stack in a line
+- v2 space, final: TOPOLOGY (1-way coax / 2-way / 3-way) x FORM (square / circular /
+  superellipse - ATH profile + roll-back, superformula uniques) - printed always.
+  Islands become presets. Old islands remain reachable for reference until parity.
