@@ -2998,15 +2998,15 @@ window.BUGPINS=(function(){
   document.addEventListener('contextmenu',(e)=>{
     if(!window.V3D||!V3D.renderer) return;
     const cv=V3D.renderer.domElement; if(e.target!==cv) return;
-    e.preventDefault();
+    e.preventDefault(); e.stopPropagation();
     const r=cv.getBoundingClientRect();
     const nd=new THREE.Vector2(((e.clientX-r.left)/r.width)*2-1, -((e.clientY-r.top)/r.height)*2+1);
     const rc=new THREE.Raycaster(); rc.setFromCamera(nd,V3D.camera);
-    const hits=rc.intersectObjects(V3D.scene.children,true).filter(h=>h.object.isMesh&&h.object.userData.tag!=='bugpin');
+    const hits=rc.intersectObjects(V3D.scene.children,true).filter(h=>h.object.isMesh&&h.object.userData.tag!=='bugpin'&&!(h.object.material&&h.object.material.transparent));
     if(!hits.length) return;
     const sc=window.__sc||1, hp=hits[0].point;
     ui(e.clientX,e.clientY,[hp.x/sc,hp.z/sc,hp.y/sc]);
-  });
+  },true);   // CAPTURE phase: the canvas pan handler stops bubbling (found live in his browser)
   return { list:()=>pins, open:()=>pins.filter(p=>!p.done), redraw,
     fly:(id)=>{ const p=pins.find(q=>q.id===id); if(!p)return false;
       if(p.cam){ V3D.yaw=p.cam.yaw; V3D.pitch=p.cam.pitch; V3D.dist=Math.min(p.cam.dist,1.0); }
@@ -3015,7 +3015,7 @@ window.BUGPINS=(function(){
     resolve:(id,note)=>{ const p=pins.find(q=>q.id===id); if(p){p.done=true;p.fix=note||'';save();redraw();} },
     clear:()=>{ pins=[]; save(); redraw(); } };
 })();
-window.MEH_BUILD=79;
+window.MEH_BUILD=80;
 window.persistS=function(){
   try{
     const ca=window.curArch||'unity';
