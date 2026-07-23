@@ -1288,6 +1288,8 @@ const BUILDS=(()=>{
      s:{...B,...CDX,...CXU,...W12, topo:'1way',seN:2, covH:60,covV:60,mouthW:24,nW:2,nM:4}},
    ],
    '2way':[
+    {key:'jmod',      name:'JMOD-class — 90°×60° · 2×12″ on the DCX coax (JW Sound manual)',
+     s:{...B,...CDX,...W12,...M4, topo:'2way',seN:6, covH:90,covV:60,mouthW:30,nW:2,nM:4}},
     {key:'canon9060', name:'house canon — 90°×60° · 4×6.5″ on the DCX coax',
      s:{...B,...CDX,...W65,...M4, topo:'2way',seN:6, covH:90,covV:60,mouthW:24,nW:4,nM:4}},
     {key:'compact',   name:'compact synergy — 90°×60° · 4×5.25″',
@@ -1319,7 +1321,7 @@ return {C,IN,CM, sePoint,seRing, profile, stations, dimsAt, surfPt, surfN, layou
 if(typeof module!=='undefined') module.exports=MEH2;
 
 /* parametric */
-window.MEH_BUILD=512;
+window.MEH_BUILD=513;
 document.getElementById('bno').textContent=MEH_BUILD;
 "use strict";
 /* ---------------- driver presets (v4 datasheets; mesh = true CAD, meshApprox = nearest body) ---------------- */

@@ -47,6 +47,14 @@ same 3-way that capped at 65″ solves at 42″.
 - The crossover then DERIVES from the landed path (1.2× under the λ/4 null);
   every dialect is judged by the same law rows (docs/tap_laws.md).
 
+## Measured Danley anchors (reference library study, 2026-07-23)
+
+Placement-solver sanity constants measured from the real products:
+- SH-50: mid taps 3.5″ from the CD, LF taps 10.5″, reflex 14.5″; mid taps 8.5 cm apart.
+- SH-96: woofer taps 13.3 cm apart H / 10.5 cm V.
+Use these to sanity-check derived stations on the SH50/SH96 presets — the
+solver's landed stations should be the same order of magnitude, never 2× off.
+
 ## Honest refusals to expect
 
 - Mid frames too big for their derived top (e.g. 5″ mids asked to reach ~360 Hz

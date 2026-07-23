@@ -109,7 +109,10 @@ M7. LAYOUT DIALECTS [CORNER BOARDS LANDED build 507: placeW='chamfer' puts the
     42in clean); crease exclusion by true axial footprint; velocity-first CR
     grading]. Still open: SH96 corner boards as a WOOFER dialect, knuckle
     passages, remote bandpass (Solana).
-M8. PROVEN-BUILD PRESETS [LANDED build 501 - his call: "default settings drop
+M8. PROVEN-BUILD PRESETS [JMOD-CLASS LANDED build 513 from the JW Sound manual
+    (2×12 on the DCX coax, 90×60, 30in, exemplary); SH96-class landed 511 under
+    ruling B; reference library study in docs/REFERENCE_LIBRARY_STUDY.md]
+    [LANDED build 501 - his call: "default settings drop
     downs that match popular MEH styles so users that are not advanced can land
     at well known MEH horns". KNOWN BUILD dropdown under TOPOLOGY, repopulates
     per 1way/2way/3way. Bundles are ENGINE CANON (MEH2.BUILDS): 10 complete
