@@ -135,7 +135,13 @@ M9. ENCLOSURE REALITY: rear chamber volumes, magnet clearance at angle, the box.
 M10. FULL T/S per preset (Fs Qts Re Le...) + Hornresp ME2 export.
 
 ## REMAINING TOOLING (A-I, under the M-list)
-A. EXPORTS [STL SLICE LANDED build 506: MEH2.shellMesh(S) builds the shell
+A. EXPORTS [SPLIT/ORIENT CANON captured in REFERENCE_LIBRARY_STUDY_2.md
+   (batch 2, build 517): segments stay in ASSEMBLY coordinates, cut planes never
+   through driver features; per-role auto-orientation (mouth-down bodies,
+   throat-plate-down small horns, mate-face-down roundovers); bed-size-driven
+   split strategy (200 vs 300 beds); mirrored-part dedup + BOM manifest;
+   glued vs bolted joint systems - the auto-split exporter's spec.]
+   [STL SLICE LANDED build 506: MEH2.shellMesh(S) builds the shell
    SOLID (inner + true-offset outer + mouth face/lip + throat annulus; angular
    = exact panel verts, 1way starts at the dish seat), MEH2.stlBytes -> binary
    STL (mm); EXPORT STL button in the HUD; gate 2.8 asserts WATERTIGHT
