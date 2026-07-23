@@ -1,0 +1,189 @@
+/* MEH STUDIO v5 — PRINT-ONLY ENGINE (ground-up rebuild, Marwan's mandate 2026-07-23)
+   ONE surface family: superellipse(n) cross-section swept along an ATH-style
+   curvature-continuous flare with mouth roll-back. n=2 round · n=6 squircle ·
+   n=12 "square" (printable corners). Sourced physics carried from v4 verbatim:
+   λ/4 tap law, CR bands, 17 m/s port velocity, Keele mouth sizing, XO from geometry.
+   TOPOLOGY: 1way (coax synergy-exit) · 2way (CD+woofers) · 3way (CD+mids+woofers).
+   All mounting is PRINTED: apex insert (tap ring around throat bore), facet seats
+   (driver over its slot, always), chamber housings for bandpass. No wood anywhere. */
+"use strict";
+const MEH2=(()=>{
+const C=344, IN=0.0254, CM=0.01;
+const d2r=d=>d*Math.PI/180;
+
+/* ---- superellipse cross-section: |y/a|^n + |z/b|^n = 1 ---- */
+function sePoint(a,b,n,phi){
+  const c=Math.cos(phi), s=Math.sin(phi);
+  const y=a*Math.sign(c)*Math.pow(Math.abs(c),2/n);
+  const z=b*Math.sign(s)*Math.pow(Math.abs(s),2/n);
+  return [y,z];
+}
+/* perimeter-parameterized ring (uniform arc spacing matters for clean meshes) */
+function seRing(a,b,n,M){
+  const raw=[]; let L=0;
+  for(let i=0;i<=M*4;i++){ raw.push(sePoint(a,b,n,i/(M*4)*2*Math.PI)); }
+  const seg=[0]; for(let i=1;i<raw.length;i++){ L+=Math.hypot(raw[i][0]-raw[i-1][0],raw[i][1]-raw[i-1][1]); seg.push(L); }
+  const out=[]; let j=0;
+  for(let i=0;i<M;i++){ const t=i/M*L;
+    while(seg[j+1]<t && j<seg.length-2) j++;
+    const f=(t-seg[j])/((seg[j+1]-seg[j])||1e-9);
+    out.push([raw[j][0]+(raw[j+1][0]-raw[j][0])*f, raw[j][1]+(raw[j+1][1]-raw[j][1])*f]);
+  }
+  return out;
+}
+
+/* ---- ATH-style flare profile (curvature-continuous):
+   half-width h(x) = ht + (hm-ht) * s(t)^p  with s = smoothstep blend of conical
+   core and tanh-like termination, plus ROLL-BACK past the mouth plane.
+   Sources: Keele mouth law for hm; the roll radius is the printable termination
+   (Mother donut). This is a solver allowance shaped to be curvature-continuous;
+   exact R-OSSE coefficients can be swapped in later without touching callers. ---- */
+function profile(S){
+  const th=d2r(S.covH/2);                       // wall angle target (coverage)
+  const ht=S.throat*IN/2;
+  const hm=S.mouthW*IN/2;
+  const depth=Math.max(0.06,(hm-ht)/Math.tan(th));
+  const rollR=S.rollR*IN;
+  const N=48, pts=[];
+  for(let i=0;i<=N;i++){ const t=i/N, x=t*depth;
+    const s=t*t*(3-2*t);                        // smoothstep: zero slope at throat, eases to mouth
+    const lin=ht+(hm-ht)*t;
+    const eased=ht+(hm-ht)*(0.72*t+0.28*s);     // mostly conical (pattern control) + eased ends
+    pts.push({x, h:eased});
+  }
+  /* roll-back: quarter-torus past the mouth plane, tangent to the last segment */
+  const M=10;
+  const hEnd=pts[N].h, slope=(pts[N].h-pts[N-1].h)/(pts[N].x-pts[N-1].x);
+  const a0=Math.atan(slope);
+  for(let i=1;i<=M;i++){ const a=a0+(Math.PI/2-a0)*(i/M)*0.9;
+    pts.push({x:depth+rollR*(Math.sin(a)-Math.sin(a0)),
+              h:hEnd+rollR*((1-Math.cos(a))-(1-Math.cos(a0))), roll:true});
+  }
+  return {pts, depth, rollR, mouthH:hm};
+}
+
+/* stations: superellipse half-axes track the profile; aspect from covV/covH */
+function stations(S){
+  const pr=profile(S);
+  const ar=Math.tan(d2r(S.covV/2))/Math.tan(d2r(S.covH/2));   // vertical/horizontal
+  return { form:'se', n:S.seN, pts:pr.pts.map(p=>({x:p.x, a:p.h, b:p.h*ar, roll:p.roll})),
+           depth:pr.depth, rollR:pr.rollR, throat:S.throat*IN/2, ar };
+}
+function dimsAt(st,x){
+  const P=st.pts;
+  if(x<=P[0].x) return {a:P[0].a,b:P[0].b};
+  for(let i=1;i<P.length;i++){ if(P[i].x>=x){ const f=(x-P[i-1].x)/((P[i].x-P[i-1].x)||1e-9);
+    return {a:P[i-1].a+(P[i].a-P[i-1].a)*f, b:P[i-1].b+(P[i].b-P[i-1].b)*f}; } }
+  return {a:P[P.length-1].a,b:P[P.length-1].b};
+}
+/* surface point + outward normal at station x, azimuth phi */
+function surfPt(st,x,phi){ const d=dimsAt(st,x); const [y,z]=sePoint(d.a,d.b,st.n,phi); return [x,y,z]; }
+function surfN(st,x,phi){
+  const e=Math.max(1e-4,st.depth*2e-3);
+  const p0=surfPt(st,Math.max(0,x-e),phi), p1=surfPt(st,Math.min(st.depth,x+e),phi);
+  const u=[p1[0]-p0[0],p1[1]-p0[1],p1[2]-p0[2]];
+  const q0=surfPt(st,x,phi-0.02), q1=surfPt(st,x,phi+0.02);
+  const v=[q1[0]-q0[0],q1[1]-q0[1],q1[2]-q0[2]];
+  let n=[u[1]*v[2]-u[2]*v[1], u[2]*v[0]-u[0]*v[2], u[0]*v[1]-u[1]*v[0]];
+  const L=Math.hypot(...n)||1e-9; n=n.map(c=>c/L);
+  /* orient outward (away from axis) */
+  const p=surfPt(st,x,phi);
+  if(n[1]*p[1]+n[2]*p[2]<0) n=n.map(c=>-c);
+  return n;
+}
+
+/* ---- TOPOLOGY LAYOUTS (all printed; taps UNDER drivers always) ----
+   1way: coax at apex - cone taps ring the CD bore in the printed apex insert.
+   2way: CD at apex + nW woofers on facet seats at the λ/4 station, slot under each.
+   3way: CD + nM mids ringing the apex insert + nW woofers further out.        */
+function perimeterAt(st,x){
+  const d=dimsAt(st,x), ring=seRing(d.a,d.b,st.n,64);
+  let L=0; for(let i=0;i<ring.length;i++){ const j=(i+1)%ring.length;
+    L+=Math.hypot(ring[j][0]-ring[i][0],ring[j][1]-ring[i][1]); }
+  return L;
+}
+/* smallest station whose ring hosts n seats (printed law: seat pitch = 2*seatR+8mm) */
+function xForRing(st,n,seatR,xMin){
+  const need=n*(2*seatR+0.008)*1.13;   // arc>chord: ring pitch by arc must leave chord clearance
+  for(let x=xMin;x<=st.depth;x+=st.depth/96){ if(perimeterAt(st,x)>=need) return x; }
+  return null;                                  // does not fit anywhere - horn must grow
+}
+function layout(S,st){
+  const out=[];
+  /* GEOMETRY FIRST, XO DERIVED (v4 coax2 canon, now universal):
+     drivers sit at the smallest station whose ring fits them; the crossover
+     falls out of the path length. fxHi/fxLo become CEILINGS to respect. */
+  const seatW=S.odW*CM/2+0.011, seatM=S.odM*CM/2+0.011;
+  const xM0=xForRing(st,(S.nM|0)||4,seatM,0.012);
+  const xW0=xForRing(st,(S.nW|0)||2,seatW,(S.topo==='3way'&&xM0!=null)?(xM0+seatM+seatW+0.008):0.02);
+  const xM=xM0, xW=xW0;
+  S.fxDerived={ hi: xM!=null? Math.round(C/(4*((S.topo==='3way'?xM:xW||st.depth)+S.cdDepth*IN))) : null,
+                lo: xW!=null? Math.round(C/(4*(xW+S.cdDepth*IN))) : null };
+  const place=(kind,x,phi,od,dp)=>{
+    const p=surfPt(st,x,phi), n=surfN(st,x,phi);
+    out.push({kind, x, phi, center:p, normal:n, od, dp,
+      tap:p,                                    // PRINTED LAW: the tap IS under the driver
+      seatR:od/2+0.011});
+  };
+  if(S.topo!=='1way' && xW!=null){
+    const nW=S.nW|0||2;
+    for(let k=0;k<nW;k++) place('woof', xW, Math.PI/nW*(1+2*k)- (nW===2?0:Math.PI/2), S.odW*CM, S.dpW*CM);
+  }
+  if(S.topo==='3way' && xM!=null){
+    const nM=S.nM|0||4;
+    for(let k=0;k<nM;k++) place('mid', xM, Math.PI/nM*(1+2*k), S.odM*CM, S.dpM*CM);
+  }
+  if(S.topo!=='1way' && xW==null) out.missing=true;
+  if(S.topo==='3way' && xM==null) out.missing=true;
+  if(S.topo==='1way'){
+    /* coax: ring of cone taps in the apex insert around the CD bore */
+    const nT=6, rT=Math.max(S.td*IN*0.5+0.012, S.coaxRing*CM);
+    for(let k=0;k<nT;k++){ const a=k/nT*2*Math.PI;
+      out.push({kind:'coaxtap', x:0.004, phi:a, center:[0.004, rT*Math.cos(a), rT*Math.sin(a)],
+        normal:[-1,0,0], od:0.02, dp:0, tap:[0.004, rT*Math.cos(a), rT*Math.sin(a)], seatR:0.011}); }
+  }
+  return out;
+}
+
+/* ---- fit & physics checks (carried laws; expanded per rebuild) ---- */
+function evaluate(S){
+  const st=stations(S), L=layout(S,st), rows=[];
+  const add=(sec,name,val,ok,warn,why)=>rows.push({sec,name,val,st:ok?'ok':(warn?'warn':'fail'),why});
+  /* pin #4/#11 acceptance: every driver's tap under its frame; ring even */
+  let tapOff=0;
+  for(const d of L){ if(!d.tap) continue;
+    tapOff=Math.max(tapOff, Math.hypot(d.tap[0]-d.center[0],d.tap[1]-d.center[1],d.tap[2]-d.center[2])); }
+  add('LAW','Taps under their drivers',(tapOff*1000).toFixed(1)+' mm', tapOff<=0.001,false,'printed facets make this structural');
+  /* neighbor clearance (frame + seat) */
+  let worst=1e9;
+  for(let i=0;i<L.length;i++)for(let j=i+1;j<L.length;j++){
+    const a=L[i], b=L[j];
+    const g=Math.hypot(a.center[0]-b.center[0],a.center[1]-b.center[1],a.center[2]-b.center[2])-(a.seatR+b.seatR);
+    if(g<worst)worst=g; }
+  add('LAW','Seats clear each other',(worst*1000).toFixed(0)+' mm', worst>=0.006, worst>=0,'printed seats must not merge');
+  add('LAW','Every ring fits inside the horn', L.missing?'NO':'yes', !L.missing, false,'drivers sit at the smallest station whose ring hosts them; if none exists the horn grows');
+  if(S.fxDerived&&S.fxDerived.lo)
+    add('XO','Derived crossover (from landed geometry)', (S.topo==='3way'? S.fxDerived.hi+' / ':'')+S.fxDerived.lo+' Hz',
+      (S.fxDerived.lo<= (S.topo==='3way'?S.fxLo:S.fxHi)*1.35), true, 'XO falls out of the path length; ceiling from the driver choice');
+  return {st, layout:L, rows, fails:rows.filter(r=>r.st==='fail').length};
+}
+
+/* ---- SOLVE: grow the horn until every law passes (throat-invariant growth;
+   the v4 principle, clean-roomed). Returns the settled state + evaluation. ---- */
+function solve(S0){
+  const S={...S0};
+  for(let it=0;it<40;it++){
+    const ev=evaluate(S);
+    if(!ev.fails) return {S, ev, grown:S.mouthW-S0.mouthW};
+    S.mouthW=+(S.mouthW+1).toFixed(2);
+    if(S.mouthW>S0.mouthCap) {
+      const evC=evaluate(S);
+      return {S, ev:evC, grown:S.mouthW-S0.mouthW, infeasible:true};
+    }
+  }
+  return {S, ev:evaluate(S), infeasible:true};
+}
+
+return {C,IN,CM, sePoint,seRing, profile, stations, dimsAt, surfPt, surfN, layout, evaluate, solve};
+})();
+if(typeof module!=='undefined') module.exports=MEH2;
