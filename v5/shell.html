@@ -255,9 +255,19 @@ function rebuild(){
   for(const d of ev.layout){
     const n=P3(d.normal), c=P3(d.center);
     if(d.kind==='coaxtap'){
-      const tap=new THREE.Mesh(new THREE.CircleGeometry(0.011,20),
+      /* pin #8: radial slot ring in the printed apex plate (Reference C look) */
+      const sa=(d.slot&&d.slot.sa)||0.016, sb=(d.slot&&d.slot.sb)||0.006;
+      const rad=new THREE.Vector3(0,d.center[2],d.center[1]).normalize();
+      const tan=new THREE.Vector3(0,-rad.z,rad.y);
+      const sp=new THREE.Shape(); const r2=0.9;
+      sp.moveTo(-1+r2,-1); sp.lineTo(1-r2,-1); sp.quadraticCurveTo(1,-1,1,-1+r2);
+      sp.lineTo(1,1-r2); sp.quadraticCurveTo(1,1,1-r2,1); sp.lineTo(-1+r2,1);
+      sp.quadraticCurveTo(-1,1,-1,1-r2); sp.lineTo(-1,-1+r2); sp.quadraticCurveTo(-1,-1,-1+r2,-1);
+      const tap=new THREE.Mesh(new THREE.ShapeGeometry(sp,8),
         new THREE.MeshBasicMaterial({color:0x0d0c0b,side:THREE.DoubleSide}));
-      tap.position.copy(c); tap.position.x-=0.0004; tap.rotation.y=Math.PI/2; tap.userData.tag='port'; g.add(tap);
+      const mB=new THREE.Matrix4().makeBasis(rad.clone().multiplyScalar(sa),tan.clone().multiplyScalar(sb),new THREE.Vector3(1,0,0));
+      mB.setPosition(new THREE.Vector3(d.center[0]-0.0008, d.center[2], d.center[1]));
+      tap.applyMatrix4(mB); tap.userData.tag='port'; g.add(tap);
       continue; }
     /* stadium slot under the driver: long axis along flow */
     { const u=new THREE.Vector3(1,0,0).sub(n.clone().multiplyScalar(n.x)).normalize();  // flow dir on surface
@@ -288,8 +298,14 @@ function rebuild(){
       body.traverse(o=>o.userData.tag='driver'); g.add(body);
     }
   }
-  /* CD behind apex */
-  { const cd=new THREE.Mesh(new THREE.CylinderGeometry(0.065,0.075,S.cdDepth*MEH2.IN,28),
+  /* apex driver: 1way = the full COAX unit (his pin #8); else the CD */
+  if(S.topo==='1way'){
+    const body=driverBody((S.odC||0.22),(S.dpC||0.11),{motor:'ferrite'});
+    body.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),new THREE.Vector3(-1,0,0));
+    body.position.set(st.pts[0].x-0.004,0,0);
+    body.traverse(o=>o.userData.tag='driver'); g.add(body);
+  } else {
+    const cd=new THREE.Mesh(new THREE.CylinderGeometry(0.065,0.075,S.cdDepth*MEH2.IN,28),
       new THREE.MeshPhongMaterial({color:0x8a8a88,shininess:18}));
     cd.rotation.z=Math.PI/2; cd.position.x=st.pts[0].x-S.cdDepth*MEH2.IN/2-0.004; cd.userData.tag='driver'; g.add(cd); }
   V3D.scene.add(g);

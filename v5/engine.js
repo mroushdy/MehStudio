@@ -83,7 +83,8 @@ function paramFor(aH,bH,n,y,z){
    exact R-OSSE coefficients can be swapped in later without touching callers. ---- */
 function profile(S){
   const th=d2r(S.covH/2);                       // wall angle target (coverage)
-  const ht=S.throat*IN/2;
+  const ht=(S.topo==='1way')? ((S.coaxRing||4.5)*CM+0.024)   // 1way: the printed APEX PLATE is the throat - flare starts at its edge (his pin #8 / Reference C)
+                             : S.throat*IN/2;
   const hm=S.mouthW*IN/2;
   const depth=Math.max(0.06,(hm-ht)/Math.tan(th));
   const rollR=(S.style==='angular'? Math.min(S.rollR,0.75) : S.rollR)*IN;   // angular keeps a printable bevel, not a donut
@@ -235,11 +236,18 @@ function layout(S,st){
   if(S.topo!=='1way' && xW==null) out.missing=true;
   if(S.topo==='3way' && xM==null) out.missing=true;
   if(S.topo==='1way'){
-    /* coax: ring of cone taps in the apex insert around the CD bore */
-    const nT=6, rT=Math.max(S.td*IN*0.5+0.012, S.coaxRing*CM);
-    for(let k=0;k<nT;k++){ const a=k/nT*2*Math.PI;
-      out.push({kind:'coaxtap', x:0.004, phi:a, center:[0.004, rT*Math.cos(a), rT*Math.sin(a)],
-        normal:[-1,0,0], od:0.02, dp:0, tap:[0.004, rT*Math.cos(a), rT*Math.sin(a)], seatR:0.011}); }
+    /* PIN #8 (his spec): ONE coax driver - the horn IS the CD's waveguide; the cone
+       section fires through a tap-slot ring in the printed apex plate. */
+    const nT=(S.coaxTaps|0)||6;
+    const rT=Math.max(S.td*IN*0.5+0.014, (S.coaxRing||4.5)*CM);
+    const apC=(S.sdC||150)/Math.max(4,Math.min(8, 17/(2*Math.PI*((S.fxDerived&&S.fxDerived.lo)||S.fxC||300)*((S.xmC||4)/1000)) ))/nT;   // cm^2 per slot, velocity-clamped CR
+    const saC=Math.sqrt(apC*1e-4*3)/2, sbC=Math.sqrt(apC*1e-4/3)/2;
+    S.fxDerived={hi: Math.round(C/(4*(rT+S.cdDepth*IN))), lo: Math.round(C/(4*(rT+S.cdDepth*IN)))};   // coax XO from the tap path
+    for(let k=0;k<nT;k++){ const a2=(k+0.5)/nT*2*Math.PI;
+      const p=[0.004, rT*Math.cos(a2), rT*Math.sin(a2)];
+      out.push({kind:'coaxtap', x:0.004, phi:a2, center:p, normal:[-1,0,0], od:0.02, dp:0,
+        tap:p, seatR:sbC+0.004, slot:{sa:saC, sb:sbC, ap:apC, radial:true}}); }
+    out.coax={od:(S.odC||0.22), dp:(S.dpC||0.11)};
   }
   return out;
 }
@@ -320,7 +328,7 @@ function areaAt(st,x){
 }
 function response(S,ev){
   const st=ev.st, L=ev.layout;
-  const hasW=S.topo!=='1way', hasM=S.topo==='3way';
+  const hasW=S.topo!=='1way', hasM=S.topo==='3way', hasC=S.topo==='1way';
   const fxHi=(S.fxDerived&&S.fxDerived.hi)||900, fxLo=(S.fxDerived&&S.fxDerived.lo)||fxHi;
   const RHO=1.205, NSEG=64, F0=100, F1=16000, NF=120;
   const Ss=[]; for(let i=0;i<=NSEG;i++) Ss.push(Math.max(1e-6,areaAt(st, st.depth*i/NSEG)));
@@ -334,6 +342,9 @@ function response(S,ev){
     return {M:RHO*(LPT_CM*1e-2+0.85*r)/Ap, Cc:V/(RHO*C*C)}; };
   const brW=hasW&&dW&&dW.slot? mkBr(dW.slot.ap,S.vtcW||150,(S.nW|0)||2) : null;
   const brM=hasM&&dM&&dM.slot? mkBr(dM.slot.ap,S.vtcM||40,(S.nM|0)||4) : null;
+  const dC=L.find(d2=>d2.kind==='coaxtap');
+  const brC=hasC&&dC&&dC.slot? mkBr(dC.slot.ap,(S.vtcC||60)/((S.coaxTaps|0)||6),(S.coaxTaps|0)||6) : null;
+  const nodeC=hasC? 1 : -1;
   const f=[],HF=[],MID=[],WOOF=[];
   for(let i=0;i<NF;i++){
     const fq=F0*Math.pow(F1/F0,i/(NF-1)); f.push(fq);
@@ -353,6 +364,7 @@ function response(S,ev){
     for(let j=NSEG-1;j>=0;j--){ let Z=zline(Zm[j+1],segL,RHO*C/Ss[j]);
       if(j===nodeM&&brM) Z=CX.inv(CX.add(CX.inv(Z),YbrOf(brM)));
       if(j===nodeW&&brW) Z=CX.inv(CX.add(CX.inv(Z),YbrOf(brW)));
+      if(j===nodeC&&brC) Z=CX.inv(CX.add(CX.inv(Z),YbrOf(brC)));
       Zm[j]=Z; }
     const Zt=new Array(NSEG+1);
     { const t=Math.tan(k*stub.L), Zcs=RHO*C/stub.Sa;
@@ -382,10 +394,10 @@ function response(S,ev){
       [P,U]=line(P,U,stub.L,Zcs);
       HF.push(CX.abs(CX.scale(mouthFrom(0,P,U,'hf'),w))); }
     MID.push(hasM&&brM?drive(nodeM,brM,'mid'):0);
-    WOOF.push(hasW&&brW?drive(nodeW,brW,'woof'):0);
+    WOOF.push(hasW&&brW?drive(nodeW,brW,'woof'): hasC&&brC?drive(nodeC,brC,'woof'):0);   // 1way: the coax CONE takes the low band
   }
   const dB=arr=>{const mx=Math.max(1e-30,...arr); return arr.map(v=>20*Math.log10((v||1e-30)/mx));};
-  const hf=dB(HF), mid=hasM?dB(MID):null, woof=hasW?dB(WOOF):null;
+  const hf=dB(HF), mid=hasM?dB(MID):null, woof=(hasW||hasC)?dB(WOOF):null;
   const lr4lp=x=>{const H2=CX.div([1,0],[1-x*x,Math.SQRT2*x]);return CX.mul(H2,H2);};
   const lr4hp=x=>{const ix=1/Math.max(1e-9,x);const H2=CX.div([1,0],[1-ix*ix,Math.SQRT2*ix]);return CX.mul(H2,H2);};
   const sum=f.map((fq,i)=>{
@@ -393,7 +405,7 @@ function response(S,ev){
     const add2=(curve,H)=>{if(!curve)return;acc=CX.add(acc,CX.scale(H,Math.pow(10,curve[i]/20)));};
     add2(hf,lr4hp(fq/fxHi));
     if(hasM) add2(mid,CX.mul(lr4lp(fq/fxHi),lr4hp(fq/fxLo)));
-    if(hasW) add2(woof,lr4lp(fq/(hasM?fxLo:fxHi)));
+    if(hasW||hasC) add2(woof,lr4lp(fq/(hasM?fxLo:fxHi)));
     return 20*Math.log10(CX.abs(acc)+1e-12); });
   return {f,hf,mid,woof,sum,fxHi,fxLo};
 }
