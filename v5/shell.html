@@ -142,6 +142,32 @@ function render3d(){
   V3D.camera.lookAt(V3D.tgt);
   V3D.renderer.render(V3D.scene,V3D.camera);
 }
+/* ---- clean parametric driver silhouettes (outer shapes only, per his call) ---- */
+function driverBody(od,dp,PRE){
+  const g=new THREE.Group();
+  const R=od/2, motor=PRE.motor||'neo';
+  const magR=(motor==='ferrite'? 0.44 : 0.30)*od;
+  const magL=(motor==='ferrite'? 0.22 : 0.30)*dp;
+  const CAST=new THREE.MeshPhongMaterial({color:0xB9B6B0,specular:0x333333,shininess:26,side:THREE.DoubleSide});
+  const DARK=new THREE.MeshPhongMaterial({color:0x3A3835,specular:0x222222,shininess:34,side:THREE.DoubleSide});
+  const pts=[
+    [R*1.00,0.000],[R*1.00,0.006],[R*0.97,0.009],
+    [R*0.92,0.012],[R*0.78,dp*0.16],[R*0.60,dp*0.34],
+    [R*0.46,dp*0.48],[magR*1.06,dp*0.56],[magR*1.02,dp*0.585]
+  ].map(p=>new THREE.Vector2(p[0],p[1]));
+  g.add(new THREE.Mesh(new THREE.LatheGeometry(pts,48),CAST));
+  const gk=new THREE.Mesh(new THREE.TorusGeometry(R*0.94,R*0.035,10,48),DARK);
+  gk.rotation.x=Math.PI/2; gk.position.y=0.002; g.add(gk);
+  const mpts=[
+    [magR*1.02,dp*0.585],[magR,dp*0.60],[magR,dp*0.60+magL*0.92],
+    [magR*0.94,dp*0.60+magL],[magR*0.42,dp*0.60+magL],[magR*0.40,dp*0.60+magL+dp*0.045],
+    [0.0001,dp*0.60+magL+dp*0.045]
+  ].map(p=>new THREE.Vector2(p[0],p[1]));
+  g.add(new THREE.Mesh(new THREE.LatheGeometry(mpts,40),DARK));
+  const term=new THREE.Mesh(new THREE.BoxGeometry(od*0.10,dp*0.10,od*0.05),DARK);
+  term.position.set(R*0.72,dp*0.30,0); term.rotation.z=0.5; g.add(term);
+  return g;
+}
 /* scene axes: (x,z,y) like v4 — model x = depth axis points at the viewer-front */
 const sc=1;
 function P3(p){ return new THREE.Vector3(p[0],p[2],p[1]); }
@@ -200,44 +226,15 @@ function rebuild(){
     { const seat=new THREE.Mesh(new THREE.CylinderGeometry(d.seatR,d.seatR*1.15,0.014,36,1,true),
         new THREE.MeshPhongMaterial({color:0xCFC9BD,shininess:6,side:THREE.DoubleSide}));
       seat.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),n);
-      seat.position.copy(c).add(n.clone().multiplyScalar(0.0115));   // fully outside the shell seat.userData.tag='seat'; g.add(seat);
+      seat.position.copy(c).add(n.clone().multiplyScalar(0.0115));   // fully outside the shell
+      seat.userData.tag='seat'; g.add(seat);
     }
-    /* driver body: the REAL CAD mesh IS the driver (his mandate: look like the models).
-       The crude can draws ONLY when no CAD exists for the preset (custom sliders). */
-    { const body=new THREE.Group();
-      const PRE=(d.kind==='mid'? MPRE[S.mPre] : WPRE[S.wPre])||null;
-      const MK=PRE&&(PRE.mesh||PRE.meshApprox);
-      let usedCAD=false;
-      if(MK && window.CADM && CADM[MK] && typeof cadMesh==='function'){
-        const cm=cadMesh(MK,0x9a9895), MM2=CADM[MK];
-        const kr=PRE.mesh?1:(d.od*100*10)/((MM2.bb1[0]-MM2.bb0[0])||1), kz=PRE.mesh?1:(d.dp*100*10)/((MM2.bb1[2]-MM2.bb0[2])||1);
-        cm.scale.set(kr/1000,kz/1000,kr/1000);
-        cm.position.y=0.012;                       // flange lands on the printed seat lip
-        body.add(cm); usedCAD=true;
-        /* solid core UNDER the CAD shell (v4 law: open decimated shells read like glass) */
-        const core=new THREE.Mesh(new THREE.CylinderGeometry(d.od/2*0.90,d.od*0.30,d.dp*0.80,24),
-          new THREE.MeshPhongMaterial({color:0x8f8d87,shininess:8}));
-        core.position.y=0.012+d.dp*0.40; body.add(core);
-        const coreMag=new THREE.Mesh(new THREE.CylinderGeometry(d.od*0.29,d.od*0.29,d.dp*0.22,24),
-          new THREE.MeshPhongMaterial({color:0x7b7a76,shininess:18}));
-        coreMag.position.y=0.012+d.dp*0.80+d.dp*0.10; body.add(coreMag);
-        const gk=new THREE.Mesh(new THREE.TorusGeometry(d.od/2*0.99,0.004,8,42),
-          new THREE.MeshPhongMaterial({color:0x2e2c29,shininess:5}));
-        gk.rotation.x=Math.PI/2; gk.position.y=0.012; body.add(gk);   // gasket under the flange
-      }
-      if(!usedCAD){
-        const fl=new THREE.Mesh(new THREE.CylinderGeometry(d.od/2,d.od/2,0.008,36),
-          new THREE.MeshPhongMaterial({color:0x8f8d87,shininess:16}));
-        fl.position.y=0.018; body.add(fl);
-        const bask=new THREE.Mesh(new THREE.CylinderGeometry(d.od/2*0.94,d.od*0.30,d.dp*0.62,24),
-          new THREE.MeshPhongMaterial({color:0x9c9a95,shininess:10}));
-        bask.position.y=0.018+d.dp*0.31; body.add(bask);
-        const mag=new THREE.Mesh(new THREE.CylinderGeometry(d.od*0.30,d.od*0.30,d.dp*0.30,24),
-          new THREE.MeshPhongMaterial({color:0x7b7a76,shininess:20}));
-        mag.position.y=0.018+d.dp*0.62+d.dp*0.15; body.add(mag);
-      }
+    /* driver body: CLEAN PARAMETRIC SILHOUETTE (his call: approximate the outer
+       shapes, not literal CAD). Smooth lathe from the preset's true dimensions. */
+    { const body=driverBody(d.od, d.dp, (d.kind==='mid'? MPRE[S.mPre] : WPRE[S.wPre])||{});
       body.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),n);
-      body.position.copy(c).add(n.clone().multiplyScalar(0.004)); body.userData.tag='driver'; body.traverse(o=>o.userData.tag='driver'); g.add(body);
+      body.position.copy(c).add(n.clone().multiplyScalar(0.004));
+      body.traverse(o=>o.userData.tag='driver'); g.add(body);
     }
   }
   /* CD behind apex */

@@ -18,8 +18,27 @@ function sePoint(a,b,n,phi){
   const z=b*Math.sign(s)*Math.pow(Math.abs(s),2/n);
   return [y,z];
 }
+/* TRUE PANEL ring for CLASSIC ANGULAR: rectangle + 45-deg corner chamfers - eight
+   FLAT segments (his call: straight panels, not a smoothed superellipse). The shape
+   slider maps to chamfer size: square end = small chamfer, round end = wide (octagon). */
+function panelRing(a,b,n,M){
+  const ch=Math.max(0.06, Math.min(0.42, (12-n)/12*0.42+0.06));   // chamfer fraction of the half-width
+  const ca=a*ch, cb=b*ch;
+  const V=[ [a,-b+cb],[a,b-cb],[a-ca,b],[-a+ca,b],[-a,b-cb],[-a,-b+cb],[-a+ca,-b],[a-ca,-b] ];
+  const segs=[]; let L=0;
+  for(let i=0;i<8;i++){ const p=V[i], q=V[(i+1)%8];
+    const l=Math.hypot(q[0]-p[0],q[1]-p[1]); segs.push(l); L+=l; }
+  const out=[]; let acc=0, i=0, used=0;
+  for(let k=0;k<M;k++){ const t=k/M*L;
+    while(used+segs[i]<t){ used+=segs[i]; i=(i+1)%8; }
+    const f=(t-used)/(segs[i]||1e-9), p=V[i], q=V[(i+1)%8];
+    out.push([p[0]+(q[0]-p[0])*f, p[1]+(q[1]-p[1])*f]);
+  }
+  return out;
+}
 /* perimeter-parameterized ring (uniform arc spacing matters for clean meshes) */
 function seRing(a,b,n,M){
+  if(typeof S!=='undefined'&&S&&S.style==='angular') return panelRing(a,b,n,M);
   const raw=[]; let L=0;
   for(let i=0;i<=M*4;i++){ raw.push(sePoint(a,b,n,i/(M*4)*2*Math.PI)); }
   const seg=[0]; for(let i=1;i<raw.length;i++){ L+=Math.hypot(raw[i][0]-raw[i-1][0],raw[i][1]-raw[i-1][1]); seg.push(L); }
