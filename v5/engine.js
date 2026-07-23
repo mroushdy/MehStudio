@@ -96,10 +96,15 @@ function profile(S){
        horn grows to host whatever coax is chosen - never the reverse. */
     const rCone=(S.odW||22)*CM/2;
     const rDish=rCone+0.012;                                   // mounting-plate flange past the frame
-    const rP=Math.min(Math.max((S.coaxRing||4.5)*CM, ht+0.02, 0.70*rCone), rCone*0.8);   // tap ring on the EXPOSED cone annulus (6FHX51 CAD: the HF horn fills the center to 0.6R)
+    /* HIS CORRECTION (2026-07-23, pins on build 512): the horn connects
+       DIRECTLY at the coax's own HF-horn mouth ring in the cone center - no
+       tube, no floating plate. The dish's BACK follows the driver cone with
+       an x-max gap (dishBack below); its FRONT is the first flare. */
+    const htC=Math.max(ht, 0.60*rCone);                        // 6FHX51 CAD: HF horn mouth = 0.60R
+    const rP=Math.min(Math.max((S.coaxRing||4.5)*CM, htC+0.012, 0.70*rCone), rCone*0.8); // tap ring on the EXPOSED cone annulus
     const thA=d2r(38);
-    const La=Math.max(0.01,(rDish-ht)/Math.tan(thA));
-    const xTap=Math.max(0.008,(rP-ht)/Math.tan(thA));          // station whose radius IS the tap ring
+    const La=Math.max(0.01,(rDish-htC)/Math.tan(thA));
+    const xTap=Math.max(0.006,(rP-htC)/Math.tan(thA));         // station whose radius IS the tap ring
     if(S.style==='angular'){
       /* REFERENCE D (Marwan's build photos, 2026-07-23): the ROUND printed dish
          (nOv:2) drops into a SQUARE straight-walled classic flare - single
@@ -107,21 +112,26 @@ function profile(S){
          bridge the dish rim to the square section. */
       const Da=Math.max(0.05,(hm-rDish)/Math.tan(th));
       const depth=La+Da, pts=[];
-      for(let i=0;i<=8;i++){ const x=La*i/8; pts.push({x, h:ht+Math.tan(thA)*x, nOv:2}); }
-      for(let j=1;j<=32;j++){ const x=La+Da*j/32; pts.push({x, h:rDish+Math.tan(th)*(x-La)}); }
-      return {pts, depth, rollR:0, mouthH:hm, xAdapter:La, xTap};
+      const vm=Math.max(hm*Math.tan(d2r(S.covV/2))/Math.tan(th), rDish*1.05);
+      for(let i=0;i<=8;i++){ const x=La*i/8;
+        const r=htC+Math.tan(thA)*x; pts.push({x, h:r, v:r, nOv:2}); }        // the dish is ROUND (his part)
+      for(let j=1;j<=32;j++){ const x=La+Da*j/32, t=j/32;
+        pts.push({x, h:rDish+Math.tan(th)*(x-La), v:rDish+(vm-rDish)*t}); }   // V flares per-plane from the round rim
+      return {pts, depth, rollR:0, mouthH:hm, xAdapter:La, xTap, rBore:htC};
     }
     const D2=Math.max(0.05,(hm-rDish)/Math.tan(th));
     const depth=La+D2, pts=[];
-    for(let i=0;i<=8;i++){ const x=La*i/8; pts.push({x, h:ht+Math.tan(thA)*x}); }
+    const vmS=Math.max(hm*Math.tan(d2r(S.covV/2))/Math.tan(th), rDish*1.05);
+    for(let i=0;i<=8;i++){ const x=La*i/8;
+      const r=htC+Math.tan(thA)*x; pts.push({x, h:r, v:r, nOv:2}); }          // ROUND dish (his part)
     for(let j=1;j<=40;j++){ const t=j/40, x=La+D2*t, s=t*t*(3-2*t);
-      pts.push({x, h:rDish+(hm-rDish)*(0.72*t+0.28*s)}); }
+      pts.push({x, h:rDish+(hm-rDish)*(0.72*t+0.28*s), v:rDish+(vmS-rDish)*(0.72*t+0.28*s)}); }
     const rollR=S.rollR*IN, M2=10;
     const hEnd=pts[pts.length-1].h, sl=(pts[pts.length-1].h-pts[pts.length-2].h)/(pts[pts.length-1].x-pts[pts.length-2].x);
     const a0=Math.atan(sl);
     for(let i=1;i<=M2;i++){ const a=a0+(Math.PI/2-a0)*(i/M2)*0.9;
       pts.push({x:depth+rollR*(Math.sin(a)-Math.sin(a0)), h:hEnd+rollR*((1-Math.cos(a))-(1-Math.cos(a0))), roll:true}); }
-    return {pts, depth, rollR, mouthH:hm, xAdapter:La, xTap};
+    return {pts, depth, rollR, mouthH:hm, xAdapter:La, xTap, rBore:htC};
   }
   if(S.style==='angular'){
     /* PIN #12 - THE CLASSIC SHAPE (Waslo Synergy Calc v5, Main Panels sheet):
@@ -180,11 +190,11 @@ function stations(S){
   return { form:'se', n:S.seN, style:S.style,
            pts:pr.pts.map(p=>({x:p.x, a:p.h, b:(p.v!==undefined)?p.v:p.h*ar, roll:p.roll,
              n:(p.nOv!==undefined)?p.nOv:morph(p.x)})),   // Reference D: the dish stays ROUND inside an angular horn
-           depth:pr.depth, rollR:pr.rollR, throat:S.throat*IN/2, ar, xBreak:pr.xBreak, slopeCos:pr.slopeCos, xAdapter:pr.xAdapter, xTap:pr.xTap };
+           depth:pr.depth, rollR:pr.rollR, throat:(pr.rBore!==undefined)?pr.rBore:S.throat*IN/2, ar, xBreak:pr.xBreak, slopeCos:pr.slopeCos, xAdapter:pr.xAdapter, xTap:pr.xTap };
 }
 function dimsAt(st,x){
   const P=st.pts;
-  if(x<=P[0].x) return {a:P[0].a,b:P[0].b};
+  if(x<=P[0].x) return {a:P[0].a,b:P[0].b,n:P[0].n};   // keep the per-station shape (the round dish start was evaluating square)
   for(let i=1;i<P.length;i++){ if(P[i].x>=x){ const f=(x-P[i-1].x)/((P[i].x-P[i-1].x)||1e-9);
     return {a:P[i-1].a+(P[i].a-P[i-1].a)*f, b:P[i-1].b+(P[i].b-P[i-1].b)*f,
             n:(P[i-1].n!==undefined)? P[i-1].n+(P[i].n-P[i-1].n)*f : undefined}; } }
@@ -518,8 +528,10 @@ function layout(S,st){
     const taps=[]; let rMax=0;
     for(let k=0;k<nT;k++){ const a2=(k+0.5)/nT*2*Math.PI;
       const p=surfPt(st,xT,a2); taps.push([a2,p]); rMax=Math.max(rMax,Math.hypot(p[1],p[2])); }
-    const Ls=Math.hypot(xT, rMax-S.throat*IN/2);              // WORST tap's slant along the adapter wall
-    const fxCo=Math.round((1/1.2)*C/(4*(Ls+S.cdDepth*IN)));   // coax XO 1.2x below the tap-path null (v4 law)
+    const Ls=Math.hypot(xT, rMax-(st.throat||S.throat*IN/2)); // WORST tap's slant along the dish face
+    /* the XO respects BOTH laws by construction: 1.2x under the tap-path null
+       AND the tap-ring diameter within lambda/4 (big cones bind on the ring) */
+    const fxCo=Math.round(Math.min((1/1.2)*C/(4*(Ls+S.cdDepth*IN)), 0.98*C/(8*rMax)));
     S.fxDerived={hi: fxCo, lo: fxCo};
     const sdC=S.sdC|| (S.sdW||150);
     const apC=sdC/Math.max(4,Math.min(8, 17/(2*Math.PI*fxCo*((S.xmC||S.xmW||4)/1000)) ))/nT;   // cm^2 per slot, velocity-clamped CR
@@ -643,11 +655,20 @@ function acoustics(S,L,st){
       const spread=2*rT, sLam=spread/(lam/4);
       add('COAX','Tap-ring diameter vs \u03bb/4',(spread*1000).toFixed(0)+' mm = '+sLam.toFixed(2)+'\u00d7\u03bb/4',
         sLam<=1.0, sLam<=1.2,'the cone slots across the plate must stay within \u03bb/4 at '+fx+' Hz');
-      const fNull=C/(4*(rT+S.cdDepth*IN));
+      const Ls9=Math.hypot(taps[0].x, rT-st.throat)+S.cdDepth*IN;   // SAME slant path the derived XO used
+      const fNull=C/(4*Ls9);
       add('COAX','\u03bb/4 reflection null vs crossover',Math.round(fNull)+' vs '+fx+' Hz',
         fNull>=1.19*fx, fNull>=fx,'derived XO builds the 1.2\u00d7 margin in');
       const ap=taps[0].slot?taps[0].slot.ap:0, vtc=(S.vtcC||60);
-      if(ap>0){ const lpt=(S.wallT||0.012)+0.85*Math.sqrt(ap*1e-4/Math.PI);
+      if(ap>0){ const rC9=(S.odW||22)*CM/2, od9=(S.odW||22)*CM;
+        /* local dish thickness at the ring: front(38 deg face) minus the
+           cone-following back (his correction) - the REAL Lpt, not wallT */
+        const rB9=Math.max(S.throat*IN/2,0.60*rC9);
+        const xF9=(rT-rB9)/Math.tan(d2r(38));
+        const cy9=od9*(0.03+0.07*Math.max(0,Math.min(1,(0.80*rC9-rT)/(0.20*rC9))));
+        const gap9=((S.xmC||S.xmW||4)/1000)+0.002;
+        const xB9=-0.004-(cy9-od9*0.03)+Math.min(gap9,cy9-od9*0.03);
+        const lpt=Math.max(S.wallT||0.012, xF9-xB9)+0.85*Math.sqrt(ap*1e-4/Math.PI);
         const fLP=C/(2*Math.PI)*Math.sqrt((taps.length*ap*1e-4)/((vtc*1e-6)*lpt));
         add('COAX','Chamber acoustic low-pass',Math.round(fLP)+' Hz',fLP>=1.2*fx,fLP>=fx,'coax front chamber + plate slots must clear the crossover'); }
       /* pin #22: honesty about the coax UNIT itself. The tap ring must sit OVER
@@ -761,9 +782,16 @@ function acoustics(S,L,st){
   }
   /* XO ceilings: CD reach (by exit size) and mid reach */
   if(S.fxDerived){
-    const cdReach=S.cdFloor||(S.td>=1.35?550:S.td>=0.95?900:1200);   // coax CDs (DCX464) reach ~300
     const top=(S.topo==='3way'?S.fxDerived.hi:S.fxDerived.lo);
-    if(top) add('XO','CD reaches the derived crossover',top+' vs '+cdReach+' Hz floor',top>=cdReach*0.9,top>=cdReach*0.75,'a '+S.td+'\u2033 exit CD wants to cross at or above its floor');
+    if(S.topo==='1way'&&!S.cdFloor){
+      /* one-unit coax (his correction): the unit's HF crossover floor is a
+         DATASHEET number we have not verified - say so, never invent it */
+      if(top) add('XO','Coax HF floor vs derived crossover',top+' Hz \u2014 floor unverified',
+        false, true, 'check the unit datasheet: its minimum crossover must sit at or under the derived XO; v5 refuses to guess');
+    } else {
+      const cdReach=S.cdFloor||(S.td>=1.35?550:S.td>=0.95?900:1200);   // coax CDs (DCX464) reach ~300
+      if(top) add('XO','CD reaches the derived crossover',top+' vs '+cdReach+' Hz floor',top>=cdReach*0.9,top>=cdReach*0.75,'a '+S.td+'\u2033 exit CD wants to cross at or above its floor');
+    }
   }
   return out;
 }
@@ -794,7 +822,7 @@ function evaluate(S){
     const a=L[i], b=L[j];
     const g=Math.hypot(a.center[0]-b.center[0],a.center[1]-b.center[1],a.center[2]-b.center[2])-(a.seatR+b.seatR);
     if(g<worst)worst=g; }
-  add('LAW','Seats clear each other',(worst*1000).toFixed(0)+' mm', worst>=0.006, worst>=0,'printed seats must not merge', true);
+  add('LAW','Seats clear each other',(worst*1000).toFixed(0)+' mm', worst>=0.006, worst>=0,'printed seats must not merge', S.topo!=='1way');   // the coax tap ring is driver-fixed - growth can't help
   add('LAW','Every ring fits inside the horn', L.missing?'NO':'yes', !L.missing, false,'drivers sit at the smallest station whose ring hosts them; if none exists the horn grows', true);
   if(S.fxDerived&&S.fxDerived.lo)
     add('XO','Derived crossover (from landed geometry)', (S.topo==='3way'? S.fxDerived.hi+' / ':'')+S.fxDerived.lo+' Hz',
@@ -974,12 +1002,24 @@ function dishMesh(S){
   const st=stations(S), L=layout(S,st);
   const tp=L.filter(d=>d.kind==='coaxtap');
   if(!tp.length) return null;
-  const th38=d2r(38), rB=S.throat*IN/2;
+  const th38=d2r(38);
   const rCone=(S.odW||22)*CM/2, rDish=rCone+0.012;
+  const od=(S.odW||22)*CM;
+  const rB=Math.max(S.throat*IN/2, 0.60*rCone);              // bore = the coax's HF-horn mouth ring (his correction)
   const rP=Math.hypot(tp[0].tap[1],tp[0].tap[2]);
   let rh=Math.max(0.004,(tp[0].slot&&tp[0].slot.sa)||0.008);
-  const N=tp.length, t=S.wallT||0.012, dxa=t/Math.sin(th38);
+  const N=tp.length, t=S.wallT||0.012;
   const xOf=r=>(r-rB)/Math.tan(th38);
+  /* HIS CORRECTION: the print's BACK takes the SHAPE OF THE DRIVER CONE with an
+     x-max gap - it nests directly on the driver, no tube, no floating plate.
+     Cone depths from the 6FHX51 CAD: 0.03od at the cone rim, 0.10od at the
+     HF-horn mouth ring. Beyond the cone rim the back is the flat flange seat. */
+  const gap=((S.xmC||S.xmW||4)/1000)+0.002;
+  const coneY=r=>{ const r0=0.60*rCone, r1=0.80*rCone;
+    const tq=Math.max(0,Math.min(1,(r1-r)/(r1-r0)));
+    return od*(0.03+0.07*tq); };
+  const dishBack=r=>{ if(r>=0.80*rCone) return -0.004;
+    return -0.004 - (coneY(r)-od*0.03) + Math.min(gap, coneY(r)-od*0.03); };
   const w0=Math.min(Math.max(rh*1.6,0.012),(rDish-rB)/2*0.6);
   const rIn=Math.max(rB+0.004,rP-w0), rOut=Math.min(rDish-0.004,rP+w0);
   const COLS=12, NA=N*COLS, NRi=5, NRo=5;
@@ -990,7 +1030,7 @@ function dishMesh(S){
   rh=Math.min(rh, halfBand*0.75, halfArc*0.6);
   const pos=[], tri=[];
   const V=(x,y,z)=>{ pos.push([x,y,z]); return pos.length-1; };
-  const F=(r,ph,back)=>V(xOf(r)-(back?dxa:0), r*Math.cos(ph), r*Math.sin(ph));
+  const F=(r,ph,back)=>V(back? Math.min(dishBack(r), xOf(r)-t*0.35) : xOf(r), r*Math.cos(ph), r*Math.sin(ph));
   const quad=(a,b,c,d,flip)=>{ if(flip) tri.push([a,b,c],[b,d,c]); else tri.push([a,c,b],[b,c,d]); };
   const ring=(rr,back)=>{ const out=[]; for(let j=0;j<NA;j++) out.push(F(rr,j/NA*2*Math.PI,back)); return out; };
   for(const back of [false,true]){
@@ -1063,7 +1103,11 @@ function tapCutters(S){
                         c0[1]+ua[1]*o[0]+va[1]*o[1]+n[1]*z,
                         c0[2]+ua[2]*o[0]+va[2]*o[1]+n[2]*z ];
       const NB=outline.length;
-      const bot=outline.map(o=>P(at(o,z0))), top=outline.map(o=>P(at(o,z1)));
+      /* 45-deg FRUSTUM on the horn side (v1.4 + Waslo canon: kills chuffing,
+         halves effective Lpt) - the cutter widens by wallT/2 toward the horn */
+      const fr=(S.wallT||0.012)/2;
+      const grow=o=>{ const l=Math.hypot(o[0],o[1])||1e-9; return [o[0]*(1+fr/l), o[1]*(1+fr/l)]; };
+      const bot=outline.map(o=>P(at(grow(o),z0))), top=outline.map(o=>P(at(o,z1)));
       for(let i=0;i<NB;i++){ const j=(i+1)%NB;
         tri.push([bot[i],top[i],bot[j]],[bot[j],top[i],top[j]]); }
       const cB=P(at([0,0],z0)), cT=P(at([0,0],z1));
@@ -1139,16 +1183,22 @@ const BUILDS=(()=>{
   const CXU={sdC:150,vtcC:60,xmC:4,coaxTaps:6,odC:0.22,dpC:0.11};
   return {
    '1way':[
-    {key:'refd',   name:'Reference D mini — square classic · BMS 5″ coax · 70°×70°',
-     s:{...B,...CDX,...CXU,...C5, topo:'1way',style:'angular',seN:12,covH:70,covV:70,mouthW:14,nW:2,nM:4,
-        coaxTaps:4, sdC:75, vtcC:30, xmC:3.5}},   // the coax's OWN cone feeds the taps
-    {key:'fhx6',   name:'B&C 6FHX51 — square classic · true-CAD coax · 70°×70°',
-     s:{...B,...CDX,...CXU,...C65, topo:'1way',style:'angular',seN:12,covH:70,covV:70,mouthW:16,nW:2,nM:4,
-        coaxTaps:4, sdC:137, vtcC:40, xmC:4}},
-    {key:'coax90', name:'point source — 90°×60° smooth · coax dish',
-     s:{...B,...CDX,...CXU,...W12, topo:'1way',seN:6, covH:90,covV:60,mouthW:24,nW:2,nM:4}},
-    {key:'coax60', name:'round — 60°×60° · DCX-class coax dish',
-     s:{...B,...CDX,...CXU,...W12, topo:'1way',seN:2, covH:60,covV:60,mouthW:24,nW:2,nM:4}},
+    {key:'refd',   name:'Reference D mini — square classic · 5″ coax unit · 70°×70°', expectWarns:1,
+     s:{...B,...M4, topo:'1way',style:'angular',seN:12,covH:70,covV:70,mouthW:14,nW:2,nM:4,coaxTaps:4,
+        cdSel:'unit',td:1.0,throat:1.0,cdFloor:0,cdDepth:2.91,odC:0.148,dpC:0.08,
+        wPre:'cx5',odW:14.8,dpW:8,sdW:75,vtcW:30,xmW:3.5, sdC:75,vtcC:30,xmC:3.5}},
+    {key:'fhx6',   name:'B&C 6FHX51 — square classic · true-CAD coax unit · 70°×70°', expectWarns:1,
+     s:{...B,...M4, topo:'1way',style:'angular',seN:12,covH:70,covV:70,mouthW:17,nW:2,nM:4,coaxTaps:4,
+        cdSel:'unit',td:1.0,throat:1.0,cdFloor:0,cdDepth:3.29,odC:0.167,dpC:0.12,
+        wPre:'cx65',odW:16.7,dpW:12,sdW:137,vtcW:40,xmW:4, sdC:137,vtcC:40,xmC:4}},
+    {key:'coax90', name:'point source — 90°×60° smooth · 12″ coax unit', expectWarns:1,
+     s:{...B,...M4, topo:'1way',seN:6, covH:90,covV:60,mouthW:30,nW:2,nM:4,coaxTaps:6,
+        cdSel:'unit',td:1.0,throat:1.0,cdFloor:0,cdDepth:6.30,odC:0.32,dpC:0.15,
+        wPre:'cx12',odW:32,dpW:15,sdW:530,vtcW:150,xmW:7, sdC:530,vtcC:150,xmC:7}},
+    {key:'coax60', name:'round — 60°×60° · 12″ coax unit', expectWarns:1,
+     s:{...B,...M4, topo:'1way',seN:2, covH:60,covV:60,mouthW:30,nW:2,nM:4,coaxTaps:6,
+        cdSel:'unit',td:1.0,throat:1.0,cdFloor:0,cdDepth:6.30,odC:0.32,dpC:0.15,
+        wPre:'cx12',odW:32,dpW:15,sdW:530,vtcW:150,xmW:7, sdC:530,vtcC:150,xmC:7}},
    ],
    '2way':[
     {key:'jmod',      name:'JMOD-class — 90°×60° · 2×12″ on the DCX coax (JW Sound manual)',

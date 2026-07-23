@@ -37,6 +37,14 @@ select{width:100%;font-family:var(--mono);font-size:11px;background:var(--paper)
 #rows{position:absolute;right:12px;top:12px;z-index:3;background:#FFFFFFee;padding:8px 12px;border:1px solid var(--gridmaj);max-width:340px;max-height:72%;overflow-y:auto;}
 #rows div{font-size:9.5px;margin:2.5px 0;letter-spacing:.02em;}
 .ok{color:var(--ok)}.warn{color:var(--warn)}.fail{color:var(--bad)}
+/* narrow widths: the law rows move BELOW the horn instead of covering it (his call) */
+@media (max-width:1100px){
+  #v3d{position:static;height:400px;}
+  #v3dwrap{min-height:0;}
+  #rows{position:static;max-width:none;max-height:none;border-left:none;border-right:none;border-top:1px solid var(--gridmaj);}
+  #dims{position:static;text-align:right;padding:4px 14px 0;}
+  #note{position:static;padding:0 14px 6px;}
+}
 </style></head><body>
 <div id="app"><div class="frame">
 <header>
@@ -71,9 +79,9 @@ select{width:100%;font-family:var(--mono);font-size:11px;background:var(--paper)
   <label>PRINT WALL [mm] <span class="val" id="vWall"></span></label>
   <input type="range" id="wallmm" min="6" max="25" step="1" value="12">
   <div class="sec">DRIVERS</div>
-  <label>COMPRESSION DRIVER</label>
-  <select id="cdSel"><option value="de500">1&Prime; CD (to ~900 Hz)</option><option value="de900">1.4&Prime; CD (to ~550 Hz)</option><option value="dcx464" selected>1.4&Prime; COAX DCX464 (to ~300 Hz)</option></select>
-  <label>WOOFER / LOW-MID</label>
+  <div id="cdCtl"><label>COMPRESSION DRIVER</label>
+  <select id="cdSel"><option value="de500">1&Prime; CD (to ~900 Hz)</option><option value="de900">1.4&Prime; CD (to ~550 Hz)</option><option value="dcx464" selected>1.4&Prime; COAX DCX464 (to ~300 Hz)</option></select></div>
+  <label id="wLbl">WOOFER / LOW-MID</label>
   <select id="wPre"></select>
   <label>WOOFER / LOW-MID Ø [cm] <span class="val" id="vOdW"></span></label>
   <input type="range" id="odW" min="8" max="46" step="1" value="14">
@@ -137,7 +145,7 @@ select{width:100%;font-family:var(--mono);font-size:11px;background:var(--paper)
 <script>
 /*__ENGINE__*/
 /*__CAD__*/
-window.MEH_BUILD=513;
+window.MEH_BUILD=514;
 document.getElementById('bno').textContent=MEH_BUILD;
 "use strict";
 /* ---------------- driver presets (v4 datasheets; mesh = true CAD, meshApprox = nearest body) ---------------- */
@@ -159,6 +167,16 @@ const MPRE={
   m4:{name:'4\u2033 mid', od:10.3, dp:6.5, sd:50, vtc:40, xm:3, meshApprox:'BC_8MDN51'},
   bc5:{name:'B&C 5\u2033 sealed', od:15.7, dp:8.2, sd:90, vtc:55, xm:4, meshApprox:'BC_8MDN51'},
   mdn8m:{name:'B&C 8MDN51 (true CAD)', od:22.0, dp:10.5, sd:232, vtc:85, xm:6, mesh:'BC_8MDN51'}};
+/* 1-WAY COAX UNITS (his correction: a coax IS one unit - cone + HF together).
+   Numerics are class-representative (6.5in measured from the B&C 6FHX51 CAD);
+   hfFloor null = datasheet crossover floor UNVERIFIED - the law row says so. */
+const CXPRE={
+  cx5:{name:'5″ coax unit (BMS CN-class)', od:14.8, dp:8,  sd:75,  vtc:30,  xm:3.5},
+  cx65:{name:'6.5″ coax unit (B&C 6FHX51, true CAD)', od:16.7, dp:12, sd:137, vtc:40, xm:4},
+  cx8:{name:'8″ coax unit (FCX-class)', od:21.0, dp:13, sd:220, vtc:60, xm:5},
+  cx10:{name:'10″ coax unit (FCX-class)', od:26.0, dp:14, sd:330, vtc:90, xm:6},
+  cx12:{name:'12″ coax unit (FHX-class)', od:32.0, dp:15, sd:530, vtc:150, xm:7},
+  cx15:{name:'15″ coax unit (FCX-class)', od:39.0, dp:17, sd:855, vtc:250, xm:8}};
 const CDP={de500:{td:1.0,floor:900,dep:1.2}, de900:{td:1.4,floor:550,dep:1.7}, dcx464:{td:1.4,floor:300,dep:2.4}};
 /* ---------------- state ---------------- */
 const S={topo:'2way', style:'smooth', wPre:'w65', mPre:'m4', cdSel:'dcx464', wallT:0.012, seN:6, covH:90, covV:60, mouthW:24, mouthCap:64, throat:1.4, rollR:2,
@@ -459,10 +477,22 @@ function rebuild(){
       lgg.setAttribute('position',new THREE.Float32BufferAttribute(sp2,3));
       const seam=new THREE.Line(lgg,new THREE.LineBasicMaterial({color:0x6b6963}));
       seam.userData.tag='apex'; g.add(seam); }
-    /* central snout tube: the CD bore through the dish center */
-    { const rB=S.td*MEH2.IN/2+0.003;
-      const tube=new THREE.Mesh(new THREE.CylinderGeometry(rB,rB+0.002,0.035,32,1,true),dishM);
-      tube.rotation.z=Math.PI/2; tube.position.x=-0.014; tube.userData.tag='apex'; g.add(tube); }
+    /* HIS CORRECTION: NO tube, NO floating plate - the dish BACK follows the
+       driver cone with an x-max gap and the part nests directly on the unit */
+    { const rCone=(S.odW||22)*0.01/2, od=(S.odW||22)*0.01;
+      const rB2=Math.max(S.throat*MEH2.IN/2,0.60*rCone), rD2=rCone+0.012;
+      const gap=((S.xmC||S.xmW||4)/1000)+0.002;
+      const coneY=r=>{ const t=Math.max(0,Math.min(1,(0.80*rCone-r)/(0.20*rCone))); return od*(0.03+0.07*t); };
+      const back=r=> (r>=0.80*rCone)? -0.004 : -0.004-(coneY(r)-od*0.03)+Math.min(gap,coneY(r)-od*0.03);
+      const NR=48,K=10, pos=[],idx=[];
+      for(let k=0;k<=K;k++){ const r=rB2+(rD2-rB2)*k/K;
+        for(let m=0;m<NR;m++){ const a2=m/NR*2*Math.PI; pos.push(back(r), r*Math.sin(a2), r*Math.cos(a2)); } }
+      for(let k=0;k<K;k++) for(let m=0;m<NR;m++){
+        const a=k*NR+m,b2=k*NR+(m+1)%NR,c=(k+1)*NR+m,d2=(k+1)*NR+(m+1)%NR; idx.push(a,b2,c, b2,d2,c); }
+      const bgm=new THREE.BufferGeometry();
+      bgm.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));
+      bgm.setIndex(idx); bgm.computeVertexNormals();
+      const bmesh=new THREE.Mesh(bgm,dishM.clone()); bmesh.userData.tag='apex'; g.add(bmesh); }
     /* corner wings (angular): flat vanes from the dish rim to the square corners */
     if(S.style==='angular'){
       const rR=MEH2.dimsAt(st,st.xAdapter).a;
@@ -725,12 +755,27 @@ function applyBuild(key){ const b=buildTbl().find(x=>x.key===key); if(!b) return
 /* pin #22: a 1-way IS a coax - the cone feeds the plate slots. A plain CD has
    no cone, so the topology forces the coax unit and disables the others. */
 function coax1way(){
-  const sel=document.getElementById('cdSel'); if(!sel) return;
-  for(const o of sel.options) o.disabled=(S.topo==='1way'&&o.value!=='dcx464');
-  if(S.topo==='1way'&&S.cdSel!=='dcx464'){
-    S.cdSel='dcx464'; const P=CDP.dcx464;
+  const cdc=document.getElementById('cdCtl'), lbl=document.getElementById('wLbl');
+  if(!cdc||!lbl) return;
+  cdc.style.display=(S.topo==='1way')?'none':'';
+  lbl.textContent=(S.topo==='1way')?'COAX DRIVER — ONE UNIT (cone + HF)':'WOOFER / LOW-MID';
+  const el=document.getElementById('wPre');
+  if(S.topo==='1way'){
+    if(!CXPRE[S.wPre]){ S.wPre='cx65'; }
+    el.innerHTML=Object.keys(CXPRE).map(k=>'<option value="'+k+'">'+CXPRE[k].name+'</option>').join('')+'<option value="custom">custom (sliders)</option>';
+    el.value=S.wPre;
+    const P=CXPRE[S.wPre];
+    if(P){ S.odW=P.od; S.dpW=P.dp; S.sdW=P.sd; S.vtcW=P.vtc; S.xmW=P.xm;
+      S.sdC=P.sd; S.vtcC=P.vtc; S.xmC=P.xm; }
+    /* the HF section IS the unit's own: 1in-class bore, diaphragm ~0.5·od behind
+       the horn-mouth ring (6FHX51 CAD), floor UNVERIFIED until datasheets land */
+    S.td=1.0; S.throat=1.0; S.cdFloor=0; S.cdDepth=+(0.5*S.odW/2.54).toFixed(2);
+  } else {
+    el.innerHTML=Object.keys(WPRE).map(k=>'<option value="'+k+'">'+WPRE[k].name+'</option>').join('')+'<option value="custom">custom (sliders)</option>';
+    if(!WPRE[S.wPre]) S.wPre='w65';
+    el.value=S.wPre;
+    const P=CDP[S.cdSel||'dcx464'];
     S.td=P.td; S.throat=P.td; S.cdFloor=P.floor; S.cdDepth=P.dep;
-    sel.value='dcx464';
   }
 }
 function wire(){
@@ -763,9 +808,11 @@ function wire(){
   const fillPre=(id,tbl,cur)=>{ const el=document.getElementById(id);
     el.innerHTML=Object.keys(tbl).map(k=>'<option value="'+k+'">'+tbl[k].name+'</option>').join('')+'<option value="custom">custom (sliders)</option>';
     el.value=cur; };
-  fillPre('wPre',WPRE,S.wPre); fillPre('mPre',MPRE,S.mPre);
+  fillPre('wPre',(S.topo==='1way'?CXPRE:WPRE),S.wPre); fillPre('mPre',MPRE,S.mPre);   // 1way lists ONE-UNIT coaxes
   document.getElementById('wPre').onchange=e=>{ S.wPre=e.target.value;
-    const P=WPRE[S.wPre]; if(P){ S.odW=P.od; S.dpW=P.dp; S.sdW=P.sd; S.vtcW=P.vtc; S.xmW=P.xm; document.getElementById('odW').value=S.odW; }
+    const P=(S.topo==='1way'?CXPRE:WPRE)[S.wPre];
+    if(P){ S.odW=P.od; S.dpW=P.dp; S.sdW=P.sd; S.vtcW=P.vtc; S.xmW=P.xm; document.getElementById('odW').value=S.odW;
+      if(S.topo==='1way'){ S.sdC=P.sd; S.vtcC=P.vtc; S.xmC=P.xm; S.cdDepth=+(0.5*S.odW/2.54).toFixed(2); } }
     save(); rebuild(); };
   document.getElementById('mPre').onchange=e=>{ S.mPre=e.target.value;
     const P=MPRE[S.mPre]; if(P){ S.odM=P.od; S.dpM=P.dp; S.sdM=P.sd; S.vtcM=P.vtc; S.xmM=P.xm; document.getElementById('odM').value=S.odM; }
@@ -778,7 +825,7 @@ function wire(){
   document.getElementById('cdSel').value=S.cdSel||'dcx464';
   document.getElementById('cdSel').onchange=e=>{ S.cdSel=e.target.value; const P=CDP[S.cdSel];
     S.td=P.td; S.throat=P.td; S.cdFloor=P.floor; S.cdDepth=P.dep; save(); rebuild(); };
-  { const P=CDP[S.cdSel||'dcx464']; S.td=P.td; S.throat=P.td; S.cdFloor=P.floor; S.cdDepth=P.dep; }
+  if(S.topo!=='1way'){ const P=CDP[S.cdSel||'dcx464']||CDP.dcx464; S.td=P.td; S.throat=P.td; S.cdFloor=P.floor; S.cdDepth=P.dep; }   // 1way runs on the UNIT's own HF
   document.getElementById('bXray').onclick=()=>{ V3D.xray=!V3D.xray; rebuild(); };
   document.getElementById('bStl').onclick=()=>{           // queue A: shell solid + (1way) the dish insert part
     const r=window.__solved||MEH2.solve(S);

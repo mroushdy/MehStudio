@@ -257,17 +257,18 @@ for(const S of lattice){
   ck(sh.includes('id="bStl"'), 'export button missing (queue A)');
   /* M8: preset driver/CD numerics must mirror the shell's datasheet tables */
   { const grab=(re)=>{ const m=sh.match(re); return m? new Function('return '+m[1])() : null; };
-    const shW=grab(/const WPRE=([\s\S]*?);\nconst MPRE/), shM=grab(/const MPRE=([\s\S]*?);\nconst CDP/),
-          shC=grab(/const CDP=(\{.*?\});/);
-    ck(!!shW&&!!shM&&!!shC, 'could not read shell driver tables for the preset cross-check');
-    if(shW&&shM&&shC) for(const topo of Object.keys(MEH2.BUILDS)) for(const b of MEH2.BUILDS[topo]){
+    const shW=grab(/const WPRE=([\s\S]*?);\nconst MPRE/), shM=grab(/const MPRE=([\s\S]*?);\n\/\* 1-WAY COAX/),
+          shX=grab(/const CXPRE=([\s\S]*?);\nconst CDP/), shC=grab(/const CDP=(\{.*?\});/);
+    ck(!!shW&&!!shM&&!!shX&&!!shC, 'could not read shell driver tables for the preset cross-check');
+    if(shW&&shM&&shX&&shC) for(const topo of Object.keys(MEH2.BUILDS)) for(const b of MEH2.BUILDS[topo]){
       const s=b.s, tag='[build '+topo+'/'+b.key+']';
-      if(s.wPre){ const P=shW[s.wPre];
-        ck(!!P&&P.od===s.odW&&P.dp===s.dpW&&P.sd===s.sdW&&P.vtc===s.vtcW&&P.xm===s.xmW, tag+' woofer numerics drift from shell WPRE.'+s.wPre); }
+      if(s.wPre){ const P=(topo==='1way'? shX : shW)[s.wPre];
+        ck(!!P&&P.od===s.odW&&P.dp===s.dpW&&P.sd===s.sdW&&P.vtc===s.vtcW&&P.xm===s.xmW, tag+' driver numerics drift from the shell table .'+s.wPre); }
       if(s.mPre){ const P=shM[s.mPre];
         ck(!!P&&P.od===s.odM&&P.dp===s.dpM&&P.sd===s.sdM&&P.vtc===s.vtcM&&P.xm===s.xmM, tag+' mid numerics drift from shell MPRE.'+s.mPre); }
-      if(s.cdSel){ const P=shC[s.cdSel];
+      if(s.cdSel&&s.cdSel!=='unit'){ const P=shC[s.cdSel];
         ck(!!P&&P.td===s.td&&P.floor===s.cdFloor&&P.dep===s.cdDepth, tag+' CD numerics drift from shell CDP.'+s.cdSel); }
+      else if(s.cdSel==='unit') ck(s.cdFloor===0&&s.td===1.0, tag+' one-unit coax must carry the unverified floor + 1in-class bore');
     }
   }
   ck(/BUGPINS/.test(sh), 'BUGPINS module missing');
