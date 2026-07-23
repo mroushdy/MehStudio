@@ -105,8 +105,8 @@ M6. BAND ARCHITECTURE [LANDED build 509: SUB CROSSOVER slider (60-120 Hz) - the
 M7. LAYOUT DIALECTS [CORNER BOARDS LANDED build 507: placeW='chamfer' puts the
     WOOFERS on the 45° chamfer boards (batch-2 SH96 canon correction) and
     forces mids to the apex ring; gate lattice sweeps it (408 states), matrix
-    row asserted, honest SH96 refusal case pinned (strict mid tier - see
-    placement_matrix.md for the canon question awaiting Marwan)] [PLACEMENT
+    row asserted. RULING B landed build 511; CORNER BOARDS v2 (build 515) =
+    real diagonal shelves sized to the woofer, slots along the board] [PLACEMENT
     MATRIX LANDED - docs/placement_matrix.md is
     LAW, gate-asserted: 2 woofers -> the long-axis Danley line (pin #14); mids
     perpendicular (2) / square DIAG diamond (4; chamfer boards on angular =

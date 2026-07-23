@@ -1502,7 +1502,7 @@ return {C,IN,CM, sePoint,seRing, profile, stations, dimsAt, surfPt, surfN, layou
 if(typeof module!=='undefined') module.exports=MEH2;
 
 /* parametric */
-window.MEH_BUILD=515;
+window.MEH_BUILD=516;
 document.getElementById('bno').textContent=MEH_BUILD;
 "use strict";
 /* ---------------- driver presets (v4 datasheets; mesh = true CAD, meshApprox = nearest body) ---------------- */
@@ -2283,13 +2283,9 @@ window.BUGPINS=(function(){
   const saveP=()=>{ try{ localStorage.setItem(KEY,JSON.stringify(pins)); }catch(e){} };
   let grp=null, prov=null;
   const redraw=()=>{ if(typeof V3D==='undefined'||!V3D.scene) return;
-    if(grp)V3D.scene.remove(grp);
-    grp=new THREE.Group(); grp.userData.tag='bugpin';
-    for(const p of pins){ if(p.done) continue;
-      const m=new THREE.Mesh(new THREE.SphereGeometry(0.012,12,10),
-        new THREE.MeshBasicMaterial({color:0xFF2D00,depthTest:false}));
-      m.renderOrder=999; m.position.set(p.p[0],p.p[2],p.p[1]); m.userData.tag='bugpin'; grp.add(m); }
-    V3D.scene.add(grp); render3d(); };
+    /* his call (2026-07-23): the red dot lives only until the report is SAVED -
+       the pin data persists for the agent, the marker does not linger */
+    if(grp){ V3D.scene.remove(grp); grp=null; render3d(); } };
   const clearProv=()=>{ if(prov){ V3D.scene.remove(prov); prov=null; render3d(); } };
   const drop=(e)=>{
     const cv=V3D.renderer.domElement, r=cv.getBoundingClientRect();
