@@ -64,3 +64,15 @@ Two reference parts define the canon:
    slots inset within the rounded outer flare - log as a future form option.
 5. Printed diamond pods (black cluster + ADDIT close-up): the flower island's
    exterior - drivers in angled printed pods on a hub, CD snout central.
+
+## Reference D — Marwan's printed 1-way coax (build photo, 2026-07-23)
+Photo: reference/build_photos (coax dish on the printer bed). Corrections to v5's 1way:
+- The HORN is a square straight-walled classic section; the round-to-square
+  transition is a SEPARATE printed ADAPTER DISH dropped into it (stepped outer
+  flange seats on the horn; corner WINGS bridge dish-to-square and mount it).
+- The cone taps are PLAIN ROUND HOLES through the DISH FACE (2-4 of them),
+  not slots on the horn wall. The dish face IS the first flare surface.
+- Central CD bore is a short cylinder tube through the dish center.
+- v5 to-do (queued in M5): 1way part = dish insert (flange + bore tube + round
+  tap holes + wings) sitting in a square angular first flare; tap-hole area
+  still velocity-derived; XO from the dish-face slant path (unchanged law).
