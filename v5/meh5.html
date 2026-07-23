@@ -77,6 +77,13 @@ select{width:100%;font-family:var(--mono);font-size:11px;background:var(--paper)
   <input type="range" id="odW" min="8" max="46" step="1" value="14">
   <label>WOOFER COUNT <span class="val" id="vNW"></span></label>
   <input type="range" id="nW" min="2" max="8" step="1" value="6">
+  <label>WOOFER PLACEMENT</label>
+  <select id="placeW">
+    <option value="auto" selected>auto — smart (coverage-driven)</option>
+    <option value="ring">ring around the horn</option>
+    <option value="pairsH">rows on top + bottom walls</option>
+    <option value="pairsV">rows on the side walls</option>
+  </select>
   <div id="midCtl" style="display:none">
     <label>MID</label>
     <select id="mPre"></select>
@@ -306,9 +313,10 @@ function layout(S,st){
   /* DIALECT BY COVERAGE (pin #1): wide format -> woofer PAIRS on top/bottom walls
      (Danley canon); tall -> side pairs; near-square/round -> ring. */
   const ratio=Math.tan(d2r(S.covH/2))/Math.tan(d2r(S.covV/2));
-  const modeW=(S.topo!=='1way' && ((S.nW|0)||2)>=2 && ratio>=1.25)? 'pairsH'
-            : (S.topo!=='1way' && ((S.nW|0)||2)>=2 && ratio<=0.8)? 'pairsV' : 'ring';
-  S.dialectW=modeW;
+  const auto=(S.topo!=='1way' && ((S.nW|0)||2)>=2 && ratio>=1.25)? 'pairsH'
+           : (S.topo!=='1way' && ((S.nW|0)||2)>=2 && ratio<=0.8)? 'pairsV' : 'ring';
+  const modeW=(S.placeW&&S.placeW!=='auto')? S.placeW : auto;    // pin #10: explicit options + smart default
+  S.dialectW=modeW+(S.placeW&&S.placeW!=='auto'?'':' (auto)');
   const xM0=xForSeats(st,(S.nM|0)||4,seatM,0.012,'ring',0);
   const xW0=xForSeats(st,(S.nW|0)||2,seatW,(S.topo==='3way'&&xM0!=null)?(xM0+seatM+seatW+0.008):0.02,modeW,offW);
   const xM=xM0, xW=xW0;
@@ -831,6 +839,8 @@ function wire(){
     S.td=P.td; S.throat=P.td; S.cdFloor=P.floor; S.cdDepth=P.dep; save(); rebuild(); };
   { const P=CDP[S.cdSel||'de900']; S.td=P.td; S.throat=P.td; S.cdFloor=P.floor; S.cdDepth=P.dep; }
   document.getElementById('bXray').onclick=()=>{ V3D.xray=!V3D.xray; rebuild(); };
+  { const el=document.getElementById('placeW'); el.value=S.placeW||'auto';
+    el.onchange=()=>{ S.placeW=el.value; save(); rebuild(); }; }
 }
 /* ---------------- bug pins (proven v3 module; bare-scope safe) ---------------- */
 window.BUGPINS=(function(){

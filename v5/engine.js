@@ -201,9 +201,10 @@ function layout(S,st){
   /* DIALECT BY COVERAGE (pin #1): wide format -> woofer PAIRS on top/bottom walls
      (Danley canon); tall -> side pairs; near-square/round -> ring. */
   const ratio=Math.tan(d2r(S.covH/2))/Math.tan(d2r(S.covV/2));
-  const modeW=(S.topo!=='1way' && ((S.nW|0)||2)>=2 && ratio>=1.25)? 'pairsH'
-            : (S.topo!=='1way' && ((S.nW|0)||2)>=2 && ratio<=0.8)? 'pairsV' : 'ring';
-  S.dialectW=modeW;
+  const auto=(S.topo!=='1way' && ((S.nW|0)||2)>=2 && ratio>=1.25)? 'pairsH'
+           : (S.topo!=='1way' && ((S.nW|0)||2)>=2 && ratio<=0.8)? 'pairsV' : 'ring';
+  const modeW=(S.placeW&&S.placeW!=='auto')? S.placeW : auto;    // pin #10: explicit options + smart default
+  S.dialectW=modeW+(S.placeW&&S.placeW!=='auto'?'':' (auto)');
   const xM0=xForSeats(st,(S.nM|0)||4,seatM,0.012,'ring',0);
   const xW0=xForSeats(st,(S.nW|0)||2,seatW,(S.topo==='3way'&&xM0!=null)?(xM0+seatM+seatW+0.008):0.02,modeW,offW);
   const xM=xM0, xW=xW0;
