@@ -111,8 +111,8 @@ function ringSeats(st,x,n,K,off){
   return out;
 }
 function xForRing(st,n,seatR,xMin,off){
-  const K=n*48;
-  for(let x=xMin;x<=st.depth;x+=st.depth/128){
+  const K=n*48, xMax=st.depth*0.84;   // seats stay OFF the mouth-roll curvature (his v5 rim-clip observation)
+  for(let x=xMin;x<=xMax;x+=st.depth/128){
     const seats=ringSeats(st,x,n,K,off);
     let ok=true;
     for(let k=0;k<n;k++){ const a2=seats[k], b2=seats[(k+1)%n];

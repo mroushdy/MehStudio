@@ -1,31 +1,26 @@
 # MEH STUDIO — STANDING QUEUE (versioned; update on every landed item)
-Last updated: 2026-07-22, build 77 deployed.
+Last updated: 2026-07-23. v4 frozen at build 83 (reference). ALL WORK IS v5 NOW.
 
-## NOW: AUTOPILOT (docs/autopilot_plan.md — Marwan's directive, takes priority)
-- P0: red-bijection oracle · red-pixel detector · corpus entry #1 (his rect-64" red
-  screenshot) root-caused and fixed · queue saved (this file)
-- P1: harness daemon + real-UI driver + settle hooks (look.js LANDED - the coding eyes: beauty + false-color provenance + section + focus in one composite) · provenance tags · nameability census
-- P2: state lattice (pairwise + boundaries) · containment/overlap/symmetry/region oracles
-- P3: occlusion probe · reference-likeness specs (7 families) · oracle mutation tests
-- P4: agent loop as standard dev cycle · deploy gates = battery+corpus+lattice
+## V5 COMPLETION QUEUE (print-only rebuild — Marwan's mandate)
+1. [DONE] Form engine: ONE superellipse(2..12) family, ATH profile + mouth roll-back
+2. [DONE] Geometry-first XO: rings placed where they fit, crossover derived
+3. [DONE] Topology front door (1way coax / 2way / 3way) + live law rows + bug pins native
+4. [DONE] Full canonical matrix solves (8/8 incl. v4-impossible square 2way, SH96 4x15+6mid)
+5. [DONE] Seats clamped off the mouth-roll curvature
+6. REAL driver bodies: migrate the 10 CAD meshes + meshApprox from v4 (drivers must look real)
+7. Driver PRESET library from v4 datasheets (replaces raw diameter sliders)
+8. 1-way coax apex insert, full Reference-C part: printed flare + tap ring + CD bore + seat
+9. Acoustic physics rows carried from v4: port area/velocity (17 m/s), CR bands, Vtc,
+   chamber LP, path-length table, Hornresp ME2 export
+10. True printed part geometry: wall thickness, seat-with-slot as one solid, chamber
+    housings for bandpass, conformal outer surface
+11. STL/3MF EXPORT — the drawn part IS the printable part (the point of print-only)
+12. Superformula unique-mouth extension of the shape slider (his original ask)
+13. v5 oracle battery: INSPECT laws rebuilt on the new scene + look.js adapted +
+    lattice sweep + acceptance tests (pins #4 taps-under-drivers, #10 port-count
+    never breaks geometry, #11 mids ring not line)
+14. Deploy ritual for v5 (gates + goldens + auto-reload his tab on every push)
 
-## FEATURE QUEUE (after / interleaved with Autopilot phases)
-1. 6-mid apex ring placement (SH96: 4 diagonal + 2 horizontal mids around the throat plate)
-2. Printed-mount rebuild remainder: apex unit (Reference B) · remote bandpass CHAMBER
-   HOUSING (knuckle funnels become honest printed chambers) · coax flare (Reference C)
-   · STL/OpenSCAD export (drawn part == printable part)
-3. Foam-insert tap option (his close-up; render + honest resistive-damping note)
-4. Lw deep-tap walk (flush 15" corner mounts; w15 currently legal via pocket dialect)
-5. Flower 2-way island (arda hub: CD + 6 small woofers radial on a printed manifold)
-6. v2 front door: topology (1-way coax / 2-way / 3-way) x form (rect / ATH superellipse
-   + Mother mouth roll-back / superformula uniques) x construction (wood / printed);
-   islands become presets; clean-pyramid rect default lands here
-7. Two-stage waveguide dialect (rect inner waveguide inset in rounded outer flare)
-
-## RECENTLY LANDED (context for any fresh session)
-- b77 round-is-round (mid-tap slivers dead; T3 circle cap 1.3) · b76 conformal lands ·
-  b75 dual chamfer dialect (flush SH96 vs F3 pocket, chosen by chord) + F2 fixture law
-  + cabinet sides + hardware-sized baffle · b72 SH96 canon correction (corner woofers,
-  throat mids, cross-kind ring law) · b71 rect1f clean pyramid · b70 15" preset ·
-  b68 rounded slots (measured-area T3) · b67 one-piece corner mount · b64-66 real CAD
-  bodies everywhere + per-kind collars
+## PARKED (v4-era items that fold into v5 stages)
+- Foam-insert tap option -> with 10   ·  Two-stage waveguide dialect -> with 12
+- Autopilot P2-P4 (state lattice, oracle mutation tests, agent loop) -> with 13/14
