@@ -129,11 +129,13 @@ select{width:100%;font-family:var(--mono);font-size:11px;background:var(--paper)
 <script>
 /*__ENGINE__*/
 /*__CAD__*/
-window.MEH_BUILD=503;
+window.MEH_BUILD=504;
 document.getElementById('bno').textContent=MEH_BUILD;
 "use strict";
 /* ---------------- driver presets (v4 datasheets; mesh = true CAD, meshApprox = nearest body) ---------------- */
 const WPRE={
+  cn5:{name:'BMS 5\u2033 coax (CN140-class)', od:14.8, dp:8, sd:75, vtc:30, xm:3.5, meshApprox:'BC_8MDN51'},
+  fhx65:{name:'B&C 6FHX51 coax (true CAD)', od:16.7, dp:12, sd:137, vtc:40, xm:4, meshApprox:'BC_8MDN51'},
   w5:{name:'5.25\u2033 woofer', od:13.2, dp:7, sd:85, vtc:35, xm:4.5, meshApprox:'BC_8MDN51'},
   w65:{name:'6.5\u2033 woofer', od:16.7, dp:8.5, sd:132, vtc:45, xm:5, meshApprox:'BC_8MDN51'},
   w8:{name:'8\u2033 woofer', od:21.0, dp:10, sd:220, vtc:80, xm:6.5, meshApprox:'BC_8MDN51'},
@@ -214,6 +216,57 @@ function driverBody(od,dp,PRE){
   g.add(new THREE.Mesh(new THREE.LatheGeometry(mpts,40),DARK));
   const term=new THREE.Mesh(new THREE.BoxGeometry(od*0.10,dp*0.10,od*0.05),DARK);
   term.position.set(R*0.72,dp*0.30,0); term.rotation.z=0.5; g.add(term);
+  return g;
+}
+/* ---- parametric COAX driver (his photo canon: BMS style) - square frame with
+   rounded corners + corner bolts, black cone, METAL THROAT HORN at the cone
+   center (the coax's CD fires through it), shallow motor + CD pot behind.
+   Local axis: face plane y=0, body extends +y (deeper). ---- */
+function coaxBody(od,dp){
+  const g=new THREE.Group(), R=od/2;
+  const BLK=new THREE.MeshPhongMaterial({color:0x232220,specular:0x111111,shininess:12,side:THREE.DoubleSide});
+  const DRK=new THREE.MeshPhongMaterial({color:0x171614,specular:0x0a0a0a,shininess:8,side:THREE.DoubleSide});
+  const MET=new THREE.MeshPhongMaterial({color:0xC9CDD1,specular:0x9a9a9a,shininess:70,side:THREE.DoubleSide});
+  /* square frame, rounded corners, center opening */
+  { const s=R*0.99, r2=R*0.24;
+    const sp=new THREE.Shape();
+    sp.moveTo(-s+r2,-s); sp.lineTo(s-r2,-s); sp.quadraticCurveTo(s,-s,s,-s+r2);
+    sp.lineTo(s,s-r2); sp.quadraticCurveTo(s,s,s-r2,s); sp.lineTo(-s+r2,s);
+    sp.quadraticCurveTo(-s,s,-s,s-r2); sp.lineTo(-s,-s+r2); sp.quadraticCurveTo(-s,-s,-s+r2,-s);
+    const hole=new THREE.Path(); hole.absarc(0,0,R*0.85,0,Math.PI*2,true); sp.holes.push(hole);
+    const fr=new THREE.Mesh(new THREE.ExtrudeGeometry(sp,{depth:od*0.05,bevelEnabled:false}),BLK);
+    fr.rotation.x=Math.PI/2; fr.position.y=od*0.05; g.add(fr);
+    for(const sx of [-1,1]) for(const sz of [-1,1]){
+      const bolt=new THREE.Mesh(new THREE.CylinderGeometry(R*0.055,R*0.055,od*0.06,10),DRK);
+      bolt.position.set(sx*s*0.84, od*0.028, sz*s*0.84); g.add(bolt); }
+  }
+  /* proportions MEASURED from the B&C 6FHX51 CAD (2026-07-23, .3dm layer boxes,
+     od-relative): gasket .97 · surround .95 · cone .72 wide x .14 deep · HF horn
+     mouth .60 SLIGHTLY PROUD of the face, throat .15 at depth .53 · woofer
+     magnet Ø.72 at .27-.44 · tweeter stack to .63. Depths scale to declared dp. */
+  const sy=Math.max(0.6, dp/(0.63*od));   // honor the state's depth
+  const Y=f=>od*f*sy;
+  /* gasket + surround + cone */
+  { const gk=new THREE.Mesh(new THREE.TorusGeometry(R*0.94,R*0.028,10,44),DRK);
+    gk.rotation.x=Math.PI/2; gk.position.y=od*0.012; g.add(gk);
+    const sur=new THREE.Mesh(new THREE.TorusGeometry(R*0.83,R*0.058,10,44),DRK);
+    sur.rotation.x=Math.PI/2; sur.position.y=od*0.03; g.add(sur);
+    const cone=[[R*0.80,od*0.045],[R*0.55,Y(0.09)],[R*0.36,Y(0.14)]]
+      .map(p=>new THREE.Vector2(p[0],p[1]));
+    g.add(new THREE.Mesh(new THREE.LatheGeometry(cone,44),BLK)); }
+  /* the METAL HF HORN filling the cone center - mouth 0.60·od, proud of the
+     face, flaring back to the 1in throat (the CAD's Horn_04) */
+  { const thr=[[R*0.60,-od*0.030],[R*0.585,0.0],[R*0.44,Y(0.10)],[R*0.26,Y(0.28)],[R*0.16,Y(0.42)],[R*0.15,Y(0.53)]]
+      .map(p=>new THREE.Vector2(p[0],p[1]));
+    g.add(new THREE.Mesh(new THREE.LatheGeometry(thr,44),MET));
+    const dk=new THREE.Mesh(new THREE.CircleGeometry(R*0.145,24),DRK);
+    dk.rotation.x=-Math.PI/2; dk.position.y=Y(0.525); g.add(dk); }
+  /* woofer magnet ring + tweeter motor behind (CAD stack) */
+  { const mo=new THREE.Mesh(new THREE.CylinderGeometry(R*0.70,R*0.72,Y(0.17),30),DRK);
+    mo.position.y=Y(0.355); g.add(mo);
+    const pot=new THREE.Mesh(new THREE.CylinderGeometry(R*0.27,R*0.28,Y(0.10),24),
+      new THREE.MeshPhongMaterial({color:0x8a8a88,shininess:20}));
+    pot.position.y=Y(0.58); g.add(pot); }
   return g;
 }
 /* scene axes: (x,z,y) like v4 — model x = depth axis points at the viewer-front */
@@ -472,18 +525,13 @@ function rebuild(){
   }
   /* apex driver: 1way = the full COAX unit (his pin #8); else the CD */
   if(S.topo==='1way'){
+    /* the ACCURATE parametric coax (his photo note): frame against the dish
+       back, cone nesting into the mounting-plate funnel, throat horn at center */
     const cx=(window.__ev&&__ev.layout&&__ev.layout.coax)||{od:S.odW*0.01||0.22,dp:S.dpW*0.01||0.11};
-    const body=driverBody(cx.od, cx.dp, {motor:'ferrite'});
+    const body=coaxBody(cx.od, cx.dp);
     body.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),new THREE.Vector3(-1,0,0));
-    body.position.set(st.pts[0].x-0.004,0,0);
+    body.position.set(st.pts[0].x-0.006,0,0);
     body.traverse(o=>o.userData.tag='driver'); g.add(body);
-    /* Reference D photo canon: the coax's CD stacks on the woofer's back */
-    { const met=new THREE.MeshPhongMaterial({color:0x8a8a88,shininess:18});
-      const xB=st.pts[0].x-0.004-cx.dp*0.95;
-      const c1=new THREE.Mesh(new THREE.CylinderGeometry(0.048,0.052,0.045,28),met);
-      c1.rotation.z=Math.PI/2; c1.position.set(xB-0.024,0,0); c1.userData.tag='driver'; g.add(c1);
-      const c2=new THREE.Mesh(new THREE.CylinderGeometry(0.030,0.033,0.032,24),met);
-      c2.rotation.z=Math.PI/2; c2.position.set(xB-0.062,0,0); c2.userData.tag='driver'; g.add(c2); }
   } else {
     const cd=new THREE.Mesh(new THREE.CylinderGeometry(0.065,0.075,S.cdDepth*MEH2.IN,28),
       new THREE.MeshPhongMaterial({color:0x8a8a88,shininess:18}));

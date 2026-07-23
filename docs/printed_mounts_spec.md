@@ -92,3 +92,22 @@ v5 build 503 implements all five: engine profile 1way+angular = round dish
 snout tube + stacked CD; 'Reference D' is the flagship 1-way KNOWN BUILD
 (70x70 square, gate-asserted exemplary). Topology button renamed 2-WAY COAX
 (the only feasible 2-way rides the coax CD - plain-CD states refuse honestly).
+
+### Coax driver CAD study (2026-07-23, B&C 6FHX51-GC .3dm + .stp) — build 504
+Measured from the Rhino layer bounding boxes (units inches; od-relative):
+frame Ø6.58 (1.00) · gasket .97 · surround .95 · cone Ø.72 x .14 deep ·
+HF HORN mouth Ø.60 sitting PROUD of the cone face, flaring back to the 1in
+throat at depth .53 (layer Horn_04 - the horn FILLS the cone center) ·
+woofer magnet Ø.72 at depth .27-.44 · tweeter stack to .63 · square-frame
+corner bolts (BMS photo canon).
+Landed in build 504:
+- coaxBody(od,dp): parametric coax render calibrated to these proportions
+  (square rounded frame + bolts, gasket/surround/cone, METAL HF horn, motor).
+- THE DISH DERIVES FROM THE DRIVER: dish rim = flange+12mm, tap ring clamped
+  to the EXPOSED cone annulus (0.70-0.80 rCone - the HF horn owns the center
+  to 0.60R), adapter length from the 38deg funnel; the horn GROWS to host the
+  driver (declared-mouth vs dish-flange law, growth-fixable) - never shrinks
+  the driver to fit.
+- KNOWN BUILDS: 'Reference D mini' (BMS 5in CN140-class, 14in mouth) and
+  'B&C 6FHX51 true-CAD' (16in mouth), both gate-asserted exemplary.
+- STEP file archived as the export-pipeline reference (queue A).

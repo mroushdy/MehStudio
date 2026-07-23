@@ -219,31 +219,38 @@ function profile(S){
   if(S.topo==='1way'){
     /* PIN #21: the horn STARTS at the CD exit, expands fast to the coax cone's
        tap radius (the snout adapter, ~38 deg half-angle), then flares normally */
-    const rP=(S.coaxRing||4.5)*CM+0.03;
+    /* THE DISH DERIVES FROM THE DRIVER (his photo note, 2026-07-23): the dish
+       rim is the driver's mounting flange (the plate follows the cone OUT to
+       the frame), the tap ring sits over the cone by construction, and the
+       horn grows to host whatever coax is chosen - never the reverse. */
+    const rCone=(S.odW||22)*CM/2;
+    const rDish=rCone+0.012;                                   // mounting-plate flange past the frame
+    const rP=Math.min(Math.max((S.coaxRing||4.5)*CM, ht+0.02, 0.70*rCone), rCone*0.8);   // tap ring on the EXPOSED cone annulus (6FHX51 CAD: the HF horn fills the center to 0.6R)
     const thA=d2r(38);
-    const La=Math.max(0.01,(rP-ht)/Math.tan(thA));
+    const La=Math.max(0.01,(rDish-ht)/Math.tan(thA));
+    const xTap=Math.max(0.008,(rP-ht)/Math.tan(thA));          // station whose radius IS the tap ring
     if(S.style==='angular'){
       /* REFERENCE D (Marwan's build photos, 2026-07-23): the ROUND printed dish
          (nOv:2) drops into a SQUARE straight-walled classic flare - single
          expansion at the coverage angle, flat printed mouth, corner wings
          bridge the dish rim to the square section. */
-      const Da=Math.max(0.05,(hm-rP)/Math.tan(th));
+      const Da=Math.max(0.05,(hm-rDish)/Math.tan(th));
       const depth=La+Da, pts=[];
       for(let i=0;i<=8;i++){ const x=La*i/8; pts.push({x, h:ht+Math.tan(thA)*x, nOv:2}); }
-      for(let j=1;j<=32;j++){ const x=La+Da*j/32; pts.push({x, h:rP+Math.tan(th)*(x-La)}); }
-      return {pts, depth, rollR:0, mouthH:hm, xAdapter:La};
+      for(let j=1;j<=32;j++){ const x=La+Da*j/32; pts.push({x, h:rDish+Math.tan(th)*(x-La)}); }
+      return {pts, depth, rollR:0, mouthH:hm, xAdapter:La, xTap};
     }
-    const D2=Math.max(0.05,(hm-rP)/Math.tan(th));
+    const D2=Math.max(0.05,(hm-rDish)/Math.tan(th));
     const depth=La+D2, pts=[];
     for(let i=0;i<=8;i++){ const x=La*i/8; pts.push({x, h:ht+Math.tan(thA)*x}); }
     for(let j=1;j<=40;j++){ const t=j/40, x=La+D2*t, s=t*t*(3-2*t);
-      pts.push({x, h:rP+(hm-rP)*(0.72*t+0.28*s)}); }
+      pts.push({x, h:rDish+(hm-rDish)*(0.72*t+0.28*s)}); }
     const rollR=S.rollR*IN, M2=10;
     const hEnd=pts[pts.length-1].h, sl=(pts[pts.length-1].h-pts[pts.length-2].h)/(pts[pts.length-1].x-pts[pts.length-2].x);
     const a0=Math.atan(sl);
     for(let i=1;i<=M2;i++){ const a=a0+(Math.PI/2-a0)*(i/M2)*0.9;
       pts.push({x:depth+rollR*(Math.sin(a)-Math.sin(a0)), h:hEnd+rollR*((1-Math.cos(a))-(1-Math.cos(a0))), roll:true}); }
-    return {pts, depth, rollR, mouthH:hm, xAdapter:La};
+    return {pts, depth, rollR, mouthH:hm, xAdapter:La, xTap};
   }
   if(S.style==='angular'){
     /* PIN #12 - THE CLASSIC SHAPE (Waslo Synergy Calc v5, Main Panels sheet):
@@ -302,7 +309,7 @@ function stations(S){
   return { form:'se', n:S.seN, style:S.style,
            pts:pr.pts.map(p=>({x:p.x, a:p.h, b:(p.v!==undefined)?p.v:p.h*ar, roll:p.roll,
              n:(p.nOv!==undefined)?p.nOv:morph(p.x)})),   // Reference D: the dish stays ROUND inside an angular horn
-           depth:pr.depth, rollR:pr.rollR, throat:S.throat*IN/2, ar, xBreak:pr.xBreak, slopeCos:pr.slopeCos, xAdapter:pr.xAdapter };
+           depth:pr.depth, rollR:pr.rollR, throat:S.throat*IN/2, ar, xBreak:pr.xBreak, slopeCos:pr.slopeCos, xAdapter:pr.xAdapter, xTap:pr.xTap };
 }
 function dimsAt(st,x){
   const P=st.pts;
@@ -630,7 +637,7 @@ function layout(S,st){
     /* PIN #8 (his spec): ONE coax driver - the horn IS the CD's waveguide; the cone
        section fires through a tap-slot ring in the printed apex plate. */
     const nT=(S.coaxTaps|0)||6;
-    const xT=(st.xAdapter||0.02)*0.85;                        // PIN #21: slots ring the ADAPTER wall
+    const xT=(st.xTap!==undefined)? st.xTap : (st.xAdapter||0.02)*0.85;   // the ring station derives from the DRIVER (photo canon)
     const taps=[]; let rMax=0;
     for(let k=0;k<nT;k++){ const a2=(k+0.5)/nT*2*Math.PI;
       const p=surfPt(st,xT,a2); taps.push([a2,p]); rMax=Math.max(rMax,Math.hypot(p[1],p[2])); }
@@ -768,10 +775,10 @@ function acoustics(S,L,st){
       add('COAX','Tap ring sits over the coax cone',(rT*1000).toFixed(0)+' vs '+(rCone*1000).toFixed(0)+' mm',
         rT+sa<=rCone*0.95, rT+sa<=rCone*1.05,
         'the plate slots must land on the cone that feeds them');
-      const mo2=st.pts[st.pts.length-1];
-      add('COAX','Coax unit vs the horn body','Ø '+(2*rCone/IN).toFixed(1)+'″ on a '+(2*mo2.a/IN).toFixed(0)+'″ mouth',
-        rCone<=mo2.a*0.75, rCone<=mo2.a,
-        'a unit wider than the horn shadows the mouth - grow the horn or pick a smaller coax',
+      const rDish2=rCone+0.012, hmD=(S.mouthW||24)*IN/2;
+      add('COAX','Coax unit vs the horn body','Ø '+(2*rCone/IN).toFixed(1)+'″ unit · '+(2*rDish2/IN).toFixed(1)+'″ dish on a '+(S.mouthW||24)+'″ mouth',
+        hmD>=1.25*rDish2, hmD>=1.05*rDish2,
+        'the dish rim IS the driver flange (photo canon) - the DECLARED mouth must clear it; the horn grows to host the driver, never the reverse',
         true);   // a bigger mouth genuinely fixes this one
     }
   }
@@ -959,12 +966,18 @@ const BUILDS=(()=>{
   const W8 ={wPre:'w8',   odW:21.0,dpW:10,  sdW:220,vtcW:80, xmW:6.5};
   const W10={wPre:'hpl10',odW:26.1,dpW:12.2,sdW:330,vtcW:130,xmW:8};
   const W12={wPre:'ndl12',odW:31.5,dpW:14,  sdW:522,vtcW:180,xmW:9};
+  const C5 ={wPre:'cn5',  odW:14.8,dpW:8,   sdW:75, vtcW:30, xmW:3.5};
+  const C65={wPre:'fhx65',odW:16.7,dpW:12,  sdW:137,vtcW:40, xmW:4};
   const M4 ={mPre:'m4',   odM:10.3,dpM:6.5, sdM:50, vtcM:40, xmM:3};
   const CXU={sdC:150,vtcC:60,xmC:4,coaxTaps:6,odC:0.22,dpC:0.11};
   return {
    '1way':[
-    {key:'refd',   name:'Reference D — square classic · coax dish · 70°×70°',
-     s:{...B,...CDX,...CXU,...W12, topo:'1way',style:'angular',seN:12,covH:70,covV:70,mouthW:24,nW:2,nM:4}},
+    {key:'refd',   name:'Reference D mini — square classic · BMS 5″ coax · 70°×70°',
+     s:{...B,...CDX,...CXU,...C5, topo:'1way',style:'angular',seN:12,covH:70,covV:70,mouthW:14,nW:2,nM:4,
+        coaxTaps:4, sdC:75, vtcC:30, xmC:3.5}},   // the coax's OWN cone feeds the taps
+    {key:'fhx6',   name:'B&C 6FHX51 — square classic · true-CAD coax · 70°×70°',
+     s:{...B,...CDX,...CXU,...C65, topo:'1way',style:'angular',seN:12,covH:70,covV:70,mouthW:16,nW:2,nM:4,
+        coaxTaps:4, sdC:137, vtcC:40, xmC:4}},
     {key:'coax90', name:'point source — 90°×60° smooth · coax dish',
      s:{...B,...CDX,...CXU,...W12, topo:'1way',seN:6, covH:90,covV:60,mouthW:24,nW:2,nM:4}},
     {key:'coax60', name:'round — 60°×60° · DCX-class coax dish',
@@ -998,11 +1011,13 @@ return {C,IN,CM, sePoint,seRing, profile, stations, dimsAt, surfPt, surfN, layou
 if(typeof module!=='undefined') module.exports=MEH2;
 
 /* parametric */
-window.MEH_BUILD=503;
+window.MEH_BUILD=504;
 document.getElementById('bno').textContent=MEH_BUILD;
 "use strict";
 /* ---------------- driver presets (v4 datasheets; mesh = true CAD, meshApprox = nearest body) ---------------- */
 const WPRE={
+  cn5:{name:'BMS 5\u2033 coax (CN140-class)', od:14.8, dp:8, sd:75, vtc:30, xm:3.5, meshApprox:'BC_8MDN51'},
+  fhx65:{name:'B&C 6FHX51 coax (true CAD)', od:16.7, dp:12, sd:137, vtc:40, xm:4, meshApprox:'BC_8MDN51'},
   w5:{name:'5.25\u2033 woofer', od:13.2, dp:7, sd:85, vtc:35, xm:4.5, meshApprox:'BC_8MDN51'},
   w65:{name:'6.5\u2033 woofer', od:16.7, dp:8.5, sd:132, vtc:45, xm:5, meshApprox:'BC_8MDN51'},
   w8:{name:'8\u2033 woofer', od:21.0, dp:10, sd:220, vtc:80, xm:6.5, meshApprox:'BC_8MDN51'},
@@ -1083,6 +1098,57 @@ function driverBody(od,dp,PRE){
   g.add(new THREE.Mesh(new THREE.LatheGeometry(mpts,40),DARK));
   const term=new THREE.Mesh(new THREE.BoxGeometry(od*0.10,dp*0.10,od*0.05),DARK);
   term.position.set(R*0.72,dp*0.30,0); term.rotation.z=0.5; g.add(term);
+  return g;
+}
+/* ---- parametric COAX driver (his photo canon: BMS style) - square frame with
+   rounded corners + corner bolts, black cone, METAL THROAT HORN at the cone
+   center (the coax's CD fires through it), shallow motor + CD pot behind.
+   Local axis: face plane y=0, body extends +y (deeper). ---- */
+function coaxBody(od,dp){
+  const g=new THREE.Group(), R=od/2;
+  const BLK=new THREE.MeshPhongMaterial({color:0x232220,specular:0x111111,shininess:12,side:THREE.DoubleSide});
+  const DRK=new THREE.MeshPhongMaterial({color:0x171614,specular:0x0a0a0a,shininess:8,side:THREE.DoubleSide});
+  const MET=new THREE.MeshPhongMaterial({color:0xC9CDD1,specular:0x9a9a9a,shininess:70,side:THREE.DoubleSide});
+  /* square frame, rounded corners, center opening */
+  { const s=R*0.99, r2=R*0.24;
+    const sp=new THREE.Shape();
+    sp.moveTo(-s+r2,-s); sp.lineTo(s-r2,-s); sp.quadraticCurveTo(s,-s,s,-s+r2);
+    sp.lineTo(s,s-r2); sp.quadraticCurveTo(s,s,s-r2,s); sp.lineTo(-s+r2,s);
+    sp.quadraticCurveTo(-s,s,-s,s-r2); sp.lineTo(-s,-s+r2); sp.quadraticCurveTo(-s,-s,-s+r2,-s);
+    const hole=new THREE.Path(); hole.absarc(0,0,R*0.85,0,Math.PI*2,true); sp.holes.push(hole);
+    const fr=new THREE.Mesh(new THREE.ExtrudeGeometry(sp,{depth:od*0.05,bevelEnabled:false}),BLK);
+    fr.rotation.x=Math.PI/2; fr.position.y=od*0.05; g.add(fr);
+    for(const sx of [-1,1]) for(const sz of [-1,1]){
+      const bolt=new THREE.Mesh(new THREE.CylinderGeometry(R*0.055,R*0.055,od*0.06,10),DRK);
+      bolt.position.set(sx*s*0.84, od*0.028, sz*s*0.84); g.add(bolt); }
+  }
+  /* proportions MEASURED from the B&C 6FHX51 CAD (2026-07-23, .3dm layer boxes,
+     od-relative): gasket .97 · surround .95 · cone .72 wide x .14 deep · HF horn
+     mouth .60 SLIGHTLY PROUD of the face, throat .15 at depth .53 · woofer
+     magnet Ø.72 at .27-.44 · tweeter stack to .63. Depths scale to declared dp. */
+  const sy=Math.max(0.6, dp/(0.63*od));   // honor the state's depth
+  const Y=f=>od*f*sy;
+  /* gasket + surround + cone */
+  { const gk=new THREE.Mesh(new THREE.TorusGeometry(R*0.94,R*0.028,10,44),DRK);
+    gk.rotation.x=Math.PI/2; gk.position.y=od*0.012; g.add(gk);
+    const sur=new THREE.Mesh(new THREE.TorusGeometry(R*0.83,R*0.058,10,44),DRK);
+    sur.rotation.x=Math.PI/2; sur.position.y=od*0.03; g.add(sur);
+    const cone=[[R*0.80,od*0.045],[R*0.55,Y(0.09)],[R*0.36,Y(0.14)]]
+      .map(p=>new THREE.Vector2(p[0],p[1]));
+    g.add(new THREE.Mesh(new THREE.LatheGeometry(cone,44),BLK)); }
+  /* the METAL HF HORN filling the cone center - mouth 0.60·od, proud of the
+     face, flaring back to the 1in throat (the CAD's Horn_04) */
+  { const thr=[[R*0.60,-od*0.030],[R*0.585,0.0],[R*0.44,Y(0.10)],[R*0.26,Y(0.28)],[R*0.16,Y(0.42)],[R*0.15,Y(0.53)]]
+      .map(p=>new THREE.Vector2(p[0],p[1]));
+    g.add(new THREE.Mesh(new THREE.LatheGeometry(thr,44),MET));
+    const dk=new THREE.Mesh(new THREE.CircleGeometry(R*0.145,24),DRK);
+    dk.rotation.x=-Math.PI/2; dk.position.y=Y(0.525); g.add(dk); }
+  /* woofer magnet ring + tweeter motor behind (CAD stack) */
+  { const mo=new THREE.Mesh(new THREE.CylinderGeometry(R*0.70,R*0.72,Y(0.17),30),DRK);
+    mo.position.y=Y(0.355); g.add(mo);
+    const pot=new THREE.Mesh(new THREE.CylinderGeometry(R*0.27,R*0.28,Y(0.10),24),
+      new THREE.MeshPhongMaterial({color:0x8a8a88,shininess:20}));
+    pot.position.y=Y(0.58); g.add(pot); }
   return g;
 }
 /* scene axes: (x,z,y) like v4 — model x = depth axis points at the viewer-front */
@@ -1341,18 +1407,13 @@ function rebuild(){
   }
   /* apex driver: 1way = the full COAX unit (his pin #8); else the CD */
   if(S.topo==='1way'){
+    /* the ACCURATE parametric coax (his photo note): frame against the dish
+       back, cone nesting into the mounting-plate funnel, throat horn at center */
     const cx=(window.__ev&&__ev.layout&&__ev.layout.coax)||{od:S.odW*0.01||0.22,dp:S.dpW*0.01||0.11};
-    const body=driverBody(cx.od, cx.dp, {motor:'ferrite'});
+    const body=coaxBody(cx.od, cx.dp);
     body.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),new THREE.Vector3(-1,0,0));
-    body.position.set(st.pts[0].x-0.004,0,0);
+    body.position.set(st.pts[0].x-0.006,0,0);
     body.traverse(o=>o.userData.tag='driver'); g.add(body);
-    /* Reference D photo canon: the coax's CD stacks on the woofer's back */
-    { const met=new THREE.MeshPhongMaterial({color:0x8a8a88,shininess:18});
-      const xB=st.pts[0].x-0.004-cx.dp*0.95;
-      const c1=new THREE.Mesh(new THREE.CylinderGeometry(0.048,0.052,0.045,28),met);
-      c1.rotation.z=Math.PI/2; c1.position.set(xB-0.024,0,0); c1.userData.tag='driver'; g.add(c1);
-      const c2=new THREE.Mesh(new THREE.CylinderGeometry(0.030,0.033,0.032,24),met);
-      c2.rotation.z=Math.PI/2; c2.position.set(xB-0.062,0,0); c2.userData.tag='driver'; g.add(c2); }
   } else {
     const cd=new THREE.Mesh(new THREE.CylinderGeometry(0.065,0.075,S.cdDepth*MEH2.IN,28),
       new THREE.MeshPhongMaterial({color:0x8a8a88,shininess:18}));

@@ -90,31 +90,38 @@ function profile(S){
   if(S.topo==='1way'){
     /* PIN #21: the horn STARTS at the CD exit, expands fast to the coax cone's
        tap radius (the snout adapter, ~38 deg half-angle), then flares normally */
-    const rP=(S.coaxRing||4.5)*CM+0.03;
+    /* THE DISH DERIVES FROM THE DRIVER (his photo note, 2026-07-23): the dish
+       rim is the driver's mounting flange (the plate follows the cone OUT to
+       the frame), the tap ring sits over the cone by construction, and the
+       horn grows to host whatever coax is chosen - never the reverse. */
+    const rCone=(S.odW||22)*CM/2;
+    const rDish=rCone+0.012;                                   // mounting-plate flange past the frame
+    const rP=Math.min(Math.max((S.coaxRing||4.5)*CM, ht+0.02, 0.70*rCone), rCone*0.8);   // tap ring on the EXPOSED cone annulus (6FHX51 CAD: the HF horn fills the center to 0.6R)
     const thA=d2r(38);
-    const La=Math.max(0.01,(rP-ht)/Math.tan(thA));
+    const La=Math.max(0.01,(rDish-ht)/Math.tan(thA));
+    const xTap=Math.max(0.008,(rP-ht)/Math.tan(thA));          // station whose radius IS the tap ring
     if(S.style==='angular'){
       /* REFERENCE D (Marwan's build photos, 2026-07-23): the ROUND printed dish
          (nOv:2) drops into a SQUARE straight-walled classic flare - single
          expansion at the coverage angle, flat printed mouth, corner wings
          bridge the dish rim to the square section. */
-      const Da=Math.max(0.05,(hm-rP)/Math.tan(th));
+      const Da=Math.max(0.05,(hm-rDish)/Math.tan(th));
       const depth=La+Da, pts=[];
       for(let i=0;i<=8;i++){ const x=La*i/8; pts.push({x, h:ht+Math.tan(thA)*x, nOv:2}); }
-      for(let j=1;j<=32;j++){ const x=La+Da*j/32; pts.push({x, h:rP+Math.tan(th)*(x-La)}); }
-      return {pts, depth, rollR:0, mouthH:hm, xAdapter:La};
+      for(let j=1;j<=32;j++){ const x=La+Da*j/32; pts.push({x, h:rDish+Math.tan(th)*(x-La)}); }
+      return {pts, depth, rollR:0, mouthH:hm, xAdapter:La, xTap};
     }
-    const D2=Math.max(0.05,(hm-rP)/Math.tan(th));
+    const D2=Math.max(0.05,(hm-rDish)/Math.tan(th));
     const depth=La+D2, pts=[];
     for(let i=0;i<=8;i++){ const x=La*i/8; pts.push({x, h:ht+Math.tan(thA)*x}); }
     for(let j=1;j<=40;j++){ const t=j/40, x=La+D2*t, s=t*t*(3-2*t);
-      pts.push({x, h:rP+(hm-rP)*(0.72*t+0.28*s)}); }
+      pts.push({x, h:rDish+(hm-rDish)*(0.72*t+0.28*s)}); }
     const rollR=S.rollR*IN, M2=10;
     const hEnd=pts[pts.length-1].h, sl=(pts[pts.length-1].h-pts[pts.length-2].h)/(pts[pts.length-1].x-pts[pts.length-2].x);
     const a0=Math.atan(sl);
     for(let i=1;i<=M2;i++){ const a=a0+(Math.PI/2-a0)*(i/M2)*0.9;
       pts.push({x:depth+rollR*(Math.sin(a)-Math.sin(a0)), h:hEnd+rollR*((1-Math.cos(a))-(1-Math.cos(a0))), roll:true}); }
-    return {pts, depth, rollR, mouthH:hm, xAdapter:La};
+    return {pts, depth, rollR, mouthH:hm, xAdapter:La, xTap};
   }
   if(S.style==='angular'){
     /* PIN #12 - THE CLASSIC SHAPE (Waslo Synergy Calc v5, Main Panels sheet):
@@ -173,7 +180,7 @@ function stations(S){
   return { form:'se', n:S.seN, style:S.style,
            pts:pr.pts.map(p=>({x:p.x, a:p.h, b:(p.v!==undefined)?p.v:p.h*ar, roll:p.roll,
              n:(p.nOv!==undefined)?p.nOv:morph(p.x)})),   // Reference D: the dish stays ROUND inside an angular horn
-           depth:pr.depth, rollR:pr.rollR, throat:S.throat*IN/2, ar, xBreak:pr.xBreak, slopeCos:pr.slopeCos, xAdapter:pr.xAdapter };
+           depth:pr.depth, rollR:pr.rollR, throat:S.throat*IN/2, ar, xBreak:pr.xBreak, slopeCos:pr.slopeCos, xAdapter:pr.xAdapter, xTap:pr.xTap };
 }
 function dimsAt(st,x){
   const P=st.pts;
@@ -501,7 +508,7 @@ function layout(S,st){
     /* PIN #8 (his spec): ONE coax driver - the horn IS the CD's waveguide; the cone
        section fires through a tap-slot ring in the printed apex plate. */
     const nT=(S.coaxTaps|0)||6;
-    const xT=(st.xAdapter||0.02)*0.85;                        // PIN #21: slots ring the ADAPTER wall
+    const xT=(st.xTap!==undefined)? st.xTap : (st.xAdapter||0.02)*0.85;   // the ring station derives from the DRIVER (photo canon)
     const taps=[]; let rMax=0;
     for(let k=0;k<nT;k++){ const a2=(k+0.5)/nT*2*Math.PI;
       const p=surfPt(st,xT,a2); taps.push([a2,p]); rMax=Math.max(rMax,Math.hypot(p[1],p[2])); }
@@ -639,10 +646,10 @@ function acoustics(S,L,st){
       add('COAX','Tap ring sits over the coax cone',(rT*1000).toFixed(0)+' vs '+(rCone*1000).toFixed(0)+' mm',
         rT+sa<=rCone*0.95, rT+sa<=rCone*1.05,
         'the plate slots must land on the cone that feeds them');
-      const mo2=st.pts[st.pts.length-1];
-      add('COAX','Coax unit vs the horn body','Ø '+(2*rCone/IN).toFixed(1)+'″ on a '+(2*mo2.a/IN).toFixed(0)+'″ mouth',
-        rCone<=mo2.a*0.75, rCone<=mo2.a,
-        'a unit wider than the horn shadows the mouth - grow the horn or pick a smaller coax',
+      const rDish2=rCone+0.012, hmD=(S.mouthW||24)*IN/2;
+      add('COAX','Coax unit vs the horn body','Ø '+(2*rCone/IN).toFixed(1)+'″ unit · '+(2*rDish2/IN).toFixed(1)+'″ dish on a '+(S.mouthW||24)+'″ mouth',
+        hmD>=1.25*rDish2, hmD>=1.05*rDish2,
+        'the dish rim IS the driver flange (photo canon) - the DECLARED mouth must clear it; the horn grows to host the driver, never the reverse',
         true);   // a bigger mouth genuinely fixes this one
     }
   }
@@ -830,12 +837,18 @@ const BUILDS=(()=>{
   const W8 ={wPre:'w8',   odW:21.0,dpW:10,  sdW:220,vtcW:80, xmW:6.5};
   const W10={wPre:'hpl10',odW:26.1,dpW:12.2,sdW:330,vtcW:130,xmW:8};
   const W12={wPre:'ndl12',odW:31.5,dpW:14,  sdW:522,vtcW:180,xmW:9};
+  const C5 ={wPre:'cn5',  odW:14.8,dpW:8,   sdW:75, vtcW:30, xmW:3.5};
+  const C65={wPre:'fhx65',odW:16.7,dpW:12,  sdW:137,vtcW:40, xmW:4};
   const M4 ={mPre:'m4',   odM:10.3,dpM:6.5, sdM:50, vtcM:40, xmM:3};
   const CXU={sdC:150,vtcC:60,xmC:4,coaxTaps:6,odC:0.22,dpC:0.11};
   return {
    '1way':[
-    {key:'refd',   name:'Reference D — square classic · coax dish · 70°×70°',
-     s:{...B,...CDX,...CXU,...W12, topo:'1way',style:'angular',seN:12,covH:70,covV:70,mouthW:24,nW:2,nM:4}},
+    {key:'refd',   name:'Reference D mini — square classic · BMS 5″ coax · 70°×70°',
+     s:{...B,...CDX,...CXU,...C5, topo:'1way',style:'angular',seN:12,covH:70,covV:70,mouthW:14,nW:2,nM:4,
+        coaxTaps:4, sdC:75, vtcC:30, xmC:3.5}},   // the coax's OWN cone feeds the taps
+    {key:'fhx6',   name:'B&C 6FHX51 — square classic · true-CAD coax · 70°×70°',
+     s:{...B,...CDX,...CXU,...C65, topo:'1way',style:'angular',seN:12,covH:70,covV:70,mouthW:16,nW:2,nM:4,
+        coaxTaps:4, sdC:137, vtcC:40, xmC:4}},
     {key:'coax90', name:'point source — 90°×60° smooth · coax dish',
      s:{...B,...CDX,...CXU,...W12, topo:'1way',seN:6, covH:90,covV:60,mouthW:24,nW:2,nM:4}},
     {key:'coax60', name:'round — 60°×60° · DCX-class coax dish',

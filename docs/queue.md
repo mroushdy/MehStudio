@@ -1,8 +1,9 @@
 # MEH STUDIO — STANDING QUEUE (versioned; update on every landed item)
-Last updated: 2026-07-23 (build 503: Reference D 1-way landed from photo study -
-dish-in-square-angular + wings + snout + coax stack; 2-WAY renamed 2-WAY COAX;
-'Reference D' flagship 1way preset. See printed_mounts_spec.md photo study).
-v4 frozen at build 83. All work is v5.
+Last updated: 2026-07-23 (build 504: coax CAD study - parametric coaxBody from
+the B&C 6FHX51 .3dm measurements, dish/tap-ring/adapter all DERIVE from the
+chosen driver (horn grows to host it), BMS 5in mini + 6FHX51 true-CAD presets.
+Build 503: Reference D 1-way from photo study; 2-WAY renamed 2-WAY COAX.
+See printed_mounts_spec.md for both studies). v4 frozen at build 83.
 
 ## BUILD 502 PIN SWEEP (all 7 open pins resolved; sourced from diyaudio 339799
 ## + Synergy Calc V5 + Danley canon)
