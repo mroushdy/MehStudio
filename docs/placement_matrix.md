@@ -10,7 +10,14 @@ ratio = tan(covH/2)/tan(covV/2). "wide" ≥ 1.25, "tall" ≤ 0.8, else square.
 | 2   | HORIZONTAL line (3 & 9 o'clock — the Danley line, pin #14) | horizontal line | VERTICAL line |
 | 3+  | rows top+bottom | ring            | rows on sides   |
 
-Explicit `placeW` (auto/ring/pairsH/pairsV) overrides (pin #10).
+Explicit `placeW` (auto/ring/pairsH/pairsV/chamfer) overrides (pin #10).
+`chamfer` = M7/SH96 CANON (batch-2 interior photo): woofers on the 45° CORNER
+BOARDS tight to the throat; mids then ALWAYS apex-ring (corners are taken).
+Honest finding (2026-07-23): with the DCX floor pushing the hi XO to ~350 Hz,
+a 6-mid apex ring measures 1.27–1.33×λ/4 against the STRICT mid tier — and the
+real SH96's own ring measures ~1.3–1.5× at its crossover. The one-click
+SH96 preset waits on Marwan's ruling whether the mid tier relaxes for the
+apex-ring dialect (woofer sections already tolerate ~1.5×, SH96 canon).
 CLASSIC ANGULAR: rows clamp onto their OWN walls (facet-normal filtered);
 ring becomes the symmetric wall partition — n = 4·base + rem, rem → top+bottom
 when wide (sides when tall, odd seat bottom-center), rows centered per wall

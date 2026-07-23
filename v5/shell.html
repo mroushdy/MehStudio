@@ -95,6 +95,7 @@ select{width:100%;font-family:var(--mono);font-size:11px;background:var(--paper)
     <option value="ring">ring around the horn</option>
     <option value="pairsH">rows on top + bottom walls</option>
     <option value="pairsV">rows on the side walls</option>
+    <option value="chamfer">corner boards — woofers on the 45° chamfers (SH96 canon)</option>
   </select>
   <div id="midCtl" style="display:none">
     <label>MID</label>
@@ -130,7 +131,7 @@ select{width:100%;font-family:var(--mono);font-size:11px;background:var(--paper)
 <script>
 /*__ENGINE__*/
 /*__CAD__*/
-window.MEH_BUILD=506;
+window.MEH_BUILD=507;
 document.getElementById('bno').textContent=MEH_BUILD;
 "use strict";
 /* ---------------- driver presets (v4 datasheets; mesh = true CAD, meshApprox = nearest body) ---------------- */
@@ -671,14 +672,16 @@ function wire(){
     S.td=P.td; S.throat=P.td; S.cdFloor=P.floor; S.cdDepth=P.dep; save(); rebuild(); };
   { const P=CDP[S.cdSel||'dcx464']; S.td=P.td; S.throat=P.td; S.cdFloor=P.floor; S.cdDepth=P.dep; }
   document.getElementById('bXray').onclick=()=>{ V3D.xray=!V3D.xray; rebuild(); };
-  document.getElementById('bStl').onclick=()=>{           // queue A first slice: the shell solid
+  document.getElementById('bStl').onclick=()=>{           // queue A: shell solid + (1way) the dish insert part
     const r=window.__solved||MEH2.solve(S);
-    const mh=MEH2.shellMesh(r.S);
-    const blob=new Blob([MEH2.stlBytes(mh)],{type:'model/stl'});
-    const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
-    a.download='meh5_shell_b'+MEH_BUILD+'.stl'; a.click();
-    setTimeout(()=>URL.revokeObjectURL(a.href),5000);
-    document.getElementById('note').textContent='STL: '+mh.tri.length+' triangles, watertight (gate-asserted) — shell solid; tap cuts + dish part are the next export slices'; };
+    const dl=(mesh,fn)=>{ const blob=new Blob([MEH2.stlBytes(mesh)],{type:'model/stl'});
+      const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+      a.download=fn; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),5000); return mesh.tri.length; };
+    const n1=dl(MEH2.shellMesh(r.S),'meh5_shell_b'+MEH_BUILD+'.stl');
+    let msg='STL: shell '+n1+' tris';
+    if(S.topo==='1way'){ const dm=MEH2.dishMesh(r.S);
+      if(dm) msg+=' + dish insert '+dl(dm,'meh5_dish_b'+MEH_BUILD+'.stl')+' tris (real tap holes + bore)'; }
+    document.getElementById('note').textContent=msg+' — watertight (gate-asserted); snout tube/flange/wings and tap cuts in the shell are next slices'; };
   { const el=document.getElementById('placeW'); el.value=S.placeW||'auto';
     el.onchange=()=>{ S.placeW=el.value; save(); rebuild(); }; }
   { const el=document.getElementById('mountSel'); el.value=S.mount||'flush';

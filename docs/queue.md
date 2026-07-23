@@ -93,7 +93,12 @@ M5. THROAT SIDE [1WAY ADAPTER LANDED - pin #21: the horn starts AT the CD exit,
     Waslo square throat with the round bore in the plate)].
 M6. BAND ARCHITECTURE: real sub-XO choice with displacement math (80 Hz is an
     assumption today); 4-way question parked explicitly.
-M7. LAYOUT DIALECTS [PLACEMENT MATRIX LANDED - docs/placement_matrix.md is
+M7. LAYOUT DIALECTS [CORNER BOARDS LANDED build 507: placeW='chamfer' puts the
+    WOOFERS on the 45° chamfer boards (batch-2 SH96 canon correction) and
+    forces mids to the apex ring; gate lattice sweeps it (408 states), matrix
+    row asserted, honest SH96 refusal case pinned (strict mid tier - see
+    placement_matrix.md for the canon question awaiting Marwan)] [PLACEMENT
+    MATRIX LANDED - docs/placement_matrix.md is
     LAW, gate-asserted: 2 woofers -> the long-axis Danley line (pin #14); mids
     perpendicular (2) / square DIAG diamond (4; chamfer boards on angular =
     SH50+v4 canon) / coverage rows (pin #9 era); measured 3D obstacle

@@ -439,13 +439,19 @@ function layout(S,st){
            : ratio>=1.25? 'pairsH' : ratio<=0.8? 'pairsV' : 'ring';
   const modeW=(S.placeW&&S.placeW!=='auto')? S.placeW : auto;    // pin #10: explicit options + smart default
   S.dialectW=modeW+(S.placeW&&S.placeW!=='auto'?'':' (auto)');
+  /* M7 - SH96 CANON (batch-2 photo correction): big multi-ways run the WOOFERS
+     on the CORNER BOARDS (the 45° chamfer shelves, tight to the throat) and the
+     mids in a TIGHT RING around the apex plate. 'chamfer' rides the proven
+     diag/chamfer machinery; mids then ALWAYS apex-ring (corners are taken). */
+  const modeWX = modeW==='chamfer' ? 'diag' : modeW;
   /* mids position RELATIVE to the woofers (the matrix, pin #15):
      2 mids -> the axis PERPENDICULAR to the woofer line; 4 mids beside axis or
      row woofers -> DIAG corner diamond (Hinson: "you see them in the corners";
      on CLASSIC ANGULAR the 45-deg chamfer boards ARE those corners - v4 canon);
      otherwise the coverage rows (Waslo widened-#2-panel canon). */
   const nMn=((S.nM|0)||4);
-  const modeM = nMn<=2 ? (modeW==='pairsV'?'pairsH':'pairsV')
+  const modeM = modeW==='chamfer' ? 'ring'                                // M7/SH96: corners carry WOOFERS - mids ring the apex
+              : nMn<=2 ? (modeW==='pairsV'?'pairsH':'pairsV')
               : (ratio>=1.25)? 'pairsH' : (ratio<=0.8)? 'pairsV'          // wide/tall: rows (the diamond's vertical pairs collapse on non-square throats)
               : (nMn===4 && modeW!=='ring')? 'diag' : 'ring';             // SQUARE-regime 4-mid diamond (SH50 canon; chamfer boards on angular)
   S.dialectM=modeM;
@@ -454,7 +460,7 @@ function layout(S,st){
      radii-sum heuristic (2x12in horns were being pushed to the mouth - pin #14 era) */
   const obsM=(S.topo==='3way'&&xM0!=null)?
     seatsFor(st,xM0,(S.nM|0)||4,modeM,0,seatM).map(q=>({p:[xM0,q[0],q[1]], r:seatM})) : null;
-  const xW0=xForSeats(st,(S.nW|0)||2,seatW,(S.topo==='3way'&&xM0!=null)?(xM0+0.01):0.02,modeW,offW,obsM);
+  const xW0=xForSeats(st,(S.nW|0)||2,seatW,(S.topo==='3way'&&xM0!=null)?(xM0+0.01):0.02,modeWX,offW,obsM);
   const xM=xM0, xW=xW0;
   /* v4 LAW: the tap->diaphragm path makes a lambda/4 reflection NULL at C/(4*path);
      cross 1.2x BELOW it so the notch stays clear of the LR4 corner. */
@@ -489,7 +495,7 @@ function layout(S,st){
     }
   };
   if(S.topo!=='1way' && xW!=null){
-    const seats=seatsFor(st,xW,(S.nW|0)||2,modeW,offW,seatW);
+    const seats=seatsFor(st,xW,(S.nW|0)||2,modeWX,offW,seatW);
     for(const q of seats){
       const p=[xW,q[0],q[1]];
       const nrm=(q.facet!==undefined)? facetN(st,xW,q.facet)
@@ -911,6 +917,73 @@ function shellMesh(S){
   }
   return {pos, tri};
 }
+/* ---- A. EXPORT slice 2: the REFERENCE D DISH INSERT as its own printable
+   part - the 38° conical face with the REAL round tap holes and the CD bore,
+   uniform print thickness (axial offset t/sin38 = normal thickness t). Built
+   as structured triangulation (annuli + one rect-to-circle patch per hole),
+   never CSG, so watertightness is constructive and gate-assertable.
+   v1 scope (stated honestly): face + holes + bore wall + rim edge; the snout
+   tube, flange step and wings are the next slice. ---- */
+function dishMesh(S){
+  if(S.topo!=='1way') return null;
+  const st=stations(S), L=layout(S,st);
+  const tp=L.filter(d=>d.kind==='coaxtap');
+  if(!tp.length) return null;
+  const th38=d2r(38), rB=S.throat*IN/2;
+  const rCone=(S.odW||22)*CM/2, rDish=rCone+0.012;
+  const rP=Math.hypot(tp[0].tap[1],tp[0].tap[2]);
+  let rh=Math.max(0.004,(tp[0].slot&&tp[0].slot.sa)||0.008);
+  const N=tp.length, t=S.wallT||0.012, dxa=t/Math.sin(th38);
+  const xOf=r=>(r-rB)/Math.tan(th38);
+  const w0=Math.min(Math.max(rh*1.6,0.012),(rDish-rB)/2*0.6);
+  const rIn=Math.max(rB+0.004,rP-w0), rOut=Math.min(rDish-0.004,rP+w0);
+  const COLS=12, NA=N*COLS, NRi=5, NRo=5;
+  /* the hole must sit strictly inside its patch (else the strip folds);
+     the LAW rows carry the true velocity-derived area - if this clamp ever
+     bites, the geometry was infeasible and the rows already said so */
+  const halfArc=Math.PI*rP/N, halfBand=Math.min(rP-rIn, rOut-rP);
+  rh=Math.min(rh, halfBand*0.75, halfArc*0.6);
+  const pos=[], tri=[];
+  const V=(x,y,z)=>{ pos.push([x,y,z]); return pos.length-1; };
+  const F=(r,ph,back)=>V(xOf(r)-(back?dxa:0), r*Math.cos(ph), r*Math.sin(ph));
+  const quad=(a,b,c,d,flip)=>{ if(flip) tri.push([a,b,c],[b,d,c]); else tri.push([a,c,b],[b,c,d]); };
+  const ring=(rr,back)=>{ const out=[]; for(let j=0;j<NA;j++) out.push(F(rr,j/NA*2*Math.PI,back)); return out; };
+  for(const back of [false,true]){
+    /* inner + outer annuli (plain polar grids) */
+    for(const [r0,r1,NR] of [[rB,rIn,NRi],[rOut,rDish,NRo]]){
+      const rows=[]; for(let i=0;i<=NR;i++) rows.push(ring(r0+(r1-r0)*i/NR,back));
+      for(let i=0;i<NR;i++) for(let j=0;j<NA;j++)
+        quad(rows[i][j],rows[i][(j+1)%NA],rows[i+1][j],rows[i+1][(j+1)%NA],back);
+    }
+    /* the hole band: one rect-to-circle patch per tap */
+    const bandIn=ring(rIn,back), bandOut=ring(rOut,back);
+    for(let k=0;k<N;k++){
+      const phC=tp[k].phi, j0=k*COLS;
+      const loop=[];
+      for(let j=0;j<=COLS;j++) loop.push(bandIn[(j0+j)%NA]);                  // bottom, left->right
+      for(let j=COLS;j>=0;j--) loop.push(bandOut[(j0+j)%NA]);                 // top, right->left
+      const Mloop=loop.length;
+      const circ=[];
+      for(const li of loop){ const p=pos[li];
+        const rr=Math.hypot(p[1],p[2]), ph=Math.atan2(p[2],p[1]);
+        const u=(((ph-phC+Math.PI*3)%(2*Math.PI))-Math.PI)*rP, v=rr-rP;       // local coords on the face
+        const dl=Math.hypot(u,v)||1e-9;
+        const cu=u/dl*rh, cv=v/dl*rh;                                          // RADIAL projection onto the hole circle
+        circ.push(F(rP+cv, phC+cu/rP, back));
+      }
+      for(let i=0;i<Mloop;i++){ const i2=(i+1)%Mloop;
+        quad(loop[i],loop[i2],circ[i],circ[i2],back); }
+      if(!back){ tp[k]._loopF=circ; } else { tp[k]._loopB=circ; }
+    }
+  }
+  /* hole tubes, bore wall, rim edge - front ring <-> back ring */
+  const join=(A,B,flip)=>{ for(let i=0;i<A.length;i++){ const i2=(i+1)%A.length;
+    quad(A[i],A[i2],B[i],B[i2],flip); } };
+  for(const d of tp){ join(d._loopF,d._loopB,true); delete d._loopF; delete d._loopB; }
+  join(ring(rB,false),ring(rB,true),true);
+  join(ring(rDish,false),ring(rDish,true),false);
+  return {pos, tri};
+}
 /* binary STL bytes from shellMesh (mm units for slicers) */
 function stlBytes(mesh){
   const n=mesh.tri.length, buf=new ArrayBuffer(84+n*50), dv=new DataView(buf);
@@ -981,6 +1054,6 @@ const BUILDS=(()=>{
   };
 })();
 
-return {C,IN,CM, sePoint,seRing, profile, stations, dimsAt, surfPt, surfN, layout, evaluate, solve, response, areaAt, facetsAt, facetN, offsetRing, offsetVerts, BUILDS, shellMesh, stlBytes};
+return {C,IN,CM, sePoint,seRing, profile, stations, dimsAt, surfPt, surfN, layout, evaluate, solve, response, areaAt, facetsAt, facetN, offsetRing, offsetVerts, BUILDS, shellMesh, dishMesh, stlBytes};
 })();
 if(typeof module!=='undefined') module.exports=MEH2;

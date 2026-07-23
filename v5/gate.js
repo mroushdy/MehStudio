@@ -41,7 +41,7 @@ for(const topo of ['1way','2way','3way'])
 for(const seN of [2,6,12])
 for(const style of ['smooth','angular'])
 for(const [covH,covV] of [[90,60],[60,60],[120,60],[60,90]])
-for(const placeW of (topo==='2way'?['auto','ring','pairsH','pairsV']:['auto']))
+for(const placeW of (topo==='2way'?['auto','ring','pairsH','pairsV','chamfer']: topo==='3way'?['auto','chamfer']:['auto']))
 for(const wallT of (placeW==='auto'?[0.008,0.02]:[0.012]))
 for(const mount of ((placeW==='auto'&&wallT===0.02)?['flush','axial']:['flush']))
 for(const np of ((placeW==='auto'&&wallT===0.008)?[1,2]:[1]))          // pins #1/#23/#25: straddling pairs swept too
@@ -83,7 +83,7 @@ for(const S of lattice){
   /* pin #9 facet laws: on ANGULAR every seat sits ON a big facet, normal in the panel plane */
   if(S.style==='angular') for(const d of L){ if(d.facet===undefined) continue;
     const F2=MEH2.facetsAt(st,d.x), f=F2[d.facet];
-    ck(!f.ch || d.kind==='mid', tag+' non-mid seat on a chamfer facet');   // diag mids OWN the chamfer boards (SH50 canon)
+    ck(!f.ch || d.kind==='mid' || S.placeW==='chamfer', tag+' non-mid seat on a chamfer facet');   // SH50: diag mids own the chamfers; M7/SH96: 'chamfer' hands them to the WOOFERS
     const rel=[d.center[1]-f.p[0], d.center[2]-f.p[1]];
     const perp=Math.abs(rel[0]*f.n2[0]+rel[1]*f.n2[1]);
     ck(perp<=0.001, tag+' seat off its panel ('+(perp*1000).toFixed(1)+'mm)');
@@ -153,6 +153,7 @@ for(const S of lattice){
     [{nW:2,nM:2},                             'pairsV','pairsH','2M perpendicular to W line'],
     [{nW:2,nM:6},                             'pairsV','pairsH','6M rows'],
     [{nW:2,covH:70,covV:70,style:'angular'},  'pairsV','diag',  'square angular -> chamfer-board mids'],
+    [{nW:4,placeW:'chamfer',style:'angular'}, 'chamfer','ring', 'M7/SH96: corner-board woofers -> apex-ring mids'],
   ];
   for(const [o,eW,eM,why] of T){ const d=dm(o);
     ck(d.W===eW && d.M===eM, 'placement matrix: '+why+' (got '+d.W+'/'+d.M+' want '+eW+'/'+eM+')'); }
@@ -196,6 +197,18 @@ for(const S of lattice){
     ck(bad===0, tag+' not watertight ('+bad+' boundary/over-shared edges)');
     const bytes=MEH2.stlBytes(mh);
     ck(bytes.byteLength===84+mh.tri.length*50, tag+' STL byte size wrong');
+    /* slice 2: the Reference D dish insert must be its own watertight part */
+    if(topo==='1way'){
+      const dm=MEH2.dishMesh(r.S);
+      ck(!!dm&&dm.tri.length>800, tag+' dish mesh missing/too small');
+      if(dm){ const kd=i=>{const p=dm.pos[i];return Math.round(p[0]*1e6)+','+Math.round(p[1]*1e6)+','+Math.round(p[2]*1e6);};
+        const ed=new Map();
+        for(const t of dm.tri) for(const [a,b2] of [[t[0],t[1]],[t[1],t[2]],[t[2],t[0]]]){
+          const ka=kd(a),kb=kd(b2); const k=ka<kb?ka+'|'+kb:kb+'|'+ka;
+          ed.set(k,(ed.get(k)||0)+1); }
+        let badD=0; for(const v of ed.values()) if(v!==2) badD++;
+        ck(badD===0, tag+' dish not watertight ('+badD+')'); }
+    }
   }
 }
 
