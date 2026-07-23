@@ -226,7 +226,7 @@ function profile(S){
     const vb=vt+Math.tan(thV)*x0;
     for(let j=1;j<=N2;j++){ const x=x0+(depth-x0)*j/N2;
       pts.push({x, h:hb+Math.tan(th2)*(x-x0), v:vb+Math.tan(th2V)*(x-x0)}); }
-    return {pts, depth, rollR:0, mouthH:hm, xBreak:x0};
+    return {pts, depth, rollR:0, mouthH:hm, xBreak:x0, slopeCos:Math.cos(th)};
   }
   const depth=Math.max(0.06,(hm-ht)/Math.tan(th));
   const rollR=S.rollR*IN;
@@ -253,7 +253,7 @@ function stations(S){
   const ar=Math.tan(d2r(S.covV/2))/Math.tan(d2r(S.covH/2));   // vertical/horizontal
   return { form:'se', n:S.seN, style:S.style,
            pts:pr.pts.map(p=>({x:p.x, a:p.h, b:(p.v!==undefined)?p.v:p.h*ar, roll:p.roll})),
-           depth:pr.depth, rollR:pr.rollR, throat:S.throat*IN/2, ar, xBreak:pr.xBreak };
+           depth:pr.depth, rollR:pr.rollR, throat:S.throat*IN/2, ar, xBreak:pr.xBreak, slopeCos:pr.slopeCos };
 }
 function dimsAt(st,x){
   const P=st.pts;
@@ -365,10 +365,21 @@ function snapSeats(st,x,pts,seatR,prefer){
 /* ANGULAR ring: seats distributed arc-uniformly over the BIG-panel perimeter
    itself (chamfers excluded from the domain). Monotonic walk - order-preserving,
    no bunching, panels share seats proportional to their length (SH96 wall rows). */
-function ringSeatsAngular(st,x,n,off,seatR){
+function ringSeatsAngular(st,x,n,off,seatR,diag){
   const F=facetsAt(st,x);
+  /* PIN #15 - DIAG on the rect IS the 45-deg chamfer boards (SH50/v4 canon) */
+  if(diag && st.n>7){
+    const chs=[]; for(let i=0;i<F.length;i++) if(F[i].ch) chs.push(i);
+    if(chs.length>=n){
+      const out=[];
+      for(let k=0;k<n;k++){ const fi=chs[Math.round(k*chs.length/n)%chs.length], f=F[fi];
+        const q=[f.mid[0],f.mid[1]];
+        q.facet=fi; q.param=Math.atan2(q[1],q[0]); out.push(q); }
+      return out;
+    }
+  }
   /* PIN #13 - rect walls get a SYMMETRIC PARTITION, not a blind perimeter walk */
-  if(st.n>7){
+  if(!diag && st.n>7){
     const wall={};
     for(let i=0;i<F.length;i++){ const f=F[i]; if(f.ch) continue;
       if(Math.abs(f.n2[0])>Math.abs(f.n2[1])) wall[f.n2[0]>0?'R':'L']=i;
@@ -421,22 +432,29 @@ function facetN(st,x,fi){
   return n;
 }
 function seatsFor(st,x,n,mode,off,seatR){
+  const diag=(mode==='diag');
+  if(diag){ off=0.5/n; mode='ring'; }                           // corner diamond = ring rotated half a pitch
   if(st.style==='angular' && mode!=='pairsH' && mode!=='pairsV')
-    return ringSeatsAngular(st,x,n,off,seatR);                  // pin #9: panel-perimeter ring
+    return ringSeatsAngular(st,x,n,off,seatR,diag);             // pin #9: panel-perimeter ring / #15: chamfer boards
   const seats = mode==='pairsH'? pairSeats(st,x,n,false)
        : mode==='pairsV'? pairSeats(st,x,n,true)
        : ringSeats(st,x,n,n*48,off||0);
   if(st.style==='angular') return snapSeats(st,x,seats,seatR, mode==='pairsH'?'h':'v');   // pin #9: rows clamp onto their OWN walls
   return seats;
 }
-function xForSeats(st,n,seatR,xMin,mode,off){
+function xForSeats(st,n,seatR,xMin,mode,off,obs){
   const xMax=st.depth*0.84;
   for(let x=xMin;x<=xMax;x+=st.depth/128){
-    if(st.xBreak!==undefined && Math.abs(x-st.xBreak)<seatR+0.008) continue;   // no seat straddles the flare-break crease
+    if(st.xBreak!==undefined && Math.abs(x-st.xBreak)<seatR*(st.slopeCos||1)+0.008) continue;   // a seat's AXIAL footprint is seatR*cos(wall slope) - don't straddle the crease
     const seats=seatsFor(st,x,n,mode,off,seatR);
     let ok=true;
     for(let i=0;i<n&&ok;i++) for(let j=i+1;j<n;j++){
       if(Math.hypot(seats[i][0]-seats[j][0],seats[i][1]-seats[j][1]) < 2*seatR+0.008){ ok=false; break; } }
+    /* MEASURED clearance vs already-placed seats (no radii-sum heuristics -
+       construct the candidate and measure it in 3D; v5 discipline) */
+    if(ok&&obs) for(const q of seats){ const p3=[x,q[0],q[1]];
+      for(const o of obs){ if(Math.hypot(p3[0]-o.p[0],p3[1]-o.p[1],p3[2]-o.p[2]) < seatR+o.r+0.008){ ok=false; break; } }
+      if(!ok) break; }
     if(ok) return x;
   }
   return null;
@@ -452,17 +470,31 @@ function layout(S,st){
   /* DIALECT BY COVERAGE (pin #1): wide format -> woofer PAIRS on top/bottom walls
      (Danley canon); tall -> side pairs; near-square/round -> ring. */
   const ratio=Math.tan(d2r(S.covH/2))/Math.tan(d2r(S.covV/2));
-  const auto=(S.topo!=='1way' && ((S.nW|0)||2)>=2 && ratio>=1.25)? 'pairsH'
-           : (S.topo!=='1way' && ((S.nW|0)||2)>=2 && ratio<=0.8)? 'pairsV' : 'ring';
+  const nWn=((S.nW|0)||2);
+  /* THE PLACEMENT MATRIX (docs/placement_matrix.md - pin #15):
+     2 woofers -> ends of the LONG axis (pin #14, the Danley line);
+     3+        -> coverage rows (wide: top/bottom, tall: sides) or the ring. */
+  const auto=(S.topo==='1way')? 'ring'
+           : nWn<=2 ? (ratio>=1? 'pairsV' : 'pairsH')            // pairsV(n=2) = one seat each side ON the horizontal line
+           : ratio>=1.25? 'pairsH' : ratio<=0.8? 'pairsV' : 'ring';
   const modeW=(S.placeW&&S.placeW!=='auto')? S.placeW : auto;    // pin #10: explicit options + smart default
   S.dialectW=modeW+(S.placeW&&S.placeW!=='auto'?'':' (auto)');
-  /* mids follow the SAME coverage dialect (Waslo canon: mids on the widened #2
-     panels = rows on the wide walls). A 4-wall mid ring can NEVER out-grow its
-     spacing law - spread and path shrink together - so wide horns must row up. */
-  const modeM=(ratio>=1.25)?'pairsH':(ratio<=0.8)?'pairsV':'ring';
+  /* mids position RELATIVE to the woofers (the matrix, pin #15):
+     2 mids -> the axis PERPENDICULAR to the woofer line; 4 mids beside axis or
+     row woofers -> DIAG corner diamond (Hinson: "you see them in the corners";
+     on CLASSIC ANGULAR the 45-deg chamfer boards ARE those corners - v4 canon);
+     otherwise the coverage rows (Waslo widened-#2-panel canon). */
+  const nMn=((S.nM|0)||4);
+  const modeM = nMn<=2 ? (modeW==='pairsV'?'pairsH':'pairsV')
+              : (ratio>=1.25)? 'pairsH' : (ratio<=0.8)? 'pairsV'          // wide/tall: rows (the diamond's vertical pairs collapse on non-square throats)
+              : (nMn===4 && modeW!=='ring')? 'diag' : 'ring';             // SQUARE-regime 4-mid diamond (SH50 canon; chamfer boards on angular)
   S.dialectM=modeM;
   const xM0=xForSeats(st,(S.nM|0)||4,seatM,0.012,modeM,0);
-  const xW0=xForSeats(st,(S.nW|0)||2,seatW,(S.topo==='3way'&&xM0!=null)?(xM0+seatM+seatW+0.008):0.02,modeW,offW);
+  /* woofers start just past the mids and clear them by MEASUREMENT, not by a
+     radii-sum heuristic (2x12in horns were being pushed to the mouth - pin #14 era) */
+  const obsM=(S.topo==='3way'&&xM0!=null)?
+    seatsFor(st,xM0,(S.nM|0)||4,modeM,0,seatM).map(q=>({p:[xM0,q[0],q[1]], r:seatM})) : null;
+  const xW0=xForSeats(st,(S.nW|0)||2,seatW,(S.topo==='3way'&&xM0!=null)?(xM0+0.01):0.02,modeW,offW,obsM);
   const xM=xM0, xW=xW0;
   /* v4 LAW: the tap->diaphragm path makes a lambda/4 reflection NULL at C/(4*path);
      cross 1.2x BELOW it so the notch stays clear of the LR4 corner. */
@@ -531,14 +563,17 @@ function acoustics(S,L,st){
   if(S.topo==='3way') kinds.push(['mid', S.sdM||50, S.vtcM||40, S.xmM||3, [4.0,8.0], S.fxDerived&&S.fxDerived.lo, S.fxDerived&&S.fxDerived.hi]);
   for(const [kind,sd,vtc,xm,band,fLow,fx] of kinds){
     const drs=L.filter(d=>d.kind===kind); if(!drs.length||!fx||!fLow) continue;
+    /* VELOCITY FIRST (the compendium law): the 17 m/s cap SETS the CR; the
+       compression band only grades it (v4: mids warn down to 2.5:1). Forcing
+       CR back into the band made the tool fail its own velocity check. */
     const crVel=17/(2*Math.PI*fLow*(xm/1000));           // CR the velocity limit allows
-    const cr=Math.max(band[0], Math.min(band[1], crVel));
+    const cr=Math.max(1.5, Math.min(band[1], crVel));    // below 1.5:1 it stops being a compression tap
     const ap=sd/cr;                                      // cm^2 per driver
     for(const d of drs){ const saM=Math.sqrt(ap*1e-4*3)/2, sbM=Math.sqrt(ap*1e-4/3)/2;
       d.slot={sa:saM, sb:sbM, ap:ap}; }
     add(kind.toUpperCase(),'Compression ratio Sd/Ap',cr.toFixed(1)+':1',
-      crVel>=band[0], crVel>=band[0]*0.8,
-      crVel<band[0]?'the 17 m/s velocity limit wants CR below the compression band - the driver excursion is too large for this duty':'derived from the 17 m/s limit, clamped to the band');
+      cr>=band[0], cr>=band[0]*0.6,
+      cr<band[0]?'below the classic band - big ports, mild loading (JMOD territory); excursion-limited duty':'derived from the 17 m/s limit, graded against the band');
     const vel=cr*2*Math.PI*fLow*(xm/1000);
     add(kind.toUpperCase(),'Port velocity at band low edge ('+fLow+' Hz)',vel.toFixed(1)+' m/s',vel<=17.2,vel<=20,'compendium: the real port-area criterion, evaluated at the band bottom');
     /* REAL port length: print wall + 0.85r end correction (matches the response network) */
@@ -593,6 +628,15 @@ function acoustics(S,L,st){
         const fLP=C/(2*Math.PI)*Math.sqrt((taps.length*ap*1e-4)/((vtc*1e-6)*lpt));
         add('COAX','Chamber acoustic low-pass',Math.round(fLP)+' Hz',fLP>=1.2*fx,fLP>=fx,'coax front chamber + plate slots must clear the crossover'); }
     }
+  }
+  /* PIN #16 (M4 down payment): Keele pattern-control floors per plane -
+     wnom = kk/(theta*Fc), kk = 25306 Hz*deg*m (Synergy Calc sheet). Below these
+     frequencies the wall angle stops steering and the pattern widens toward omni. */
+  if(st){ const KK=25306, mo=st.pts[st.pts.length-1];
+    const FcH=Math.round(KK/(S.covH*Math.max(0.05,2*mo.a)));
+    const FcV=Math.round(KK/(S.covV*Math.max(0.05,2*mo.b)));
+    add('PATTERN','Coverage control holds down to (H / V)',FcH+' / '+FcV+' Hz',true,true,
+      'Keele: mouth = 25306/(angle*Fc). Wider angle OR bigger mouth -> control lower. The classic shapes (90x60, 110x70...) are this trade struck at equal H/V floors');
   }
   /* XO ceilings: CD reach (by exit size) and mid reach */
   if(S.fxDerived){

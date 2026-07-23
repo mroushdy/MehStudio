@@ -80,7 +80,7 @@ for(const S of lattice){
   /* pin #9 facet laws: on ANGULAR every seat sits ON a big facet, normal in the panel plane */
   if(S.style==='angular') for(const d of L){ if(d.facet===undefined) continue;
     const F2=MEH2.facetsAt(st,d.x), f=F2[d.facet];
-    ck(!f.ch, tag+' seat on a chamfer facet');
+    ck(!f.ch || d.kind==='mid', tag+' non-mid seat on a chamfer facet');   // diag mids OWN the chamfer boards (SH50 canon)
     const rel=[d.center[1]-f.p[0], d.center[2]-f.p[1]];
     const perp=Math.abs(rel[0]*f.n2[0]+rel[1]*f.n2[1]);
     ck(perp<=0.001, tag+' seat off its panel ('+(perp*1000).toFixed(1)+'mm)');
@@ -114,6 +114,27 @@ for(const S of lattice){
     if(!r.infeasible){ const again=MEH2.evaluate(r.S);
       ck(again.fails===0, tag+' solve says clean but re-evaluate fails='+again.fails); }
   }catch(e){ ck(false, tag+' solve threw: '+e.message); }
+}
+
+/* ---------- 2.5 the placement matrix table (docs/placement_matrix.md is LAW) ---------- */
+{
+  const dm=(o)=>{ const S=mk({topo:'3way',nW:2,nM:4,covH:110,covV:70,
+    odW:31.5,dpW:14,sdW:522,vtcW:180,xmW:9, odM:10.3,dpM:6.5,sdM:50,vtcM:40,xmM:3, ...o});
+    delete S._w; delete S._m;
+    const st=MEH2.stations(S); MEH2.layout(S,st);
+    return {W:(S.dialectW||'').replace(' (auto)',''), M:S.dialectM||''}; };
+  const T=[
+    [{nW:2},                                  'pairsV','pairsH','wide 2W -> H line, 4M rows'],
+    [{nW:2,covH:70,covV:110},                 'pairsH','pairsV','tall 2W -> V line, 4M side rows'],
+    [{nW:2,covH:70,covV:70},                  'pairsV','diag',  'square 2W -> line, 4M diamond'],
+    [{nW:4},                                  'pairsH','pairsH','wide 4W rows, 4M rows'],
+    [{nW:4,covH:70,covV:70},                  'ring',  'ring',  'square 4W ring, 4M ring'],
+    [{nW:2,nM:2},                             'pairsV','pairsH','2M perpendicular to W line'],
+    [{nW:2,nM:6},                             'pairsV','pairsH','6M rows'],
+    [{nW:2,covH:70,covV:70,style:'angular'},  'pairsV','diag',  'square angular -> chamfer-board mids'],
+  ];
+  for(const [o,eW,eM,why] of T){ const d=dm(o);
+    ck(d.W===eW && d.M===eM, 'placement matrix: '+why+' (got '+d.W+'/'+d.M+' want '+eW+'/'+eM+')'); }
 }
 
 /* ---------- 3. canonical matrix (subprocess, expectations asserted there) ---------- */
