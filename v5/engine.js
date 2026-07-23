@@ -85,9 +85,26 @@ function paramFor(aH,bH,n,y,z){
    exact R-OSSE coefficients can be swapped in later without touching callers. ---- */
 function profile(S){
   const th=d2r(S.covH/2);                       // wall angle target (coverage)
-  const ht=(S.topo==='1way')? ((S.coaxRing||4.5)*CM+0.024)   // 1way: the printed APEX PLATE is the throat - flare starts at its edge (his pin #8 / Reference C)
-                             : S.throat*IN/2;
+  const ht=S.throat*IN/2;
   const hm=S.mouthW*IN/2;
+  if(S.topo==='1way'){
+    /* PIN #21: the horn STARTS at the CD exit, expands fast to the coax cone's
+       tap radius (the snout adapter, ~38 deg half-angle), then flares normally */
+    const rP=(S.coaxRing||4.5)*CM+0.03;
+    const thA=d2r(38);
+    const La=Math.max(0.01,(rP-ht)/Math.tan(thA));
+    const D2=Math.max(0.05,(hm-rP)/Math.tan(th));
+    const depth=La+D2, pts=[];
+    for(let i=0;i<=8;i++){ const x=La*i/8; pts.push({x, h:ht+Math.tan(thA)*x}); }
+    for(let j=1;j<=40;j++){ const t=j/40, x=La+D2*t, s=t*t*(3-2*t);
+      pts.push({x, h:rP+(hm-rP)*(0.72*t+0.28*s)}); }
+    const rollR=S.rollR*IN, M2=10;
+    const hEnd=pts[pts.length-1].h, sl=(pts[pts.length-1].h-pts[pts.length-2].h)/(pts[pts.length-1].x-pts[pts.length-2].x);
+    const a0=Math.atan(sl);
+    for(let i=1;i<=M2;i++){ const a=a0+(Math.PI/2-a0)*(i/M2)*0.9;
+      pts.push({x:depth+rollR*(Math.sin(a)-Math.sin(a0)), h:hEnd+rollR*((1-Math.cos(a))-(1-Math.cos(a0))), roll:true}); }
+    return {pts, depth, rollR, mouthH:hm, xAdapter:La};
+  }
   if(S.style==='angular'){
     /* PIN #12 - THE CLASSIC SHAPE (Waslo Synergy Calc v5, Main Panels sheet):
        flare 1 AT the coverage angle; flare 2 = the SECOND EXPANSION
@@ -141,7 +158,7 @@ function stations(S){
   const ar=Math.tan(d2r(S.covV/2))/Math.tan(d2r(S.covH/2));   // vertical/horizontal
   return { form:'se', n:S.seN, style:S.style,
            pts:pr.pts.map(p=>({x:p.x, a:p.h, b:(p.v!==undefined)?p.v:p.h*ar, roll:p.roll})),
-           depth:pr.depth, rollR:pr.rollR, throat:S.throat*IN/2, ar, xBreak:pr.xBreak, slopeCos:pr.slopeCos };
+           depth:pr.depth, rollR:pr.rollR, throat:S.throat*IN/2, ar, xBreak:pr.xBreak, slopeCos:pr.slopeCos, xAdapter:pr.xAdapter };
 }
 function dimsAt(st,x){
   const P=st.pts;
@@ -319,6 +336,31 @@ function facetN(st,x,fi){
   if(n[1]*A.mid[0]+n[2]*A.mid[1]<0) n=[-n[0],-n[1],-n[2]];
   return n;
 }
+/* PIN #18: the OUTER wall of a printed shell is each panel pushed out by the
+   wall thickness along its own normal (offset polygon), NOT a scaled copy -
+   scaling widened the chamfers and misaligned the outer creases. */
+function offsetRing(st,x,wt,M){
+  if(st.style!=='angular'){ const d=dimsAt(st,x); return seRing(d.a+wt,d.b+wt,st.n,M,st.style); }
+  const F=facetsAt(st,x), NV=F.length, OV=[];
+  for(let i=0;i<NV;i++){
+    const A=F[(i-1+NV)%NV], B=F[i];
+    const p1=[A.p[0]+wt*A.n2[0],A.p[1]+wt*A.n2[1]], d1=A.dir;
+    const p2=[B.p[0]+wt*B.n2[0],B.p[1]+wt*B.n2[1]], d2=B.dir;
+    const det=d1[0]*(-d2[1])-d1[1]*(-d2[0]);
+    if(Math.abs(det)<1e-9){ OV.push(p2); continue; }
+    const t=((p2[0]-p1[0])*(-d2[1])-(p2[1]-p1[1])*(-d2[0]))/det;
+    OV.push([p1[0]+d1[0]*t, p1[1]+d1[1]*t]);
+  }
+  const segs=[]; let L=0;
+  for(let i=0;i<NV;i++){ const p=OV[i], q=OV[(i+1)%NV];
+    const l=Math.hypot(q[0]-p[0],q[1]-p[1]); segs.push(l); L+=l; }
+  const out=[]; let used=0, i=0;
+  for(let k=0;k<M;k++){ const t=k/M*L;
+    while(used+segs[i]<t){ used+=segs[i]; i=(i+1)%NV; }
+    const f2=(t-used)/(segs[i]||1e-9), p=OV[i], q=OV[(i+1)%NV];
+    out.push([p[0]+(q[0]-p[0])*f2, p[1]+(q[1]-p[1])*f2]); }
+  return out;
+}
 function seatsFor(st,x,n,mode,off,seatR){
   const diag=(mode==='diag');
   if(diag){ off=0.5/n; mode='ring'; }                           // corner diamond = ring rotated half a pitch
@@ -425,16 +467,20 @@ function layout(S,st){
     /* PIN #8 (his spec): ONE coax driver - the horn IS the CD's waveguide; the cone
        section fires through a tap-slot ring in the printed apex plate. */
     const nT=(S.coaxTaps|0)||6;
-    const rT=Math.max(S.td*IN*0.5+0.014, (S.coaxRing||4.5)*CM);
-    const apC=(S.sdC||150)/Math.max(4,Math.min(8, 17/(2*Math.PI*((S.fxDerived&&S.fxDerived.lo)||S.fxC||300)*((S.xmC||4)/1000)) ))/nT;   // cm^2 per slot, velocity-clamped CR
-    const saC=Math.sqrt(apC*1e-4*3)/2, sbC=Math.sqrt(apC*1e-4/3)/2;
-    const fxCo=Math.round((1/1.2)*C/(4*(rT+S.cdDepth*IN)));   // coax XO 1.2x below the tap-path null (v4 law)
-    S.fxDerived={hi: fxCo, lo: fxCo};
+    const xT=(st.xAdapter||0.02)*0.85;                        // PIN #21: slots ring the ADAPTER wall
+    const taps=[]; let rMax=0;
     for(let k=0;k<nT;k++){ const a2=(k+0.5)/nT*2*Math.PI;
-      const p=[0.004, rT*Math.cos(a2), rT*Math.sin(a2)];
-      out.push({kind:'coaxtap', x:0.004, phi:a2, center:p, normal:[-1,0,0], od:0.02, dp:0,
+      const p=surfPt(st,xT,a2); taps.push([a2,p]); rMax=Math.max(rMax,Math.hypot(p[1],p[2])); }
+    const Ls=Math.hypot(xT, rMax-S.throat*IN/2);              // WORST tap's slant along the adapter wall
+    const fxCo=Math.round((1/1.2)*C/(4*(Ls+S.cdDepth*IN)));   // coax XO 1.2x below the tap-path null (v4 law)
+    S.fxDerived={hi: fxCo, lo: fxCo};
+    const sdC=S.sdC|| (S.sdW||150);
+    const apC=sdC/Math.max(4,Math.min(8, 17/(2*Math.PI*fxCo*((S.xmC||S.xmW||4)/1000)) ))/nT;   // cm^2 per slot, velocity-clamped CR
+    const saC=Math.sqrt(apC*1e-4*3)/2, sbC=Math.sqrt(apC*1e-4/3)/2;
+    for(const [a2,p] of taps){ const nrm=surfN(st,xT,a2);
+      out.push({kind:'coaxtap', x:xT, phi:a2, center:p, normal:nrm, od:0.02, dp:0,
         tap:p, seatR:sbC+0.004, slot:{sa:saC, sb:sbC, ap:apC, radial:true}}); }
-    out.coax={od:(S.odC||0.22), dp:(S.dpC||0.11)};
+    out.coax={od:(S.odW? S.odW*CM : (S.odC||0.22)), dp:(S.dpW? S.dpW*CM : (S.dpC||0.11))};   // PIN #21: the coax IS the chosen woofer
   }
   return out;
 }
@@ -451,9 +497,9 @@ function acoustics(S,L,st){
   /* v4 SOURCED LAW (compendium): peak port velocity = CR * 2pi * fLOW * xm at the
      BAND'S LOW EDGE (woofers run to the sub XO ~80 Hz; mids to their lower XO).
      Ap derives FROM the 17 m/s limit, clamped into the CR band (w 2.5-6, m 4-8). */
-  if(S.topo!=='1way') kinds.push(['woof', S.sdW||300, S.vtcW||150, S.xmW||7, [2.5,6.0], S.subXO||80, S.fxDerived&&S.fxDerived.lo]);
-  if(S.topo==='3way') kinds.push(['mid', S.sdM||50, S.vtcM||40, S.xmM||3, [4.0,8.0], S.fxDerived&&S.fxDerived.lo, S.fxDerived&&S.fxDerived.hi]);
-  for(const [kind,sd,vtc,xm,band,fLow,fx] of kinds){
+  if(S.topo!=='1way') kinds.push(['woof', S.sdW||300, S.vtcW||150, S.xmW||7, [2.5,6.0], S.subXO||80, S.fxDerived&&S.fxDerived.lo, (S.npW|0)||1]);
+  if(S.topo==='3way') kinds.push(['mid', S.sdM||50, S.vtcM||40, S.xmM||3, [4.0,8.0], S.fxDerived&&S.fxDerived.lo, S.fxDerived&&S.fxDerived.hi, (S.npM|0)||1]);
+  for(const [kind,sd,vtc,xm,band,fLow,fx,np] of kinds){
     const drs=L.filter(d=>d.kind===kind); if(!drs.length||!fx||!fLow) continue;
     /* VELOCITY FIRST (the compendium law): the 17 m/s cap SETS the CR; the
        compression band only grades it (v4: mids warn down to 2.5:1). Forcing
@@ -461,8 +507,9 @@ function acoustics(S,L,st){
     const crVel=17/(2*Math.PI*fLow*(xm/1000));           // CR the velocity limit allows
     const cr=Math.max(1.5, Math.min(band[1], crVel));    // below 1.5:1 it stops being a compression tap
     const ap=sd/cr;                                      // cm^2 per driver
-    for(const d of drs){ const saM=Math.sqrt(ap*1e-4*3)/2, sbM=Math.sqrt(ap*1e-4/3)/2;
-      d.slot={sa:saM, sb:sbM, ap:ap}; }
+    for(const d of drs){ const apP=ap/(np||1);              // pin #19: area split across the ports
+      const saM=Math.sqrt(apP*1e-4*3)/2, sbM=Math.sqrt(apP*1e-4/3)/2;
+      d.slot={sa:saM, sb:sbM, ap:ap, np:np||1}; }
     add(kind.toUpperCase(),'Compression ratio Sd/Ap',cr.toFixed(1)+':1',
       cr>=band[0], cr>=band[0]*0.6,
       cr<band[0]?'below the classic band - big ports, mild loading (JMOD territory); excursion-limited duty':'derived from the 17 m/s limit, graded against the band');
@@ -509,10 +556,10 @@ function acoustics(S,L,st){
           sLam<=okS, sLam<=wnS,
           kind==='mid'?'Waslo/Hinson: every mid tap within \u03bb/4 of every other at '+fx+' Hz, or they stop summing as one source'
                       :'woofer sections tolerate more spread (SH96 canon ~1.5\u00d7\u03bb/4 at its XO); past 2\u00d7 the section combs'); }
-      const coneD=2*Math.sqrt(sd*1e-4/Math.PI), fCone=C/(2*coneD);
+      const coneD=2*Math.sqrt(sd*1e-4/Math.PI)/((np||1)>=2?2:1), fCone=C/(2*coneD);
       add(K,'Cone dia vs \u03bb/2 at band top',Math.round(fCone)+' Hz max',
         fCone>=fx, fCone>=0.85*fx,
-        'path spread across the cone cancels above c/(2\u00b7D); pick smaller cones or lower the XO');
+        (np>=2?'TWO straddling ports halve the worst cone path (v4 law) - null pushed up an octave; ':'')+'path spread across the cone cancels above c/(2\u00b7D); a second straddling port would buy an octave');
     }
   }
   /* ---- M2 for the 1-way coax cone section (same laws on the plate tap ring) ---- */
@@ -697,6 +744,6 @@ function solve(S0){
   return {S, ev:evaluate(S), infeasible:true};
 }
 
-return {C,IN,CM, sePoint,seRing, profile, stations, dimsAt, surfPt, surfN, layout, evaluate, solve, response, areaAt, facetsAt, facetN};
+return {C,IN,CM, sePoint,seRing, profile, stations, dimsAt, surfPt, surfN, layout, evaluate, solve, response, areaAt, facetsAt, facetN, offsetRing};
 })();
 if(typeof module!=='undefined') module.exports=MEH2;

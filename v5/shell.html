@@ -77,6 +77,11 @@ select{width:100%;font-family:var(--mono);font-size:11px;background:var(--paper)
   <input type="range" id="odW" min="8" max="46" step="1" value="14">
   <label>WOOFER COUNT <span class="val" id="vNW"></span></label>
   <input type="range" id="nW" min="2" max="8" step="1" value="6">
+  <label>TAPS PER DRIVER</label>
+  <select id="npSel">
+    <option value="1" selected>one slot under the cone</option>
+    <option value="2">two, straddling — halves the cone path (v4 law)</option>
+  </select>
   <label>DRIVER MOUNT</label>
   <select id="mountSel">
     <option value="flush" selected>flush on the wall — tilts with it (Danley)</option>
@@ -231,7 +236,7 @@ function rebuild(){
        on the curling lip - caught in review); the lip closes outer edge -> roll tip */
     const pre=st.pts.filter(p=>!p.roll);
     const posO=[], idxO=[];
-    const ringsO=pre.map(p=>MEH2.seRing(p.a+wt,p.b+wt,st.n,M));
+    const ringsO=pre.map(p=>MEH2.offsetRing(st,p.x,wt,M));   // pin #18: true panel offset outside
     pre.forEach((p,i)=>{ ringsO[i].forEach(q=>posO.push(p.x,q[1],q[0])); });
     for(let i=0;i<pre.length-1;i++) for(let j=0;j<M;j++){
       const a2=i*M+j, b3=i*M+(j+1)%M, c2=(i+1)*M+j, d3=(i+1)*M+(j+1)%M;
@@ -244,7 +249,7 @@ function rebuild(){
     outer.userData.tag='shell'; g.add(outer);
     /* lip underside: outer pre-roll edge -> the roll tip ring */
     { const pl=pre[pre.length-1], tip=st.pts[st.pts.length-1];
-      const ro=MEH2.seRing(pl.a+wt,pl.b+wt,st.n,M), rt=MEH2.seRing(tip.a,tip.b,st.n,M);
+      const ro=MEH2.offsetRing(st,pl.x,wt,M), rt=MEH2.seRing(tip.a,tip.b,st.n,M);
       const rp=[], rx=[];
       ro.forEach(q=>rp.push(pl.x,q[1],q[0])); rt.forEach(q=>rp.push(tip.x,q[1],q[0]));
       for(let j=0;j<M;j++){ const a2=j,b3=(j+1)%M,c2=M+j,d3=M+(j+1)%M; rx.push(a2,c2,b3, b3,c2,d3); }
@@ -269,16 +274,19 @@ function rebuild(){
     if(d.kind==='coaxtap'){
       /* pin #8: radial slot ring in the printed apex plate (Reference C look) */
       const sa=(d.slot&&d.slot.sa)||0.016, sb=(d.slot&&d.slot.sb)||0.006;
-      const rad=new THREE.Vector3(0,d.center[2],d.center[1]).normalize();
-      const tan=new THREE.Vector3(0,-rad.z,rad.y);
+      const rad0=new THREE.Vector3(0,d.center[2],d.center[1]).normalize();
+      const nC=P3(d.normal);
+      const rad=rad0.clone().sub(nC.clone().multiplyScalar(rad0.dot(nC))).normalize();   // radial, in the wall plane
+      const tan=nC.clone().cross(rad);
       const sp=new THREE.Shape(); const r2=0.9;
       sp.moveTo(-1+r2,-1); sp.lineTo(1-r2,-1); sp.quadraticCurveTo(1,-1,1,-1+r2);
       sp.lineTo(1,1-r2); sp.quadraticCurveTo(1,1,1-r2,1); sp.lineTo(-1+r2,1);
       sp.quadraticCurveTo(-1,1,-1,1-r2); sp.lineTo(-1,-1+r2); sp.quadraticCurveTo(-1,-1,-1+r2,-1);
       const tap=new THREE.Mesh(new THREE.ShapeGeometry(sp,8),
         new THREE.MeshBasicMaterial({color:0x0d0c0b,side:THREE.DoubleSide}));
-      const mB=new THREE.Matrix4().makeBasis(rad.clone().multiplyScalar(sa),tan.clone().multiplyScalar(sb),new THREE.Vector3(1,0,0));
-      mB.setPosition(new THREE.Vector3(d.center[0]-0.0008, d.center[2], d.center[1]));
+      const mB=new THREE.Matrix4().makeBasis(rad.clone().multiplyScalar(sa),tan.clone().multiplyScalar(sb),nC);
+      const cc=new THREE.Vector3(d.center[0], d.center[2], d.center[1]).add(nC.clone().multiplyScalar(-0.0015));
+      mB.setPosition(cc);
       tap.applyMatrix4(mB); tap.userData.tag='port'; g.add(tap);
       continue; }
     /* stadium slot under the driver: long axis along flow */
@@ -289,11 +297,15 @@ function rebuild(){
       sp.moveTo(-1+r2,-1); sp.lineTo(1-r2,-1); sp.quadraticCurveTo(1,-1,1,-1+r2);
       sp.lineTo(1,1-r2); sp.quadraticCurveTo(1,1,1-r2,1); sp.lineTo(-1+r2,1);
       sp.quadraticCurveTo(-1,1,-1,1-r2); sp.lineTo(-1,-1+r2); sp.quadraticCurveTo(-1,-1,-1+r2,-1);
-      const tg=new THREE.ShapeGeometry(sp,8);
-      const tap=new THREE.Mesh(tg,new THREE.MeshBasicMaterial({color:0x0d0c0b,side:THREE.DoubleSide}));
-      const mB=new THREE.Matrix4().makeBasis(u.clone().multiplyScalar(sa),v.clone().multiplyScalar(sb),n.clone());
-      mB.setPosition(c.clone().add(n.clone().multiplyScalar(-0.0015)));   // pin #3: the tap opens on the INNER face - visible through the mouth
-      tap.applyMatrix4(mB); tap.userData.tag='port'; tap.userData.kind=d.kind; g.add(tap);
+      const np=(d.slot&&d.slot.np)||1;
+      for(let kp=0;kp<np;kp++){
+        const tg=new THREE.ShapeGeometry(sp,8);
+        const tap=new THREE.Mesh(tg,new THREE.MeshBasicMaterial({color:0x0d0c0b,side:THREE.DoubleSide}));
+        const mB=new THREE.Matrix4().makeBasis(u.clone().multiplyScalar(sa),v.clone().multiplyScalar(sb),n.clone());
+        const off=np>=2? (kp===0?-1:1)*d.od*0.22 : 0;          // pin #19: straddling pair along flow (v4 law)
+        mB.setPosition(c.clone().add(n.clone().multiplyScalar(-0.0015)).add(u.clone().multiplyScalar(off)));
+        tap.applyMatrix4(mB); tap.userData.tag='port'; tap.userData.kind=d.kind; g.add(tap);
+      }
     }
     /* printed seat + body: FLUSH rides the wall normal; AXIAL (pin #5) rides the
        spot-face land - a printed wedge keeps the body parallel to the horn axis */
@@ -321,7 +333,8 @@ function rebuild(){
   }
   /* apex driver: 1way = the full COAX unit (his pin #8); else the CD */
   if(S.topo==='1way'){
-    const body=driverBody((S.odC||0.22),(S.dpC||0.11),{motor:'ferrite'});
+    const cx=(window.__ev&&__ev.layout&&__ev.layout.coax)||{od:S.odW*0.01||0.22,dp:S.dpW*0.01||0.11};
+    const body=driverBody(cx.od, cx.dp, {motor:'ferrite'});
     body.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),new THREE.Vector3(-1,0,0));
     body.position.set(st.pts[0].x-0.004,0,0);
     body.traverse(o=>o.userData.tag='driver'); g.add(body);
@@ -426,6 +439,8 @@ function wire(){
     el.onchange=()=>{ S.placeW=el.value; save(); rebuild(); }; }
   { const el=document.getElementById('mountSel'); el.value=S.mount||'flush';
     el.onchange=()=>{ S.mount=el.value; save(); rebuild(); }; }
+  { const el=document.getElementById('npSel'); el.value=String(S.npW||1);
+    el.onchange=()=>{ S.npW=+el.value; S.npM=+el.value; save(); rebuild(); }; }
 }
 /* ---------------- bug pins (proven v3 module; bare-scope safe) ---------------- */
 window.BUGPINS=(function(){

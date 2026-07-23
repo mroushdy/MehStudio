@@ -50,7 +50,14 @@ M3. PATH-LENGTH BALANCE (Heinz US5526456, the founding canon): per-driver path t
     throat, section phase alignment at XO, common acoustic center check.
 M4. COVERAGE TRUTH: Keele mouth law per plane, pattern-loss frequency, waistbanding
     warnings; coverage currently only sets wall angle.
-M5. THROAT SIDE: CD throat adapter Vtc/Atc, exit-angle match, coax entrance geometry.
+M5. THROAT SIDE [1WAY ADAPTER LANDED - pin #21: the horn starts AT the CD exit,
+    38-deg snout to the coax cone's tap ring (slots ON the adapter wall, XO from
+    the worst tap's SLANT path), coax unit drawn at the chosen woofer's size.
+    Pin #18 landed the true panel-offset outer shell; pin #19 the taps-per-driver
+    option (straddling pair halves the cone path, v4 law). Still open: CD Vtc/Atc,
+    exit-angle match, 2way/3way round-throat -> shape morph (pin #20 - smooth
+    should blend n=2 at the throat into the chosen shape; angular keeps the
+    Waslo square throat with the round bore in the plate)].
 M6. BAND ARCHITECTURE: real sub-XO choice with displacement math (80 Hz is an
     assumption today); 4-way question parked explicitly.
 M7. LAYOUT DIALECTS [PLACEMENT MATRIX LANDED - docs/placement_matrix.md is

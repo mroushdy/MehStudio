@@ -95,7 +95,8 @@ for(const S of lattice){
     ck(S.fxDerived.lo>20&&S.fxDerived.lo<4000, tag+' silly XO lo');
     if(S.topo==='3way'&&S.fxDerived.hi) ck(S.fxDerived.hi>=S.fxDerived.lo, tag+' XO order inverted');
     const dW2=L.find(d=>d.kind===(S.topo==='1way'?'coaxtap':'woof'));
-    if(dW2){ const path=(S.topo==='1way'?Math.hypot(dW2.tap[1],dW2.tap[2]):dW2.x)+S.cdDepth*MEH2.IN;
+    if(dW2){ const rT2=Math.hypot(dW2.tap[1],dW2.tap[2]);
+      const path=(S.topo==='1way'? Math.hypot(dW2.x, rT2-st.throat) : dW2.x)+S.cdDepth*MEH2.IN;   // 1way: SLANT along the adapter
       const fNull=MEH2.C/(4*path);
       ck(fNull>=1.185*S.fxDerived.lo, tag+' null margin lost ('+(fNull/S.fxDerived.lo).toFixed(2)+'x)'); }
   }
@@ -159,6 +160,13 @@ for(const S of lattice){
   const BRAND=/\barda\b|\bara[- ]?audio\b/i;              // word-bounded: 'charAt'/'parameter' must not trip it
   ck(!BRAND.test(sh), 'brand scrub violated in shell');
   ck(!BRAND.test(fs.readFileSync('engine.js','utf8')), 'brand scrub violated in engine');
+  /* API census: every MEH2.<fn> the shell calls must exist in the engine export */
+  { const en2=fs.readFileSync('engine.js','utf8');
+    const exp=(en2.match(/return \{([^}]+)\};\s*\}\)\(\);/)||[])[1]||'';
+    const names=new Set(exp.split(',').map(t=>t.trim().split(':')[0]).filter(Boolean));
+    const used=new Set((sh.match(/MEH2\.(\w+)/g)||[]).map(t=>t.slice(5)));
+    for(const u of used) ck(names.has(u), 'shell calls MEH2.'+u+' but the engine does not export it');
+  }
   if(fs.existsSync('meh5.html')){
     const m5=fs.readFileSync('meh5.html','utf8');
     ck(!m5.includes('/*__ENGINE__*/'), 'meh5 not assembled (marker still present)');
