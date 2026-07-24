@@ -1,5 +1,39 @@
 # MEH STUDIO — STANDING QUEUE (versioned; update on every landed item)
-## BUILD 530 (2026-07-24): PIN #23 CLOSED + THE VENT FORK RESOLVED (sourced) + SH96 UNPARKED AT 58
+## BUILD 531 (2026-07-24 late): KNOWN-BUILDS AUDIT RE-BAKE + ADAPTIVE SETTINGS + SH-96 RECORD COMPLETE
+HIS THREE ASKS THIS SESSION: (1) "make sure the known builds are known builds
+you found online and match exactly" -> 14-agent adversarial audit
+(docs/KNOWN_BUILDS_AUDIT.md): 1 matched / 7 mismatched / 6 not-real. RE-BAKED
+in lockstep (shell+engine+gate+matrix): 10HPL64 sd 320 xm 4 (was 330/8 - xm
+was DOUBLE the datasheet), 12NDL76 dp 14.1 xm 7, W5 fiction -> named Dayton
+DC130A-8, W8 -> named B&C 8NDL51, BMS 5CN140 datasheet closes refd ("floors
+unverified" was FALSE - recXO 1900 published; 6FHX51 hfExit contamination
+removed), FHX coverage names corrected to the datasheets' 60x40, SH96 mids
+m3->m4 (sheet: 6x4in) + mouth DECLARED v5-geometry 51in vs real 45in front,
+SH50-class label MOVED to the angular preset re-baked to the real 50x50 /
+2x12 (the 70x70 was chrisbln's mouth-flare angle misread as coverage - trap
+documented), four archetype slots renamed "(house archetype)" loudly.
+ALL PRESETS EXEMPLARY at settled sizes; matrix AS EXPECTED.
+(2) SH-96 record complete: interior photo = Danley's own InfoComm 08 display
+unit (Flickr beavizzle 2619651027); woofers CONFIRMED 15in; official specs
+in study _4 addendum 4; addendum-3 vent corroboration RETRACTED (was anchored
+on the impossible 58in mouth - addendum 5); his front-view photo pins vent
+PLACEMENT (slot+round per quadrant flanking the seams).
+(3) "adaptive system that adjusts wrong settings atomically" ->
+docs/adaptive_settings_plan.md + MEH2.adapt(S,key,T) LANDED: pure/
+deterministic/idempotent (gate 2.10 sweeps it), derives dependents (driver
+packs from the preset tables via power-law CLASS CURVES - the od sliders
+used to FREEZE Sd/xm at the last preset: silent-trash source #1, fixed),
+ADAPT strip in the UI announces every co-move, intent knobs never touched.
+Settings sanity sweep (19k UI-reachable states) still running - policy-2
+clamps + trash-detector law rows land with its report.
+STILL OPEN from the audit: CoSyne 3-way true preset (full sourced pack in
+KNOWN_BUILDS_AUDIT 2.10 - needs CDX1-1445 CDP entry), SynTripP re-anchor for
+'tall' (STEP files in repo), kipman725/aragorus mining for classic3, sh50
+tap-station goldens vs the van Ommen 3.5/10.5/14.5in record, Xvar-vs-xm
+ruling (FHX twins diverge if Xvar becomes canon), w65 class pack unsourced.
+DRIVER MOUNTING audit (his 17 photo drop incl. the Unity wedge cutaway +
+SH-96 L-brackets + edge-over-tap) workflow still running -> plan doc next.
+## (prev) BUILD 530 (2026-07-24): PIN #23 CLOSED + THE VENT FORK RESOLVED (sourced) + SH96 UNPARKED AT 58
 HIS ASK ("research everything you can find about MEH and just fix the tool",
 finished-horn STLs attached): an 11-agent research pass over every attached
 reference + the three studies + web/patents -> docs/REFERENCE_LIBRARY_STUDY_4.md
@@ -25,9 +59,15 @@ reference + the three studies + web/patents -> docs/REFERENCE_LIBRARY_STUDY_4.md
   to the measured argmax off the diagonals (his photo: mids BETWEEN chambers).
 - SH96-CLASS UNPARKED at mouth 58 (his tab state LANDS: 0 fails, 1 declared
   warn, XO 359/276). Matrix case green again. Gate + battery ALL PASS.
-OPEN ASKS FOR HIM (new, from study _4): (1) SH-96 vent TAPE MEASURE (dia +
-count; his interior shot reads ~half the 12in-frame dia - bigger than SH-50
-scale; the dialect rides SH-50 numbers till then); (2) reflex-vents-into-horn
+OPEN ASKS FOR HIM (new, from study _4; item 1 amended b531): (1) SH-96 vent
+measurement (dia + count) - HE HAS NO TAPE ACCESS, ONLY PICTURES (his answer
+2026-07-24); b531 zoom re-read of his interior shot: the round side-wall
+circles are recessed HANDLE CUPS (flanged rim, mounting T-nuts, closed body),
+NOT vents - the study-4 "~half the frame dia" vent reading is RETRACTED. The
+photo's real canon is the construction (X-braced corner chambers, 45deg
+recessed woofers, 6 sealed mid cups ringing the CD block - v3.1 matches it).
+The dialect rides SH-50 numbers until a real SH-96 vent measurement surfaces
+(web hunt for the photo's source thread underway); (2) reflex-vents-into-horn
 (SH-50 @14.5in, JMOD Fb 70 Hz seam teardrops, SB-Horn Fb 34.65 Hz) is a
 MISSING ELEMENT class - M9 sealed-vs-reflex needs it; (3) FIX_LIST items:
 sh50-preset goldens vs the 3.5/10.5/14.5in record, pin #10 datum (transition

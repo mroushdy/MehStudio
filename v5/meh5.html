@@ -136,6 +136,8 @@ select{width:100%;font-family:var(--mono);font-size:11px;background:var(--paper)
 <main class="viewcol">
   <div id="refuseBanner" style="display:none;background:#B3261E;color:#fff;font-family:inherit;
     font-size:12px;letter-spacing:.06em;padding:8px 12px;text-transform:uppercase"></div>
+  <div id="adaptStrip" style="display:none;background:#20242B;color:#D8DEE9;font-family:inherit;
+    font-size:11px;letter-spacing:.05em;padding:6px 12px"></div>
   <div id="v3dwrap">
   <div id="v3d"></div>
   <div id="hud">
@@ -967,7 +969,7 @@ function acoustics(S,L,st){
     }
     add(kind.toUpperCase(),'Compression ratio Sd/Ap',cr.toFixed(1)+':1',
       danley? true : cr>=band[0], danley? true : cr>=band[0]*0.6,
-      danley? 'DANLEY DIALECT: '+(kind==='mid'?'one 3/4in round tap per mid':'one 2.5in round corner tap per woofer')+' = the SH-50 tape-measured record (van Ommen, diyaudio 292379 #4957246; chrisbln thing:6886663 ships the same 2.5in as canon). HIS SH-96 interior shot reads BIGGER (~half the frame dia) - his tape measure wanted before this number hardens'
+      danley? 'DANLEY DIALECT: '+(kind==='mid'?'one 3/4in round tap per mid':'one 2.5in round corner tap per woofer')+' = the SH-50 tape-measured record (van Ommen, diyaudio 292379 #4957246; chrisbln thing:6886663 ships the same 2.5in as canon). His SH-96 interior shot confirms the CONSTRUCTION (X-braced corner chambers, 6 sealed mid cups) but shows NO vent - the side-wall circles are recessed handle cups (b531 zoom re-read). An SH-96 vent measurement would harden this number'
             : (cr<band[0]?'below the classic band - big ports, mild loading (JMOD territory); excursion-limited duty':'derived from the 17 m/s limit, graded against the band'));
     const vel=cr*2*Math.PI*fLow*(xm/1000);
     add(kind.toUpperCase(),'Port velocity at band low edge ('+fLow+' Hz)',vel.toFixed(1)+' m/s',
@@ -1573,6 +1575,61 @@ function response(S,ev){
 }
 /* ---- SOLVE: grow the horn until every law passes (throat-invariant growth;
    the v4 principle, clean-roomed). Returns the settled state + evaluation. ---- */
+/* ---- ADAPTIVE SETTINGS (his ask 2026-07-24, docs/adaptive_settings_plan.md):
+   ONE atomic transition per knob change - DERIVED knobs co-move with a ledger
+   entry each; INTENT knobs (topo/style/coverage/counts/driver+CD choices/
+   mouth/subXO/taps-per/shape/mount/dialect) are NEVER auto-changed. Pure,
+   deterministic, idempotent - gate-asserted. The class curves are power-law
+   fits OF THE PRESET TABLES themselves (data-derived, nothing invented):
+   the od sliders used to freeze Sd/Vtc/xm at the last preset's values -
+   the first sweep finding, a silent-trash source. */
+function fitPow(pts){
+  let sx=0,sy=0,sxx=0,sxy=0,n=0;
+  for(const p of pts){ const x=p[0],y=p[1]; if(!(x>0&&y>0)) continue;
+    const lx=Math.log(x),ly=Math.log(y); sx+=lx; sy+=ly; sxx+=lx*lx; sxy+=lx*ly; n++; }
+  if(n<2) return null;
+  const b=(n*sxy-sx*sy)/Math.max(1e-9,n*sxx-sx*sx);
+  return {a:Math.exp((sy-b*sx)/n), b};
+}
+function adapt(S0,key,T){
+  const S={...S0}, ledger=[];
+  const set=(k,to,why)=>{ const from=S[k];
+    if(to===undefined||from===to) return;
+    S[k]=to; ledger.push({knob:k,from,to,why}); };
+  T=T||{};
+  /* 1. DERIVE dependents of the touched knob */
+  if(key==='cdSel'&&S.topo!=='1way'&&T.CDP&&T.CDP[S.cdSel]){ const P=T.CDP[S.cdSel];
+    set('td',P.td,'CD choice'); set('throat',P.td,'CD choice');
+    set('cdFloor',P.floor,'CD choice'); set('cdDepth',P.dep,'CD choice'); }
+  if(key==='wPre'){ const tbl=(S.topo==='1way'?T.CXPRE:T.WPRE)||{}; const P=tbl[S.wPre];
+    if(P){ set('odW',P.od,'driver preset'); set('dpW',P.dp,'driver preset');
+      set('sdW',P.sd,'driver preset'); set('vtcW',P.vtc,'driver preset'); set('xmW',P.xm,'driver preset');
+      if(S.topo==='1way'){ set('sdC',P.sd,'coax unit'); set('vtcC',P.vtc,'coax unit'); set('xmC',P.xm,'coax unit');
+        set('hfExit',P.hfExit!==undefined?P.hfExit:20.1,'coax unit'); set('recXO',P.recXO!==undefined?P.recXO:0,'coax unit');
+        set('hornType',P.horn||'fixed','coax unit'); set('cdDepth',0,'coax unit');
+        set('mouthW',Math.min(S.mouthCap||64,Math.round(2.35*P.od/2.54)),'driver-sized mouth (2.35×OD, the b518 rule)'); } } }
+  if(key==='mPre'&&T.MPRE&&T.MPRE[S.mPre]){ const P=T.MPRE[S.mPre];
+    set('odM',P.od,'mid preset'); set('dpM',P.dp,'mid preset'); set('sdM',P.sd,'mid preset');
+    set('vtcM',P.vtc,'mid preset'); set('xmM',P.xm,'mid preset'); }
+  if(key==='odW'){ set('wPre','custom','sliders detune the preset');
+    if(T.WPRE){ const pts=k=>Object.values(T.WPRE).map(P=>[P.od,P[k]]);
+      const fD=fitPow(pts('dp')), fS=fitPow(pts('sd')), fV=fitPow(pts('vtc')), fX=fitPow(pts('xm'));
+      if(fD) set('dpW',+(fD.a*Math.pow(S.odW,fD.b)).toFixed(2),'depth class curve');
+      if(fS) set('sdW',Math.round(fS.a*Math.pow(S.odW,fS.b)),'Sd class curve (fit of the preset table - the od slider used to freeze Sd)');
+      if(fV) set('vtcW',Math.round(fV.a*Math.pow(S.odW,fV.b)),'Vtc class curve');
+      if(fX) set('xmW',+(fX.a*Math.pow(S.odW,fX.b)).toFixed(1),'xmax class curve'); } }
+  if(key==='odM'){ set('mPre','custom','sliders detune the preset');
+    if(T.MPRE){ const pts=k=>Object.values(T.MPRE).map(P=>[P.od,P[k]]);
+      const fD=fitPow(pts('dp')), fS=fitPow(pts('sd')), fV=fitPow(pts('vtc')), fX=fitPow(pts('xm'));
+      if(fD) set('dpM',+(fD.a*Math.pow(S.odM,fD.b)).toFixed(2),'depth class curve');
+      if(fS) set('sdM',Math.round(fS.a*Math.pow(S.odM,fS.b)),'Sd class curve');
+      if(fV) set('vtcM',Math.round(fV.a*Math.pow(S.odM,fV.b)),'Vtc class curve');
+      if(fX) set('xmM',+(fX.a*Math.pow(S.odM,fX.b)).toFixed(1),'xmax class curve'); } }
+  if(key==='style'&&S.topo==='1way') set('seN',(S.style==='angular')?12:2,'1way form space is ROUND | SQUARE');
+  /* 2. CLAMPS (only evidence-backed ones; more as the sweep report lands) */
+  if(S.mouthW>(S.mouthCap||64)) set('mouthW',S.mouthCap||64,'mouth cap');
+  return {S2:S, ledger};
+}
 function solve(S0){
   const S={...S0};
   for(let it=0;it<120;it++){                        // must outlast (cap - start)/step
@@ -1848,12 +1905,19 @@ const BUILDS=(()=>{
   const B={style:'smooth',wallT:0.012,rollR:2,mouthCap:64,subXO:80,npW:1,npM:1,
     placeW:'auto',mount:'flush',fxHi:900,fxLo:300,coaxRing:4.5};
   const CDX={cdSel:'dcx464',td:1.4,throat:1.4,cdFloor:300,cdDepth:2.4};
-  const W5 ={wPre:'w5',   odW:13.2,dpW:7,   sdW:85, vtcW:35, xmW:4.5};
+  /* b531 KNOWN-BUILDS AUDIT re-bake (docs/KNOWN_BUILDS_AUDIT.md): every row a
+     NAMED purchasable driver or loudly archetype; W10 sd/xm and W12 dp/xm were
+     datasheet contradictions (10HPL64 sd 320 xm 4 - the old xm 8 read like a
+     peak-to-peak doubling; 12NDL76 dp 141mm xm 7); W5 was fiction (no 5.25in
+     driver has xm 4.5) -> Dayton DC130A-8; W8 -> named B&C 8NDL51; C5 -> the
+     BMS 5CN140 datasheet (od 135mm dp 82 sd 74 - 'floors unverified' was
+     FALSE, recXO 1900 published). vtc all tool-estimated (no maker publishes). */
+  const W5 ={wPre:'w5',   odW:13.76,dpW:6.95,sdW:91.6,vtcW:35, xmW:2.5};
   const W65={wPre:'w65',  odW:16.7,dpW:8.5, sdW:132,vtcW:45, xmW:5};
-  const W8 ={wPre:'w8',   odW:21.0,dpW:10,  sdW:220,vtcW:80, xmW:6.5};
-  const W10={wPre:'hpl10',odW:26.1,dpW:12.2,sdW:330,vtcW:130,xmW:8};
-  const W12={wPre:'ndl12',odW:31.5,dpW:14,  sdW:522,vtcW:180,xmW:9};
-  const C5 ={wPre:'cn5',  odW:14.8,dpW:8,   sdW:75, vtcW:30, xmW:3.5};
+  const W8 ={wPre:'w8',   odW:22.5,dpW:9.0, sdW:220,vtcW:80, xmW:7};
+  const W10={wPre:'hpl10',odW:26.1,dpW:12.2,sdW:320,vtcW:130,xmW:4};
+  const W12={wPre:'ndl12',odW:31.5,dpW:14.1,sdW:522,vtcW:180,xmW:7};
+  const C5 ={wPre:'cn5',  odW:13.5,dpW:8.2, sdW:74, vtcW:30, xmW:3.5};
   const C65={wPre:'fhx65',odW:16.7,dpW:12,  sdW:137,vtcW:40, xmW:4};
   const M4 ={mPre:'m4',   odM:10.3,dpM:6.5, sdM:50, vtcM:40, xmM:3};
   const CXU={sdC:150,vtcC:60,xmC:4,coaxTaps:6,odC:0.22,dpC:0.11};
@@ -1863,31 +1927,43 @@ const BUILDS=(()=>{
      s:{...B,...M4, topo:'1way',style:'angular',seN:12,covH:70,covV:70,mouthW:17,nW:2,nM:4,coaxTaps:4,
         cdSel:'unit',td:1.0,throat:1.0,cdFloor:0,cdDepth:0,hfExit:20.1,recXO:2500,odC:0.187,dpC:0.122,
         wPre:'fhx6',odW:18.7,dpW:12.2,sdW:132,vtcW:35,xmW:3.5, sdC:132,vtcC:35,xmC:3.5}},
-    {key:'refd',   name:'Reference D mini — 5″ coax unit · 70°×70° (floors unverified)', expectWarns:1,
+    /* b531 audit: 'floors unverified' was FALSE - the BMS 5CN140 datasheet
+       publishes recXO 1900 / HF 1500-30k; od/dp/sd re-baked to it. hfExit
+       REMOVED (the old 20.1 was B&C 6FHX51 contamination; BMS publishes no
+       exit dia - the class default applies until his 3 measurements). */
+    {key:'refd',   name:'Reference D mini — BMS 5CN140 5″ coax · 70°×70°', expectWarns:1,
      s:{...B,...M4, topo:'1way',style:'angular',seN:12,covH:70,covV:70,mouthW:14,nW:2,nM:4,coaxTaps:4,
-        cdSel:'unit',td:1.0,throat:1.0,cdFloor:0,cdDepth:0,hfExit:20.1,recXO:0,odC:0.148,dpC:0.08,
-        wPre:'cx5',odW:14.8,dpW:8,sdW:75,vtcW:30,xmW:3.5, sdC:75,vtcC:30,xmC:3.5}},
-    {key:'fhx12',  name:'B&C 12FHX76 — one-horn point source · 90°×60°', expectWarns:1,
-     s:{...B,...M4, topo:'1way',seN:6, covH:90,covV:60,mouthW:30,nW:2,nM:4,coaxTaps:6,
+        cdSel:'unit',td:1.0,throat:1.0,cdFloor:0,cdDepth:0,recXO:1900,odC:0.135,dpC:0.082,
+        wPre:'cx5',odW:13.5,dpW:8.2,sdW:74,vtcW:30,xmW:3.5, sdC:74,vtcC:30,xmC:3.5}},
+    /* b531 audit: both FHX datasheets state 60x40 NOMINAL coverage - the old
+       90x60 / 60x60 names were unsourced print targets wearing the driver name */
+    {key:'fhx12',  name:'B&C 12FHX76 — one-horn point source · 60°×40°', expectWarns:1,
+     s:{...B,...M4, topo:'1way',seN:6, covH:60,covV:40,mouthW:30,nW:2,nM:4,coaxTaps:6,
         cdSel:'unit',td:1.0,throat:1.0,cdFloor:0,cdDepth:0,hfExit:33,recXO:1200,odC:0.315,dpC:0.169,
         wPre:'fhx12',odW:31.5,dpW:16.9,sdW:522,vtcW:150,xmW:4.25, sdC:522,vtcC:150,xmC:4.25}},
-    {key:'fhx15',  name:'B&C 15FHX76 — one-horn round · 60°×60°', expectWarns:1,
-     s:{...B,...M4, topo:'1way',seN:2, covH:60,covV:60,mouthW:34,nW:2,nM:4,coaxTaps:6,
+    {key:'fhx15',  name:'B&C 15FHX76 — one-horn round · 60°×40°', expectWarns:1,
+     s:{...B,...M4, topo:'1way',seN:2, covH:60,covV:40,mouthW:34,nW:2,nM:4,coaxTaps:6,
         cdSel:'unit',td:1.0,throat:1.0,cdFloor:0,cdDepth:0,hfExit:33,recXO:1200,odC:0.393,dpC:0.199,
         wPre:'fhx15',odW:39.3,dpW:19.9,sdW:855,vtcW:250,xmW:4.25, sdC:855,vtcC:250,xmC:4.25}},
    ],
    '2way':[
     {key:'jmod',      name:'JMOD-class — 90°×60° · 2×12″ on the DCX coax (JW Sound manual)',
      s:{...B,...CDX,...W12,...M4, topo:'2way',seN:6, covH:90,covV:60,mouthW:30,nW:2,nM:4}},
-    {key:'canon9060', name:'house canon — 90°×60° · 4×6.5″ on the DCX coax',
+    /* b531 audit honesty: no online build pairs a DCX coax with these 4-woofer
+       packs - the four slots below are HOUSE ARCHETYPES and say so loudly
+       (his rule: known builds are builds found online). Drivers are now NAMED
+       purchasable units (DC130A-8, 8NDL51); '(Waslo)' dropped - no Waslo
+       build is a 2way on a DCX464 (the true CoSyne 3-way preset is a queued
+       item with the full sourced pack in docs/KNOWN_BUILDS_AUDIT.md 2.10). */
+    {key:'canon9060', name:'house canon — 90°×60° · 4×6.5″ on the DCX coax (house archetype)',
      s:{...B,...CDX,...W65,...M4, topo:'2way',seN:6, covH:90,covV:60,mouthW:24,nW:4,nM:4}},
-    {key:'compact',   name:'compact synergy — 90°×60° · 4×5.25″',
+    {key:'compact',   name:'compact — 90°×60° · 4× Dayton DC130A-8 (house archetype)',
      s:{...B,...CDX,...W5,...M4,  topo:'2way',seN:6, covH:90,covV:60,mouthW:24,nW:4,nM:4}},
-    {key:'square',    name:'square-format — 90°×60° · 4×8″',
-     s:{...B,...CDX,...W8,...M4,  topo:'2way',seN:12,covH:90,covV:60,mouthW:24,nW:4,nM:4}},
-    {key:'tall',      name:'tall — 60°×90° · 4×5.25″',
+    {key:'square',    name:'square-format — 90°×60° · 4× B&C 8NDL51 (house archetype — no real build)',
+     s:{...B,...CDX,...W8,...M4,  topo:'2way',seN:12,covH:90,covV:60,mouthW:25,nW:4,nM:4}},   // b531: settled size (8NDL51 od 22.5 needs 25)
+    {key:'tall',      name:'tall — 60°×90° · 4× DC130A-8 (house archetype — no known real build)',
      s:{...B,...CDX,...W5,...M4,  topo:'2way',seN:6, covH:60,covV:90,mouthW:24,nW:4,nM:4}},
-    {key:'angular',   name:'classic angular (Waslo) — 90°×60° · 4×5.25″',
+    {key:'angular',   name:'classic angular — 90°×60° · 4× DC130A-8 (CoSyne geometry · drivers differ)',
      s:{...B,...CDX,...W5,...M4,  topo:'2way',style:'angular',seN:12,covH:90,covV:60,mouthW:24,nW:4,nM:4}},
    ],
    '3way':[
@@ -1902,42 +1978,70 @@ const BUILDS=(()=>{
        seams (HIS SH-96 interior shot: round side-wall openings; JMOD: seam
        teardrops). SH-96's own vent dia/count stays UNMEASURED - the dialect
        rides SH-50-scale numbers until his tape measure (queue ask). */
-    {key:'sh96',  name:'SH96-class — corner boards · 4×15″ + 6 mids (SH-50-scale vents · SH-96 tape measure wanted)',
-     expectWarns:1,   // declared: woofer any-pair spacing 1.54×λ/4 (ruling B tolerates ~1.5× for the class; the real SH96 measures the same)
+    /* b531 audit: mids m3->m4 (SH96HO sheet says 6x4in; 2008 press said 5in -
+       sheet wins, conflict cited); mouth 58 was PHYSICALLY IMPOSSIBLE on the
+       real unit (front face 45.00 x 26.50 in, 18mm birch => max ~43.6in) ->
+       re-baked 43. odW/sdW/xmW stay generic-15 proxies (Danley LF
+       proprietary); fxLo unsourced (passive box). */
+    {key:'sh96',  name:'SH96-class — corner boards · 4×15″ + 6×4″ mids (stand-ins declared · v5 mouth 51″ vs real 45″ front)',
+     expectWarns:1,   // declared: woofer any-pair spacing ~1.5×λ/4 (ruling B tolerates it for the class; the real SH96 measures the same)
+     /* v5's corner-board geometry cannot land 4x15 @ 90x60 under 51in - the
+        real unit does it inside a 45.00x26.50in front (18mm birch). The gap
+        is MODEL HONESTY, stated in the name: Danley's real pocket/vent
+        geometry is tighter than v5's measured-clearance model allows. */
      s:{...B,...CDX, topo:'3way',style:'angular',seN:12,covH:90,
-        covV:60,mouthW:58,nW:4,nM:6,fxLo:250,placeW:'chamfer', wPre:'w15',
-        odW:39,dpW:17,sdW:855,vtcW:320,xmW:10, mPre:'m3',odM:9.3,dpM:6.2,
-        sdM:31,vtcM:25,xmM:2.5}},
-    {key:'sh50',      name:'SH50-class — 70°×70° square · 4×10″ + 4 mids',
+        covV:60,mouthW:51,nW:4,nM:6,fxLo:250,placeW:'chamfer', wPre:'w15',
+        odW:39,dpW:17,sdW:855,vtcW:320,xmW:10, mPre:'m4',odM:10.3,dpM:6.5,
+        sdM:50,vtcM:40,xmM:3}},
+    /* b531 audit: this slot wore the SH50 name on a state that is NOT the
+       SH-50 (real: 50x50, 2x12 - spec sheet Rev.202209301629; the 70x70 was
+       chrisbln thing:6886663's MOUTH-FLARE angle misread as coverage - the
+       provenance trap is documented in docs/KNOWN_BUILDS_AUDIT.md 2.12/2.14).
+       The SH50-class label moved to the ANGULAR preset below (the real SH-50
+       is angular 13-ply birch); this shape stays as a loud archetype. */
+    {key:'arch7070',  name:'70°×70° square · 4×10″ + 4 mids (house archetype — no real build)',
      s:{...B,...CDX,...W10,...M4, topo:'3way',seN:12,covH:70,covV:70,mouthW:24,nW:4,nM:4,fxLo:250}},
-    {key:'classic',   name:'classic — 90°×60° · 4×10″ + 4 mids',
+    {key:'classic',   name:'classic — 90°×60° · 4×10″ + 4 mids (house archetype — no real build)',
      /* b528: 27 -> 31, the mouth-plane enclosure law - at 27 the 10in frames
-        reached 51 mm past the mouth plane (nothing to seal a box against) */
+        reached 51 mm past the mouth plane (nothing to seal a box against).
+        b531 audit: no 3way MEH with FOUR horn-loaded 10s exists anywhere -
+        loud archetype; kipman725/aragorus re-anchor candidates recorded in
+        docs/KNOWN_BUILDS_AUDIT.md 2.13 (need more thread mining first). */
      s:{...B,...CDX,...W10,...M4, topo:'3way',seN:6, covH:90,covV:60,mouthW:31,nW:4,nM:4,fxLo:250}},
-    {key:'angular',   name:'classic angular — 70°×70° · 4×10″ + 4 mids',
-     s:{...B,...CDX,...W10,...M4, topo:'3way',style:'angular',seN:12,covH:70,covV:70,mouthW:33,nW:4,nM:4,fxLo:250}},
+    /* b531 audit 2.14: the SH50-class label lives HERE now - the real SH-50
+       IS angular 13-ply birch. Sourced: 50x50 coverage, 2x12 LF, 4 mids
+       (sheet says 5in, av-iq 4in - conflict cited, M4 pack = declared
+       stand-in), 1in-exit HF (DCX464 = declared stand-in), external
+       28x28x25.5in. Mouth 26 = design choice inside that envelope (never an
+       SH-50 number); fxLo unsourced (passive box). Tap-station goldens vs
+       the van Ommen record (3/4in@3.5 / 2.5in@10.5 / reflex@14.5) are the
+       queued next step. */
+    {key:'sh50',   name:'SH50-class — 50°×50° · 2×12″ + 4 mids (stand-ins declared · v5 mouth 29″ vs real 28″ box)',
+     s:{...B,...CDX,...W12,...M4, topo:'3way',style:'angular',seN:12,covH:50,covV:50,mouthW:29,nW:2,nM:4,fxLo:250}},   // b531: settled size; real external 28x28x25.5in - the 1in gap is model honesty, declared
    ],
   };
 })();
 
-return {C,IN,CM, sePoint,seRing, profile, stations, dimsAt, surfPt, surfN, layout, evaluate, solve, response, areaAt, facetsAt, facetN, offsetRing, offsetVerts, BUILDS, shellMesh, dishMesh, tapCutters, panelLayout, stlBytes, boxDims};
+return {C,IN,CM, sePoint,seRing, profile, stations, dimsAt, surfPt, surfN, layout, evaluate, solve, adapt, response, areaAt, facetsAt, facetN, offsetRing, offsetVerts, BUILDS, shellMesh, dishMesh, tapCutters, panelLayout, stlBytes, boxDims};
 })();
 if(typeof module!=='undefined') module.exports=MEH2;
 
 /* parametric */
-window.MEH_BUILD=530;
+window.MEH_BUILD=531;
 document.getElementById('bno').textContent=MEH_BUILD;
 "use strict";
 /* ---------------- driver presets (v4 datasheets; mesh = true CAD, meshApprox = nearest body) ---------------- */
 const WPRE={
-  cn5:{name:'BMS 5\u2033 coax (CN140-class)', od:14.8, dp:8, sd:75, vtc:30, xm:3.5, meshApprox:'BC_8MDN51'},
+  /* b531 KNOWN-BUILDS AUDIT: rows re-baked to NAMED datasheets or loudly
+     archetype (docs/KNOWN_BUILDS_AUDIT.md 3.1); vtc all tool-estimated */
+  cn5:{name:'BMS 5CN140 coax (datasheet)', od:13.5, dp:8.2, sd:74, vtc:30, xm:3.5, meshApprox:'BC_8MDN51'},
   fhx65:{name:'B&C 6FHX51 coax (true CAD)', od:16.7, dp:12, sd:137, vtc:40, xm:4, meshApprox:'BC_8MDN51'},
-  w5:{name:'5.25\u2033 woofer', od:13.2, dp:7, sd:85, vtc:35, xm:4.5, meshApprox:'BC_8MDN51'},
-  w65:{name:'6.5\u2033 woofer', od:16.7, dp:8.5, sd:132, vtc:45, xm:5, meshApprox:'BC_8MDN51'},
-  w8:{name:'8\u2033 woofer', od:21.0, dp:10, sd:220, vtc:80, xm:6.5, meshApprox:'BC_8MDN51'},
+  w5:{name:'Dayton DC130A-8 (5.25\u2033, datasheet)', od:13.76, dp:6.95, sd:91.6, vtc:35, xm:2.5, meshApprox:'BC_8MDN51'},
+  w65:{name:'6.5\u2033 woofer (class pack \u2014 unsourced)', od:16.7, dp:8.5, sd:132, vtc:45, xm:5, meshApprox:'BC_8MDN51'},
+  w8:{name:'B&C 8NDL51 (8\u2033, datasheet)', od:22.5, dp:9.0, sd:220, vtc:80, xm:7, meshApprox:'BC_8MDN51'},
   mdn8:{name:'B&C 8MDN51 (true CAD)', od:22.0, dp:10.5, sd:232, vtc:85, xm:6, mesh:'BC_8MDN51'},
-  hpl10:{name:'B&C 10HPL64 (true CAD)', od:26.1, dp:12.2, sd:330, vtc:130, xm:8, mesh:'BC_10HPL64'},
-  ndl12:{name:'B&C 12NDL76 (true CAD)', od:31.5, dp:14, sd:522, vtc:180, xm:9, mesh:'BC_12NDL76'},
+  hpl10:{name:'B&C 10HPL64 (true CAD)', od:26.1, dp:12.2, sd:320, vtc:130, xm:4, mesh:'BC_10HPL64'},
+  ndl12:{name:'B&C 12NDL76 (true CAD)', od:31.5, dp:14.1, sd:522, vtc:180, xm:7, mesh:'BC_12NDL76'},
   es12:{name:'18Sound 12LW1400 (true CAD)', od:32.2, dp:15, sd:530, vtc:190, xm:9.5, mesh:'ES_12LW1400'},
   w15:{name:'15\u2033 woofer', od:39.0, dp:17, sd:855, vtc:320, xm:10, meshApprox:'BC_18SW115'},
   sw18:{name:'B&C 18SW115 (true CAD)', od:46.0, dp:22, sd:1210, vtc:450, xm:14, mesh:'BC_18SW115'},
@@ -1960,11 +2064,14 @@ const MPRE={
    collar OVER the proud mouth; horn:'removable' = bolt-on horn comes off,
    print takes over AT the true exit (BMS style, his funnel build). */
 const CXPRE={
-  cx5:{name:'5″ coax unit (BMS CN-class, floors unverified)', od:14.8, dp:8, sd:75, vtc:30, xm:3.5, horn:'removable'},
+  /* b531: 5CN140 datasheet closes od/dp/sd + publishes recXO 1900 ('floors
+     unverified' was false); exit dia UNPUBLISHED - no hfExit here, the class
+     default stands until his 3 measurements (queue) */
+  cx5:{name:'BMS 5CN140 — 5″ coax (datasheet)', od:13.5, dp:8.2, sd:74, vtc:30, xm:3.5, recXO:1900, horn:'removable'},
   fhx6:{name:'B&C 6FHX51 — 6.5″ coax (datasheet + CAD)', od:18.7, dp:12.2, sd:132, vtc:35, xm:3.5, hfExit:20.1, recXO:2500, horn:'fixed'},
   hcx6:{name:'B&C 6HCX51 — 6.5″ coax (datasheet)', od:18.7, dp:10.4, sd:132, vtc:35, xm:3.5, hfExit:20.1, recXO:2200, horn:'fixed'},
   fhx12:{name:'B&C 12FHX76 — 12″ coax (datasheet)', od:31.5, dp:16.9, sd:522, vtc:150, xm:4.25, hfExit:33, recXO:1200, horn:'fixed'},
-  hcx12:{name:'B&C 12HCX76 — 12″ coax (datasheet)', od:31.5, dp:16.9, sd:522, vtc:150, xm:4.25, hfExit:33, recXO:1200, horn:'fixed'},
+  hcx12:{name:'B&C 12HCX76 — 12″ coax (datasheet)', od:31.5, dp:16.8, sd:522, vtc:150, xm:4.25, hfExit:33, recXO:1200, horn:'fixed'},
   fhx15:{name:'B&C 15FHX76 — 15″ coax (datasheet)', od:39.3, dp:19.9, sd:855, vtc:250, xm:4.25, hfExit:33, recXO:1200, horn:'fixed'}};
 const CDP={de500:{td:1.0,floor:900,dep:1.2}, de900:{td:1.4,floor:550,dep:1.7}, dcx464:{td:1.4,floor:300,dep:2.4}};
 /* ---------------- state ---------------- */
@@ -2649,14 +2756,36 @@ function wire(){
   });
   coax1way();
   document.getElementById('midCtl').style.display=S.topo==='3way'?'':'none';
+  /* ADAPTIVE SETTINGS (his ask - docs/adaptive_settings_plan.md): every knob
+     change routes through MEH2.adapt - dependents co-move as ONE atomic
+     transition, each move announced on the ADAPT strip; intent knobs never
+     auto-change; refusal stays loud and unchanged. */
+  const ADAPT_T={WPRE,MPRE,CXPRE,CDP};
+  const SUF={mouthW:'″',odW:' cm',odM:' cm',seN:''};
+  function applyAdapt(key){
+    const res=MEH2.adapt(S,key,ADAPT_T);
+    for(const k of Object.keys(res.S2)) S[k]=res.S2[k];
+    window.__adaptLedger=res.ledger;
+    for(const e of res.ledger){
+      const el=document.getElementById(e.knob);
+      if(el&&el.tagName==='INPUT') el.value=S[e.knob];
+      const v=document.getElementById('v'+e.knob.charAt(0).toUpperCase()+e.knob.slice(1));
+      if(v) v.textContent=S[e.knob]+(SUF[e.knob]||'');
+    }
+    const wp=document.getElementById('wPre'); if(wp&&wp.value!==S.wPre) wp.value=S.wPre;
+    const mp=document.getElementById('mPre'); if(mp&&mp.value!==S.mPre) mp.value=S.mPre;
+    const strip=document.getElementById('adaptStrip');
+    if(strip){ strip.style.display=res.ledger.length?'':'none';
+      if(res.ledger.length) strip.textContent='◆ ADAPTED — '+res.ledger.map(e=>
+        e.knob+' '+e.from+'→'+e.to+' ('+e.why+')').join(' · '); }
+  }
   const bind=(id,key,fmt)=>{ const el=document.getElementById(id);
     el.value=S[key];
     const show=()=>{ const v=document.getElementById('v'+id.charAt(0).toUpperCase()+id.slice(1));
       if(v)v.textContent=fmt?fmt(S[key]):S[key]; };
     show();
     el.oninput=()=>{ S[key]=+el.value;
-      if(key==='odW'){S.dpW=S.odW*0.5; S.wPre='custom'; const p=document.getElementById('wPre'); if(p)p.value='custom';}
-      if(key==='odM'){S.dpM=S.odM*0.6; S.mPre='custom'; const p=document.getElementById('mPre'); if(p)p.value='custom';}
+      applyAdapt(key);
       show(); save(); rebuild(); }; };
   bind('seN','seN',v=>v<=2.4?'round':v>=10?'square':('n='+v));
   bind('mouthW','mouthW',v=>v+'″'); bind('covH','covH',v=>v+'°'); bind('covV','covV',v=>v+'°');
@@ -2672,27 +2801,21 @@ function wire(){
     el.value=cur; };
   fillPre('wPre',(S.topo==='1way'?CXPRE:WPRE),S.wPre); fillPre('mPre',MPRE,S.mPre);   // 1way lists ONE-UNIT coaxes
   document.getElementById('wPre').onchange=e=>{ S.wPre=e.target.value;
-    const P=(S.topo==='1way'?CXPRE:WPRE)[S.wPre];
-    if(P){ S.odW=P.od; S.dpW=P.dp; S.sdW=P.sd; S.vtcW=P.vtc; S.xmW=P.xm; document.getElementById('odW').value=S.odW;
-      if(S.topo==='1way'){ S.sdC=P.sd; S.vtcC=P.vtc; S.xmC=P.xm; S.hfExit=P.hfExit||20.1; S.recXO=P.recXO||0; S.hornType=P.horn||'fixed'; S.cdDepth=0; delete S.hornLen;
-        /* his call: the horn RESIZES to the driver. Ratio from the retired
-           gate-asserted 1way bundles: mouth/od = 2.31/2.42/2.20/2.40 - mean 2.35 */
-        S.mouthW=Math.min(S.mouthCap||64, Math.round(2.35*P.od/2.54));
-        const mEl=document.getElementById('mouthW'); if(mEl) mEl.value=S.mouthW;
-        const vm=document.getElementById('vMouth'); if(vm) vm.textContent=S.mouthW+'″'; } }
+    if(S.topo==='1way') delete S.hornLen;
+    applyAdapt('wPre');   // preset fields + 1way extras + the 2.35×OD mouth rule now live in MEH2.adapt
     save(); rebuild(); };
   document.getElementById('mPre').onchange=e=>{ S.mPre=e.target.value;
-    const P=MPRE[S.mPre]; if(P){ S.odM=P.od; S.dpM=P.dp; S.sdM=P.sd; S.vtcM=P.vtc; S.xmM=P.xm; document.getElementById('odM').value=S.odM; }
+    applyAdapt('mPre');
     save(); rebuild(); };
   document.querySelectorAll('#segStyle button').forEach(b=>{
     if(b.dataset.v===S.style){document.querySelectorAll('#segStyle button').forEach(x=>x.classList.remove('on'));b.classList.add('on');}
     b.onclick=()=>{ S.style=b.dataset.v;
       document.querySelectorAll('#segStyle button').forEach(x=>x.classList.toggle('on',x===b));
-      if(S.topo==='1way') S.seN=(S.style==='angular')?12:2;   // ROUND | SQUARE are the whole 1way form space
+      applyAdapt('style');   // 1way ROUND|SQUARE seN lives in MEH2.adapt
       coax1way(); save(); rebuild(); }; });
   document.getElementById('cdSel').value=S.cdSel||'dcx464';
-  document.getElementById('cdSel').onchange=e=>{ S.cdSel=e.target.value; const P=CDP[S.cdSel];
-    S.td=P.td; S.throat=P.td; S.cdFloor=P.floor; S.cdDepth=P.dep; save(); rebuild(); };
+  document.getElementById('cdSel').onchange=e=>{ S.cdSel=e.target.value;
+    applyAdapt('cdSel'); save(); rebuild(); };
   if(S.topo!=='1way'){ const P=CDP[S.cdSel||'dcx464']||CDP.dcx464; S.td=P.td; S.throat=P.td; S.cdFloor=P.floor; S.cdDepth=P.dep; }   // 1way runs on the UNIT's own HF
   document.getElementById('bXray').onclick=()=>{ V3D.xray=!V3D.xray; rebuild(); };
   document.getElementById('bView').onclick=()=>{           // FULL -> GHOST DRIVERS -> NO DRIVERS -> HORN ONLY

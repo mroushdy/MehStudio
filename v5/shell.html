@@ -136,6 +136,8 @@ select{width:100%;font-family:var(--mono);font-size:11px;background:var(--paper)
 <main class="viewcol">
   <div id="refuseBanner" style="display:none;background:#B3261E;color:#fff;font-family:inherit;
     font-size:12px;letter-spacing:.06em;padding:8px 12px;text-transform:uppercase"></div>
+  <div id="adaptStrip" style="display:none;background:#20242B;color:#D8DEE9;font-family:inherit;
+    font-size:11px;letter-spacing:.05em;padding:6px 12px"></div>
   <div id="v3dwrap">
   <div id="v3d"></div>
   <div id="hud">
@@ -161,19 +163,21 @@ select{width:100%;font-family:var(--mono);font-size:11px;background:var(--paper)
 <script>
 /*__ENGINE__*/
 /*__CAD__*/
-window.MEH_BUILD=530;
+window.MEH_BUILD=531;
 document.getElementById('bno').textContent=MEH_BUILD;
 "use strict";
 /* ---------------- driver presets (v4 datasheets; mesh = true CAD, meshApprox = nearest body) ---------------- */
 const WPRE={
-  cn5:{name:'BMS 5\u2033 coax (CN140-class)', od:14.8, dp:8, sd:75, vtc:30, xm:3.5, meshApprox:'BC_8MDN51'},
+  /* b531 KNOWN-BUILDS AUDIT: rows re-baked to NAMED datasheets or loudly
+     archetype (docs/KNOWN_BUILDS_AUDIT.md 3.1); vtc all tool-estimated */
+  cn5:{name:'BMS 5CN140 coax (datasheet)', od:13.5, dp:8.2, sd:74, vtc:30, xm:3.5, meshApprox:'BC_8MDN51'},
   fhx65:{name:'B&C 6FHX51 coax (true CAD)', od:16.7, dp:12, sd:137, vtc:40, xm:4, meshApprox:'BC_8MDN51'},
-  w5:{name:'5.25\u2033 woofer', od:13.2, dp:7, sd:85, vtc:35, xm:4.5, meshApprox:'BC_8MDN51'},
-  w65:{name:'6.5\u2033 woofer', od:16.7, dp:8.5, sd:132, vtc:45, xm:5, meshApprox:'BC_8MDN51'},
-  w8:{name:'8\u2033 woofer', od:21.0, dp:10, sd:220, vtc:80, xm:6.5, meshApprox:'BC_8MDN51'},
+  w5:{name:'Dayton DC130A-8 (5.25\u2033, datasheet)', od:13.76, dp:6.95, sd:91.6, vtc:35, xm:2.5, meshApprox:'BC_8MDN51'},
+  w65:{name:'6.5\u2033 woofer (class pack \u2014 unsourced)', od:16.7, dp:8.5, sd:132, vtc:45, xm:5, meshApprox:'BC_8MDN51'},
+  w8:{name:'B&C 8NDL51 (8\u2033, datasheet)', od:22.5, dp:9.0, sd:220, vtc:80, xm:7, meshApprox:'BC_8MDN51'},
   mdn8:{name:'B&C 8MDN51 (true CAD)', od:22.0, dp:10.5, sd:232, vtc:85, xm:6, mesh:'BC_8MDN51'},
-  hpl10:{name:'B&C 10HPL64 (true CAD)', od:26.1, dp:12.2, sd:330, vtc:130, xm:8, mesh:'BC_10HPL64'},
-  ndl12:{name:'B&C 12NDL76 (true CAD)', od:31.5, dp:14, sd:522, vtc:180, xm:9, mesh:'BC_12NDL76'},
+  hpl10:{name:'B&C 10HPL64 (true CAD)', od:26.1, dp:12.2, sd:320, vtc:130, xm:4, mesh:'BC_10HPL64'},
+  ndl12:{name:'B&C 12NDL76 (true CAD)', od:31.5, dp:14.1, sd:522, vtc:180, xm:7, mesh:'BC_12NDL76'},
   es12:{name:'18Sound 12LW1400 (true CAD)', od:32.2, dp:15, sd:530, vtc:190, xm:9.5, mesh:'ES_12LW1400'},
   w15:{name:'15\u2033 woofer', od:39.0, dp:17, sd:855, vtc:320, xm:10, meshApprox:'BC_18SW115'},
   sw18:{name:'B&C 18SW115 (true CAD)', od:46.0, dp:22, sd:1210, vtc:450, xm:14, mesh:'BC_18SW115'},
@@ -196,11 +200,14 @@ const MPRE={
    collar OVER the proud mouth; horn:'removable' = bolt-on horn comes off,
    print takes over AT the true exit (BMS style, his funnel build). */
 const CXPRE={
-  cx5:{name:'5″ coax unit (BMS CN-class, floors unverified)', od:14.8, dp:8, sd:75, vtc:30, xm:3.5, horn:'removable'},
+  /* b531: 5CN140 datasheet closes od/dp/sd + publishes recXO 1900 ('floors
+     unverified' was false); exit dia UNPUBLISHED - no hfExit here, the class
+     default stands until his 3 measurements (queue) */
+  cx5:{name:'BMS 5CN140 — 5″ coax (datasheet)', od:13.5, dp:8.2, sd:74, vtc:30, xm:3.5, recXO:1900, horn:'removable'},
   fhx6:{name:'B&C 6FHX51 — 6.5″ coax (datasheet + CAD)', od:18.7, dp:12.2, sd:132, vtc:35, xm:3.5, hfExit:20.1, recXO:2500, horn:'fixed'},
   hcx6:{name:'B&C 6HCX51 — 6.5″ coax (datasheet)', od:18.7, dp:10.4, sd:132, vtc:35, xm:3.5, hfExit:20.1, recXO:2200, horn:'fixed'},
   fhx12:{name:'B&C 12FHX76 — 12″ coax (datasheet)', od:31.5, dp:16.9, sd:522, vtc:150, xm:4.25, hfExit:33, recXO:1200, horn:'fixed'},
-  hcx12:{name:'B&C 12HCX76 — 12″ coax (datasheet)', od:31.5, dp:16.9, sd:522, vtc:150, xm:4.25, hfExit:33, recXO:1200, horn:'fixed'},
+  hcx12:{name:'B&C 12HCX76 — 12″ coax (datasheet)', od:31.5, dp:16.8, sd:522, vtc:150, xm:4.25, hfExit:33, recXO:1200, horn:'fixed'},
   fhx15:{name:'B&C 15FHX76 — 15″ coax (datasheet)', od:39.3, dp:19.9, sd:855, vtc:250, xm:4.25, hfExit:33, recXO:1200, horn:'fixed'}};
 const CDP={de500:{td:1.0,floor:900,dep:1.2}, de900:{td:1.4,floor:550,dep:1.7}, dcx464:{td:1.4,floor:300,dep:2.4}};
 /* ---------------- state ---------------- */
@@ -885,14 +892,36 @@ function wire(){
   });
   coax1way();
   document.getElementById('midCtl').style.display=S.topo==='3way'?'':'none';
+  /* ADAPTIVE SETTINGS (his ask - docs/adaptive_settings_plan.md): every knob
+     change routes through MEH2.adapt - dependents co-move as ONE atomic
+     transition, each move announced on the ADAPT strip; intent knobs never
+     auto-change; refusal stays loud and unchanged. */
+  const ADAPT_T={WPRE,MPRE,CXPRE,CDP};
+  const SUF={mouthW:'″',odW:' cm',odM:' cm',seN:''};
+  function applyAdapt(key){
+    const res=MEH2.adapt(S,key,ADAPT_T);
+    for(const k of Object.keys(res.S2)) S[k]=res.S2[k];
+    window.__adaptLedger=res.ledger;
+    for(const e of res.ledger){
+      const el=document.getElementById(e.knob);
+      if(el&&el.tagName==='INPUT') el.value=S[e.knob];
+      const v=document.getElementById('v'+e.knob.charAt(0).toUpperCase()+e.knob.slice(1));
+      if(v) v.textContent=S[e.knob]+(SUF[e.knob]||'');
+    }
+    const wp=document.getElementById('wPre'); if(wp&&wp.value!==S.wPre) wp.value=S.wPre;
+    const mp=document.getElementById('mPre'); if(mp&&mp.value!==S.mPre) mp.value=S.mPre;
+    const strip=document.getElementById('adaptStrip');
+    if(strip){ strip.style.display=res.ledger.length?'':'none';
+      if(res.ledger.length) strip.textContent='◆ ADAPTED — '+res.ledger.map(e=>
+        e.knob+' '+e.from+'→'+e.to+' ('+e.why+')').join(' · '); }
+  }
   const bind=(id,key,fmt)=>{ const el=document.getElementById(id);
     el.value=S[key];
     const show=()=>{ const v=document.getElementById('v'+id.charAt(0).toUpperCase()+id.slice(1));
       if(v)v.textContent=fmt?fmt(S[key]):S[key]; };
     show();
     el.oninput=()=>{ S[key]=+el.value;
-      if(key==='odW'){S.dpW=S.odW*0.5; S.wPre='custom'; const p=document.getElementById('wPre'); if(p)p.value='custom';}
-      if(key==='odM'){S.dpM=S.odM*0.6; S.mPre='custom'; const p=document.getElementById('mPre'); if(p)p.value='custom';}
+      applyAdapt(key);
       show(); save(); rebuild(); }; };
   bind('seN','seN',v=>v<=2.4?'round':v>=10?'square':('n='+v));
   bind('mouthW','mouthW',v=>v+'″'); bind('covH','covH',v=>v+'°'); bind('covV','covV',v=>v+'°');
@@ -908,27 +937,21 @@ function wire(){
     el.value=cur; };
   fillPre('wPre',(S.topo==='1way'?CXPRE:WPRE),S.wPre); fillPre('mPre',MPRE,S.mPre);   // 1way lists ONE-UNIT coaxes
   document.getElementById('wPre').onchange=e=>{ S.wPre=e.target.value;
-    const P=(S.topo==='1way'?CXPRE:WPRE)[S.wPre];
-    if(P){ S.odW=P.od; S.dpW=P.dp; S.sdW=P.sd; S.vtcW=P.vtc; S.xmW=P.xm; document.getElementById('odW').value=S.odW;
-      if(S.topo==='1way'){ S.sdC=P.sd; S.vtcC=P.vtc; S.xmC=P.xm; S.hfExit=P.hfExit||20.1; S.recXO=P.recXO||0; S.hornType=P.horn||'fixed'; S.cdDepth=0; delete S.hornLen;
-        /* his call: the horn RESIZES to the driver. Ratio from the retired
-           gate-asserted 1way bundles: mouth/od = 2.31/2.42/2.20/2.40 - mean 2.35 */
-        S.mouthW=Math.min(S.mouthCap||64, Math.round(2.35*P.od/2.54));
-        const mEl=document.getElementById('mouthW'); if(mEl) mEl.value=S.mouthW;
-        const vm=document.getElementById('vMouth'); if(vm) vm.textContent=S.mouthW+'″'; } }
+    if(S.topo==='1way') delete S.hornLen;
+    applyAdapt('wPre');   // preset fields + 1way extras + the 2.35×OD mouth rule now live in MEH2.adapt
     save(); rebuild(); };
   document.getElementById('mPre').onchange=e=>{ S.mPre=e.target.value;
-    const P=MPRE[S.mPre]; if(P){ S.odM=P.od; S.dpM=P.dp; S.sdM=P.sd; S.vtcM=P.vtc; S.xmM=P.xm; document.getElementById('odM').value=S.odM; }
+    applyAdapt('mPre');
     save(); rebuild(); };
   document.querySelectorAll('#segStyle button').forEach(b=>{
     if(b.dataset.v===S.style){document.querySelectorAll('#segStyle button').forEach(x=>x.classList.remove('on'));b.classList.add('on');}
     b.onclick=()=>{ S.style=b.dataset.v;
       document.querySelectorAll('#segStyle button').forEach(x=>x.classList.toggle('on',x===b));
-      if(S.topo==='1way') S.seN=(S.style==='angular')?12:2;   // ROUND | SQUARE are the whole 1way form space
+      applyAdapt('style');   // 1way ROUND|SQUARE seN lives in MEH2.adapt
       coax1way(); save(); rebuild(); }; });
   document.getElementById('cdSel').value=S.cdSel||'dcx464';
-  document.getElementById('cdSel').onchange=e=>{ S.cdSel=e.target.value; const P=CDP[S.cdSel];
-    S.td=P.td; S.throat=P.td; S.cdFloor=P.floor; S.cdDepth=P.dep; save(); rebuild(); };
+  document.getElementById('cdSel').onchange=e=>{ S.cdSel=e.target.value;
+    applyAdapt('cdSel'); save(); rebuild(); };
   if(S.topo!=='1way'){ const P=CDP[S.cdSel||'dcx464']||CDP.dcx464; S.td=P.td; S.throat=P.td; S.cdFloor=P.floor; S.cdDepth=P.dep; }   // 1way runs on the UNIT's own HF
   document.getElementById('bXray').onclick=()=>{ V3D.xray=!V3D.xray; rebuild(); };
   document.getElementById('bView').onclick=()=>{           // FULL -> GHOST DRIVERS -> NO DRIVERS -> HORN ONLY

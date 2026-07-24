@@ -1,4 +1,19 @@
-# MEH STUDIO v5 HANDOFF (2026-07-24, build 530 = commit 4e187e3)
+# MEH STUDIO v5 HANDOFF (2026-07-24 late, build 531)
+BUILD 531 (his asks: audit known builds vs the online record; audit settings
+sanity + build the adaptive anti-trash layer; driver-mounting audit): the
+14-agent KNOWN-BUILDS AUDIT (docs/KNOWN_BUILDS_AUDIT.md) re-baked every
+driver row to NAMED datasheets in lockstep across shell/engine/gate/matrix
+(10HPL64 xm was DOUBLE the datasheet; W5 was fiction -> Dayton DC130A-8;
+5CN140 datasheet closes refd; FHX coverage 60x40; SH50-class label moved to
+the angular preset at the real 50x50/2x12; SH96 mids m4 + v5-vs-real mouth
+DECLARED; archetypes named loudly). MEH2.adapt() adaptive layer landed (gate
+2.10 contract; ADAPT strip in UI; class-curve driver packs - od sliders no
+longer freeze Sd). SH-96 record complete + addendum-3 vent line retracted
+(study _4 addenda 4/5). WATCH: his tab state (58in custom SH96) is HIS state,
+untouched - only the preset moved. Mounting-audit workflow + 19k settings
+sweep were still running at handoff - fold their reports next. Older header
+below.
+# (prev) MEH STUDIO v5 HANDOFF (2026-07-24, build 530 = commit 4e187e3)
 BUILD 530 (his ask: "research everything about MEH and just fix the tool"):
 b529 was left UNPUSHED mid-flight (v3 boards, SH96 parked, 7 gate fails).
 This session: 11-agent reference research -> docs/REFERENCE_LIBRARY_STUDY_4.md

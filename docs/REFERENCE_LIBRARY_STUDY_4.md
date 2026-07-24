@@ -390,3 +390,120 @@ yet the measured record says SH-50 LF vents are 2.5 in round (~32 cm²).
    3.5/10.5/14.5 in distances.
 9. Tom Danley's own diyAudio/PSW post history on port sizing — a
    first-party statement was not located this session.
+
+---
+
+## ADDENDUM (b531, 2026-07-24 late) — SH-96 interior photo RE-READ: the "vents" are handle cups
+
+Marwan's answer to the tape-measure ask: he has NO physical access — only
+pictures. So the interior shot was re-read at zoom (sips crops, this
+session, `scratchpad/crop_left2big.png` / `crop_right2big.png`):
+
+- The round side-wall circles (~half a 12in frame dia) that §V read as
+  "small round vents at SH-96 scale" are **recessed HANDLE CUPS**: the
+  right-side zoom shows a molded cup with a flanged rim, mounting
+  hardware (T-nuts) above and below the flange, and a CLOSED cylindrical
+  body protruding into the box. Not an air path. **The §V vent reading is
+  RETRACTED** (measured re-read, this session).
+- What the photo DOES establish (measured, construction canon): four
+  woofers mounted at 45° on X-braced plywood corner boards, bodies
+  recessed in triangular corner chambers; SIX sealed mid rear-cups
+  ringing the center CD block (mids between the chambers); no reflex
+  vent visible anywhere in the rear chamber view.
+- Consequence: the SH-50 tape measure (van Ommen) remains the ONLY hard
+  Danley LF tap/vent number. The Danley dialect keeps riding it, caveat
+  stated in the CR-row why. An SH-96 number can now only come from the
+  photo's source thread (web hunt run this session) or a third party
+  with unit access.
+
+### Addendum 2 (b531): higher-res original of the interior shot (2470×1474, his Google Images find)
+
+- **The unit's own spec placard is legible** (documented, from the unit
+  itself): `SH-96 / 90°×60° / 45Hz–16KHz / 2000 watts / 103dB/1W/1M`.
+  The preset's 90×60 coverage is now photo-documented; 45 Hz low corner
+  on that box implies serious LF help (reflex or EQ) — the vent question
+  stays open, nothing visible in the rear chamber.
+- Center block confirmed at this resolution: round CD flange (blue
+  label) with SIX silver sealed mid cups ringing it — 2 top, 2 bottom,
+  1 left, 1 right. Mid pods and corner chambers interlock exactly as
+  v3.1 models.
+- Side-wall circles: still read as recessed handle cups (closed bodies).
+- Black overspray staining concentrates near the throat-center panels
+  and the wall regions by the woofer boards — CONSISTENT WITH near-throat
+  tap openings on the horn side of those walls (factory spray through
+  the mouth drifting through the taps). Confidence: inferred; do not
+  bake numbers from it.
+
+### Addendum 3 (b531): HIS FRONT-VIEW MOUTH PHOTO — the SH-96-class vents ARE visible
+
+His pushback ("arent the vents on the left and right of the wall?") came
+with a front view straight into the mouth (garage setting, gray textured
+finish, rectangular mouth, X seams). CORRECT — and it resolves what the
+rear photo could not:
+
+- PER QUADRANT, flanking the diagonal seam: one ELONGATED CURVED SLOT
+  running along one wall beside the seam + one ROUNDER opening in the
+  adjacent wall, sitting slightly more mouth-ward than the slot. This is
+  the SH-50 record's ordering (taps nearer the throat, reflex vents
+  beyond) and matches corner boards v3.1 verbatim (openings through the
+  walls AT the seams, slot long-axis along the wall). 8 wall openings
+  total + the center throat; small mid taps near the throat not
+  resolvable at this size.
+- The rear-photo side circles remain HANDLE CUPS (cabinet sides, closed
+  bodies) — two different things; the vents live in the HORN walls and
+  only the front view shows them.
+- MEASURABLE: visual pixel proportions vs the mouth width (rough read,
+  ±15-20%, perspective foreshortens the deeper openings slightly):
+  round openings ≈ 0.04-0.05 × mouth width each; slots ≈ 0.15-0.19 ×
+  mouth width long, ≈ 0.035-0.045 wide. Anchored on a 58 in mouth that
+  reads: round vents ~2.5-3.2 in dia, slots ~9-12 in × 2-2.8 in — the
+  round openings land right on the SH-50's tape-measured 2.5 in class.
+  ANCHOR NEEDED: the unit's true mouth width (official SH-96 dims - web
+  hunt pending) before any of this hardens into dialect numbers.
+
+### Addendum 4 (b531): SH-96 PROVENANCE FOUND + official record (source-hunt agent)
+
+- **The interior photo is Danley's own display unit**: Flickr beavizzle
+  photo 2619651027, taken 2008-06-19 at InfoComm 08 Las Vegas (same-day
+  set incl. GH-60, SH-25); FaitalPRO press (2008-07-27) confirms "the
+  SH-96 was displayed without the rear panel". Poster supplied no
+  measurements. Direct: live.staticflickr.com/3047/2619651027_f27f0151a7_b.jpg
+- **CORRECTION (measured re-read by the agent): the woofers are 15in,
+  NOT 12in** — cone tops only show above the chamber walls. The
+  preset's 4×15 stands. (Retracts this session's earlier 12in-class
+  read; the placard reads 2800 W not 2000 W.)
+- **Official SH96 spec** (danleysoundlabs.com/products/sh96 + SH-96-spec-sheet3.pdf):
+  26.5(H) × 45(W) × 25(D) in, 215 lb, 4×15 LF + 6×4 MF + 1×1.4 HF,
+  50 Hz–16 kHz ±3 dB, 90°×60°, 101 dB 2.83V/1m. SH96HO (Rev.1 220304):
+  same box, 265 lb, 45 Hz–13.5 kHz −3 dB, LF 2/8 Ω switch, 13-ply 18 mm
+  Baltic birch, polyurea. 2008 press (Mix, FaitalPRO) said 6×5 mids +
+  FaitalPRO 15HP1020 woofers + HF14AT CD; later sheets say 6×4 mids;
+  HF changed to B&C DE880-8 in 2015 (Ivan Beaver, PSW 161714). FLAG the
+  4-vs-5 mid discrepancy. TRAP: the 2012 archived Danley page's spec
+  table is a template error (60×40 etc.) — do not use.
+- **CONSEQUENCE for the preset**: mouthW 58 cannot be the real unit
+  (45 in external width). Real mouth ≈ external W minus walls/trim
+  (INFERRED ~42–43 in — needs the no-grill render proportions before
+  baking). Mids: real 4 in (or 5 in per 2008 press), preset carries 3 in.
+  Coverage 90×60 and 4×15 confirmed.
+- **Vents**: no published dimensions exist anywhere (searched diyaudio,
+  PSW, soundforums, AVS). Official no-grill render shows ROUNDED CORNER
+  SLOTS (local copy: scratchpad sh96spec_p0_R209.png); diyaudio Droco
+  photo-analysis (339799 post-5841736): woofer edge — not center — sits
+  over the tap; "vented backchamber" (post-5841738). Ivan Beaver
+  (soundforums 13057): ports act as a built-in physical low-pass;
+  crossover deliberately unspecified, bands overlap ~1 octave.
+
+### Addendum 5 (b531): RETRACTION of Addendum 3's vent-size corroboration
+
+Addendum 3 scaled his front-view mouth photo's port pixels against a 58 in
+mouth and read "round vents ~2.5-3.2 in — landing on the SH-50 2.5 in
+class". The known-builds audit then established the real SH-96 front is
+45.00 × 26.50 in (max mouth ~43.6 in) — the 58 was v5-geometry, never the
+unit. Re-anchored at ≤43.6 in the same pixel ratios give ~1.7–2.2 in round
+/ ~6.5–8.3 × 1.5–2.0 in slots — BELOW the SH-50 class. The corroboration
+claim is RETRACTED. What stands from that photo: the vent PLACEMENT canon
+(openings flanking the diagonal seams, slot + round per quadrant, taps
+nearer the throat) and the ratio table itself (usable the moment the
+photographed unit's true mouth width is established). The Danley dialect
+continues to ride the only tape-measured record (SH-50, van Ommen).

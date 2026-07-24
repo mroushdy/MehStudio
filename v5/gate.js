@@ -24,8 +24,8 @@ const fin=v=>Number.isFinite(v);
 }
 
 /* ---------- 2. the state lattice ---------- */
-const W={ w5:{od:13.2,dp:7,sd:85,vtc:35,xm:4.5}, w8:{od:21.0,dp:10,sd:220,vtc:80,xm:6.5},
-          hpl10:{od:26.1,dp:12.2,sd:330,vtc:130,xm:8}, w15:{od:39.0,dp:17,sd:855,vtc:320,xm:10} };
+const W={ w5:{od:13.76,dp:6.95,sd:91.6,vtc:35,xm:2.5}, w8:{od:22.5,dp:9.0,sd:220,vtc:80,xm:7},
+          hpl10:{od:26.1,dp:12.2,sd:320,vtc:130,xm:4}, w15:{od:39.0,dp:17,sd:855,vtc:320,xm:10} };   // b531 audit re-bake (KNOWN_BUILDS_AUDIT 3.1)
 const M={ m3:{od:9.3,dp:6.2,sd:31,vtc:25,xm:2.5}, m4:{od:10.3,dp:6.5,sd:50,vtc:40,xm:3} };
 const mk=(o)=>{
   const S={topo:'2way',style:'smooth',wallT:0.012,seN:6,covH:90,covV:60,mouthW:24,mouthCap:64,
@@ -320,6 +320,37 @@ for(const S of lattice){
       if(s.cdSel&&s.cdSel!=='unit'){ const P=shC[s.cdSel];
         ck(!!P&&P.td===s.td&&P.floor===s.cdFloor&&P.dep===s.cdDepth, tag+' CD numerics drift from shell CDP.'+s.cdSel); }
       else if(s.cdSel==='unit') ck(s.cdFloor===0&&s.td===1.0, tag+' one-unit coax must carry the unverified floor + 1in-class bore');
+    }
+  }
+  /* ---------- 2.10 ADAPTIVE SETTINGS contract (his ask 2026-07-24):
+     adapt(S,key,T) is pure, deterministic, idempotent, and may only touch
+     DERIVED-class knobs (docs/adaptive_settings_plan.md §1) ---------- */
+  { const T={WPRE:null,MPRE:null,CXPRE:null,CDP:null};
+    { const grab=(re)=>{ const m=sh.match(re); return m? new Function('return '+m[1])() : null; };
+      T.WPRE=grab(/const WPRE=([\s\S]*?);\nconst MPRE/); T.MPRE=grab(/const MPRE=([\s\S]*?);\n\/\* 1-WAY COAX/);
+      T.CXPRE=grab(/const CXPRE=([\s\S]*?);\nconst CDP/); T.CDP=grab(/const CDP=(\{.*?\});/); }
+    ck(!!(T.WPRE&&T.MPRE&&T.CXPRE&&T.CDP), '2.10: could not read shell tables for adapt');
+    const DERIVED={ cdSel:['td','throat','cdFloor','cdDepth'],
+      wPre:['odW','dpW','sdW','vtcW','xmW','sdC','vtcC','xmC','hfExit','recXO','hornType','cdDepth','mouthW'],
+      mPre:['odM','dpM','sdM','vtcM','xmM'],
+      odW:['wPre','dpW','sdW','vtcW','xmW'], odM:['mPre','dpM','sdM','vtcM','xmM'],
+      style:['seN'], mouthW:[], covH:[], nW:[] };
+    for(let i=0;i<lattice.length;i+=31){
+      const S0={...lattice[i]};
+      for(const key of Object.keys(DERIVED)){
+        const S1={...S0};
+        if(key==='odW') S1.wPre='custom'; if(key==='odM') S1.mPre='custom';
+        if(key==='cdSel') S1.cdSel='de900';
+        if(key==='wPre') S1.wPre=(S1.topo==='1way')?'fhx12':'w8';
+        if(key==='mPre') S1.mPre='m4';
+        const r1=MEH2.adapt(S1,key,T), r2=MEH2.adapt(S1,key,T);
+        ck(JSON.stringify(r1)===JSON.stringify(r2), '2.10 adapt not deterministic on '+key);
+        for(const e of r1.ledger)
+          ck(DERIVED[key].includes(e.knob)||e.knob==='mouthW', '2.10 adapt touched INTENT knob '+e.knob+' on '+key);
+        const r3=MEH2.adapt(r1.S2,key,T);
+        ck(r3.ledger.length===0, '2.10 adapt not idempotent on '+key+' ('+r3.ledger.map(e=>e.knob).join(',')+')');
+        for(const e of r1.ledger) ck(e.why&&e.from!==e.to, '2.10 ledger entry malformed on '+key);
+      }
     }
   }
   ck(/BUGPINS/.test(sh), 'BUGPINS module missing');

@@ -2,10 +2,10 @@
 /* v5 canonical matrix — every case must solve clean (0 fails) or refuse honestly.
    Run: node test_matrix.js   (persisted per the autopilot/testing mandate) */
 const MEH2=require('./engine.js');
-const WPRE={ w65:{od:16.7,dp:8.5,sd:132,vtc:45,xm:5}, w8:{od:21.0,dp:10,sd:220,vtc:80,xm:6.5},
-  hpl10:{od:26.1,dp:12.2,sd:330,vtc:130,xm:8}, w15:{od:39.0,dp:17,sd:855,vtc:320,xm:10} };
+const WPRE={ w65:{od:16.7,dp:8.5,sd:132,vtc:45,xm:5}, w8:{od:22.5,dp:9.0,sd:220,vtc:80,xm:7},
+  hpl10:{od:26.1,dp:12.2,sd:320,vtc:130,xm:4}, w15:{od:39.0,dp:17,sd:855,vtc:320,xm:10} };   // b531 audit re-bake
 const MPRE={ m3:{od:9.3,dp:6.2,sd:31,vtc:25,xm:2.5}, m4:{od:10.3,dp:6.5,sd:50,vtc:40,xm:3} };
-WPRE.w5={od:13.2,dp:7,sd:85,vtc:35,xm:4.5};   // 5.25-inch class - the small-woofer multi-tap canon
+WPRE.w5={od:13.76,dp:6.95,sd:91.6,vtc:35,xm:2.5};   // Dayton DC130A-8 (b531: the 5.25in fiction is retired)
 const base={topo:'2way',style:'smooth',wallT:0.012,seN:6,covH:90,covV:60,mouthW:24,mouthCap:64,
   throat:1.4,rollR:2,fxHi:900,fxLo:300,cdDepth:1.7,td:1.4,coaxRing:4.5,nW:6,nM:4};
 const drv=(S,w,m)=>{const W=WPRE[w];S.odW=W.od;S.dpW=W.dp;S.sdW=W.sd;S.vtcW=W.vtc;S.xmW=W.xm;
