@@ -31,8 +31,25 @@ KNOWN_BUILDS_AUDIT 2.10 - needs CDX1-1445 CDP entry), SynTripP re-anchor for
 'tall' (STEP files in repo), kipman725/aragorus mining for classic3, sh50
 tap-station goldens vs the van Ommen 3.5/10.5/14.5in record, Xvar-vs-xm
 ruling (FHX twins diverge if Xvar becomes canon), w65 class pack unsourced.
-DRIVER MOUNTING audit (his 17 photo drop incl. the Unity wedge cutaway +
-SH-96 L-brackets + edge-over-tap) workflow still running -> plan doc next.
+DRIVER MOUNTING PLAN LANDED (post-531 docs commit): docs/DRIVER_MOUNTING_AUDIT.md
+(the taxonomy: ONE invariant chain - frame clamps cone-down on a FLAT land
+outside the wall, taps smaller than the cone inside its footprint, machine
+screws into captured metal threads, driver's own gasket seals, land thickness
+IS tap length; cells differ only in who supplies the land) +
+docs/DRIVER_MOUNTING_PLAN.md (5 steps: datasheet mount fields -> check-only
+law rows [wood relief >= xmax+5mm chrisbln, seal annulus, tap-in-footprint
+US6411718, bolt-access ray] -> viewer mount-ring pass [= pin 12] -> integral
+printed land mesh on the b530 landH boss -> exporter split-extraction law
+[DH350 pattern]) + docs/MARWAN_MOUNT_PHOTOS_NOTES.md (his 17 images; purple
+o-ring-in-groove counter-example amended into the audit).
+PINS 3/9 RULING TEXT READY FOR HIM (echo, not resolved - his build 503 ships
+the opposite pattern): pin 3 = LAW, no ruling needed (mount geometry =
+datasheet fields verbatim, refuse when fields missing - every measured mount
+mirrors its datasheet); pin 9 proposed = ONE PIECE with the horn on printed
+monolithic parts; AUTO-EXTRACTED as a separate un-split adapter iff an
+exporter cut plane crosses the mount (DH350 canon); wood = machined-in land
+with the K-402 ring as the drawing option. Insert-spec correction: M5 7.1x9.5
+@350C is White manual p.10, NOT JMOD.
 ## (prev) BUILD 530 (2026-07-24): PIN #23 CLOSED + THE VENT FORK RESOLVED (sourced) + SH96 UNPARKED AT 58
 HIS ASK ("research everything you can find about MEH and just fix the tool",
 finished-horn STLs attached): an 11-agent research pass over every attached
