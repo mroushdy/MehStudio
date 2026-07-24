@@ -161,7 +161,7 @@ select{width:100%;font-family:var(--mono);font-size:11px;background:var(--paper)
 <script>
 /*__ENGINE__*/
 /*__CAD__*/
-window.MEH_BUILD=528;
+window.MEH_BUILD=530;
 document.getElementById('bno').textContent=MEH_BUILD;
 "use strict";
 /* ---------------- driver presets (v4 datasheets; mesh = true CAD, meshApprox = nearest body) ---------------- */
@@ -613,14 +613,20 @@ function rebuild(){
     { const mN=d.mountN? P3(d.mountN) : n;
       const ct=Math.max(0.15,Math.abs(n.dot(mN)));
       const wedge=d.mountN? (d.seatR||d.od/2)*Math.tan(Math.acos(Math.min(1,ct))) : 0;
-      const base=c.clone().add(n.clone().multiplyScalar(S.wallT||0.012));
+      const base=c.clone().add(n.clone().multiplyScalar(d.board?0.018:(S.wallT||0.012)+(d.mountN?0:(d.landH||0))));   // boards: 18 mm shelf; flush: the pin-#23 land boss raises the seat (axial wedges rise along mountN below)
       if(d.mountN){ const land=new THREE.Mesh(
           new THREE.CylinderGeometry(d.od/2+0.004, d.od/2+0.007, Math.max(0.006,wedge), 40),
           new THREE.MeshPhongMaterial({color:0xE2DDD3,shininess:6}));
         land.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),mN);
         land.position.copy(base).add(mN.clone().multiplyScalar(Math.max(0.006,wedge)/2));
         land.userData.tag='seat'; g.add(land);
-      } else { const seat=new THREE.Mesh(new THREE.CylinderGeometry(d.od/2+0.004,d.od/2+0.006,0.005,40),
+      } else { if((d.landH||0)>0.003){   // pin #23: draw the measured land boss (wall -> seat base)
+          const boss=new THREE.Mesh(new THREE.CylinderGeometry(d.od/2+0.004, d.od/2+0.007, d.landH, 40),
+            new THREE.MeshPhongMaterial({color:0xE2DDD3,shininess:6}));
+          boss.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),n);
+          boss.position.copy(base).add(n.clone().multiplyScalar(-d.landH/2));
+          boss.userData.tag='seat'; g.add(boss); }
+        const seat=new THREE.Mesh(new THREE.CylinderGeometry(d.od/2+0.004,d.od/2+0.006,0.005,40),
           new THREE.MeshPhongMaterial({color:0xE2DDD3,shininess:6}));
         seat.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),n);
         seat.position.copy(base).add(n.clone().multiplyScalar(0.0025));   // slim seat ON the outer face (pin #6)

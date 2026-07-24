@@ -28,10 +28,22 @@ guides, Hornresp manual, Makarski dissertation.
 
 ## Size
 
-5. **Velocity first, area second** (Waslo compendium): the real port-area
-   criterion is peak air velocity at the band's LOW edge:
-   v = CR·2π·f_low·xm ≤ 17 m/s (≈5% of c). Ap derives FROM the limit,
-   clamped to the CR bands (mids 4–8:1, woofers 2.5–6:1).
+5. **Velocity first, area second** (PROVENANCE CORRECTED b530 — study _4):
+   v = CR·2π·f_low·xm ≤ 17 m/s at the band's LOW edge. NOT Waslo (Synergy
+   Calc V5 contains zero occurrences of "velocity" — grep, study _4); the
+   community origin is diyAudio user nc535's worst-case check at maximum
+   anticipated SPL, and Hinson's 17 m/s (MEH.pdf p.19, the figure's ONLY
+   occurrence) is "onset of audible chuffing" — a BASTA! max-SPL prediction
+   input for his REFLEX ports, which he knowingly shipped past it (port-
+   limited below 70 Hz, pp.19-21). Danley's own patents legislate AREA
+   (US6411718 area-matching; US8284976 "relatively small"), never velocity.
+   Ap still derives FROM the limit for the DIY slot dialect (a conservative
+   heuristic, stated as such), clamped to the CR bands (mids 4–8:1, woofers
+   2.5–6:1). THE DANLEY DIALECT (corner boards, b530) instead rides the
+   tape-measured record: 2.5in woofer taps / 3/4in mid taps (SH-50, van
+   Ommen, diyaudio 292379 #4957246; chrisbln thing:6886663 concurs) with
+   the velocity number stated, not graded. SH-96's own vents: UNMEASURED —
+   his tape measure wanted.
 6. **Taps vs station area**: mids ≤ 20% of the local horn area protects the
    HF wavefront (patent ideal is full area match — the tension is the
    design); woofers ≤ 50% (CoSyne measured clean at 43%).

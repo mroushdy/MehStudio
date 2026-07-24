@@ -76,13 +76,16 @@ for(const S of lattice){
     if(S.mount==='axial'&&d.kind!=='coaxtap') ck(!!d.mountN&&Math.abs(d.mountN[0]+1)<1e-9, tag+' axial mount lost its land axis');
     ck(d.center.every(fin)&&d.normal.every(fin)&&d.tap.every(fin), tag+' non-finite driver fields');
     const nl=Math.hypot(...d.normal); ck(Math.abs(nl-1)<0.01, tag+' normal not unit ('+nl.toFixed(3)+')');
-    const off=Math.hypot(d.tap[0]-d.center[0],d.tap[1]-d.center[1],d.tap[2]-d.center[2]);
+    const dv=[d.tap[0]-d.center[0],d.tap[1]-d.center[1],d.tap[2]-d.center[2]];
+    const off=d.board? (()=>{ const al=dv[0]*d.normal[0]+dv[1]*d.normal[1]+dv[2]*d.normal[2];
+        return Math.hypot(dv[0]-al*d.normal[0],dv[1]-al*d.normal[1],dv[2]-al*d.normal[2]); })()
+      : Math.hypot(dv[0],dv[1],dv[2]);            // v3 boards: tap on the wall ALONG the fire axis
     ck(off<=0.0011, tag+' tap not under driver ('+(off*1000).toFixed(1)+'mm)');
     if(d.slot) ck(d.slot.ap>0&&fin(d.slot.ap), tag+' bad slot area');
   }
   if(!L.missing&&S.topo!=='1way') ck(L.filter(d=>d.kind==='woof').length===((S.nW|0)||2), tag+' woofer count wrong');
   /* pin #9 facet laws: on ANGULAR every seat sits ON a big facet, normal in the panel plane */
-  if(S.style==='angular') for(const d of L){ if(d.facet===undefined) continue;
+  if(S.style==='angular') for(const d of L){ if(d.facet===undefined||d.board) continue;   // v3 boards: center OUTSIDE the horn, facet = the slot's wall
     const F2=MEH2.facetsAt(st,d.x), f=F2[d.facet];
     ck(!f.ch || d.kind==='mid' || S.placeW==='chamfer', tag+' non-mid seat on a chamfer facet');   // SH50: diag mids own the chamfers; M7/SH96: 'chamfer' hands them to the WOOFERS
     const rel=[d.center[1]-f.p[0], d.center[2]-f.p[1]];

@@ -1,5 +1,41 @@
 # MEH STUDIO — STANDING QUEUE (versioned; update on every landed item)
-## BUILD 528 (2026-07-23 late): M9 DOWN PAYMENT + THE ASSEMBLY INSPECTOR
+## BUILD 530 (2026-07-24): PIN #23 CLOSED + THE VENT FORK RESOLVED (sourced) + SH96 UNPARKED AT 58
+HIS ASK ("research everything you can find about MEH and just fix the tool",
+finished-horn STLs attached): an 11-agent research pass over every attached
+reference + the three studies + web/patents -> docs/REFERENCE_LIBRARY_STUDY_4.md
++ docs/FIX_LIST_STUDY_4.md (ranked, cited). LANDED THIS BUILD:
+- PIN #23 CLOSED (the b529 fails): every flush/axial wall seat now carries a
+  MEASURED LAND (rim-march of the frame out of the wall solid, 24 azimuths;
+  landH on the driver record). Battery re-verifies the land top with its own
+  membership code; viewer draws the boss; Helmholtz law AND response network
+  lengthen the port through it. The 6 pin-#23-class lattice fails are gone.
+- THE VENT FORK -> RULING (a), SOURCED (study _4 verdict): 17 m/s is NOT
+  Danley and NOT a law in its own source (nc535 worst-case heuristic; Hinson
+  p.19 chuffing-onset for HIS reflex ports, shipped past it; Waslo Calc has
+  zero "velocity" occurrences). Measured record: SH-50 tape measure (van
+  Ommen, diyaudio 292379 #4957246) = 2.5in woofer taps @10.5in, 3/4in mid
+  taps @3.5in, reflex 2.5in @14.5in; chrisbln thing:6886663 ships the same.
+  DANLEY DIALECT (corner-board states): woofer taps 31.67 cm2, mid taps
+  2.85 cm2, velocity/CR rows stated-not-graded with the record cited.
+- CORNER BOARDS v3.1: the opening cuts THROUGH the walls AT THE SEAM (HIS
+  SH-96 interior shot = round side-wall openings; JMOD teardrops along the
+  diagonal seams) - the chamfer-chord bound was fiction. Adjacency = exact
+  2D rect cut (capsule model over-fattened flat frames by (2-sqrt2)r).
+  Wall-cutout law: mid seats vs corner openings, measured. Mid ring rotates
+  to the measured argmax off the diagonals (his photo: mids BETWEEN chambers).
+- SH96-CLASS UNPARKED at mouth 58 (his tab state LANDS: 0 fails, 1 declared
+  warn, XO 359/276). Matrix case green again. Gate + battery ALL PASS.
+OPEN ASKS FOR HIM (new, from study _4): (1) SH-96 vent TAPE MEASURE (dia +
+count; his interior shot reads ~half the 12in-frame dia - bigger than SH-50
+scale; the dialect rides SH-50 numbers till then); (2) reflex-vents-into-horn
+(SH-50 @14.5in, JMOD Fb 70 Hz seam teardrops, SB-Horn Fb 34.65 Hz) is a
+MISSING ELEMENT class - M9 sealed-vs-reflex needs it; (3) FIX_LIST items:
+sh50-preset goldens vs the 3.5/10.5/14.5in record, pin #10 datum (transition
+completes 42-54% of length - Diyaudio adapter measured; engine's 0.45 morph
+sits INSIDE the band, note only), pin #12 sourced silhouette dims, saucer
+depth = Martin tangent + 0.5-3cm-at-xmax (replaces the 38deg rim formula),
+tap-pressure-vs-cone-strength info row (Hinson pp.13-14).
+## (prev) BUILD 528 (2026-07-23 late): M9 DOWN PAYMENT + THE ASSEMBLY INSPECTOR
 HIS MID-BUILD CALL: "build a new way to evaluate how things work and do it
 while programming... you are messing a lot of how these MEH speakers should
 work together" -> v5/inspect5.js: the ASSEMBLY battery (cross-part truths

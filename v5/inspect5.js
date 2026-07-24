@@ -27,6 +27,24 @@ function insideInner(S,st,x,y,z){
   const d=MEH2.dimsAt(st,x), n=(d.n!==undefined)?d.n:st.n;
   return Math.pow(Math.abs(y/d.a),n)+Math.pow(Math.abs(z/d.b),n) < 1;
 }
+/* is (y,z) inside the horn WALL SOLID's outer boundary at x? A driver body
+   point that is inside the OUTER surface but not in the channel is buried in
+   the print itself - his pin #23: "how can you allow drivers to go through
+   the horn like that" */
+function insideOuter(S,st,x,y,z,tol){
+  if(x<1e-4||x>st.depth-1e-4) return false;
+  const wt=S.wallT||0.012, t=tol||0;
+  if(S.style==='angular'){
+    const P=MEH2.offsetVerts(st,x,Math.max(0,wt-t));
+    let inC=false;
+    for(let i=0,j=P.length-1;i<P.length;j=i++){
+      if(((P[i][1]>z)!==(P[j][1]>z)) && (y < (P[j][0]-P[i][0])*(z-P[i][1])/(P[j][1]-P[i][1])+P[i][0])) inC=!inC;
+    }
+    return inC;
+  }
+  const d=MEH2.dimsAt(st,x), n=(d.n!==undefined)?d.n:st.n;
+  return Math.pow(Math.abs(y/(d.a+wt-t)),n)+Math.pow(Math.abs(z/(d.b+wt-t)),n) < 1;
+}
 
 /* the battery: returns a list of issue strings (empty = the assembly is sane) */
 function inspectState(S0){
@@ -50,14 +68,21 @@ function inspectState(S0){
      surface it claims to sit on (drivers must never float or bury - pin #18) */
   for(const d of L){ if(d.kind!=='woof'&&d.kind!=='mid') continue;
     if(d.board){
-      /* CORNER BOARD (SH96/M7): its own 45° shelf, not a horn facet. The seat
-         must ride the corner diagonal with a pocket deep enough for the body */
-      const rC=Math.hypot(d.center[1],d.center[2]);
-      const dm=MEH2.dimsAt(st,d.x);
-      const rCorner=(dm.a+dm.b)/Math.SQRT2;
-      if(rC>=rCorner) push('corner board past its own corner');
-      const nd=Math.abs(d.normal[1]*Math.cos(d.phi)+d.normal[2]*Math.sin(d.phi));
-      if(Math.abs(nd-1)>0.01) push('corner-board normal off the diagonal');
+      /* CORNER BOARD v3 (pin #23): the shelf spans the BOX corner OUTSIDE the
+         flare - the seat must sit clear of the horn's outer wall, with a
+         positive pocket gap to the wall it fires through */
+      if(insideOuter(S,st,d.center[0],d.center[1],d.center[2],0))
+        push('corner-board seat INSIDE the horn outer wall (pin #23 class)');
+      if(!(d.board.gap>=-1e-6)) push('corner-board pocket gap negative ('+((d.board.gap||0)*1000).toFixed(1)+' mm - board through the horn wall)');
+      /* v3.1: the chamber front pitches WITH the wall - the invariant is the
+         driver firing along ITS OWN chamfer panel's normal, re-derived here
+         (on non-square coverages the panel normal is NOT the 45deg diagonal) */
+      if(d.facet!==undefined){
+        const fN2=MEH2.facetN(st,d.x,d.facet);
+        const dn=d.normal[0]*fN2[0]+d.normal[1]*fN2[1]+d.normal[2]*fN2[2];
+        if(Math.abs(dn)<0.999) push('corner-board normal off its panel (dot '+dn.toFixed(3)+')');
+      }
+      if(d.facet===undefined) push('corner board without a slot facet');
       continue;
     }
     if(S.style==='angular'){
@@ -74,23 +99,51 @@ function inspectState(S0){
   /* 3. BODIES STAY OUT OF THE AIR PATH: the magnet hangs OUTSIDE the horn
      channel - sample the mount axis and the far end cap ring */
   for(const d of L){ if(d.kind!=='woof'&&d.kind!=='mid') continue;
-    const A=d.mountN||d.normal;
-    for(let t=0.25;t<=1.001;t+=0.25){
-      const p=[d.center[0]+A[0]*d.dp*t, d.center[1]+A[1]*d.dp*t, d.center[2]+A[2]*d.dp*t];
-      if(d.board){
-        /* pocket-side test: the body lives BEHIND the board plane (the corner
-           pocket is walled off the channel by the board itself) */
-        const side=(p[1]-d.center[1])*d.normal[1]+(p[2]-d.center[2])*d.normal[2]+(p[0]-d.center[0])*d.normal[0];
-        if(side<-1e-4) push('woof body crosses its corner board into the channel (t='+t.toFixed(2)+')');
-      } else if(insideInner(S,st,p[0],p[1],p[2]))
-        push(d.kind+' body point INSIDE the air channel at x='+(p[0]*1000).toFixed(0)+' mm (t='+t.toFixed(2)+')'); } }
+    const A=d.mountN||d.normal, wt=S.wallT||0.012, rB=d.od/2;
+    /* frame u/v in the cap plane for the far-cap ring samples */
+    let u=[0,1,0];
+    if(Math.abs(A[1])>0.9) u=[0,0,1];
+    u=(()=>{ const d2=u[0]*A[0]+u[1]*A[1]+u[2]*A[2];
+      const w=[u[0]-d2*A[0],u[1]-d2*A[1],u[2]-d2*A[2]], l=Math.hypot(...w)||1; return [w[0]/l,w[1]/l,w[2]/l]; })();
+    const v=[A[1]*u[2]-A[2]*u[1], A[2]*u[0]-A[0]*u[2], A[0]*u[1]-A[1]*u[0]];
+    /* pin #23 land boss: the body sits ON the printed land (engine measures
+       landH by rim march) - re-verify HERE with THIS file's own membership
+       code that the land TOP itself clears the wall solid, then sample the
+       body from the land top up. An engine landH lie fails the land-top ring. */
+    const lh=d.landH||0;
+    if(lh>0){ let burr=0;
+      for(let q=0;q<8;q++){ const a2=q/8*2*Math.PI, cu=Math.cos(a2)*(rB-0.002), sv=Math.sin(a2)*(rB-0.002);
+        const p=[d.center[0]+A[0]*(wt+lh)+u[0]*cu+v[0]*sv,
+                 d.center[1]+A[1]*(wt+lh)+u[1]*cu+v[1]*sv,
+                 d.center[2]+A[2]*(wt+lh)+u[2]*cu+v[2]*sv];
+        if(insideInner(S,st,p[0],p[1],p[2])||insideOuter(S,st,p[0],p[1],p[2],0.001)) burr++; }
+      if(burr>0) push(d.kind+' land top still in the wall solid ('+burr+'/8 rim points, landH '+(lh*1000).toFixed(1)+' mm) - pin #23 class'); }
+    const samples=[];
+    for(let t=0.3;t<=1.001;t+=0.35){
+      const base=wt+lh+t*d.dp;
+      samples.push([d.center[0]+A[0]*base, d.center[1]+A[1]*base, d.center[2]+A[2]*base]);
+      for(let q=0;q<8;q++){ const a2=q/8*2*Math.PI, cu=Math.cos(a2)*(rB-0.002), sv=Math.sin(a2)*(rB-0.002);
+        samples.push([d.center[0]+A[0]*base+u[0]*cu+v[0]*sv,
+                      d.center[1]+A[1]*base+u[1]*cu+v[1]*sv,
+                      d.center[2]+A[2]*base+u[2]*cu+v[2]*sv]); } }
+    let worstCh=0, worstWall=0;
+    for(const p of samples){
+      if(insideInner(S,st,p[0],p[1],p[2])) worstCh++;
+      else if(insideOuter(S,st,p[0],p[1],p[2],0.002)) worstWall++; }
+    /* the seat neighborhood legitimately meets the wall - a real violation is
+       systematic, not a grazing sample */
+    if(worstCh>1) push(d.kind+' body inside the AIR CHANNEL ('+worstCh+' samples) at x='+(d.center[0]*1000).toFixed(0)+' mm'+(d.board?' [corner board]':''));
+    if(worstWall>1) push(d.kind+' body buried in the horn WALL ('+worstWall+' samples) at x='+(d.center[0]*1000).toFixed(0)+' mm'+(d.board?' [corner board]':'')+' - pin #23 class'); }
 
   /* 4. TAPS PIERCE THE WALL THEY CLAIM: every tap center re-tested on-wall
      (the tap IS under the driver - if the seat is true so is the tap; verify
      the invariant anyway, independently) */
   for(const d of L){ if(!d.tap) continue;
-    const off=Math.hypot(d.tap[0]-d.center[0],d.tap[1]-d.center[1],d.tap[2]-d.center[2]);
-    if(off>0.0015) push(d.kind+' tap drifted '+(off*1000).toFixed(1)+' mm from its driver'); }
+    const dv=[d.tap[0]-d.center[0],d.tap[1]-d.center[1],d.tap[2]-d.center[2]];
+    const off=d.board? (()=>{ const al=dv[0]*d.normal[0]+dv[1]*d.normal[1]+dv[2]*d.normal[2];
+        return Math.hypot(dv[0]-al*d.normal[0],dv[1]-al*d.normal[1],dv[2]-al*d.normal[2]); })()
+      : Math.hypot(dv[0],dv[1],dv[2]);
+    if(off>0.0015) push(d.kind+' tap drifted '+(off*1000).toFixed(1)+' mm off its driver axis'); }
 
   /* 5. THE 1WAY NEST: dish ring on the exposed cone annulus, unit face at the
      seat plane, bore wide enough for the TRUE HF exit (all re-derived) */

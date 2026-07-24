@@ -1,4 +1,17 @@
-# MEH STUDIO v5 HANDOFF (2026-07-24, build 528)
+# MEH STUDIO v5 HANDOFF (2026-07-24, build 530)
+BUILD 530 (his ask: "research everything about MEH and just fix the tool"):
+b529 was left UNPUSHED mid-flight (v3 boards, SH96 parked, 7 gate fails).
+This session: 11-agent reference research -> docs/REFERENCE_LIBRARY_STUDY_4.md
++ FIX_LIST_STUDY_4.md; pin #23 CLOSED (measured land bosses under every wall
+seat, battery-verified); THE VENT FORK RESOLVED as ruling (a) SOURCED (17 m/s
+was nc535's heuristic + Hinson p.19 chuffing-onset, NOT Danley canon; SH-50
+tape-measured taps are the record) -> DANLEY DIALECT on corner-board states;
+CORNER BOARDS v3.1 (seam openings, exact rect adjacency, cutout law, mid ring
+rotated off the diagonals); SH96-class UNPARKED at 58 - HIS TAB STATE LANDS
+(0 fails, 1 declared warn). tap_laws.md law 5 provenance corrected. Gate ALL
+PASS. NEW ASKS FOR HIM: SH-96 vent tape measure; reflex-vents-into-horn as an
+element (M9); FIX_LIST ranked items. Older header below.
+# (prev) MEH STUDIO v5 HANDOFF (2026-07-24, build 528)
 BUILD 528: his mid-build call ("evaluate how things work TOGETHER while
 programming") -> v5/inspect5.js assembly battery (run it while coding; gate
 2.9 enforces it) + M9 down payment: MEH2.boxDims TRUE box (viewer draws it),
