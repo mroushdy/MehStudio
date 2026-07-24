@@ -1,7 +1,7 @@
-# MEH STUDIO v5 HANDOFF (2026-07-23 late night, build 522 = commit e0c9b91)
+# MEH STUDIO v5 HANDOFF (2026-07-24, build 526 = commit 2e81e45)
 Repo: github.com/mroushdy/MehStudio (main). Tool: v5/meh5.html (assembled by
 `node v5/assemble.js` — run it FROM v5/, it reads shell.html relative).
-RITUAL: `node v5/gate.js` (41,772 checks / 480 states) MUST pass before any
+RITUAL: `node v5/gate.js` (44,172 checks / 480 states) MUST pass before any
 push; push from a scratch clone with GIT_ASKPASS=~/hs/.secrets/askpass.sh and
 `git -c credential.helper=` (macOS keychain injects stale creds otherwise).
 
@@ -25,7 +25,7 @@ along the ring (stadium; degenerates to round), coax CR at the band low edge
 (face at the cone plane, cavity to the true throat). 522 GHOST DRIVERS view
 mode. All pushed, gate ALL PASS at every step.
 
-READ FIRST: docs/queue.md - the DRIVER-MOUNT TRIPLE block at the very top is
+READ FIRST: docs/queue.md - top block: 1way family CLOSED at 526 (OS face curve, triple, collar, round/arc taps, crossover section); NEXT = the AUTO-SPLIT STL EXPORTER (studies _2/_3 spec). Old note below:
 THE next build (his ~8:45pm ruling: exit circle / rim circle / baffle depth
 +xmax per driver; print never runs THROUGH the driver; collar over proud
 fixed horns vs deep print for removable horns). Open pins after this session:
