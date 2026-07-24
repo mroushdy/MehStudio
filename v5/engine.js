@@ -109,10 +109,15 @@ function profile(S){
        ANNULUS [.60,.72]od - his pin #8: the old .70-.80 clamp parked the ring
        1 mm PAST the true rim on the 6FHX51. */
     const Lh=(S.hornLen!==undefined)? S.hornLen : 0.53*((S.odW||22)*CM);
-    const rSM=0.60*rCone;                                      // stock mouth at the cone plane ("same geometry first")
+    /* funnel base per CONSTRUCTION: FIXED horn -> the proud mouth (.60od,
+       CAD); REMOVABLE -> the print funnel only wraps the true exit (narrow
+       funnel, WIDE saucer - his white print) */
+    const rSM=(S.hornType==='removable')? rHF+0.008 : 0.60*rCone;
     const rimC=0.72*rCone;
-    /* ring pinned MID-ANNULUS: the exposed cone band is ~0.12od wide - with
-       slot width and the collar seat there is exactly one honest station */
+    /* ring pinned MID-ANNULUS [.60,.72]od for BOTH constructions - the funnel
+       (internal horn) owns the center either way; his reference holes sit just
+       outside the funnel base, which IS this band (correction after the cx5
+       render tore holes through the funnel wall) */
     const rP=(rSM+rimC)/2;
     const thA=d2r(38);
     const La=Lh+Math.max(0.008,(rDish-rSM)/Math.tan(thA));     // adapter = replaced horn + dish face
@@ -605,7 +610,8 @@ function layout(S,st){
        along the ring carries it in length; when the demand is small it
        degenerates to a circle (sa==sb), which IS the Reference D round hole. */
     const rConeL=(S.odW||22)*CM/2;
-    const sbC=Math.max(0.003, Math.min(Math.sqrt(apC*1e-4/Math.PI), (0.72-0.60)*rConeL/2-0.003));
+    const smL=(S.hornType==='removable')? ((S.hfExit||20.1)/1000)/2+0.012 : 0.60*rConeL;
+    const sbC=Math.max(0.003, Math.min(Math.sqrt(apC*1e-4/Math.PI), (0.72*rConeL-smL)/2-0.003));
     const saC=Math.max(sbC, (apC*1e-4+(4-Math.PI)*sbC*sbC)/(4*sbC));   // exact stadium area: 4·sa·sb-(4-π)·sb²
     for(const [a2,p] of taps){ const nrm=surfN(st,xT,a2);
       out.push({kind:'coaxtap', x:xT, phi:a2, center:p, normal:nrm, od:0.02, dp:0,
@@ -763,7 +769,8 @@ function acoustics(S,L,st){
       /* 6FHX51 CAD (build-504 study): the HF horn owns the center out to
          Ø.60od; the cone rim is Ø.72od. The ring must ride the EXPOSED CONE
          ANNULUS between them - his pin #8 (holes low enough to meet the cone). */
-      const smA=0.60*rCone, rimA=0.72*rCone;
+      const smA=(S.hornType==='removable')? ((S.hfExit||20.1)/1000)/2+0.012 : 0.60*rCone;
+      const rimA=0.72*rCone;
       add('COAX','Tap ring rides the exposed cone annulus',
         (rT*1000).toFixed(0)+' mm in ['+(smA*1000).toFixed(0)+'..'+(rimA*1000).toFixed(0)+'] (CAD)',
         rT>=smA-0.001&&rT<=rimA+0.001, rT>=smA-0.004&&rT<=rimA+0.004,
@@ -1201,7 +1208,7 @@ function dishMesh(S){
   const od=(S.odW||22)*CM;
   const rHFm=((S.hfExit||20.1)/1000)/2;
   const Lhm=(S.hornLen!==undefined)? S.hornLen : 0.53*((S.odW||22)*CM);   // 6FHX51 CAD: throat at depth .53od (matches profile)
-  const rSMm=0.60*rCone;
+  const rSMm=(S.hornType==='removable')? rHFm+0.008 : 0.60*rCone;
   /* the triple (US10506331 + his ruling): FIXED metal horn -> the part starts
      AT the proud-mouth plane and seats a COLLAR over the metal ring (never
      printing into the driver); REMOVABLE bolt-on horn -> the part still owns
@@ -1228,7 +1235,7 @@ function dishMesh(S){
     return Lhm-0.004 - (coneY(r)-od*0.03) + Math.min(gap, coneY(r)-od*0.03); };
   const w0=Math.min(Math.max(sb*1.6,0.012),(rDish-rB)/2*0.6);
   const rIn=Math.max(rB+0.0005,rP-w0), rOut=Math.min(rDish-0.004,rP+w0);
-  const COLS=12, NA=N*COLS, NRi=5, NRo=5;
+  const COLS=Math.max(12, Math.ceil(48/N)), NA=N*COLS, NRi=5, NRo=5;   // ring resolution holds even at 2 taps
   /* the slot must sit strictly inside its patch (else the strip folds);
      the LAW rows carry the true velocity-derived area - if this clamp ever
      bites, the geometry was infeasible and the rows already said so */

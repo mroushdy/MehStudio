@@ -161,7 +161,7 @@ select{width:100%;font-family:var(--mono);font-size:11px;background:var(--paper)
 <script>
 /*__ENGINE__*/
 /*__CAD__*/
-window.MEH_BUILD=523;
+window.MEH_BUILD=524;
 document.getElementById('bno').textContent=MEH_BUILD;
 "use strict";
 /* ---------------- driver presets (v4 datasheets; mesh = true CAD, meshApprox = nearest body) ---------------- */
@@ -706,6 +706,32 @@ function drawReports(r){
   if(Sx.topo==='3way') h+=' · mids '+((Sx.nM|0)||4)+'×'+(Sx.vtcM||'?')+' = '+(((Sx.nM|0)||4)*(Sx.vtcM||0))+' cm³';
   if(Sx.topo==='1way') h+='coax cone Vtc '+(Sx.vtcC||'?')+' cm³ behind the dish';
   h+='<br>';
+  /* ---- CROSSOVER — WHAT TO BUILD (his ask, 2026-07-23 night): the derived
+     frequencies turned into a concrete filter plan, with the doctrine fork
+     stated so nobody guesses. Sources: v4 null-margin law (US6411718 read in
+     full - see tap_laws.md), Hinson MEH.pdf (DCX pads, port-protect HPs). */
+  { const fx=Sx.fxDerived||{}, sub=Sx.subXO||80;
+    h+='<br><b>CROSSOVER — WHAT TO BUILD</b> (geometry derived these; the filters just obey)<br>';
+    h+='<table style="border-collapse:collapse">';
+    h+=row('<i>section</i>','<i>filters (LR4 = 24 dB/oct Linkwitz-Riley)</i>','<i>why</i>');
+    if(Sx.topo==='1way'){
+      h+=row('coax cone (taps)','HP LR2 @ '+sub+' Hz · LP LR4 @ '+(fx.lo||'—')+' Hz','box hands off at '+sub+'; dish geometry sets '+(fx.lo||'—'));
+      h+=row('coax HF','HP LR4 @ '+(fx.lo||'—')+' Hz','same point - the horn is the HF waveguide from here up');
+    } else if(Sx.topo==='2way'){
+      h+=row('woofers (taps)','HP LR2 @ '+sub+' Hz · LP LR4 @ '+(fx.lo||'—')+' Hz','sub XO below, tap geometry above');
+      h+=row('DCX mid coil','HP LR4 @ '+(fx.lo||'—')+' Hz · LP LR4 @ ~3.5 kHz','the dual-diaphragm split (datasheet)');
+      h+=row('DCX HF coil','HP LR4 @ ~3.5 kHz','datasheet split');
+    } else {
+      h+=row('woofers (taps)','HP LR2 @ '+sub+' Hz · LP LR4 @ '+(fx.lo||'—')+' Hz','sub XO below, woofer taps above');
+      h+=row('mids (taps)','HP LR4 @ '+(fx.lo||'—')+' Hz · LP LR4 @ '+(fx.hi||'—')+' Hz','both edges from landed geometry');
+      h+=row('CD','HP LR4 @ '+(fx.hi||'—')+' Hz','the mid taps hand off here');
+    }
+    h+='</table>';
+    h+='WHY LR4: v5 derives every XO 1.2× BELOW the λ/4 tap null (v4 law) - LR4 sums IN PHASE there. ';
+    h+='THE FORK (US6411718): Danley instead places taps AT λ/4 and uses an odd-order (90°-shift) crossover so the air path supplies the quarter turn - a coherent alternative, but NOT what these geometry numbers were derived for. Stick to LR4 (or LR2 where marked) unless you re-derive.<br>';
+    h+='LEVELS: horn sections run ~10-20 dB hotter than direct radiators - pad passively at the driver (Hinson: 6Ω series / 1Ω shunt per DCX coil ≈ 18 dB, and the 1Ω shunt keeps the coupled diaphragms honest even on active rigs). ';
+    h+='PORT PROTECTION (Hinson): two stacked HP filters at ~30 Hz on the woofer branch stop sub-band excursion and port chuffing. ';
+    h+='PHASE CHECK: the law row “Common acoustic center” must stay ≤76° at the crossover - if it warns, the crossover needs delay on the forward section, not more EQ.<br>'; }
   /* angular cut list / smooth print hints */
   if(Sx.style==='angular'){
     h+='<br><b>PANEL CUT LIST</b> (outside faces; verify before cutting — Waslo rule)<br>';
