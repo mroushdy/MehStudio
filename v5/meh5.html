@@ -1560,7 +1560,7 @@ return {C,IN,CM, sePoint,seRing, profile, stations, dimsAt, surfPt, surfN, layou
 if(typeof module!=='undefined') module.exports=MEH2;
 
 /* parametric */
-window.MEH_BUILD=521;
+window.MEH_BUILD=522;
 document.getElementById('bno').textContent=MEH_BUILD;
 "use strict";
 /* ---------------- driver presets (v4 datasheets; mesh = true CAD, meshApprox = nearest body) ---------------- */
@@ -2050,7 +2050,10 @@ function rebuild(){
     +(S.topo==='3way'&&r.S.fxDerived?r.S.fxDerived.hi+' / ':'')+(r.S.fxDerived?r.S.fxDerived.lo:'—')+' Hz';
   /* VIEW MODES (his call): FULL -> NO DRIVERS (mounts+horn) -> HORN ONLY (taps) */
   g.traverse(o=>{ const t=o.userData&&o.userData.tag;
-    if(t==='driver') o.visible=(V3D.view||'full')==='full';
+    if(t==='driver'){ const vm=V3D.view||'full';
+      o.visible=(vm==='full'||vm==='ghost');
+      if(vm==='ghost'&&o.isMesh&&o.material){ o.material=o.material.clone();
+        o.material.transparent=true; o.material.opacity=0.28; o.material.depthWrite=false; } }
     if(t==='seat')   o.visible=(V3D.view||'full')!=='horn'; });
   if(window.BUGPINS)BUGPINS.redraw();
   drawResponse(r);
@@ -2267,9 +2270,9 @@ function wire(){
     S.td=P.td; S.throat=P.td; S.cdFloor=P.floor; S.cdDepth=P.dep; save(); rebuild(); };
   if(S.topo!=='1way'){ const P=CDP[S.cdSel||'dcx464']||CDP.dcx464; S.td=P.td; S.throat=P.td; S.cdFloor=P.floor; S.cdDepth=P.dep; }   // 1way runs on the UNIT's own HF
   document.getElementById('bXray').onclick=()=>{ V3D.xray=!V3D.xray; rebuild(); };
-  document.getElementById('bView').onclick=()=>{           // FULL -> NO DRIVERS -> HORN ONLY
-    V3D.view=V3D.view==='full'||!V3D.view?'nodrv':V3D.view==='nodrv'?'horn':'full';
-    document.getElementById('bView').textContent='VIEW: '+(V3D.view==='full'?'FULL':V3D.view==='nodrv'?'NO DRIVERS':'HORN ONLY');
+  document.getElementById('bView').onclick=()=>{           // FULL -> GHOST DRIVERS -> NO DRIVERS -> HORN ONLY
+    V3D.view=V3D.view==='full'||!V3D.view?'ghost':V3D.view==='ghost'?'nodrv':V3D.view==='nodrv'?'horn':'full';
+    document.getElementById('bView').textContent='VIEW: '+(V3D.view==='full'?'FULL':V3D.view==='ghost'?'GHOST DRIVERS':V3D.view==='nodrv'?'NO DRIVERS':'HORN ONLY');
     rebuild(); };
   document.getElementById('bStl').onclick=()=>{           // queue A: shell solid + (1way) the dish insert part
     const r=window.__solved||MEH2.solve(S);
