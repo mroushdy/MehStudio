@@ -269,7 +269,14 @@ function profile(S){
        stock horn's length, and the tap ring must land on the EXPOSED CONE
        ANNULUS [.60,.72]od - his pin #8: the old .70-.80 clamp parked the ring
        1 mm PAST the true rim on the 6FHX51. */
-    const Lh=(S.hornLen!==undefined)? S.hornLen : 0.53*((S.odW||22)*CM);
+    const odm=(S.odW||22)*CM;
+    /* PRINT DEPTH per construction (his ruling: 'the snoot starts at where
+       the woofer paper cone is'): the print NEVER enters the driver. FIXED
+       metal horn: the .53od is the DRIVER's own path (Lint, laws only) and
+       the print sits at the proud mouth; REMOVABLE: funnel depth = baffle
+       depth (.14od CAD) + xmax + 2mm standoff. */
+    const Lh=(S.hornLen!==undefined)? S.hornLen :
+      (S.hornType==='removable'? 0.14*odm+((S.xmC||S.xmW||4)/1000)+0.002 : 0.53*odm);
     /* funnel base per CONSTRUCTION: FIXED horn -> the proud mouth (.60od,
        CAD); REMOVABLE -> the print funnel only wraps the true exit (narrow
        funnel, WIDE saucer - his white print) */
@@ -1368,7 +1375,8 @@ function dishMesh(S){
   const rCone=(S.odW||22)*CM/2, rDish=rCone+0.012;
   const od=(S.odW||22)*CM;
   const rHFm=((S.hfExit||20.1)/1000)/2;
-  const Lhm=(S.hornLen!==undefined)? S.hornLen : 0.53*((S.odW||22)*CM);   // 6FHX51 CAD: throat at depth .53od (matches profile)
+  const Lhm=(S.hornLen!==undefined)? S.hornLen :
+    (S.hornType==='removable'? 0.14*od+((S.xmC||S.xmW||4)/1000)+0.002 : 0.53*od);   // print depth per construction (matches profile)
   const rSMm=(S.hornType==='removable')? rHFm+0.008 : 0.60*rCone;
   /* the triple (US10506331 + his ruling): FIXED metal horn -> the part starts
      AT the proud-mouth plane and seats a COLLAR over the metal ring (never
@@ -1380,7 +1388,11 @@ function dishMesh(S){
   let sa=Math.max(0.004,(tp[0].slot&&tp[0].slot.sa)||0.008);   // ARC half-length (along the ring)
   let sb=Math.max(0.003,(tp[0].slot&&tp[0].slot.sb)||sa);      // RADIAL half-width (annulus-clamped upstream)
   const N=tp.length, t=S.wallT||0.012;
-  const xOf=r=> r<=rSMm? (r-rHFm)/((rSMm-rHFm)/Lhm) : Lhm+(r-rSMm)/Math.tan(th38);   // replaced horn, then the dish face
+  const xOfRaw=r=> r<=rSMm? (r-rHFm)/((rSMm-rHFm)/Lhm) : Lhm+(r-rSMm)/Math.tan(th38);
+  const xOf=r=>{ const bl=0.006;                             // 6mm smoothstep across the funnel-saucer crease (his 'giant mess' zoom)
+    if(Math.abs(r-rSMm)>=bl) return xOfRaw(r);
+    const t=(r-(rSMm-bl))/(2*bl), t2=t*t*(3-2*t);
+    return xOfRaw(rSMm-bl)*(1-t2)+xOfRaw(rSMm+bl)*t2; };
   /* HIS CORRECTION: the print's BACK takes the SHAPE OF THE DRIVER CONE with an
      x-max gap - it nests directly on the driver, no tube, no floating plate.
      Cone depths from the 6FHX51 CAD: 0.03od at the cone rim, 0.10od at the
@@ -1396,7 +1408,7 @@ function dishMesh(S){
     return Lhm-0.004 - (coneY(r)-od*0.03) + Math.min(gap, coneY(r)-od*0.03); };
   const w0=Math.min(Math.max(sb*1.6,0.012),(rDish-rB)/2*0.6);
   const rIn=Math.max(rB+0.0005,rP-w0), rOut=Math.min(rDish-0.004,rP+w0);
-  const COLS=Math.max(12, Math.ceil(48/N)), NA=N*COLS, NRi=5, NRo=5;   // ring resolution holds even at 2 taps
+  const COLS=Math.max(18, Math.ceil(72/N)), NA=N*COLS, NRi=8, NRo=8;   // ring resolution holds even at 2 taps; finer patches (his mesh-quality zoom)
   /* the slot must sit strictly inside its patch (else the strip folds);
      the LAW rows carry the true velocity-derived area - if this clamp ever
      bites, the geometry was infeasible and the rows already said so */
@@ -1466,7 +1478,7 @@ function tapCutters(S){
     for(let kp=0;kp<np;kp++){
       const sgn=(kp===0?-1:1);
       let ua=u, va=v;
-      if(np>=2){ const c=Math.SQRT1_2;
+      if(np>=2 && !(d.slot&&d.slot.round)){ const c=Math.SQRT1_2;   // pin #16: round pairs offset without the X rotation
         ua=[ (u[0]+sgn*v[0])*c, (u[1]+sgn*v[1])*c, (u[2]+sgn*v[2])*c ];
         va=[ n[1]*ua[2]-n[2]*ua[1], n[2]*ua[0]-n[0]*ua[2], n[0]*ua[1]-n[1]*ua[0] ]; }
       const off=np>=2? sgn*(d.slot.offm||d.od*0.24) : 0;
@@ -1613,7 +1625,7 @@ return {C,IN,CM, sePoint,seRing, profile, stations, dimsAt, surfPt, surfN, layou
 if(typeof module!=='undefined') module.exports=MEH2;
 
 /* parametric */
-window.MEH_BUILD=524;
+window.MEH_BUILD=525;
 document.getElementById('bno').textContent=MEH_BUILD;
 "use strict";
 /* ---------------- driver presets (v4 datasheets; mesh = true CAD, meshApprox = nearest body) ---------------- */
@@ -1962,25 +1974,35 @@ function rebuild(){
     }
     /* no bore disc: the dishMesh bore is a REAL opening (pin #5 - "the plug") */
   } else { const t0=st.pts[0];
-    let plate;
-    if(S.style==='angular'){
-      const F=MEH2.facetsAt(st,t0.x), pos=[],idx=[];
-      pos.push(t0.x-0.001,0,0);
-      F.forEach(f=>pos.push(t0.x-0.001,f.p[1],f.p[0]));
-      for(let i=0;i<F.length;i++) idx.push(0,1+i,1+(i+1)%F.length);
+    /* his pin #15: the throat READS circular - the plate is an annulus from
+       the (square or round) throat perimeter down to a REAL round bore
+       (Waslo canon: square throat, round bore in the plate), not a fan with
+       a black disc pasted on. */
+    { const rB=S.td*MEH2.IN/2, K2=48, pos=[],idx=[];
+      const outer=[];
+      if(S.style==='angular'){
+        const F=MEH2.facetsAt(st,t0.x), NV=F.length;
+        for(let i=0;i<K2;i++){ const f=F[Math.floor(i/K2*NV)];
+          const f2=F[(Math.floor(i/K2*NV)+1)%NV];
+          const tq=(i/K2*NV)%1;
+          outer.push([f.p[0]*(1-tq)+f2.p[0]*tq, f.p[1]*(1-tq)+f2.p[1]*tq]); }
+      } else {
+        const a2=Math.min(t0.a,t0.b)*0.999;
+        for(let i=0;i<K2;i++){ const ph=i/K2*2*Math.PI; outer.push([a2*Math.cos(ph), a2*Math.sin(ph)]); }
+      }
+      outer.forEach(q=>pos.push(t0.x-0.001, q[1], q[0]));
+      for(let i=0;i<K2;i++){ const ph=Math.atan2(outer[i][1],outer[i][0]);
+        pos.push(t0.x-0.001, rB*Math.sin(ph), rB*Math.cos(ph)); }
+      for(let i=0;i<K2;i++){ const j=(i+1)%K2;
+        idx.push(i,K2+i,j, j,K2+i,K2+j); }
       const pg=new THREE.BufferGeometry();
       pg.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));
       pg.setIndex(idx); pg.computeVertexNormals();
-      plate=new THREE.Mesh(pg,new THREE.MeshPhongMaterial({color:0xD8D3C9,shininess:8,side:THREE.DoubleSide}));
-    } else {
-      plate=new THREE.Mesh(new THREE.CircleGeometry(Math.min(t0.a,t0.b)*0.999,48),
-        new THREE.MeshPhongMaterial({color:0xD8D3C9,shininess:8,side:THREE.DoubleSide}));
-      plate.rotation.y=Math.PI/2; plate.position.x=t0.x-0.001;
-    }
-    plate.userData.tag='apex'; g.add(plate);
-    const bore=new THREE.Mesh(new THREE.CircleGeometry(S.td*MEH2.IN/2,32),
-      new THREE.MeshBasicMaterial({color:0x0d0c0b,side:THREE.DoubleSide}));
-    bore.rotation.y=Math.PI/2; bore.position.x=t0.x-0.0005; bore.userData.tag='port'; g.add(bore);
+      const plate=new THREE.Mesh(pg,new THREE.MeshPhongMaterial({color:0xD8D3C9,shininess:8,side:THREE.DoubleSide}));
+      plate.userData.tag='apex'; g.add(plate);
+      const bore=new THREE.Mesh(new THREE.CircleGeometry(rB,32),
+        new THREE.MeshBasicMaterial({color:0x0d0c0b,side:THREE.DoubleSide}));
+      bore.rotation.y=Math.PI/2; bore.position.x=t0.x-0.006; bore.userData.tag='port'; g.add(bore); }   // bore floor recessed = real depth
   }
   /* drivers + printed seats + taps (slot under each driver, along flow) */
   for(const d of ev.layout){
@@ -1998,7 +2020,7 @@ function rebuild(){
       for(let kp=0;kp<np;kp++){
         const sgn=(kp===0?-1:1);
         let ua=u, va=v;
-        if(np>=2){ const c45=Math.SQRT1_2;
+        if(np>=2 && !(d.slot&&d.slot.round)){ const c45=Math.SQRT1_2;   // pin #16: a circle has no axis - pairs just offset
           ua=u.clone().multiplyScalar(c45).add(v.clone().multiplyScalar(sgn*c45)).normalize();
           va=n.clone().cross(ua).normalize(); }
         const off=np>=2? sgn*((d.slot&&d.slot.offm)||d.od*0.24) : 0;

@@ -108,7 +108,14 @@ function profile(S){
        stock horn's length, and the tap ring must land on the EXPOSED CONE
        ANNULUS [.60,.72]od - his pin #8: the old .70-.80 clamp parked the ring
        1 mm PAST the true rim on the 6FHX51. */
-    const Lh=(S.hornLen!==undefined)? S.hornLen : 0.53*((S.odW||22)*CM);
+    const odm=(S.odW||22)*CM;
+    /* PRINT DEPTH per construction (his ruling: 'the snoot starts at where
+       the woofer paper cone is'): the print NEVER enters the driver. FIXED
+       metal horn: the .53od is the DRIVER's own path (Lint, laws only) and
+       the print sits at the proud mouth; REMOVABLE: funnel depth = baffle
+       depth (.14od CAD) + xmax + 2mm standoff. */
+    const Lh=(S.hornLen!==undefined)? S.hornLen :
+      (S.hornType==='removable'? 0.14*odm+((S.xmC||S.xmW||4)/1000)+0.002 : 0.53*odm);
     /* funnel base per CONSTRUCTION: FIXED horn -> the proud mouth (.60od,
        CAD); REMOVABLE -> the print funnel only wraps the true exit (narrow
        funnel, WIDE saucer - his white print) */
@@ -1207,7 +1214,8 @@ function dishMesh(S){
   const rCone=(S.odW||22)*CM/2, rDish=rCone+0.012;
   const od=(S.odW||22)*CM;
   const rHFm=((S.hfExit||20.1)/1000)/2;
-  const Lhm=(S.hornLen!==undefined)? S.hornLen : 0.53*((S.odW||22)*CM);   // 6FHX51 CAD: throat at depth .53od (matches profile)
+  const Lhm=(S.hornLen!==undefined)? S.hornLen :
+    (S.hornType==='removable'? 0.14*od+((S.xmC||S.xmW||4)/1000)+0.002 : 0.53*od);   // print depth per construction (matches profile)
   const rSMm=(S.hornType==='removable')? rHFm+0.008 : 0.60*rCone;
   /* the triple (US10506331 + his ruling): FIXED metal horn -> the part starts
      AT the proud-mouth plane and seats a COLLAR over the metal ring (never
@@ -1219,7 +1227,11 @@ function dishMesh(S){
   let sa=Math.max(0.004,(tp[0].slot&&tp[0].slot.sa)||0.008);   // ARC half-length (along the ring)
   let sb=Math.max(0.003,(tp[0].slot&&tp[0].slot.sb)||sa);      // RADIAL half-width (annulus-clamped upstream)
   const N=tp.length, t=S.wallT||0.012;
-  const xOf=r=> r<=rSMm? (r-rHFm)/((rSMm-rHFm)/Lhm) : Lhm+(r-rSMm)/Math.tan(th38);   // replaced horn, then the dish face
+  const xOfRaw=r=> r<=rSMm? (r-rHFm)/((rSMm-rHFm)/Lhm) : Lhm+(r-rSMm)/Math.tan(th38);
+  const xOf=r=>{ const bl=0.006;                             // 6mm smoothstep across the funnel-saucer crease (his 'giant mess' zoom)
+    if(Math.abs(r-rSMm)>=bl) return xOfRaw(r);
+    const t=(r-(rSMm-bl))/(2*bl), t2=t*t*(3-2*t);
+    return xOfRaw(rSMm-bl)*(1-t2)+xOfRaw(rSMm+bl)*t2; };
   /* HIS CORRECTION: the print's BACK takes the SHAPE OF THE DRIVER CONE with an
      x-max gap - it nests directly on the driver, no tube, no floating plate.
      Cone depths from the 6FHX51 CAD: 0.03od at the cone rim, 0.10od at the
@@ -1235,7 +1247,7 @@ function dishMesh(S){
     return Lhm-0.004 - (coneY(r)-od*0.03) + Math.min(gap, coneY(r)-od*0.03); };
   const w0=Math.min(Math.max(sb*1.6,0.012),(rDish-rB)/2*0.6);
   const rIn=Math.max(rB+0.0005,rP-w0), rOut=Math.min(rDish-0.004,rP+w0);
-  const COLS=Math.max(12, Math.ceil(48/N)), NA=N*COLS, NRi=5, NRo=5;   // ring resolution holds even at 2 taps
+  const COLS=Math.max(18, Math.ceil(72/N)), NA=N*COLS, NRi=8, NRo=8;   // ring resolution holds even at 2 taps; finer patches (his mesh-quality zoom)
   /* the slot must sit strictly inside its patch (else the strip folds);
      the LAW rows carry the true velocity-derived area - if this clamp ever
      bites, the geometry was infeasible and the rows already said so */
@@ -1305,7 +1317,7 @@ function tapCutters(S){
     for(let kp=0;kp<np;kp++){
       const sgn=(kp===0?-1:1);
       let ua=u, va=v;
-      if(np>=2){ const c=Math.SQRT1_2;
+      if(np>=2 && !(d.slot&&d.slot.round)){ const c=Math.SQRT1_2;   // pin #16: round pairs offset without the X rotation
         ua=[ (u[0]+sgn*v[0])*c, (u[1]+sgn*v[1])*c, (u[2]+sgn*v[2])*c ];
         va=[ n[1]*ua[2]-n[2]*ua[1], n[2]*ua[0]-n[0]*ua[2], n[0]*ua[1]-n[1]*ua[0] ]; }
       const off=np>=2? sgn*(d.slot.offm||d.od*0.24) : 0;
