@@ -220,7 +220,7 @@ for(const S of lattice){
     /* slice 4: angular presets must yield a finite panel layout with sane seams */
     if(b.s.style==='angular'){
       const pl=MEH2.panelLayout(r.S);
-      ck(!!pl&&pl.panels.length>=8, tag+' panel layout missing/short');
+      ck(!!pl&&pl.panels.length>=4, tag+' panel layout missing/short');   // true square (pin #17) = 4 plates; chamfered forms = 8
       if(pl){ for(const p of pl.panels){
           ck(p.widths.every(v=>fin(v)&&v>0)&&p.slants.every(v=>fin(v)&&v>0), tag+' bad panel dims ('+p.name+')'); }
         for(const s2 of pl.seams) ck(fin(s2.deg)&&s2.deg>0&&s2.deg<180, tag+' bad seam angle'); }

@@ -37,7 +37,7 @@ function panelRing(a,b,n,M){
       const pt=[p[0]+(q[0]-p[0])*f, p[1]+(q[1]-p[1])*f]; pt.param=Math.atan2(pt[1],pt[0]); out.push(pt); }
     return out;
   }
-  const ch=Math.max(0.06, Math.min(0.42, (12-n)/12*0.42+0.06));   // chamfer fraction of the half-width
+  const ch=(n>=11.75)? 0 : Math.max(0.06, Math.min(0.42, (12-n)/12*0.42+0.06));   // pin #17: TRUE square at the top of the slider - the .06 slivers were his 'weird corner angles'
   const ca=a*ch, cb=b*ch;
   const V=[ [a,-b+cb],[a,b-cb],[a-ca,b],[-a+ca,b],[-a,b-cb],[-a,-b+cb],[-a+ca,-b],[a-ca,-b] ];
   const segs=[]; let L=0;
@@ -229,7 +229,8 @@ function stations(S){
   const morph=(x)=>{ if(S.style==='angular') return S.seN;
     const t=Math.min(1, x/(0.45*pr.depth)), s=t*t*(3-2*t);
     return 2+(S.seN-2)*s; };                             // M5/pin #20: ROUND at the CD exit -> the chosen shape (ATH canon)
-  return { form:'se', n:S.seN, style:S.style,
+  const nSt=(S.placeW==='chamfer')? Math.min(S.seN,11.5) : S.seN;   // corner boards live on chamfers - keep them
+  return { form:'se', n:nSt, style:S.style,
            pts:pr.pts.map(p=>({x:p.x, a:p.h, b:(p.v!==undefined)?p.v:p.h*ar, roll:p.roll,
              n:(p.nOv!==undefined)?p.nOv:morph(p.x)})),   // Reference D: the dish stays ROUND inside an angular horn
            depth:pr.depth, rollR:pr.rollR, throat:(pr.rBore!==undefined)?pr.rBore:S.throat*IN/2, ar, xBreak:pr.xBreak, slopeCos:pr.slopeCos, xAdapter:pr.xAdapter, xTap:pr.xTap, xPrint:pr.xPrint };
@@ -302,7 +303,7 @@ function facetsAt(st,x){
     const NF=Math.max(8, Math.round(22-2*st.n));
     for(let i=0;i<NF;i++){ const t=(i+0.5)/NF*2*Math.PI; V.push(sePoint(a,b,Math.max(st.n,2),t)); ch.push(false); }
   } else {
-    const cf=Math.max(0.06, Math.min(0.42, (12-st.n)/12*0.42+0.06));
+    const cf=(st.n>=11.75)? 0 : Math.max(0.06, Math.min(0.42, (12-st.n)/12*0.42+0.06));
     const ca=a*cf, cb=b*cf;
     V.push([a,-b+cb],[a,b-cb],[a-ca,b],[-a+ca,b],[-a,b-cb],[-a,-b+cb],[-a+ca,-b],[a-ca,-b]);
     for(let i=0;i<8;i++) ch.push(i%2===1);          // odd segments are the 45-deg chamfers
@@ -316,7 +317,7 @@ function facetsAt(st,x){
     if(n2[0]*mid[0]+n2[1]*mid[1]<0) n2=[-n2[0],-n2[1]];   // outward
     out.push({p,q,mid,dir,len,n2,ch:ch[i]});
   }
-  return out;
+  return out.filter(f=>f.len>1e-6);   // pin #17: zero-width chamfers drop out - a true square is 4 plates
 }
 /* clamp-project a 2D point onto facet fi */
 function projFacet(F,fi,pt,seatR){
