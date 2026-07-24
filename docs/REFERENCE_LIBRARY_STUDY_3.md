@@ -125,3 +125,35 @@ The full split decision tree observed across batches 2+3:
 7. Joints: glued full-face butt (thin walls, home scale) OR bolted flanges +
    backer braces + T-nut/M6 hardware BOM (pro/wood scale). Both are canon;
    exporter should name its joint mode in the manifest.
+
+---
+
+## 7. PATENT CANON — the coax throat side (Marwan's drop, 2026-07-23 ~9pm)
+
+### US 10,506,331 B2 — Martin Audio, "Coaxial Loudspeaker" (Baird/Anthony, 2019)
+THE law source for the driver-mount triple. Their model of a horn-loaded coax
+is THREE waveguides acting "as though a single waveguide were present":
+1. FIXED waveguide - from the HF exit (pole/phase-plug region);
+2. MOVING waveguide - ON THE CONE: the cone's front face is a waveguide
+   segment that "moves in unison" with the cone;
+3. STATIC outer waveguide - continues from the cone rim outward, "shaped to
+   continue the curvature of the cone, thereby enlarging the cone".
+Junction rules: substantially CONTINUOUS at both handoffs - tangent angle
+alpha at fixed->moving, beta at moving->static, with beta > alpha in their
+example (opens coverage). CLEARANCE between static and moving waveguides:
+0.3-5 cm, "more preferably 0.5-3 cm", and it must hold AT MAXIMAL DOWNSTREAM
+DISPLACEMENT (i.e. >= xmax by construction). The static waveguide reaches
+down to the surround.
+v5 mapping: small circle = fixed->moving junction; large circle =
+moving->static junction (the dish takes over); dish inner slope = TANGENT
+MATCH to the cone at the rim (not a fixed 38 deg), then blend to coverage;
+print-to-cone gap law gets the sourced band [5,30] mm AND >= xmax; the cone
+path between the circles is legitimately part of the horn (their claim 1) -
+v5's slant-path XO math across the dish face is the same doctrine.
+
+### US 2013/0064414 A1 — PHL Audio, "Coaxial speaker system having a compression chamber"
+Frontal-HF coax (compression driver mounted IN FRONT of the woofer - no bore
+through the main magnet; kills the saturated-pole compromise and the axial
+time offset). Geometry content is transducer-level (voice-coil clearances,
+motor architecture), not horn law - keep as background for a future
+frontal-coax dialect, not for the current build.

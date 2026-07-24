@@ -9,7 +9,11 @@ REMOVABLE-horn units (BMS bolt-on style; print reaches the exit, which sits
 AT the cone plane on those), the PROUD MOUTH (.60od) for FIXED-metal-horn
 units (FHX family - the print stops there and seats OVER the proud ring with
 a collar, the recessed ring in his white print's bore); (2) rim Ø = .72od
-(CAD); (3) baffle depth = .14od (CAD cone depth) + xmax clearance.
+(CAD); (3) baffle depth = .14od (CAD cone depth) + xmax clearance - now SOURCED:
+US10506331 (Martin Audio, his 9pm drop) sets the static-to-moving clearance
+at 0.3-5cm (prefer 0.5-3cm) held at max displacement; same patent: dish inner
+slope = TANGENT CONTINUATION of the cone at the rim (beta >= alpha), the
+static waveguide reaches to the surround - see study _3 section 7.
 IMPLEMENTATION: profile keeps the full acoustic ladder (true exit onward -
 the driver's own horn is real path, Lint ≈ .53od as cdDepth-analog for the
 XO/null laws) but the PRINTED part starts at exitAtCone: dishMesh loses the
