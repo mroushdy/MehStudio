@@ -1,4 +1,4 @@
-# MEH STUDIO v5 HANDOFF (2026-07-24, build 530)
+# MEH STUDIO v5 HANDOFF (2026-07-24, build 530 = commit 4e187e3)
 BUILD 530 (his ask: "research everything about MEH and just fix the tool"):
 b529 was left UNPUSHED mid-flight (v3 boards, SH96 parked, 7 gate fails).
 This session: 11-agent reference research -> docs/REFERENCE_LIBRARY_STUDY_4.md
