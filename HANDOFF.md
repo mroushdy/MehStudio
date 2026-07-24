@@ -1,7 +1,7 @@
-# MEH STUDIO v5 HANDOFF (2026-07-23 night, build 518)
+# MEH STUDIO v5 HANDOFF (2026-07-23 late night, build 522 = commit e0c9b91)
 Repo: github.com/mroushdy/MehStudio (main). Tool: v5/meh5.html (assembled by
 `node v5/assemble.js` — run it FROM v5/, it reads shell.html relative).
-RITUAL: `node v5/gate.js` (41,111 checks / 480 states) MUST pass before any
+RITUAL: `node v5/gate.js` (41,772 checks / 480 states) MUST pass before any
 push; push from a scratch clone with GIT_ASKPASS=~/hs/.secrets/askpass.sh and
 `git -c credential.helper=` (macOS keychain injects stale creds otherwise).
 
@@ -14,17 +14,24 @@ window.BUGPINS.resolve(id,'<hash>: <what>') in that tab, never by rewriting
 the store while he types. After a push, assemble+reload the LOCAL tab; the
 githack repin only matters if he asks for it.
 
-BUILD 518 (this session): topology-switch crash fixed (cdSel='unit' guard in
-coax1way — the "changing topology does nothing / KNOWN BUILD stale" report);
-viewer now draws the REAL print solids (shellMesh + dishMesh — translucence
-film gone, real tap holes, no fake bore plug; pins 2/5/6/13/14); new COAX law
-row 'Tap holes land whole on the dish' (pin 18); 1way UX: no KNOWN BUILD list,
-FORM = ROUND|SQUARE, driver select auto-sizes mouth (2.35xOD, from the retired
-bundle ratios). Local BUILD counter went 516->518 (517 was pushed from the
-scratch clone last session; keep local = remote from now on).
+BUILDS 518-522 (this session): 518 topology-switch crash fix + render the
+real print solids (shellMesh/dishMesh live in the viewer) + 1way UX (no
+KNOWN BUILD list, ROUND|SQUARE, driver-sized mouth 2.35xOD). 519 tap-truth:
+recessed tap plugs (round reads round), 'Tap opening fits the cone' law
+(sqrt(Sd/pi)), REFUSED banner + ghosted shell on any fail/infeasible. 520
+CAD-true coax dish: ring on the exposed cone annulus [.60,.72]od, ARC SLOTS
+along the ring (stadium; degenerates to round), coax CR at the band low edge
+(subXO) - 1way XOs rose (fhx6 541->620). 521 the unit NESTS on the print
+(face at the cone plane, cavity to the true throat). 522 GHOST DRIVERS view
+mode. All pushed, gate ALL PASS at every step.
 
-READ FIRST: docs/queue.md (open-pins block at the top = the next batch: the
-1way/2way GEOMETRY rework, pins 3/4/7-12/15-17 — his reference images show
+READ FIRST: docs/queue.md - the DRIVER-MOUNT TRIPLE block at the very top is
+THE next build (his ~8:45pm ruling: exit circle / rim circle / baffle depth
++xmax per driver; print never runs THROUGH the driver; collar over proud
+fixed horns vs deep print for removable horns). Open pins after this session:
+3/9 (dish=plate one piece), 10/11/12 (transition, entry width recheck on 520+,
+cone silhouette), 15/16/17 (2way angular: round throat bore, tap count/straddle
+options, square-max wooden look) — his reference images show
 the funnel base IS the driver flange, entry wide, kidney taps tight around
 the snout; ground everything in CXPRE datasheet dims + the batch-2/3 measured
 refs, invent nothing). docs/REFERENCE_LIBRARY_STUDY_3.md is new (Pavdan

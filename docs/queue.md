@@ -1,4 +1,24 @@
 # MEH STUDIO — STANDING QUEUE (versioned; update on every landed item)
+## NEXT BUILD — THE DRIVER-MOUNT TRIPLE (his ruling, 2026-07-23 ~8:45pm, ghost-view session)
+"The horn needs to go from the small green circle to the large green circle
+and match the depth of the baffle with an x-max... estimate these 3 numbers
+for every driver." And: the print must NEVER run through the driver.
+PER-DRIVER MOUNT DATASET (CXPRE fields + od-relative defaults from the 6FHX51
+CAD): (1) exitAtCone Ø - where the print takes over: the TRUE exit for
+REMOVABLE-horn units (BMS bolt-on style; print reaches the exit, which sits
+AT the cone plane on those), the PROUD MOUTH (.60od) for FIXED-metal-horn
+units (FHX family - the print stops there and seats OVER the proud ring with
+a collar, the recessed ring in his white print's bore); (2) rim Ø = .72od
+(CAD); (3) baffle depth = .14od (CAD cone depth) + xmax clearance.
+IMPLEMENTATION: profile keeps the full acoustic ladder (true exit onward -
+the driver's own horn is real path, Lint ≈ .53od as cdDepth-analog for the
+XO/null laws) but the PRINTED part starts at exitAtCone: dishMesh loses the
+internal snout and gains the collar seat; coaxBody restores the METAL proud
+horn (the removed-plastic cavity stays only for removable-horn presets);
+shellMesh 1way smooth must slice at the print boundary like angular does
+(SPx filter is angular-only today - the smooth funnel still prints from the
+deep exit, only correct for removable-horn units). Builds 520-522 landed the
+annulus ring + arc slots + nesting; this closes the throat side.
 Last updated: 2026-07-23 late (build 518): TOPOLOGY-SWITCH CRASH fixed (leaving
 1way with cdSel='unit' died in coax1way at CDP[...].td — button lit, nothing
 rebuilt, KNOWN BUILD list stayed stale; guard restores dcx464). RENDER TRUTH:
