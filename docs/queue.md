@@ -1,5 +1,31 @@
 # MEH STUDIO — STANDING QUEUE (versioned; update on every landed item)
-## BUILD 532 (2026-07-24 night): PORT TRUTH — the real cutout, measured
+## BUILD 533 (2026-07-25): THE PRE-CUT SHELL LANDS (guarded) + HIS 4 RULINGS
+HIS RULINGS (2026-07-25): (1) pin 9 = BOTH mount styles as an option
+(integrated one-piece | separate ring; auto-extraction on export splits stays
+mandatory) - option UI next build; (2) Xvar-vs-xm DELEGATED -> decided: derived
+xm stays the law basis, maker Xvar recorded informationally in why-texts,
+never a knob; (3) custom drivers grow MEASUREMENT ENTRY (incl. the mount
+triple) so caliper owners can feed real drivers - next build; BMS preset keeps
+datasheet numbers; wood wall DECIDED: 18mm box / 12mm horn panels; v4 parity
+DROPPED from the queue (no v4 build exists here); (4) pin 10 = build the
+ROUND->SQUARE THROAT ADAPTER as its own printed part (Horn Studio precedent;
+1way dish machinery is the pattern; transition completes in the measured
+42-54% band) - next build.
+LANDED b533: THE TRUE PRE-CUT SHELL - constructive (never CSG): wall cells
+under each flush port are skipped and re-tessellated (bridge + tolerant
+ear-clip in fold-free index-space UV) down to the true hole outline on BOTH
+surfaces, with the port barrel (grown 45deg chuff flare inner -> nominal
+outer) connecting them. SELF-VALIDATING: shellMesh census-checks its own
+edges and falls back to the uncut+cutters build on any leak - a leaky shell
+CANNOT ship. Coverage today: 8/22 preset ports pre-cut (jmod, compact,
+square partial); the rest ride the b532-correct cutters; _cutReport says
+which; gate 2.8 watertight + battery 4.5/4.6 enforce all of it. Coverage
+grows as the residual patch cases (angular chamfer-ring mids, some smooth
+pair rects) get fixed - the guard makes each fix pure upside.
+STILL IN FLIGHT: backlog miners (SynTripP/classic3/CoSyne-CD/w65/T-S/
+Hornresp-ME2 incl. HIS Dropbox manual copy/Solana/sweep2) -> b534 batch
+with pin-10 adapter + custom-driver measurement entry + pin-9 option.
+## (prev) BUILD 532 (2026-07-24 night): PORT TRUTH — the real cutout, measured
 HIS ASK: "make sure the ports actually cut through the horn... the real
 cutout on the horn needs to be measured not just the illusion of a port."
 5 probe batteries (216 cutter prisms / 60 dish states / 14 presets / ~480

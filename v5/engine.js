@@ -1525,12 +1525,166 @@ function solve(S0){
    true-offset outer, mouth face/lip, throat annulus. Tap cuts and the dish
    part are the next slices.) The gate asserts edge-manifoldness by position:
    every undirected edge shared by exactly two triangles = printable. */
+/* ---- b533 TRUE PRE-CUT SHELL (his ask: the real cutout in the shell itself).
+   Constructive, never CSG (the dish precedent): wall cells under each port are
+   skipped, the gap re-tessellated as a bridge-and-ear-clip patch from the
+   surviving grid boundary to the TRUE hole outline (projected onto each
+   surface), and the port barrel connects inner (grown, 45deg chuff flare) to
+   outer (nominal) - watertight by construction, gate 2.8 keeps asserting it.
+   SCOPE: flush wall ports (smooth: all; angular: ports that live inside ONE
+   facet). Corner-board/seam-spanning ports and axial wedges keep the (b532-
+   correct) cutter path - stated in the export note and PORT_TRUTH_AUDIT. */
+function earClip(poly){       // simple-polygon ear clipping in 2D; returns index triples
+  /* b533: tolerant of bridge-duplicated vertices (hole splicing repeats the
+     two bridge points): collinear/zero-area ears are CONSUMED without
+     emitting, and containment tests skip points coincident with the ear */
+  const n=poly.length, idx=[]; for(let i=0;i<n;i++) idx.push(i);
+  const area2=(a,b,c)=>(b[0]-a[0])*(c[1]-a[1])-(b[1]-a[1])*(c[0]-a[0]);
+  const same=(p,q)=>Math.abs(p[0]-q[0])<1e-12&&Math.abs(p[1]-q[1])<1e-12;
+  let A=0; for(let i=0;i<n;i++){ const a=poly[i],b=poly[(i+1)%n]; A+=a[0]*b[1]-b[0]*a[1]; }
+  const ccw=A>0, out=[];
+  let guard=0;
+  while(idx.length>3&&guard++<8000){
+    let clipped=false;
+    /* pass 1: consume DUPLICATE-neighbor ears only (the bridge points).
+       Collinear grid verts must SURVIVE - consuming them leaves chords that
+       skip vertices and break position-keyed edge sharing. */
+    for(let k=0;k<idx.length;k++){
+      const i1=idx[k], i2=idx[(k+1)%idx.length];
+      if(same(poly[i1],poly[i2])){ idx.splice(k,1); clipped=true; break; } }
+    if(clipped) continue;
+    for(let k=0;k<idx.length;k++){
+      const i0=idx[(k+idx.length-1)%idx.length], i1=idx[k], i2=idx[(k+1)%idx.length];
+      const a=poly[i0], b=poly[i1], c=poly[i2];
+      const cross=area2(a,b,c);
+      if((ccw? cross:-cross)<=1e-14) continue;
+      let ok=true;
+      for(const j of idx){ if(j===i0||j===i1||j===i2) continue;
+        const p=poly[j];
+        if(same(p,a)||same(p,b)||same(p,c)) continue;
+        const d0=area2(a,b,p), d1=area2(b,c,p), d2=area2(c,a,p);
+        const s=ccw?1:-1;
+        if(d0*s>=-1e-14&&d1*s>=-1e-14&&d2*s>=-1e-14){ ok=false; break; } }
+      if(!ok) continue;
+      out.push([i0,i1,i2]); idx.splice(k,1); clipped=true; break;
+    }
+    if(!clipped) break;                                   // degenerate - caller falls back
+  }
+  if(idx.length===3){ const a=poly[idx[0]],b=poly[idx[1]],c=poly[idx[2]];
+    if(Math.abs(area2(a,b,c))>1e-14) out.push([idx[0],idx[1],idx[2]]); }
+  return out;
+}
+function bridgeHole(outer,hole){   // splice a hole loop into the outer loop via the closest bridge
+  let bi=0,bj=0,bd=1e9;
+  for(let i=0;i<outer.length;i++) for(let j=0;j<hole.length;j++){
+    const d=Math.hypot(outer[i][0]-hole[j][0],outer[i][1]-hole[j][1]);
+    if(d<bd){bd=d;bi=i;bj=j;} }
+  const res=[];
+  for(let i=0;i<=bi;i++) res.push(outer[i]);
+  for(let j=0;j<=hole.length;j++) res.push(hole[(bj+j)%hole.length]);
+  for(let i=bi;i<outer.length;i++) res.push(outer[i]);
+  return res;
+}
 function shellMesh(S){
-  const st=stations(S);
+  /* b533 SELF-VALIDATING: build with pre-cut ports; if the patch machinery
+     leaves ANY unshared edge, rebuild uncut (ports fall back to the b532
+     cutters - correct, just not pre-cut). A leaky shell can never ship;
+     _cutReport says which ports are truly open. */
+  const m1=shellMeshCore(S,true);
+  const key=i=>{const p=m1.pos[i];return Math.round(p[0]*1e6)+','+Math.round(p[1]*1e6)+','+Math.round(p[2]*1e6);};
+  const em=new Map();
+  for(const t of m1.tri) for(const e of [[t[0],t[1]],[t[1],t[2]],[t[2],t[0]]]){
+    const ka=key(e[0]),kb=key(e[1]); const k=ka<kb?ka+'|'+kb:kb+'|'+ka;
+    em.set(k,(em.get(k)||0)+1); }
+  for(const v of em.values()) if(v!==2){
+    const m2=shellMeshCore(S,false);
+    shellMesh._cutReport=(shellMeshCore._cutReport||[]).map(p=>({kind:p.kind,cut:false}));
+    return m2; }
+  shellMesh._cutReport=shellMeshCore._cutReport||[];
+  return m1;
+}
+function shellMeshCore(S,allowCut){
+  const ev=evaluate({...S});
+  const st=ev.st;
   const wt=S.wallT||0.012, M=64;
   const pos=[], tri=[];
   const P=(x,q)=>{ pos.push([x,q[0],q[1]]); return pos.length-1; };
+  const P3=(p)=>{ pos.push([p[0],p[1],p[2]]); return pos.length-1; };
   const quad=(a,b,c,d)=>{ tri.push([a,c,b],[b,c,d]); };
+  const emitOriented=(list,a,b,c,refN,inward)=>{ const A=pos[a],B=pos[b],C2=pos[c];
+    const nx=(B[1]-A[1])*(C2[2]-A[2])-(B[2]-A[2])*(C2[1]-A[1]);
+    const ny=(B[2]-A[2])*(C2[0]-A[0])-(B[0]-A[0])*(C2[2]-A[2]);
+    const nz=(B[0]-A[0])*(C2[1]-A[1])-(B[1]-A[1])*(C2[0]-A[0]);
+    const dt=nx*refN[0]+ny*refN[1]+nz*refN[2];
+    if((inward&&dt>0)||(!inward&&dt<0)) list.push([a,c,b]); else list.push([a,b,c]); };
+  /* ---- cut-eligible ports (frames identical to tapCutters) ---- */
+  const K=24;
+  const ports=[];
+  if(allowCut&&S.topo!=='1way') for(const d of ev.layout){
+    if(d.kind!=='woof'&&d.kind!=='mid') continue;
+    if(!d.slot||!d.flowU||!d.crossV) continue;
+    if(d.board||d.mountN) continue;                        // seam/axial ports keep the cutter path (declared)
+    const n=d.normal, u=d.flowU, v=d.crossV, np=d.slot.np||1;
+    for(let kp=0;kp<np;kp++){
+      const sgn=(kp===0?-1:1);
+      let ua=u, va=v;
+      if(np>=2 && !(d.slot&&d.slot.round)){ const c45=Math.SQRT1_2;
+        ua=[(u[0]+sgn*v[0])*c45,(u[1]+sgn*v[1])*c45,(u[2]+sgn*v[2])*c45];
+        va=[n[1]*ua[2]-n[2]*ua[1], n[2]*ua[0]-n[0]*ua[2], n[0]*ua[1]-n[1]*ua[0]]; }
+      const off=np>=2? sgn*(d.slot.offm||d.od*0.24) : 0;
+      const c0=[d.tap[0]+v[0]*off, d.tap[1]+v[1]*off, d.tap[2]+v[2]*off];
+      const sa=d.slot.sa, sb=d.slot.sb, cx=Math.max(0,sa-sb), fr=wt/2;
+      const outl=[];
+      if(cx<1e-9){ for(let i=0;i<K;i++){ const a=i/K*2*Math.PI; outl.push([sb*Math.cos(a),sb*Math.sin(a)]); } }
+      else{ for(let i=0;i<K/2;i++){ const a=-Math.PI/2+Math.PI*i/(K/2); outl.push([cx+sb*Math.cos(a),sb*Math.sin(a)]); }
+            for(let i=0;i<K/2;i++){ const a=Math.PI/2+Math.PI*i/(K/2); outl.push([-cx+sb*Math.cos(a),sb*Math.sin(a)]); } }
+      const grow=o=>{ const l=Math.hypot(o[0],o[1])||1e-9; return [o[0]*(1+fr/l),o[1]*(1+fr/l)]; };
+      const at3=(o,z)=>[c0[0]+ua[0]*o[0]+va[0]*o[1]+n[0]*z,
+                        c0[1]+ua[1]*o[0]+va[1]*o[1]+n[1]*z,
+                        c0[2]+ua[2]*o[0]+va[2]*o[1]+n[2]*z];
+      ports.push({d, c0, ua, va, n, outl, grow, at3, facet:d.facet, cut:false});
+    }
+  }
+  /* patch builder: stitch a boundary loop (EXISTING vertex indices) to hole
+     rings via bridge+earClip in the port-frame plane; returns tri list or null */
+  const buildPatch=(boundIdx, boundUV, holeRings, holeUVs, refN, inward)=>{
+    const out=[];
+    let loopUV=boundUV.slice(), loopIdx=boundIdx.slice();
+    for(let hi=0;hi<holeRings.length;hi++){
+      const ring=holeRings[hi];
+      const hUV=holeUVs[hi].slice().reverse();
+      const hIdx=ring.slice().reverse();
+      let bi=0,bj=0,bd=1e9;
+      for(let i=0;i<loopUV.length;i++) for(let j=0;j<hUV.length;j++){
+        const d2=Math.hypot(loopUV[i][0]-hUV[j][0],loopUV[i][1]-hUV[j][1]);
+        if(d2<bd){bd=d2;bi=i;bj=j;} }
+      const nUV=[],nIdx=[];
+      for(let i=0;i<=bi;i++){ nUV.push(loopUV[i]); nIdx.push(loopIdx[i]); }
+      for(let j=0;j<=hUV.length;j++){ nUV.push(hUV[(bj+j)%hUV.length]); nIdx.push(hIdx[(bj+j)%hUV.length]); }
+      for(let i=bi;i<loopUV.length;i++){ nUV.push(loopUV[i]); nIdx.push(loopIdx[i]); }
+      loopUV=nUV; loopIdx=nIdx;
+    }
+    const tris=earClip(loopUV);
+    /* bridges duplicate 2 vertices per hole - those ears are consumed without
+       emitting, so expect (len-2) minus up to 2 per hole, minus corner dupes */
+    if(tris.length<loopUV.length-2-2*holeRings.length-4||!tris.length) return null;
+    for(const t of tris) emitOriented(out,loopIdx[t[0]],loopIdx[t[1]],loopIdx[t[2]],refN,inward);
+    return out;
+  };
+  const buildBarrel=(pt,ringsIn,ringsMid,ringsOut)=>{
+    const out=[];
+    for(let h=0;h<pt.length;h++){
+      const NB=ringsIn[h].length, c0=pt[h].c0;
+      for(const pair of [[ringsIn[h],ringsMid[h]],[ringsMid[h],ringsOut[h]]]){
+        const A=pair[0],B2=pair[1];
+        for(let i=0;i<NB;i++){ const j=(i+1)%NB;
+          const a=pos[A[i]];
+          const rad=[a[0]-c0[0],a[1]-c0[1],a[2]-c0[2]];
+          emitOriented(out,A[i],B2[i],A[j],rad,true);
+          emitOriented(out,A[j],B2[i],B2[j],rad,true); } }
+    }
+    return out;
+  };
   if(S.style==='angular'){
     const SPx=(S.topo==='1way'&&st.xAdapter)? st.pts.filter(p=>p.x>=st.xAdapter-1e-9) : st.pts;
     const FS=SPx.map(p=>facetsAt(st,p.x));
@@ -1538,12 +1692,60 @@ function shellMesh(S){
     const NV=FS[0].length, NS=SPx.length;
     const iIn=[], iOut=[];
     for(let j=0;j<NS;j++){ iIn.push(FS[j].map(f=>P(SPx[j].x,f.p))); iOut.push(OS[j].map(v=>P(SPx[j].x,v))); }
+    /* group single-facet ports into cell rects, dry-build the patches, and
+       only commit skips on success (a failed patch falls back to the cutter) */
+    const skip=new Set(), patches=[];
+    const groups=new Map();
+    for(const p of ports){
+      if(p.facet===undefined) continue;
+      let xMin=1e9,xMax=-1e9;
+      for(const o of p.outl){ const g=p.grow(o); const q=p.at3(g,0);
+        xMin=Math.min(xMin,q[0]); xMax=Math.max(xMax,q[0]); }
+      let j0=-1,j1=-1;
+      for(let j=0;j<NS;j++){ if(SPx[j].x<=xMin-0.003) j0=j; if(j1<0&&SPx[j].x>=xMax+0.003) j1=j; }
+      if(j0<1||j1<0||j1>=NS-1||j1<=j0) continue;
+      let fits=true;
+      for(let j=j0;j<=j1&&fits;j++){ const f=FS[j][p.facet]; if(!f){fits=false;break;}
+        const t0=(p.c0[1]-f.p[0])*f.dir[0]+(p.c0[2]-f.p[1])*f.dir[1];
+        const half=Math.max.apply(null,p.outl.map(o=>{const g=p.grow(o);return Math.abs(g[1]);}))
+                  +Math.abs((p.c0[1]-p.d.tap[1])*f.dir[0]+(p.c0[2]-p.d.tap[2])*f.dir[1])*0+0.006;
+        if(t0-half<0.003||t0+half>f.len-0.003) fits=false; }
+      if(!fits) continue;
+      const key=p.facet;
+      if(!groups.has(key)) groups.set(key,{facet:p.facet,j0,j1,list:[]});
+      const g=groups.get(key); g.j0=Math.min(g.j0,j0); g.j1=Math.max(g.j1,j1); g.list.push(p);
+    }
+    for(const g of groups.values()){
+      const fi=g.facet, pt=g.list, p0=pt[0];
+      const projUV=(q)=>[ (q[0]-p0.c0[0])*p0.ua[0]+(q[1]-p0.c0[1])*p0.ua[1]+(q[2]-p0.c0[2])*p0.ua[2],
+                          (q[0]-p0.c0[0])*p0.va[0]+(q[1]-p0.c0[1])*p0.va[1]+(q[2]-p0.c0[2])*p0.va[2] ];
+      const mkRing=(p,zf,grown)=>p.outl.map(o=>P3(p.at3(grown? p.grow(o):o, zf)));
+      const ringsIn=pt.map(p=>mkRing(p,0,true));
+      const ringsMid=pt.map(p=>mkRing(p,wt/2,false));
+      const ringsOut=pt.map(p=>mkRing(p,wt,false));
+      const bIn=[], bOut=[];
+      for(let j=g.j0;j<=g.j1;j++) bIn.push(iIn[j][fi]);
+      for(let j=g.j1;j>=g.j0;j--) bIn.push(iIn[j][(fi+1)%NV]);
+      for(let j=g.j0;j<=g.j1;j++) bOut.push(iOut[j][fi]);
+      for(let j=g.j1;j>=g.j0;j--) bOut.push(iOut[j][(fi+1)%NV]);
+      const uvOf=idx=>idx.map(i=>projUV(pos[i]));
+      const hUVi=ringsIn.map(r2=>uvOf(r2)), hUVo=ringsOut.map(r2=>uvOf(r2));
+      const pin=buildPatch(bIn,uvOf(bIn),ringsIn,hUVi,p0.n,true);
+      const pout=buildPatch(bOut,uvOf(bOut),ringsOut,hUVo,p0.n,false);
+      if(!pin||!pout) continue;
+      const bar=buildBarrel(pt,ringsIn,ringsMid,ringsOut);
+      for(let j=g.j0;j<g.j1;j++) skip.add(j+':'+fi);
+      patches.push(...pin,...pout,...bar);
+      for(const p of pt) p.cut=true;
+    }
     for(let j=0;j<NS-1;j++) for(let i=0;i<NV;i++){
+      if(skip.has(j+':'+i)) continue;
       quad(iIn[j][i],iIn[j][(i+1)%NV],iIn[j+1][i],iIn[j+1][(i+1)%NV]);
       quad(iOut[j][(i+1)%NV],iOut[j][i],iOut[j+1][(i+1)%NV],iOut[j+1][i]); }
     for(let i=0;i<NV;i++){ const jm=NS-1;
       quad(iIn[jm][(i+1)%NV],iIn[jm][i],iOut[jm][(i+1)%NV],iOut[jm][i]);     // mouth face
       quad(iIn[0][i],iIn[0][(i+1)%NV],iOut[0][i],iOut[0][(i+1)%NV]); }      // throat annulus
+    tri.push(...patches);
   } else {
     /* 1way: the SHELL part starts at the dish rim - the dish part owns
        [xPrint..xAdapter]; printing the deep interior in the shell was only
@@ -1554,15 +1756,127 @@ function shellMesh(S){
     const ringsO=pre.map(p=>offsetRing(st,p.x,wt,M));
     const iIn=SPs.map((p,j)=>rings[j].map(q=>P(p.x,q)));
     const iOut=pre.map((p,j)=>ringsO[j].map(q=>P(p.x,q)));
-    for(let j=0;j<SPs.length-1;j++) for(let i=0;i<M;i++)
-      quad(iIn[j][i],iIn[j][(i+1)%M],iIn[j+1][i],iIn[j+1][(i+1)%M]);
-    for(let j=0;j<pre.length-1;j++) for(let i=0;i<M;i++)
-      quad(iOut[j][(i+1)%M],iOut[j][i],iOut[j+1][(i+1)%M],iOut[j+1][i]);
+    /* ---- smooth-family cuts: project outlines onto the true surfaces ---- */
+    const skip=new Set(), patches=[];
+    const NSs=SPs.length, NPre=pre.length;
+    const memb=(q,off)=>{ const x=q[0];
+      if(x<1e-4||x>st.depth-1e-4) return 1e9;
+      const dd=dimsAt(st,x), nn=(dd.n!==undefined)?dd.n:st.n;
+      return Math.pow(Math.abs(q[1]/(dd.a+off)),nn)+Math.pow(Math.abs(q[2]/(dd.b+off)),nn); };
+    const projSurf=(p,o,off)=>{           // bisect along the port normal to land ON the surface
+      let lo=-0.06, hi=0.08;
+      const f=t=>memb(p.at3(o,t),off)-1;
+      let flo=f(lo), fhi=f(hi);
+      if(flo>0||fhi<0) return null;
+      for(let it=0;it<24;it++){ const mid=(lo+hi)/2; if(f(mid)>0) hi=mid; else lo=mid; }
+      return p.at3(o,(lo+hi)/2);
+    };
+    const groups=new Map();
+    for(const p of ports){
+      /* grid rect: stations from x extent; azimuth from params of outline pts */
+      let xMin=1e9,xMax=-1e9;
+      const prm=[];
+      let ok=true;
+      for(const o of p.outl){ const g=p.grow(o);
+        const q=projSurf(p,g,0); if(!q){ ok=false; break; }
+        xMin=Math.min(xMin,q[0]); xMax=Math.max(xMax,q[0]);
+        const dd=dimsAt(st,Math.max(1e-4,Math.min(st.depth-1e-4,q[0])));
+        prm.push(paramFor(dd.a,dd.b,(dd.n!==undefined)?dd.n:st.n,q[1],q[2])); }
+      if(!ok) continue;
+      let j0=-1,j1=-1;
+      for(let j=0;j<NPre;j++){ if(pre[j].x<=xMin-0.002) j0=j; if(j1<0&&pre[j].x>=xMax+0.002) j1=j; }
+      if(j0<1||j1<0||j1>=NPre-1||j1<=j0) continue;
+      const ic=Math.round(prm.reduce((a,b)=>a+b,0)/prm.length/(2*Math.PI)*M);
+      let dMin=0,dMax=0;
+      for(const t of prm){ let dd=Math.round(t/(2*Math.PI)*M)-ic;
+        while(dd>M/2)dd-=M; while(dd<-M/2)dd+=M;
+        dMin=Math.min(dMin,dd); dMax=Math.max(dMax,dd); }
+      const i0=ic+dMin-1, i1=ic+dMax+1;
+      if(i1-i0>=M-2) continue;
+      groups.set(groups.size,{j0,j1,i0,i1,list:[p]});
+    }
+    /* iterative merge until stable: a port can bridge two groups - single-pass
+       merging left overlapping rects that double-skipped cells (leak source) */
+    { let changed=true;
+      while(changed){ changed=false;
+        const ks=[...groups.keys()];
+        outer: for(let a=0;a<ks.length;a++) for(let b2=a+1;b2<ks.length;b2++){
+          const A=groups.get(ks[a]), B3=groups.get(ks[b2]);
+          if(!A||!B3) continue;
+          if(!(B3.j1<A.j0-1||B3.j0>A.j1+1)&&!(B3.i1<A.i0-1||B3.i0>A.i1+1)){
+            A.j0=Math.min(A.j0,B3.j0); A.j1=Math.max(A.j1,B3.j1);
+            A.i0=Math.min(A.i0,B3.i0); A.i1=Math.max(A.i1,B3.i1);
+            A.list.push(...B3.list); groups.delete(ks[b2]); changed=true; break outer; } } }
+    }
+    for(const g of groups.values()){
+      const pt=g.list, p0=pt[0];
+      const projUV=(q)=>[ (q[0]-p0.c0[0])*p0.ua[0]+(q[1]-p0.c0[1])*p0.ua[1]+(q[2]-p0.c0[2])*p0.ua[2],
+                          (q[0]-p0.c0[0])*p0.va[0]+(q[1]-p0.c0[1])*p0.va[1]+(q[2]-p0.c0[2])*p0.va[2] ];
+      const mkRing=(p,off,grown,mid)=>{
+        const out2=[];
+        for(const o of p.outl){ const oo=grown? p.grow(o):o;
+          let q;
+          if(mid){ const qi=projSurf(p,oo,0), qo=projSurf(p,oo,wt);
+            if(!qi||!qo) return null;
+            q=[(qi[0]+qo[0])/2,(qi[1]+qo[1])/2,(qi[2]+qo[2])/2]; }
+          else{ q=projSurf(p,oo,off); if(!q) return null; }
+          out2.push(P3(q)); }
+        return out2;
+      };
+      const ringsIn=[], ringsMid=[], ringsOut=[];
+      let bad=false;
+      for(const p of pt){
+        const a=mkRing(p,0,true,false), m=mkRing(p,0,false,true), b=mkRing(p,wt,false,false);
+        if(!a||!m||!b){ bad=true; break; }
+        ringsIn.push(a); ringsMid.push(m); ringsOut.push(b); }
+      if(bad) continue;
+      const wrap=i=>((i%M)+M)%M;
+      /* index-space UVs (station j, unwrapped azimuth i): intrinsic to the
+         surface - the tangent-plane projection FOLDED at n=12 superellipse
+         corners and fed earClip self-intersecting polygons (the leak source) */
+      const bIn=[], bOut=[], uvIn=[], uvOut=[];
+      const pushB=(arr,uvArr,vidx,iu,j)=>{ if(arr.length&&arr[arr.length-1]===vidx) return;
+        arr.push(vidx); uvArr.push([iu,j]); };
+      for(let j=g.j0;j<=g.j1;j++) pushB(bIn,uvIn,iIn[j][wrap(g.i0)],g.i0,j);
+      for(let i=g.i0;i<=g.i1;i++) pushB(bIn,uvIn,iIn[g.j1][wrap(i)],i,g.j1);
+      for(let j=g.j1;j>=g.j0;j--) pushB(bIn,uvIn,iIn[j][wrap(g.i1)],g.i1,j);
+      for(let i=g.i1;i>=g.i0;i--) pushB(bIn,uvIn,iIn[g.j0][wrap(i)],i,g.j0);
+      if(bIn[0]===bIn[bIn.length-1]){ bIn.pop(); uvIn.pop(); }
+      for(let j=g.j0;j<=g.j1;j++) pushB(bOut,uvOut,iOut[j][wrap(g.i0)],g.i0,j);
+      for(let i=g.i0;i<=g.i1;i++) pushB(bOut,uvOut,iOut[g.j1][wrap(i)],i,g.j1);
+      for(let j=g.j1;j>=g.j0;j--) pushB(bOut,uvOut,iOut[j][wrap(g.i1)],g.i1,j);
+      for(let i=g.i1;i>=g.i0;i--) pushB(bOut,uvOut,iOut[g.j0][wrap(i)],i,g.j0);
+      if(bOut[0]===bOut[bOut.length-1]){ bOut.pop(); uvOut.pop(); }
+      const ic2=(g.i0+g.i1)/2;
+      const uvRing=(ring)=>ring.map(vi=>{
+        const q=pos[vi];
+        const x=Math.max(pre[0].x,Math.min(pre[NPre-1].x,q[0]));
+        let jF=0; for(let k2=0;k2<NPre-1;k2++){ if(pre[k2+1].x>=x){ jF=k2+(x-pre[k2].x)/Math.max(1e-9,pre[k2+1].x-pre[k2].x); break; } jF=k2+1; }
+        const dd=dimsAt(st,Math.max(1e-4,Math.min(st.depth-1e-4,q[0])));
+        const t=paramFor(dd.a,dd.b,(dd.n!==undefined)?dd.n:st.n,q[1],q[2]);
+        let iF=t/(2*Math.PI)*M;
+        while(iF-ic2>M/2) iF-=M; while(iF-ic2<-M/2) iF+=M;
+        return [iF,jF]; });
+      const hUVi=ringsIn.map(uvRing), hUVo=ringsOut.map(uvRing);
+      const pin=buildPatch(bIn,uvIn,ringsIn,hUVi,p0.n,true);
+      const pout=buildPatch(bOut,uvOut,ringsOut,hUVo,p0.n,false);
+      if(!pin||!pout) continue;
+      const bar=buildBarrel(pt,ringsIn,ringsMid,ringsOut);
+      for(let j=g.j0;j<g.j1;j++) for(let i=g.i0;i<g.i1;i++) skip.add(j+':'+wrap(i));
+      patches.push(...pin,...pout,...bar);
+      for(const p of pt) p.cut=true;
+    }
+    for(let j=0;j<SPs.length-1;j++) for(let i=0;i<M;i++){
+      if(!skip.has(j+':'+i)) quad(iIn[j][i],iIn[j][(i+1)%M],iIn[j+1][i],iIn[j+1][(i+1)%M]); }
+    for(let j=0;j<pre.length-1;j++) for(let i=0;i<M;i++){
+      if(!skip.has(j+':'+i)) quad(iOut[j][(i+1)%M],iOut[j][i],iOut[j+1][(i+1)%M],iOut[j+1][i]); }
     const jt=SPs.length-1, jp=pre.length-1;
     for(let i=0;i<M;i++){
       quad(iIn[jt][(i+1)%M],iIn[jt][i],iOut[jp][(i+1)%M],iOut[jp][i]);      // lip: roll tip -> outer edge
       quad(iIn[0][i],iIn[0][(i+1)%M],iOut[0][i],iOut[0][(i+1)%M]); }        // throat annulus
+    tri.push(...patches);
   }
+  shellMeshCore._cutReport=ports.map(p=>({kind:p.d.kind, cut:p.cut}));       // battery reads which ports are truly open
   return {pos, tri};
 }
 /* ---- A. EXPORT slice 2: the REFERENCE D DISH INSERT as its own printable
