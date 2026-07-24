@@ -1560,7 +1560,7 @@ return {C,IN,CM, sePoint,seRing, profile, stations, dimsAt, surfPt, surfN, layou
 if(typeof module!=='undefined') module.exports=MEH2;
 
 /* parametric */
-window.MEH_BUILD=520;
+window.MEH_BUILD=521;
 document.getElementById('bno').textContent=MEH_BUILD;
 "use strict";
 /* ---------------- driver presets (v4 datasheets; mesh = true CAD, meshApprox = nearest body) ---------------- */
@@ -1706,13 +1706,13 @@ function coaxBody(od,dp){
     mo.position.y=Y(0.34); g.add(mo); }
   /* ONE HORN (his correction): the stock plastic horn is REMOVED - the center
      is the open cavity down to the HF exit; the PRINTED horn reaches in */
-  { const cav=[[R*0.42,Y(0.145)],[R*0.30,Y(0.22)],[R*0.17,Y(0.36)],[R*0.125,Y(0.48)]]
+  { /* cavity floor AT the true throat (CAD .53od) - the printed snout reaches
+       all the way in, so the floor must not stop short of it (his gap note) */
+    const cav=[[R*0.42,Y(0.145)],[R*0.30,Y(0.22)],[R*0.17,Y(0.36)],[R*0.125,od*0.53]]
       .map(p=>new THREE.Vector2(p[0],p[1]));
     g.add(new THREE.Mesh(new THREE.LatheGeometry(cav,40),DRK));
     const ring=new THREE.Mesh(new THREE.TorusGeometry(R*0.125,R*0.018,10,32),MET);
-    ring.rotation.x=Math.PI/2; ring.position.y=Y(0.485); g.add(ring);
-    const dk=new THREE.Mesh(new THREE.CircleGeometry(R*0.115,24),DRK);
-    dk.rotation.x=-Math.PI/2; dk.position.y=Y(0.49); g.add(dk); }
+    ring.rotation.x=Math.PI/2; ring.position.y=od*0.535; g.add(ring); }
   /* tweeter CD stack right behind the horn flange (CAD: .547-.634) */
   { const pot=new THREE.Mesh(new THREE.CylinderGeometry(R*0.140,R*0.140,Y(0.088),24),DRK);
     pot.position.y=Y(0.585); g.add(pot);
@@ -2010,7 +2010,13 @@ function rebuild(){
     const cx=(window.__ev&&__ev.layout&&__ev.layout.coax)||{od:S.odW*0.01||0.22,dp:S.dpW*0.01||0.11};
     const body=coaxBody(cx.od, cx.dp);
     body.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),new THREE.Vector3(-1,0,0));
-    body.position.set(st.pts[0].x-0.006,0,0);
+    /* his photo correction (2026-07-23 night): the unit's MOUNTING FACE lives
+       at the CONE PLANE (x = .53od, the 6FHX51 CAD horn depth), pressed on the
+       dish's flange seat - NOT at the throat plane. Drawing it at x=0 exposed
+       the internal replaced-horn wall as a bare spike between driver and dish
+       (the real snout plunges INSIDE the unit's cavity). */
+    const LhV=(S.hornLen!==undefined)? S.hornLen : 0.53*cx.od;
+    body.position.set(LhV-0.004,0,0);
     body.traverse(o=>o.userData.tag='driver'); g.add(body);
   } else {
     const cd=new THREE.Mesh(new THREE.CylinderGeometry(0.065,0.075,S.cdDepth*MEH2.IN,28),
