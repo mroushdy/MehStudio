@@ -163,7 +163,7 @@ select{width:100%;font-family:var(--mono);font-size:11px;background:var(--paper)
 <script>
 /*__ENGINE__*/
 /*__CAD__*/
-window.MEH_BUILD=531;
+window.MEH_BUILD=532;
 document.getElementById('bno').textContent=MEH_BUILD;
 "use strict";
 /* ---------------- driver presets (v4 datasheets; mesh = true CAD, meshApprox = nearest body) ---------------- */
@@ -568,14 +568,22 @@ function rebuild(){
           ua=u.clone().multiplyScalar(c45).add(v.clone().multiplyScalar(sgn*c45)).normalize();
           va=n.clone().cross(ua).normalize(); }
         const off=np>=2? sgn*((d.slot&&d.slot.offm)||d.od*0.24) : 0;
-        const c0=c.clone().add(v.clone().multiplyScalar(off));
+        /* b532: the opening is drawn at the TAP (the wall/seam point) - for
+           corner boards d.center is the RECESSED face 30mm off the wall and
+           the patch used to float on the board instead of the cut */
+        const c0=P3(d.tap||d.center).add(v.clone().multiplyScalar(off));
         const K=24, cx=Math.max(0,sa-sb), pos=[], idx=[];
         const conform=(P)=>{                    // scene -> model -> surface -> scene
           if(S.style==='angular'||!st2) return P.add(n.clone().multiplyScalar(-0.0015));
           const mx=P.x, my=P.z, mz=P.y;
-          const phi=Math.atan2(mz,my);
           const dd=MEH2.dimsAt(st2,Math.max(0,Math.min(st2.depth,mx)));
-          const sp2=MEH2.sePoint(dd.a,dd.b,(dd.n!==undefined)?dd.n:st2.n,phi);
+          /* b532 PORT TRUTH: atan2 gives a POLAR angle; sePoint takes a
+             superellipse PARAMETER - feeding one into the other drew smooth-
+             family taps 33-88mm off the real cut. paramFor solves the true
+             parameter for the point. */
+          const nn2=(dd.n!==undefined)?dd.n:st2.n;
+          const phi=MEH2.paramFor(dd.a,dd.b,nn2,my,mz);
+          const sp2=MEH2.sePoint(dd.a,dd.b,nn2,phi);
           return new THREE.Vector3(mx, sp2[1]*0.9975, sp2[0]*0.9975);
         };
         /* his pins #20/#21: a flat black decal reads as a smear at glancing
@@ -960,6 +968,15 @@ function wire(){
     rebuild(); };
   document.getElementById('bStl').onclick=()=>{           // queue A: shell solid + (1way) the dish insert part
     const r=window.__solved||MEH2.solve(S);
+    /* b532 EXPORT HONESTY (pin #22 extended): a refused state must not ship
+       printable bytes - the export used to download a driver-less, port-less
+       horn from an infeasible state without a word */
+    { const fl=(r.ev&&r.ev.rows||[]).filter(x=>x.st==='fail');
+      if(r.infeasible||fl.length){
+        document.getElementById('note').textContent='✗ EXPORT REFUSED — this state fails '
+          +(fl.length||'the solver')+' law'+(fl.length===1?'':'s')+' ('+(fl[0]?fl[0].name:'no feasible size')
+          +'); fix the state before printing. The tool will not ship a horn it refuses.';
+        return; } }
     const dl=(mesh,fn)=>{ const blob=new Blob([MEH2.stlBytes(mesh)],{type:'model/stl'});
       const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
       a.download=fn; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),5000); return mesh.tri.length; };
@@ -992,7 +1009,8 @@ function wire(){
         const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
         a.download='meh5_panels_b'+MEH_BUILD+'.svg'; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),5000);
         msg+=' + panel layout SVG ('+pl.panels.length+' parts, seam bevels included)'; } }
-    document.getElementById('note').textContent=msg+' — watertight (gate-asserted); pre-cut shell, snout/flange/wings are next slices'; };
+    document.getElementById('note').textContent=msg
+      +(S.topo!=='1way'?' — ⚠ THE SHELL STL HAS NO PORT OPENINGS: you MUST boolean-subtract the tap-cutters file in your slicer/CAD or the printed horn is sealed (pre-cut shell is a queued slice)':' — watertight (gate-asserted)'); };
   { const el=document.getElementById('placeW'); el.value=S.placeW||'auto';
     el.onchange=()=>{ S.placeW=el.value; save(); rebuild(); }; }
   { const el=document.getElementById('mountSel'); el.value=S.mount||'flush';

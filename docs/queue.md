@@ -1,5 +1,35 @@
 # MEH STUDIO — STANDING QUEUE (versioned; update on every landed item)
-## BUILD 531 (2026-07-24 late): KNOWN-BUILDS AUDIT RE-BAKE + ADAPTIVE SETTINGS + SH-96 RECORD COMPLETE
+## BUILD 532 (2026-07-24 night): PORT TRUTH — the real cutout, measured
+HIS ASK: "make sure the ports actually cut through the horn... the real
+cutout on the horn needs to be measured not just the illusion of a port."
+5 probe batteries (216 cutter prisms / 60 dish states / 14 presets / ~480
+settings states / viewer-vs-export triple compare) -> 37 claims; the verify
+fleet died on ACCOUNT CREDITS mid-run, so every landed fix was re-verified
+INLINE before editing (docs/PORT_TRUTH_AUDIT.md - fixed/posture/deferred).
+LANDED: cutters pierce the REAL stack (wall+duct/landH, was wallT+12mm
+hard-coded - 6mm short of its own board); board cutter axis un-rotated (was
+90deg across law/viewer/record, pairs 'behind each other'); measured inner
+reach (curved walls left >=20mm membranes); true 45deg chuff flare with the
+lawed area INSIDE the print (was a ~10deg taper with nominal area 12mm
+outside); exact stadium sizing (rect model under-cut every slot 7.15%); the
+1way dish kite bug (holes were 25-52% under the law with rows green) - dish
+clamps moved into layout, uniform-perimeter area-corrected hole polygons,
+and slot.apEm (EMITTED area) now feeds every physical row + the response
+network; one port-length truth (measured landH supersedes the 0.7-heuristic);
+viewer paramFor fix (smooth taps were drawn 33-88mm off); board ports drawn
+at the seam; EXPORT REFUSES failed states + loud uncut-shell warning; round
+cutters manifold. ENFORCED FOREVER: inspect 4.5 (port-pierce battery:
+cutter-vs-stack reach, channel reach, manifold) + 4.6 (dish watertight +
+apEm consistency) run on every preset + lattice sample each push.
+DEFERRED (probe numbers in the audit doc): TRUE PRE-CUT SHELL (top exporter
+slice; dish patch technique = prior art), boss/wedge/board solids in export,
+measured-barrel lpt (walls run 7.9-10.9mm vs wallT 12 along tilted normals),
+JMOD seam-teardrop dialect, sh50 Danley-record station option + goldens,
+axial-wedge cutter dogleg, B5-10/11 cosmetics.
+ALSO b532: settings-sweep replacement (the 19k sweep was killed for the port
+audit; re-run sampled when compute is free) - adapt() policy-2 clamps still
+wait on it.
+## (prev) BUILD 531 (2026-07-24 late): KNOWN-BUILDS AUDIT RE-BAKE + ADAPTIVE SETTINGS + SH-96 RECORD COMPLETE
 HIS THREE ASKS THIS SESSION: (1) "make sure the known builds are known builds
 you found online and match exactly" -> 14-agent adversarial audit
 (docs/KNOWN_BUILDS_AUDIT.md): 1 matched / 7 mismatched / 6 not-real. RE-BAKED

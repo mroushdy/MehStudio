@@ -237,7 +237,7 @@ for(const S of lattice){
       const wantPorts=((r.S.nW|0)||2)*((r.S.npW|0)||1) + (topo==='3way'?((r.S.nM|0)||4)*((r.S.npM|0)||1):0);
       const tc=MEH2.tapCutters(r.S);
       ck(!!tc, tag+' tap cutters missing');
-      if(tc){ ck(tc.tri.length===wantPorts*104, tag+' cutter count off ('+tc.tri.length+' tris for '+wantPorts+' ports)');   // 26-pt stadium outline: 52 side + 52 cap tris
+      if(tc){ ck(tc.tri.length===wantPorts*192, tag+' cutter count off ('+tc.tri.length+' tris for '+wantPorts+' ports)');   // b532 prism: 24-pt manifold outline x 4 rings (wide/wide/nominal/nominal) = 144 side + 48 cap tris
         const kt=i=>{const p=tc.pos[i];return Math.round(p[0]*1e6)+','+Math.round(p[1]*1e6)+','+Math.round(p[2]*1e6);};
         const et=new Map();
         for(const t of tc.tri) for(const [a,b2] of [[t[0],t[1]],[t[1],t[2]],[t[2],t[0]]]){
@@ -248,7 +248,7 @@ for(const S of lattice){
       /* the X-pair variant must also emit clean cutters */
       const r2=MEH2.solve({...b.s, npW:2});
       if(!r2.infeasible){ const tc2=MEH2.tapCutters(r2.S);
-        ck(!!tc2&&tc2.tri.length===(((r2.S.nW|0)||2)*2+(topo==='3way'?((r2.S.nM|0)||4)*((r2.S.npM|0)||1):0))*104, tag+' np2 cutter count off'); }
+        ck(!!tc2&&tc2.tri.length===(((r2.S.nW|0)||2)*2+(topo==='3way'?((r2.S.nM|0)||4)*((r2.S.npM|0)||1):0))*192, tag+' np2 cutter count off'); }
     }
     /* slice 4: angular presets must yield a finite panel layout with sane seams */
     if(b.s.style==='angular'){

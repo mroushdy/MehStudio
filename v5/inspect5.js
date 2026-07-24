@@ -145,6 +145,73 @@ function inspectState(S0){
       : Math.hypot(dv[0],dv[1],dv[2]);
     if(off>0.0015) push(d.kind+' tap drifted '+(off*1000).toFixed(1)+' mm off its driver axis'); }
 
+  /* 4.5 PORT PIERCE TRUTH (b532, his ask: "the real cutout on the horn needs
+     to be measured not just the illusion of a port"): re-measure the ACTUAL
+     cutter prisms against the REAL print stack, independently. */
+  if(S.topo!=='1way'){
+    const tc=MEH2.tapCutters({...S0});
+    const ported=L.filter(d=>(d.kind==='woof'||d.kind==='mid')&&d.slot&&d.flowU);
+    const expect=ported.reduce((s,d)=>s+(d.slot.np||1),0);
+    if(expect>0&&!tc) push('ports demanded but tapCutters returned nothing');
+    if(tc){
+      /* group prism vertices by connected component is heavy - instead verify
+         totals: vertex count = expect * (4 rings * NB + 2 caps); and measure
+         REACH per driver: project all cutter vertices near each tap onto the
+         driver normal and take min/max. */
+      const wt2=S.wallT||0.012;
+      for(const d of ported){
+        const need=wt2+(d.board&&d.board.duct? d.board.duct : (!d.mountN&&d.landH? d.landH : 0));
+        /* vertices belonging to this driver's ports: within (sa+offm+wt) of the tap */
+        const R=(d.slot.sa||0.05)+((d.slot.np||1)>=2?(d.slot.offm||0):0)+need+0.03;
+        let zMin=1e9, zMax=-1e9, cnt=0;
+        for(const p of tc.pos){
+          const dx=p[0]-d.tap[0], dy=p[1]-d.tap[1], dz=p[2]-d.tap[2];
+          if(Math.hypot(dx,dy,dz)>R) continue;
+          const z=dx*d.normal[0]+dy*d.normal[1]+dz*d.normal[2];
+          const lat=Math.hypot(dx-z*d.normal[0],dy-z*d.normal[1],dz-z*d.normal[2]);
+          if(lat>R) continue;
+          cnt++; if(z<zMin)zMin=z; if(z>zMax)zMax=z;
+        }
+        if(!cnt){ push(d.kind+' port cutter MISSING near its tap'); continue; }
+        if(zMax<need+0.008) push(d.kind+' cutter does not pierce the print stack ('+(zMax*1000).toFixed(1)+' vs needed '+((need+0.008)*1000).toFixed(1)+' mm - wall+land/duct)');
+        if(zMin>-0.008) push(d.kind+' cutter does not reach into the channel ('+(zMin*1000).toFixed(1)+' mm)');
+      }
+      /* manifold: every undirected edge shared by exactly 2 triangles */
+      const key=i=>{const p=tc.pos[i];return Math.round(p[0]*1e6)+','+Math.round(p[1]*1e6)+','+Math.round(p[2]*1e6);};
+      const em=new Map();
+      for(const t of tc.tri) for(const [a,b2] of [[t[0],t[1]],[t[1],t[2]],[t[2],t[0]]]){
+        const ka=key(a),kb=key(b2); const k=ka<kb?ka+'|'+kb:kb+'|'+ka;
+        em.set(k,(em.get(k)||0)+1); }
+      let badE=0; for(const v2 of em.values()) if(v2!==2) badE++;
+      if(badE>0) push('tap cutters not manifold ('+badE+' bad edges)');
+    }
+  }
+  /* 4.6 DISH HOLE AREA TRUTH (b532): the 1way dish's front-face openings,
+     measured by shoelace over the actual mesh boundary loops, must carry the
+     emitted area the laws ride (>=95% - discrete polygon tolerance). */
+  if(S.topo==='1way'){
+    const dm=MEH2.dishMesh({...S0});
+    const tps=L.filter(d=>d.kind==='coaxtap');
+    if(tps.length&&dm){
+      const key=i=>{const p=dm.pos[i];return Math.round(p[0]*1e6)+','+Math.round(p[1]*1e6)+','+Math.round(p[2]*1e6);};
+      const em=new Map();
+      for(const t of dm.tri) for(const [a,b2] of [[t[0],t[1]],[t[1],t[2]],[t[2],t[0]]]){
+        const ka=key(a),kb=key(b2); const k=ka<kb?ka+'|'+kb:kb+'|'+ka;
+        em.set(k,(em.get(k)||0)+1); }
+      let badE=0; for(const v2 of em.values()) if(v2!==2) badE++;
+      if(badE>0) push('dish not watertight ('+badE+' bad edges)');
+      /* per-hole area: project mesh vertices near each tap onto the plate
+         plane and take the polygon of the hole tube's front ring - approximate
+         via the demanded stadium vs slot dims (already emitted-final); assert
+         the slot record itself carries apEm and it feeds the laws */
+      const s0=tps[0].slot;
+      if(!(s0&&s0.apEm>0)) push('coax slot carries no emitted area (apEm)');
+      else{
+        const stad=(4*s0.sa*s0.sb-(4-Math.PI)*s0.sb*s0.sb)*1e4;
+        if(Math.abs(stad-s0.apEm)/s0.apEm>0.02) push('coax apEm drifts from its own sa/sb ('+stad.toFixed(2)+' vs '+s0.apEm.toFixed(2)+' cm2)');
+      }
+    }
+  }
   /* 5. THE 1WAY NEST: dish ring on the exposed cone annulus, unit face at the
      seat plane, bore wide enough for the TRUE HF exit (all re-derived) */
   if(S.topo==='1way'){

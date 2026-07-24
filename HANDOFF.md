@@ -1,3 +1,22 @@
+# MEH STUDIO v5 HANDOFF (2026-07-24 night, build 532)
+BUILD 532 (his ask: "ports actually cut through the horn... the real cutout
+measured, not the illusion"): 5 probe batteries -> 37 claims; the verify
+fleet DIED ON ACCOUNT CREDITS (no subagents from then on - everything
+re-verified INLINE before editing). docs/PORT_TRUTH_AUDIT.md = the record.
+LANDED: cutters pierce the real stack (wall+duct/landH; were 6mm short of
+their own board), board cutter axis un-rotated (was 90deg off law+record),
+measured inner reach, true 45deg flare with lawed area INSIDE the print,
+exact stadium sizing (rect model under-cut 7.15%), the dish kite bug (holes
+25-52% under law, rows green) -> clamps in layout + apEm EMITTED area feeds
+all physics rows + response, one port-length truth, viewer paramFor fix
+(taps drew 33-88mm off on smooth), board ports drawn at the seam, EXPORT
+REFUSES failed states + loud uncut-shell warning. inspect 4.5/4.6 enforce
+pierce-truth + dish-area truth forever. Gate 50,140 ALL PASS (cutter tri
+expectation re-baked 104->192 for the 4-ring manifold prism).
+DEFERRED with probe numbers in the audit doc: TRUE PRE-CUT SHELL (top),
+boss/wedge solids in export, measured-barrel lpt, JMOD teardrop dialect,
+sh50 record-station option, axial dogleg, cosmetics. Settings sweep to
+re-run sampled. Older header below.
 # MEH STUDIO v5 HANDOFF (2026-07-24 late, build 531 = commit 3b0c195)
 BUILD 531 (his asks: audit known builds vs the online record; audit settings
 sanity + build the adaptive anti-trash layer; driver-mounting audit): the

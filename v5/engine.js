@@ -750,11 +750,28 @@ function layout(S,st){
        degenerates to a circle (sa==sb), which IS the Reference D round hole. */
     const rConeL=(S.odW||22)*CM/2;
     const smL=(S.hornType==='removable')? ((S.hfExit||20.1)/1000)/2+0.012 : 0.60*rConeL;
-    const sbC=Math.max(0.003, Math.min(Math.sqrt(apC*1e-4/Math.PI), (0.72*rConeL-smL)/2-0.003));
-    const saC=Math.max(sbC, (apC*1e-4+(4-Math.PI)*sbC*sbC)/(4*sbC));   // exact stadium area: 4·sa·sb-(4-π)·sb²
+    let sbC=Math.max(0.003, Math.min(Math.sqrt(apC*1e-4/Math.PI), (0.72*rConeL-smL)/2-0.003));
+    let saC=Math.max(sbC, (apC*1e-4+(4-Math.PI)*sbC*sbC)/(4*sbC));   // exact stadium area: 4·sa·sb-(4-π)·sb²
+    /* b532 PORT TRUTH: the DISH's own patch clamps used to bite silently
+       INSIDE dishMesh while every law row rode the un-clamped demand (real
+       holes measured 25-52% under). The clamps now live HERE, the FINAL
+       dims + band ride the slot record (dishMesh consumes them verbatim),
+       and apEm carries the EMITTED area for every law that grades physics. */
+    { const rDishL=rConeL+0.012;
+      const rHFm2=((S.hfExit||20.1)/1000)/2;
+      const rBL=(S.hornType!=='removable')? 0.60*rConeL+0.001 : rHFm2;
+      const rPL=rMax;
+      const w0=Math.min(Math.max(sbC*1.6,0.012),(rDishL-rBL)/2*0.6);
+      const rInL=Math.max(rBL+0.0005,rPL-w0), rOutL=Math.min(rDishL-0.004,rPL+w0);
+      const halfArc=Math.PI*rPL/nT, halfBand=Math.min(rPL-rInL, rOutL-rPL);
+      sbC=Math.min(sbC, halfBand*0.75);
+      saC=Math.max(sbC, Math.min(saC, halfArc*0.75));
+      var bandC={w0,rIn:rInL,rOut:rOutL};
+    }
+    const apEmC=(4*saC*sbC-(4-Math.PI)*sbC*sbC)*1e4;   // cm^2 EMITTED per slot
     for(const [a2,p] of taps){ const nrm=surfN(st,xT,a2);
       out.push({kind:'coaxtap', x:xT, phi:a2, center:p, normal:nrm, od:0.02, dp:0,
-        tap:p, seatR:sbC+0.004, slot:{sa:saC, sb:sbC, ap:apC, radial:true}}); }
+        tap:p, seatR:sbC+0.004, slot:{sa:saC, sb:sbC, ap:apC, apEm:apEmC, band:bandC, radial:true}}); }
     out.coax={od:(S.odW? S.odW*CM : (S.odC||0.22)), dp:(S.dpW? S.dpW*CM : (S.dpC||0.11))};   // PIN #21: the coax IS the chosen woofer
   }
   return out;
@@ -791,28 +808,33 @@ function acoustics(S,L,st){
     const cr=danley? sd/apRec : Math.max(1.5, Math.min(band[1], crVel));    // below 1.5:1 it stops being a compression tap
     const ap=danley? apRec : sd/cr;                      // cm^2 per driver (Danley record port areas, SH-50 tape measure)
     const shp=(kind==='mid'? S.shM : S.shW)||'slot';       // his call: ROUND is classic for many horns
-    for(const d of drs){ const apP=ap/(np||1);              // pin #19: area split across the ports
-      let saM=shp==='round'? Math.sqrt(apP*1e-4/Math.PI) : Math.sqrt(apP*1e-4*3)/2;
-      let sbM=shp==='round'? saM : Math.sqrt(apP*1e-4/3)/2;
+    for(const d of drs){ const apP=ap/(np||1), A=apP*1e-4;  // pin #19: area split across the ports
+      let saM,sbM;
+      if(shp==='round'){ saM=sbM=Math.sqrt(A/Math.PI); }
+      else{ sbM=Math.sqrt(A/(8+Math.PI)); saM=3*sbM; }      // b532: EXACT 3:1 stadium ((8+π)·sb² = A) - the rect model under-cut every slot 7.15%
       if(d.board&&shp!=='round'){
         /* v3.1 corner boards: the opening cuts THROUGH the walls at the seam
            (SH-96 side-wall openings, JMOD seam teardrops) - the board CHAMBER
            must still cover it; elongate along the wall at constant area if
            the chamber coverage binds (cone-fit law grades the consequence) */
         const sbMax=Math.max(0.008, d.board.half-0.012);
-        if(sbM>sbMax){ sbM=sbMax; saM=apP*1e-4/(4*sbM); } }
-      d.slot={sa:saM, sb:sbM, ap:ap, np:np||1, round:shp==='round',
+        if(sbM>sbMax){ sbM=sbMax; saM=(A+(4-Math.PI)*sbM*sbM)/(4*sbM); } }   // exact stadium inversion
+      const apEm=(shp==='round'? Math.PI*saM*saM : 4*saM*sbM-(4-Math.PI)*sbM*sbM)*1e4*(np||1);   // cm^2 per driver, EMITTED
+      d.slot={sa:saM, sb:sbM, ap:ap, apEm, np:np||1, round:shp==='round',
         offm:(np||1)>=2? 0.24*d.od : 0};                    // pins #1/#25: pair straddles CROSS-wise (same station)
     }
-    add(kind.toUpperCase(),'Compression ratio Sd/Ap',cr.toFixed(1)+':1',
-      danley? true : cr>=band[0], danley? true : cr>=band[0]*0.6,
-      danley? 'DANLEY DIALECT: '+(kind==='mid'?'one 3/4in round tap per mid':'one 2.5in round corner tap per woofer')+' = the SH-50 tape-measured record (van Ommen, diyaudio 292379 #4957246; chrisbln thing:6886663 ships the same 2.5in as canon). His SH-96 interior shot confirms the CONSTRUCTION (X-braced corner chambers, 6 sealed mid cups) but shows NO vent - the side-wall circles are recessed handle cups (b531 zoom re-read). An SH-96 vent measurement would harden this number'
-            : (cr<band[0]?'below the classic band - big ports, mild loading (JMOD territory); excursion-limited duty':'derived from the 17 m/s limit, graded against the band'));
-    const vel=cr*2*Math.PI*fLow*(xm/1000);
+    /* b532 PORT TRUTH: the graded rows ride the EMITTED area (what the print
+       actually cuts) - identical to the demand unless a clamp bit */
+    const apEmD=drs[0].slot.apEm, crEm=sd/apEmD;
+    add(kind.toUpperCase(),'Compression ratio Sd/Ap',crEm.toFixed(1)+':1',
+      danley? true : crEm>=band[0], danley? true : crEm>=band[0]*0.6,
+      danley? 'DANLEY DIALECT: '+(kind==='mid'?'one 3/4in round tap per mid':'one 2.5in round corner tap per woofer')+' = the SH-50 tape-measured record (van Ommen, diyaudio 292379 #4957246; chrisbln thing:6886663 ships the same 2.5in as canon), shipped as an area-matched '+(drs[0].slot.round?'round hole':'stadium (shape follows the tap-shape knob)')+'. His SH-96 interior shot confirms the CONSTRUCTION but shows no vent (side-wall circles = handle cups, b531). An SH-96 vent measurement would harden this number'
+            : (crEm<band[0]?'below the classic band - big ports, mild loading (JMOD territory); excursion-limited duty':'derived from the 17 m/s limit, graded against the band; rides the EMITTED cut area (b532)'));
+    const vel=crEm*2*Math.PI*fLow*(xm/1000);
     add(kind.toUpperCase(),'Port velocity at band low edge ('+fLow+' Hz)',vel.toFixed(1)+' m/s',
       danley? true : vel<=17.2, danley? true : vel<=20,
       danley? 'DANLEY DIALECT: the worst-case formula (CR*2pi*f*xm, nc535 heuristic) reads this number, yet Danley ships exactly these taps - horn loading keeps real excursion far under xm at the band edge. Stated, not graded'
-            : 'nc535 worst-case heuristic (17 m/s ~ reflex chuffing onset, Hinson MEH.pdf p.19), evaluated at the band bottom');
+            : 'nc535 worst-case heuristic (17 m/s ~ reflex chuffing onset, Hinson MEH.pdf p.19), evaluated at the band bottom on the EMITTED cut area');
     /* his pins #20/#21: the tap must OPEN INTO THE CONE, not the frame. Sd
        sets the emissive radius (sqrt(Sd/pi)); the farthest lit point of the
        opening (pair offset + half-length) must stay inside it. Hinson canon:
@@ -824,8 +846,9 @@ function acoustics(S,L,st){
         (need*1000).toFixed(0)+' vs '+(rSd*1000).toFixed(0)+' mm (Sd radius)',
         need<=rSd, need<=1.1*rSd,
         'the port must land on the cone that drives it; a straddling pair or a second tap shrinks each opening'); }
-    /* REAL port length: print wall + 0.85r end correction (matches the response network) */
-    const lpt=(S.wallT||0.012)+0.85*Math.sqrt(ap*1e-4/Math.PI);
+    /* REAL port length: print wall + 0.85r end correction (matches the response
+       network); b532: rides the EMITTED area like every physical row */
+    const lpt=(S.wallT||0.012)+0.85*Math.sqrt(apEmD*1e-4/Math.PI);
     /* pin #5: the axial land is printed SOLID - the tap port runs THROUGH it, so
        the port LENGTHENS by the land's local thickness (~0.7*seatR*tan(tilt));
        the front chamber volume stays the driver's own Vtc */
@@ -846,7 +869,12 @@ function acoustics(S,L,st){
       for(const d of drs){ if(!d.mountN) continue;
         const ct=Math.abs(d.normal[0]*d.mountN[0]+d.normal[1]*d.mountN[1]+d.normal[2]*d.mountN[2]);
         mx=Math.max(mx, Math.tan(Math.acos(Math.min(1,ct)))); }
-      if(mx>0){ lptEff=lpt + 0.7*(((drs[0].seatR)||0.05))*mx; landed=true;
+      if(mx>0){ const wlMeas=drs.reduce((m,d)=>Math.max(m,(d.landH||0)),0);
+        /* b532 ONE length truth: the MEASURED wedge clearance (landH, the b530
+           rim march along the mount axis) supersedes the ~0.7·seatR·tan
+           heuristic when present - acoustics and the response network now
+           agree on the same port (the probe caught a 17mm skew) */
+        lptEff=lpt + (wlMeas>0? wlMeas : 0.7*(((drs[0].seatR)||0.05))*mx); landed=true;
         /* pin #24: on a steeply tilted wall the printed land becomes a monster
            wedge - say so. Danley uses spot-faces where walls run near-parallel
            to the axis (Waslo flare 2); past ~30 deg flush is the honest mount. */
@@ -856,9 +884,9 @@ function acoustics(S,L,st){
           'the spot-face land grows with wall tilt (seatR·tan); past ~30° the print is a wedge monster - use FLUSH on steep walls (Danley lands live on near-axial walls)');
       }
     }
-    const fLP=C/(2*Math.PI)*Math.sqrt((ap*1e-4)/((vtc*1e-6)*lptEff));
+    const fLP=C/(2*Math.PI)*Math.sqrt((apEmD*1e-4)/((vtc*1e-6)*lptEff));
     add(kind.toUpperCase(),'Chamber acoustic low-pass',Math.round(fLP)+' Hz',fLP>=1.2*fx,fLP>=fx,
-      (landed?'tap runs THROUGH the solid axial land (port lengthened ~0.7*seatR*tan(tilt)) - ':bossH>0?'tap runs THROUGH the printed land boss (port lengthened by it) - ':'')+'Vtc+tap Helmholtz (real wall + end-corrected port) must clear the crossover ('+fx+' Hz)');
+      (landed?'tap runs THROUGH the solid axial land (measured landH when available) - ':bossH>0?'tap runs THROUGH the printed land boss (port lengthened by it) - ':'')+'Vtc+tap Helmholtz (real wall + end-corrected EMITTED port) must clear the crossover ('+fx+' Hz)');
     /* ---- M2: the tap placement/size laws (US 8,284,976 / Waslo / Hinson) ---- */
     if(st && drs[0] && drs[0].x!==undefined){
       const K=kind.toUpperCase(), xT=drs[0].x, Astn=areaAt(st,xT), lam=C/fx;
@@ -918,7 +946,7 @@ function acoustics(S,L,st){
       const fNull=C/(4*Ls9);
       add('COAX','\u03bb/4 reflection null vs crossover',Math.round(fNull)+' vs '+fx+' Hz',
         fNull>=1.19*fx, fNull>=fx,'derived XO builds the 1.2\u00d7 margin in');
-      const ap=taps[0].slot?taps[0].slot.ap:0, vtc=(S.vtcC||60);
+      const ap=taps[0].slot?(taps[0].slot.apEm||taps[0].slot.ap):0, vtc=(S.vtcC||60);   // b532: EMITTED area (post-clamp) - the dish holes were 25-52% under the demand with rows green
       if(ap>0){ const rC9=(S.odW||22)*CM/2, od9=(S.odW||22)*CM;
         /* local dish thickness at the ring: front(38 deg face) minus the
            cone-following back (his correction) - the REAL Lpt, not wallT */
@@ -1341,10 +1369,11 @@ function response(S,ev){
   const lptM=(d)=>(S.wallT||0.012)+((d&&d.board&&d.board.duct)? d.board.duct : Math.max(0.009,(d&&d.landH)||0));   // REAL port length: print wall + the MEASURED land/duct (pin #23) or the legacy 9 mm seat pad
   const mkBr=(ap,vtc,n,d)=>{ const Ap=n*ap*1e-4, V=n*vtc*1e-6, r=Math.sqrt(ap*1e-4/Math.PI);
     return {M:RHO*(lptM(d)+0.85*r)/Ap, Cc:V/(RHO*C*C)}; };
-  const brW=hasW&&dW&&dW.slot? mkBr(dW.slot.ap,S.vtcW||150,(S.nW|0)||2,dW) : null;
-  const brM=hasM&&dM&&dM.slot? mkBr(dM.slot.ap,S.vtcM||40,(S.nM|0)||4,dM) : null;
+  /* b532: the network breathes through the EMITTED cut, like the law rows */
+  const brW=hasW&&dW&&dW.slot? mkBr(dW.slot.apEm||dW.slot.ap,S.vtcW||150,(S.nW|0)||2,dW) : null;
+  const brM=hasM&&dM&&dM.slot? mkBr(dM.slot.apEm||dM.slot.ap,S.vtcM||40,(S.nM|0)||4,dM) : null;
   const dC=L.find(d2=>d2.kind==='coaxtap');
-  const brC=hasC&&dC&&dC.slot? mkBr(dC.slot.ap,(S.vtcC||60)/((S.coaxTaps|0)||6),(S.coaxTaps|0)||6,dC) : null;
+  const brC=hasC&&dC&&dC.slot? mkBr(dC.slot.apEm||dC.slot.ap,(S.vtcC||60)/((S.coaxTaps|0)||6),(S.coaxTaps|0)||6,dC) : null;
   const nodeC=hasC? 1 : -1;
   const f=[],HF=[],MID=[],WOOF=[];
   for(let i=0;i<NF;i++){
@@ -1562,8 +1591,10 @@ function dishMesh(S){
   const fixedH=(S.hornType!=='removable');
   const rB=fixedH? rSMm+0.001 : rHFm;
   const rP=Math.hypot(tp[0].tap[1],tp[0].tap[2]);
-  let sa=Math.max(0.004,(tp[0].slot&&tp[0].slot.sa)||0.008);   // ARC half-length (along the ring)
-  let sb=Math.max(0.003,(tp[0].slot&&tp[0].slot.sb)||sa);      // RADIAL half-width (annulus-clamped upstream)
+  /* b532 PORT TRUTH: sa/sb arrive FINAL from layout (all clamps applied
+     there; the law rows ride the same emitted dims) - no re-clamping here */
+  const sa=Math.max(0.004,(tp[0].slot&&tp[0].slot.sa)||0.008);   // ARC half-length (along the ring)
+  const sb=Math.max(0.003,(tp[0].slot&&tp[0].slot.sb)||sa);      // RADIAL half-width
   const N=tp.length, t=S.wallT||0.012;
   /* OS face (matches profile): x(r) inverts r=sqrt(r0^2+((x-x0) tanT)^2) */
   const rem=(S.hornType==='removable');
@@ -1585,15 +1616,12 @@ function dishMesh(S){
     if(r<rSMm) return xOf(r)-t*1.25;                         // (removable) the internal-horn shell wall
     if(r>=0.72*rCone) return Lhm-0.004;                      // flange seat past the TRUE cone rim (CAD .72od)
     return Lhm-0.004 - (coneY(r)-od*0.03) + Math.min(gap, coneY(r)-od*0.03); };
-  const w0=Math.min(Math.max(sb*1.6,0.012),(rDish-rB)/2*0.6);
-  const rIn=Math.max(rB+0.0005,rP-w0), rOut=Math.min(rDish-0.004,rP+w0);
+  /* band geometry rides the slot record (computed once in layout - the
+     dishMesh/law divergence is structurally gone, b532) */
+  const band=(tp[0].slot&&tp[0].slot.band)||null;
+  const w0=band? band.w0 : Math.min(Math.max(sb*1.6,0.012),(rDish-rB)/2*0.6);
+  const rIn=band? band.rIn : Math.max(rB+0.0005,rP-w0), rOut=band? band.rOut : Math.min(rDish-0.004,rP+w0);
   const COLS=Math.max(18, Math.ceil(72/N)), NA=N*COLS, NRi=8, NRo=8;   // ring resolution holds even at 2 taps; finer patches (his mesh-quality zoom)
-  /* the slot must sit strictly inside its patch (else the strip folds);
-     the LAW rows carry the true velocity-derived area - if this clamp ever
-     bites, the geometry was infeasible and the rows already said so */
-  const halfArc=Math.PI*rP/N, halfBand=Math.min(rP-rIn, rOut-rP);
-  sb=Math.min(sb, halfBand*0.75);
-  sa=Math.max(sb, Math.min(sa, halfArc*0.75));
   const pos=[], tri=[];
   const V=(x,y,z)=>{ pos.push([x,y,z]); return pos.length-1; };
   const F=(r,ph,back)=>V(back? Math.min(dishBack(r), xOf(r)-t*0.35) : xOf(r), r*Math.cos(ph), r*Math.sin(ph));
@@ -1616,16 +1644,28 @@ function dishMesh(S){
       for(let j=COLS;j>=0;j--) loop.push(bandOut[(j0+j)%NA]);                 // top, right->left
       const Mloop=loop.length;
       const circ=[];
-      const Lst=Math.max(0,sa-sb);                                            // straight half-length of the stadium
-      for(const li of loop){ const p=pos[li];
-        const rr=Math.hypot(p[1],p[2]), ph=Math.atan2(p[2],p[1]);
-        const u=(((ph-phC+Math.PI*3)%(2*Math.PI))-Math.PI)*rP, v=rr-rP;       // local coords: u along the ring, v radial
-        const dl=Math.hypot(u,v)||1e-9, du=u/dl, dv=v/dl;
-        let tR;                                                                // ray from center -> stadium boundary
-        if(Math.abs(dv)>1e-9 && Math.abs(du)*(sb/Math.abs(dv))<=Lst) tR=sb/Math.abs(dv);
-        else tR=Math.abs(du)*Lst + Math.sqrt(Math.max(0, sb*sb - Lst*Lst*dv*dv));
-        circ.push(F(rP+dv*tR, phC+du*tR/rP, back));
-      }
+      /* b532 PORT TRUTH: the hole polygon is a UNIFORM-PERIMETER stadium,
+         discrete-area-corrected. The old ray-through-center mapping bunched
+         vertices mid-slot and cut the caps into a pinched kite - real holes
+         measured 25-52% under the lawed area with every row green. */
+      const Lst=Math.max(0,sa-sb);
+      const per=4*Lst+2*Math.PI*sb;
+      const stadPt=(s)=>{ // s in [0,per): bottom straight -> right cap -> top straight -> left cap (CCW, starts bottom-left)
+        let q=s%per;
+        if(q<2*Lst) return [-Lst+q, -sb];
+        q-=2*Lst;
+        if(q<Math.PI*sb){ const a=-Math.PI/2+q/sb; return [Lst+sb*Math.cos(a), sb*Math.sin(a)]; }
+        q-=Math.PI*sb;
+        if(q<2*Lst) return [Lst-q, sb];
+        q-=2*Lst;
+        const a=Math.PI/2+q/sb; return [-Lst+sb*Math.cos(a), sb*Math.sin(a)];
+      };
+      const uv=[]; for(let i=0;i<Mloop;i++) uv.push(stadPt(i/Mloop*per));
+      let Apoly=0; for(let i=0;i<Mloop;i++){ const a=uv[i], b2=uv[(i+1)%Mloop];
+        Apoly+=a[0]*b2[1]-b2[0]*a[1]; } Apoly=Math.abs(Apoly)/2;
+      const Atrue=4*sa*sb-(4-Math.PI)*sb*sb;
+      const fsc=Math.sqrt(Math.max(0.5,Atrue/Math.max(1e-12,Apoly)));         // discrete-polygon correction (~1%)
+      for(const q2 of uv) circ.push(F(rP+q2[1]*fsc, phC+(q2[0]*fsc)/rP, back));
       for(let i=0;i<Mloop;i++){ const i2=(i+1)%Mloop;
         quad(loop[i],loop[i2],circ[i],circ[i2],back); }
       if(!back){ tp[k]._loopF=circ; } else { tp[k]._loopB=circ; }
@@ -1646,14 +1686,44 @@ function dishMesh(S){
    X-pairs carry the ±45° rotation and the cross-wise offsets exactly as
    rendered/lawed. ---- */
 function tapCutters(S){
+  /* b532 PORT-TRUTH rewrite (docs/PORT_TRUTH_AUDIT findings, all measured):
+     - long axis rides flowU for EVERY driver (the b529 onCh swap put board
+       slots 90deg across the law/record and pair offsets behind each other)
+     - the prism reaches through the REAL print stack: wall + board duct /
+       flush land boss (the old wallT+12mm could never pierce the b530 lands)
+     - inner reach is MEASURED (outline marched into the channel; curved
+       walls left >=20mm membranes at -12mm)
+     - true 45deg chuff flare: widened profile below the inner face, 45deg
+       taper across the inner half-wall, NOMINAL area from mid-wall out
+       (the old full-length taper was ~10deg and the lawed area existed only
+       12mm outside the print)
+     - manifold outlines (deduped ring; the round degenerate seam made
+       non-manifold prisms) */
   const ev=evaluate(S);
+  const st=ev.st;
+  const wt=S.wallT||0.012;
+  const innerHas=(x,y,z)=>{
+    if(x<1e-4||x>st.depth-1e-4) return false;
+    if(S.style==='angular'){
+      const F2=facetsAt(st,x); let inC=false;
+      for(let i=0,j=F2.length-1;i<F2.length;j=i++){
+        const a=F2[i].p, b=F2[j].p;
+        if(((a[1]>z)!==(b[1]>z)) && (y<(b[0]-a[0])*(z-a[1])/(b[1]-a[1])+a[0])) inC=!inC; }
+      return inC; }
+    const d2=dimsAt(st,x), nn=(d2.n!==undefined)?d2.n:st.n;
+    return Math.pow(Math.abs(y/d2.a),nn)+Math.pow(Math.abs(z/d2.b),nn)<1;
+  };
   const pos=[], tri=[];
   const P=(p)=>{ pos.push(p); return pos.length-1; };
   for(const d of ev.layout){
     if(d.kind!=='woof'&&d.kind!=='mid') continue;
     if(!d.slot||!d.flowU||!d.crossV) continue;
-    const n=d.normal, u=d.onCh?d.crossV:d.flowU, v=d.onCh?d.flowU:d.crossV;   // corner boards: long axis ALONG the board
+    const n=d.normal, u=d.flowU, v=d.crossV;
     const np=d.slot.np||1;
+    /* the REAL stack past the inner face: wall + duct (corner boards) or
+       wall + measured land boss (flush); axial wedges stay a queued export
+       item - their cutter still pierces the wall (see queue b532) */
+    const stack=wt+(d.board&&d.board.duct? d.board.duct : (!d.mountN&&d.landH? d.landH : 0));
     for(let kp=0;kp<np;kp++){
       const sgn=(kp===0?-1:1);
       let ua=u, va=v;
@@ -1663,26 +1733,46 @@ function tapCutters(S){
       const off=np>=2? sgn*(d.slot.offm||d.od*0.24) : 0;
       const c0=[ d.tap[0]+v[0]*off, d.tap[1]+v[1]*off, d.tap[2]+v[2]*off ];
       const sa=d.slot.sa, sb=d.slot.sb, K=24;
-      /* stadium outline in (ua,va): straights at ±sb, semicircle ends r=sb */
+      /* outline: round = clean K-gon circle; stadium = caps + straights,
+         built without duplicate seam points (manifold) */
       const outline=[];
       const cx=Math.max(0,sa-sb);
-      for(let i=0;i<=K/2;i++){ const a=-Math.PI/2+Math.PI*i/(K/2); outline.push([cx+sb*Math.cos(a), sb*Math.sin(a)]); }
-      for(let i=0;i<=K/2;i++){ const a=Math.PI/2+Math.PI*i/(K/2); outline.push([-cx+sb*Math.cos(a), sb*Math.sin(a)]); }
-      const z0=-0.012, z1=(S.wallT||0.012)+0.012;   // past both faces
+      if(cx<1e-9){ for(let i=0;i<K;i++){ const a=i/K*2*Math.PI; outline.push([sb*Math.cos(a), sb*Math.sin(a)]); } }
+      else{
+        for(let i=0;i<K/2;i++){ const a=-Math.PI/2+Math.PI*i/(K/2); outline.push([cx+sb*Math.cos(a), sb*Math.sin(a)]); }
+        for(let i=0;i<K/2;i++){ const a=Math.PI/2+Math.PI*i/(K/2); outline.push([-cx+sb*Math.cos(a), sb*Math.sin(a)]); }
+      }
+      /* MEASURED inner reach: march the widened outline into the channel */
+      const fr=wt/2;
+      const grow=o=>{ const l=Math.hypot(o[0],o[1])||1e-9; return [o[0]*(1+fr/l), o[1]*(1+fr/l)]; };
+      let z0=-0.012;
+      for(let guard=0;guard<16;guard++){
+        let all=true;
+        for(const o of outline){ const g=grow(o);
+          const p=[c0[0]+ua[0]*g[0]+va[0]*g[1]+n[0]*z0,
+                   c0[1]+ua[1]*g[0]+va[1]*g[1]+n[1]*z0,
+                   c0[2]+ua[2]*g[0]+va[2]*g[1]+n[2]*z0];
+          if(!innerHas(p[0],p[1],p[2])){ all=false; break; } }
+        if(all) break;
+        z0-=0.004;
+      }
+      const z1=stack+0.012;
       const at=(o,z)=>[ c0[0]+ua[0]*o[0]+va[0]*o[1]+n[0]*z,
                         c0[1]+ua[1]*o[0]+va[1]*o[1]+n[1]*z,
                         c0[2]+ua[2]*o[0]+va[2]*o[1]+n[2]*z ];
       const NB=outline.length;
-      /* 45-deg FRUSTUM on the horn side (v1.4 + Waslo canon: kills chuffing,
-         halves effective Lpt) - the cutter widens by wallT/2 toward the horn */
-      const fr=(S.wallT||0.012)/2;
-      const grow=o=>{ const l=Math.hypot(o[0],o[1])||1e-9; return [o[0]*(1+fr/l), o[1]*(1+fr/l)]; };
-      const bot=outline.map(o=>P(at(grow(o),z0))), top=outline.map(o=>P(at(o,z1)));
-      for(let i=0;i<NB;i++){ const j=(i+1)%NB;
-        tri.push([bot[i],top[i],bot[j]],[bot[j],top[i],top[j]]); }
+      /* rings: z0 wide -> inner face wide -> mid-wall nominal (true 45deg
+         flare over wt/2) -> z1 nominal */
+      const rings=[ outline.map(o=>P(at(grow(o),z0))),
+                    outline.map(o=>P(at(grow(o),0))),
+                    outline.map(o=>P(at(o,wt/2))),
+                    outline.map(o=>P(at(o,z1))) ];
+      for(let s2=0;s2<rings.length-1;s2++){ const A=rings[s2], B2=rings[s2+1];
+        for(let i=0;i<NB;i++){ const j=(i+1)%NB;
+          tri.push([A[i],B2[i],A[j]],[A[j],B2[i],B2[j]]); } }
       const cB=P(at([0,0],z0)), cT=P(at([0,0],z1));
       for(let i=0;i<NB;i++){ const j=(i+1)%NB;
-        tri.push([cB,bot[j],bot[i]],[cT,top[i],top[j]]); }
+        tri.push([cB,rings[0][j],rings[0][i]],[cT,rings[3][i],rings[3][j]]); }
     }
   }
   return pos.length? {pos, tri} : null;
@@ -1784,7 +1874,10 @@ const BUILDS=(()=>{
         wPre:'fhx15',odW:39.3,dpW:19.9,sdW:855,vtcW:250,xmW:4.25, sdC:855,vtcC:250,xmC:4.25}},
    ],
    '2way':[
-    {key:'jmod',      name:'JMOD-class — 90°×60° · 2×12″ on the DCX coax (JW Sound manual)',
+    /* b532 port-truth audit: the real JMOD runs TWO teardrop vents per 12in
+       ALONG the diagonal seams inside milled cone recesses; v5 ships its own
+       wall-slot dialect - the name says so (a seam-teardrop dialect is queued) */
+    {key:'jmod',      name:'JMOD-class — 90°×60° · 2×12″ on the DCX coax (JW manual · v5 wall slots, not JMOD seam teardrops)',
      s:{...B,...CDX,...W12,...M4, topo:'2way',seN:6, covH:90,covV:60,mouthW:30,nW:2,nM:4}},
     /* b531 audit honesty: no online build pairs a DCX coax with these 4-woofer
        packs - the four slots below are HOUSE ARCHETYPES and say so loudly
@@ -1859,6 +1952,6 @@ const BUILDS=(()=>{
   };
 })();
 
-return {C,IN,CM, sePoint,seRing, profile, stations, dimsAt, surfPt, surfN, layout, evaluate, solve, adapt, response, areaAt, facetsAt, facetN, offsetRing, offsetVerts, BUILDS, shellMesh, dishMesh, tapCutters, panelLayout, stlBytes, boxDims};
+return {C,IN,CM, sePoint,seRing, paramFor, profile, stations, dimsAt, surfPt, surfN, layout, evaluate, solve, adapt, response, areaAt, facetsAt, facetN, offsetRing, offsetVerts, BUILDS, shellMesh, dishMesh, tapCutters, panelLayout, stlBytes, boxDims};
 })();
 if(typeof module!=='undefined') module.exports=MEH2;
