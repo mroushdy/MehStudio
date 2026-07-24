@@ -157,3 +157,22 @@ through the main magnet; kills the saturated-pole compromise and the axial
 time offset). Geometry content is transducer-level (voice-coil clearances,
 motor architecture), not horn law - keep as background for a future
 frontal-coax dialect, not for the current build.
+
+### US 6,411,718 B1 — Danley/Skuran, "Unity Summation Aperture" (2002; his ~9pm drop)
+The founding patent. What it confirms with original provenance, and one nuance:
+- CONIC/QUADRATIC ONLY (the Hinson quotes come from here verbatim); the
+  transformation-vs-waveguide split at CIRCUMFERENCE = 1 wavelength is stated
+  here explicitly - v5's entry-circumference row now has its root source.
+- THE λ/4 NUANCE (doctrinal, matters): Danley PLACES the taps AT λ/4 from the
+  HF source at the crossover ON PURPOSE - the crossover is chosen to have a
+  90 deg electrical shift (odd-order behavior), and the λ/4 air path SUPPLIES
+  the matching 90 deg so the sections sum in phase ("moving the higher
+  frequency driver back a quarter wavelength"). v5 instead derives the XO
+  1.2x BELOW the λ/4 null (v4 compendium law) - which is the CORRECT rule for
+  v5's LR4 (in-phase) summation basis. Two coherent philosophies keyed to
+  crossover topology: LR4 -> stay 1.2x clear of λ/4 (current v5); 90deg-shift
+  crossover -> land AT λ/4 (Danley). If a crossover-topology choice ever
+  enters v5, this is the fork. No engine change now.
+- Reference ratios from the worked example: starting XO 1 kHz; HF throat
+  0.78 in² vs mid section total 10 in²; conic flare "doubles area every
+  2.4 inches for a 300 Hz flare" (flare-rate intuition).

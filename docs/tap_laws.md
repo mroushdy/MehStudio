@@ -54,3 +54,10 @@ guides, Hornresp manual, Makarski dissertation.
 `engine.js layout()` — XO derivation with the 1.2× margin;
 `gate.js` — 14k-check lattice asserts the null margin and row sanity on
 every state, every push.
+
+## Provenance note (2026-07-23, US6411718 read in full)
+The λ/4 family's root: Danley's patent places taps AT λ/4 with a 90°-shift
+crossover (air path supplies the missing quarter turn). v5 sums LR4
+(in-phase), so the v4-inherited rule - derive the XO 1.2× BELOW the λ/4
+null - is the matching discipline. The entry-circumference ≤ 1λ boundary
+(transformation vs waveguide zones) is also stated in this patent.
