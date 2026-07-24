@@ -1,4 +1,4 @@
-# MEH STUDIO v5 HANDOFF (2026-07-25, build 534)
+# MEH STUDIO v5 HANDOFF (2026-07-25, build 534 = commit defe6f5)
 BUILD 534: the 8-miner batch landed - SynTripP + CoSyne true presets ('tall'
 retired; classic3 mined-and-rejected recorded), named 6NDL38 w65, T/S data
 layer (M10 data slice), sweep-v2 evidence laws + roll clamp, caliper entry +
