@@ -1,4 +1,11 @@
-# MEH STUDIO v5 HANDOFF (2026-07-24, build 527 = commit 6c49386)
+# MEH STUDIO v5 HANDOFF (2026-07-24, build 528)
+BUILD 528: his mid-build call ("evaluate how things work TOGETHER while
+programming") -> v5/inspect5.js assembly battery (run it while coding; gate
+2.9 enforces it) + M9 down payment: MEH2.boxDims TRUE box (viewer draws it),
+BOX law rows, mouth-plane enclosure law (re-baked sh96 58->60 + classic
+27->31 - see queue.md top block; sh96 needs HIS ruling on the rectangular-
+cabinet corner model). Gate now 50,712 checks. Older header below.
+# (prev) MEH STUDIO v5 HANDOFF (2026-07-24, build 527 = commit 6c49386)
 Repo: github.com/mroushdy/MehStudio (main). Tool: v5/meh5.html (assembled by
 `node v5/assemble.js` — run it FROM v5/, it reads shell.html relative).
 RITUAL: `node v5/gate.js` (44,138 checks / 480 states) MUST pass before any

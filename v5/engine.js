@@ -957,6 +957,93 @@ function acoustics(S,L,st){
   }
   return out;
 }
+/* ---- M9 (build 528): THE TRUE BOX ----
+   Sources: Pavdan halves (batch-3 study §1, MEASURED): printed enclosure,
+   6 mm walls, ONE mid-plane split, full-face butt joints, printed on the big
+   flat face. Hinson MEH.pdf (§4): the wood build is 12/18 mm baltic birch -
+   which ply is box vs horn is NOT stated, so the wood wall is flagged as his
+   ruling in the row. The box is the MINIMAL rectangle containing the printed
+   horn (true offset outer), every driver body (frame OD × depth cylinder on
+   its mount axis - both measured preset fields) and the CD depth behind the
+   throat. The CD's radial body has no datasheet field and is NOT modeled -
+   the row says so instead of guessing. */
+function segSegDist(p0,p1,q0,q1){
+  const sub=(a,b)=>[a[0]-b[0],a[1]-b[1],a[2]-b[2]], dot=(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2];
+  const d1=sub(p1,p0), d2=sub(q1,q0), rr=sub(p0,q0);
+  const a=dot(d1,d1), e=dot(d2,d2), f=dot(d2,rr);
+  let s,t;
+  if(a<=1e-12&&e<=1e-12){ s=0;t=0; }
+  else if(a<=1e-12){ s=0; t=Math.max(0,Math.min(1,f/e)); }
+  else{ const c=dot(d1,rr);
+    if(e<=1e-12){ t=0; s=Math.max(0,Math.min(1,-c/a)); }
+    else{ const b=dot(d1,d2), den=a*e-b*b;
+      s=den>1e-12? Math.max(0,Math.min(1,(b*f-c*e)/den)) : 0;
+      t=(b*s+f)/e;
+      if(t<0){ t=0; s=Math.max(0,Math.min(1,-c/a)); }
+      else if(t>1){ t=1; s=Math.max(0,Math.min(1,(b-c)/a)); } } }
+  const cp=[p0[0]+d1[0]*s,p0[1]+d1[1]*s,p0[2]+d1[2]*s], cq=[q0[0]+d2[0]*t,q0[1]+d2[1]*t,q0[2]+d2[2]*t];
+  return Math.hypot(cp[0]-cq[0],cp[1]-cq[1],cp[2]-cq[2]);
+}
+function boxCalc(S,st,L){
+  const wt=S.wallT||0.012;
+  const boxT=(S.style==='angular')?0.018:0.006;   // Pavdan 6 mm print (measured) / Hinson 12-or-18 birch (heavier ply ASSUMED - his ruling pending)
+  let hy=0,hz=0; let gy='the horn mouth', gz='the horn mouth';
+  /* exact per-station extremes: ANGULAR = the true offset panel corners
+     (resampled rings miss them); SMOOTH = a+wt / b+wt (superellipse |y|max=a),
+     roll points read directly so the lip counts */
+  if(S.style==='angular'){
+    for(const p of st.pts){ const x=Math.max(1e-4,Math.min(st.depth-1e-4,p.x));
+      for(const v of offsetVerts(st,x,wt)){
+        if(Math.abs(v[0])>hy) hy=Math.abs(v[0]);
+        if(Math.abs(v[1])>hz) hz=Math.abs(v[1]); } }
+  } else {
+    for(const p of st.pts){
+      if(p.a+wt>hy) hy=p.a+wt;
+      if(p.b+wt>hz) hz=p.b+wt; } }
+  let x0=0, gx='the throat plate';
+  if(S.topo!=='1way'&&S.cdDepth){ x0=-S.cdDepth*IN; gx='the CD'; }
+  let xMax=-1e9, minGap=1e9; const bodies=[];
+  const kindName={woof:'the woofer bodies', mid:'the mid bodies'};
+  for(const d of L){ if(d.kind!=='woof'&&d.kind!=='mid') continue;
+    const A=d.mountN||d.normal, rB=d.od/2;
+    const c1=[d.center[0]+A[0]*d.dp, d.center[1]+A[1]*d.dp, d.center[2]+A[2]*d.dp];
+    bodies.push({c0:d.center,c1,r:rB});
+    const ext=(i)=>{ const w=Math.sqrt(Math.max(0,1-A[i]*A[i]))*rB;
+      return [Math.min(d.center[i],c1[i])-w, Math.max(d.center[i],c1[i])+w]; };
+    const ex=ext(0), ey=ext(1), ez=ext(2);
+    if(ex[0]<x0){ x0=ex[0]; gx=kindName[d.kind]; }
+    xMax=Math.max(xMax,ex[1]);
+    const my=Math.max(-ey[0],ey[1]), mz=Math.max(-ez[0],ez[1]);
+    if(my>hy){ hy=my; gy=kindName[d.kind]; }
+    if(mz>hz){ hz=mz; gz=kindName[d.kind]; }
+  }
+  for(let i=0;i<bodies.length;i++) for(let j=i+1;j<bodies.length;j++)
+    minGap=Math.min(minGap, segSegDist(bodies[i].c0,bodies[i].c1,bodies[j].c0,bodies[j].c1)-(bodies[i].r+bodies[j].r));
+  if(S.topo==='1way'&&L.coax){
+    const xU=(st.xAdapter!==undefined)?st.xAdapter:0, rU=L.coax.od/2;
+    if(xU-L.coax.dp<x0){ x0=xU-L.coax.dp; gx='the coax unit'; }
+    if(rU>hy){ hy=rU; gy='the coax unit'; }
+    if(rU>hz){ hz=rU; gz='the coax unit'; } }
+  const x1=st.depth, overshoot=Math.max(0, xMax-x1);
+  /* volumes: box interior minus the horn (channel + walls, sliced true) minus
+     the driver cylinders; CD body volume not modeled (no datasheet field) */
+  const ringArea=(x)=>{ const R2=offsetRing(st,x,wt,24);
+    let s2=0; for(let i=0;i<R2.length;i++){ const p=R2[i], q=R2[(i+1)%R2.length];
+      s2+=p[0]*q[1]-q[0]*p[1]; } return Math.abs(s2)/2; };
+  let Vhorn=0, aPrev=null; const NSl=32;
+  for(let i=0;i<=NSl;i++){ const x=Math.max(1e-4,Math.min(st.depth-1e-4,st.depth*i/NSl));
+    const A2=ringArea(x);
+    if(aPrev!==null) Vhorn+=(st.depth/NSl)*(A2+aPrev)/2;
+    aPrev=A2; }
+  let Vdrv=0;
+  for(const b of bodies) Vdrv+=Math.PI*b.r*b.r*Math.hypot(b.c1[0]-b.c0[0],b.c1[1]-b.c0[1],b.c1[2]-b.c0[2]);
+  if(S.topo==='1way'&&L.coax) Vdrv+=Math.PI*(L.coax.od/2)*(L.coax.od/2)*L.coax.dp;
+  const Vinner=(x1-x0)*(2*hy)*(2*hz);
+  return {x0,x1,hy,hz,boxT, W:2*(hy+boxT), H:2*(hz+boxT), D:(x1-x0)+boxT,
+    Vinner, Vhorn, Vdrv, Vnet:Vinner-Vhorn-Vdrv, gov:{y:gy,z:gz,x:gx}, overshoot,
+    minGap:(bodies.length>1?minGap:null)};
+}
+function boxDims(S){ const st=stations(S); return boxCalc(S,st,layout(S,st)); }
 /* ---- fit & physics checks (carried laws; expanded per rebuild) ---- */
 function evaluate(S){
   let st=stations(S), L=layout(S,st);
@@ -990,6 +1077,24 @@ function evaluate(S){
     add('XO','Derived crossover (from landed geometry)', (S.topo==='3way'? S.fxDerived.hi+' / ':'')+S.fxDerived.lo+' Hz',
       (S.fxDerived.lo<= (S.topo==='3way'?S.fxLo:S.fxHi)*1.35), true, 'XO falls out of the path length; ceiling from the driver choice');
   let ac=acoustics(S,L,st); rows.push(...ac.rows);
+  /* ---- M9 (build 528): THE BOX IS TRUE - the viewer draws THIS box ---- */
+  { const BX=boxCalc(S,st,L);
+    add('BOX','Minimum true box W × H × D (outer)',
+      Math.round(BX.W*1000)+' × '+Math.round(BX.H*1000)+' × '+Math.round(BX.D*1000)+' mm, '+Math.round(BX.boxT*1000)+' mm walls',
+      true,true,
+      'assembly-exact envelope: printed horn + every driver body on its mount axis + the CD depth. Width set by '+BX.gov.y+', height by '+BX.gov.z+', rear by '+BX.gov.x+'. Pavdan canon (measured): ONE mid-plane split, full-face butt joint, big-face-down print; add bracing/damping room to taste. '+(S.style==='angular'?'Wood wall 18 mm ASSUMED of Hinson’s 12/18 birch stock - his ruling wanted.':'6 mm walls = the measured Pavdan print.')+' CD radial body: no datasheet field, not modeled.');
+    add('BOX','Rear air volume net of horn + drivers',(BX.Vnet*1000).toFixed(1)+' L',true,true,
+      'M9: sealed-vs-reflex grading needs full T/S (M10) - v5 refuses to grade without it. Hinson canon: the MID rear chamber is deliberately tiny (V1 shapes its LF corner) - partition the mids off this shared volume in the build');
+    if(S.topo!=='1way'){
+      add('BOX','Drivers stay behind the mouth plane',(BX.overshoot*1000).toFixed(1)+' mm past',
+        BX.overshoot<=0.0005, BX.overshoot<=0.003,
+        'a magnet past the mouth plane would poke through the front baffle - deepen the horn (grow the mouth) or choose a shallower driver', true);
+      if(BX.minGap!==null)
+        add('BOX','Driver body envelope gap at angle',(BX.minGap*1000).toFixed(0)+' mm'+(BX.minGap<0?' (envelopes overlap)':''),
+          true,true,
+          'INFORMATIONAL: full frame-OD cylinders along each mount axis - real baskets TAPER to the magnet, so a negative gap here is not yet a refusal (the SH96-class canon build overlaps on envelopes and exists in the flesh). Grading needs magnet OD per preset - a datasheet field to add, not a guess');
+    }
+  }
   /* HIS 'BETTER SYSTEM' (2026-07-23): the TAP FOOTPRINT itself - every outline
      point of every port (pair offsets, X rotation, round or stadium) - must lie
      ON its host facet, clear of creases and the flare break. Measured, and if
@@ -1460,18 +1565,25 @@ const BUILDS=(()=>{
    '3way':[
     {key:'sh96',      name:'SH96-class — corner boards · 4×15″ + 6 mids (ruling B)',
      expectWarns:1,   // the one canon compromise left: entry ~1.0λ (corner boards fixed the spread)
-     s:{...B,...CDX, topo:'3way',style:'angular',seN:12,covH:90,covV:60,mouthW:58,nW:4,nM:6,fxLo:250,placeW:'chamfer',
+     /* b528: 58 -> 60. The mouth-plane enclosure law (M9) found the 15in
+        frames + boards 12 mm past the mouth at 58 - v5's boards live INSIDE
+        the flare, so the pocket walk lands near the mouth. The REAL SH96 is a
+        rectangular cabinet whose corner pockets sit OUTSIDE the flare (room at
+        the throat) - modeling THAT would let 58 stand. HIS RULING WANTED. */
+     s:{...B,...CDX, topo:'3way',style:'angular',seN:12,covH:90,covV:60,mouthW:60,nW:4,nM:6,fxLo:250,placeW:'chamfer',
         wPre:'w15',odW:39,dpW:17,sdW:855,vtcW:320,xmW:10, mPre:'m3',odM:9.3,dpM:6.2,sdM:31,vtcM:25,xmM:2.5}},
     {key:'sh50',      name:'SH50-class — 70°×70° square · 4×10″ + 4 mids',
      s:{...B,...CDX,...W10,...M4, topo:'3way',seN:12,covH:70,covV:70,mouthW:24,nW:4,nM:4,fxLo:250}},
     {key:'classic',   name:'classic — 90°×60° · 4×10″ + 4 mids',
-     s:{...B,...CDX,...W10,...M4, topo:'3way',seN:6, covH:90,covV:60,mouthW:27,nW:4,nM:4,fxLo:250}},
+     /* b528: 27 -> 31, the mouth-plane enclosure law - at 27 the 10in frames
+        reached 51 mm past the mouth plane (nothing to seal a box against) */
+     s:{...B,...CDX,...W10,...M4, topo:'3way',seN:6, covH:90,covV:60,mouthW:31,nW:4,nM:4,fxLo:250}},
     {key:'angular',   name:'classic angular — 70°×70° · 4×10″ + 4 mids',
      s:{...B,...CDX,...W10,...M4, topo:'3way',style:'angular',seN:12,covH:70,covV:70,mouthW:33,nW:4,nM:4,fxLo:250}},
    ],
   };
 })();
 
-return {C,IN,CM, sePoint,seRing, profile, stations, dimsAt, surfPt, surfN, layout, evaluate, solve, response, areaAt, facetsAt, facetN, offsetRing, offsetVerts, BUILDS, shellMesh, dishMesh, tapCutters, panelLayout, stlBytes};
+return {C,IN,CM, sePoint,seRing, profile, stations, dimsAt, surfPt, surfN, layout, evaluate, solve, response, areaAt, facetsAt, facetN, offsetRing, offsetVerts, BUILDS, shellMesh, dishMesh, tapCutters, panelLayout, stlBytes, boxDims};
 })();
 if(typeof module!=='undefined') module.exports=MEH2;

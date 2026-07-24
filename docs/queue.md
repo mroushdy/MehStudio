@@ -1,4 +1,27 @@
 # MEH STUDIO — STANDING QUEUE (versioned; update on every landed item)
+## BUILD 528 (2026-07-23 late): M9 DOWN PAYMENT + THE ASSEMBLY INSPECTOR
+HIS MID-BUILD CALL: "build a new way to evaluate how things work and do it
+while programming... you are messing a lot of how these MEH speakers should
+work together" -> v5/inspect5.js: the ASSEMBLY battery (cross-part truths
+re-derived independently: counts landed, seats ON their wall/board, bodies
+OUT of the air channel (corner-pocket aware), taps under drivers, 1way
+nest/ring-band/bore-vs-HF-exit, box containment, NaN sweep, refusal honesty).
+Run `node inspect5.js '{...state}'` WHILE CODING; gate section 2.9 runs the
+battery on every preset + a lattice sample each push. THE TRUE BOX (M9):
+MEH2.boxDims = minimal enclosure over printed horn + driver bodies at mount
+angle + CD depth; viewer ghost box now draws IT (14-era cosmetic margins
+retired); BOX rows: outer dims + governor (Pavdan 6 mm print walls MEASURED /
+18 mm of Hinson's 12-18 birch ASSUMED - his ruling), net rear-air liters
+(informational until M10 T/S), 'Drivers stay behind the mouth plane' (graded,
+grow-fixable - a body past the mouth cannot be enclosed), body envelope gap
+(informational until magnet OD fields exist - frame-OD cylinders falsely
+collide on the real SH96). CONSEQUENCE: the law re-baked 3way/sh96 58->60
+(v5's corner boards live INSIDE the flare; the real SH96's rectangular cabinet
+has pocket room OUTSIDE it - modeling that would let 58 stand, HIS RULING
+WANTED) and 3way/classic 27->31 (10in frames were 51 mm past the mouth).
+Gate 50,712 checks / 480 states ALL PASS. STILL OPEN M9: rear-chamber
+partitions (mid V1 cups), sealed-vs-reflex alignment (needs M10 T/S),
+magnet-clearance-at-angle grading (needs magnet OD datasheet fields).
 ## NEXT: AUTO-SPLIT STL EXPORTER (spec = study _2 findings + study _3 §6 tiers)
 1way family CLOSED at build 526 per his call ("we gotta finish with this
 family... lets move on"). Landed 518-526: triple, collar/funnel per

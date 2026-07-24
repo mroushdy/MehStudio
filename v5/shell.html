@@ -161,7 +161,7 @@ select{width:100%;font-family:var(--mono);font-size:11px;background:var(--paper)
 <script>
 /*__ENGINE__*/
 /*__CAD__*/
-window.MEH_BUILD=527;
+window.MEH_BUILD=528;
 document.getElementById('bno').textContent=MEH_BUILD;
 "use strict";
 /* ---------------- driver presets (v4 datasheets; mesh = true CAD, meshApprox = nearest body) ---------------- */
@@ -433,15 +433,6 @@ function rebuild(){
       tg2.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));
       tg2.setIndex(idx); tg2.computeVertexNormals();
       const tc=new THREE.Mesh(tg2,mat(0xF5F5F2,0.2,16)); tc.userData.tag='shell'; g.add(tc); }
-    /* the ghosted CABINET box + edges (14's rect-family signature) */
-    { const jm=NS-1, OB=MEH2.offsetVerts(st,SP[jm].x,wt+0.10);
-      let my=0,mz=0; for(const v of OB){ my=Math.max(my,Math.abs(v[0])); mz=Math.max(mz,Math.abs(v[1])); }
-      const bx=SP[jm].x-SP[0].x+0.06;
-      const boxG=new THREE.BoxGeometry(bx, 2*mz, 2*my);
-      const box=new THREE.Mesh(boxG,new THREE.MeshPhongMaterial({color:0xD8D8D4,transparent:true,opacity:0.12,depthWrite:false}));
-      box.position.set(SP[0].x+bx/2-0.06,0,0); box.userData.tag='ghost'; g.add(box);
-      const edges=new THREE.LineSegments(new THREE.EdgesGeometry(boxG),new THREE.LineBasicMaterial({color:0xC2C2BF}));
-      edges.position.copy(box.position); edges.userData.tag='ghost'; g.add(edges); }
   } else {
   /* the PRINTED SOLID itself - MEH2.shellMesh: inner surface, true-offset
      outer, lip and throat annulus in ONE watertight FrontSide mesh (the same
@@ -460,6 +451,16 @@ function rebuild(){
       transparent:V3D.xray,opacity:V3D.xray?0.35:1}));
     horn.userData.tag='shell'; g.add(horn); }
   }
+  /* M9 (build 528): the ghosted cabinet is TRUE - MEH2.boxDims: the minimal
+     enclosure around the printed horn, every driver body at its mount angle
+     and the CD depth (Pavdan/Hinson canon; the BOX law rows carry the same
+     numbers + sources). Replaces the 14-era cosmetic margins, both styles. */
+  { const B=MEH2.boxDims(r.S);
+    const boxG=new THREE.BoxGeometry(B.D, 2*(B.hz+B.boxT), 2*(B.hy+B.boxT));
+    const box=new THREE.Mesh(boxG,new THREE.MeshPhongMaterial({color:0xD8D8D4,transparent:true,opacity:0.10,depthWrite:false}));
+    box.position.set((B.x0-B.boxT+B.x1)/2,0,0); box.userData.tag='ghost'; g.add(box);
+    const edges=new THREE.LineSegments(new THREE.EdgesGeometry(boxG),new THREE.LineBasicMaterial({color:0xC2C2BF}));
+    edges.position.copy(box.position); edges.userData.tag='ghost'; g.add(edges); }
   /* apex insert: printed plate with CD bore (+ coax tap ring for 1way) -
      polygon plate on ANGULAR (pin #26), disc on smooth */
   if(S.topo==='1way'&&st.xAdapter){

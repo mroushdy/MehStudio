@@ -130,6 +130,36 @@ for(const S of lattice){
     ck(R.sum.every(fin), tag+' response sum non-finite');
     ck(R.hf.every(fin), tag+' response hf non-finite');
   }catch(e){ ck(false, tag+' response threw: '+e.message); }
+  /* M9 (build 528): the true box must contain the assembly. Containment is
+     checked against a FRESH stations+layout on the post-evaluate state - the
+     same geometry boxDims itself sees (evaluate converges the angular flare
+     break, so the pre-evaluate st/L above can differ). */
+  try{ const B=MEH2.boxDims(S);
+    ck([B.hy,B.hz,B.W,B.H,B.D,B.Vinner,B.Vhorn,B.Vnet,B.x0].every(fin), tag+' box non-finite');
+    ck(B.W>=2*B.hy && B.H>=2*B.hz, tag+' box outer smaller than contents');
+    ck(B.Vinner>B.Vhorn, tag+' horn volume exceeds its box');
+    ck(B.Vnet>0, tag+' net rear volume <= 0');
+    const st2=MEH2.stations(S), L2=MEH2.layout(S,st2);
+    let inside=true;
+    for(const p of st2.pts){ const x=Math.max(1e-4,Math.min(st2.depth-1e-4,p.x));
+      if(S.style==='angular'){
+        for(const v of MEH2.offsetVerts(st2,x,S.wallT||0.012))
+          if(Math.abs(v[0])>B.hy+1e-6||Math.abs(v[1])>B.hz+1e-6) inside=false;
+      } else if(p.a+(S.wallT||0.012)>B.hy+1e-6||p.b+(S.wallT||0.012)>B.hz+1e-6) inside=false; }
+    ck(inside, tag+' horn outside its box');
+    let dIn=true;
+    for(const d of L2){ if(d.kind!=='woof'&&d.kind!=='mid') continue;
+      const A=d.mountN||d.normal, r2=d.od/2;
+      const c1=[d.center[0]+A[0]*d.dp,d.center[1]+A[1]*d.dp,d.center[2]+A[2]*d.dp];
+      const ext=i2=>{ const w=Math.sqrt(Math.max(0,1-A[i2]*A[i2]))*r2;
+        return [Math.min(d.center[i2],c1[i2])-w, Math.max(d.center[i2],c1[i2])+w]; };
+      const ex=ext(0), ey=ext(1), ez=ext(2);
+      if(ex[0]<B.x0-1e-6) dIn=false;
+      if(Math.max(-ey[0],ey[1])>B.hy+1e-6) dIn=false;
+      if(Math.max(-ez[0],ez[1])>B.hz+1e-6) dIn=false; }
+    ck(dIn, tag+' a driver body escapes the box');
+    ck(ev.rows.some(q=>q.sec==='BOX'), tag+' BOX rows missing');
+  }catch(e){ ck(false, tag+' boxDims threw: '+e.message); }
   /* solve terminates + determinism on clean states */
   try{ const r=MEH2.solve(S);
     ck(!!r&&!!r.ev, tag+' solve returned nothing');
@@ -237,6 +267,23 @@ for(const S of lattice){
         let badD=0; for(const v of ed.values()) if(v!==2) badD++;
         ck(badD===0, tag+' dish not watertight ('+badD+')'); }
     }
+  }
+}
+
+/* ---------- 2.9 ASSEMBLY INSPECTOR (build 528, his call: "evaluate how things
+   work together while programming") - inspect5.js re-derives the cross-part
+   truths independently; every preset AND a lattice sample must come back sane ---------- */
+{
+  const {inspectState}=require('./inspect5.js');
+  for(const topo of Object.keys(MEH2.BUILDS)) for(const b of MEH2.BUILDS[topo]){
+    const iss=inspectState({...b.s});
+    ck(iss.length===0, '[inspect '+topo+'/'+b.key+'] '+iss.slice(0,3).join(' | '));
+  }
+  for(let i=0;i<lattice.length;i+=7){
+    const S2={...lattice[i]};
+    const iss=inspectState(S2);
+    const tag2=`[inspect ${S2.topo}/${S2.style}/n${S2.seN}/${S2.covH}x${S2.covV}/${S2.placeW}]`;
+    ck(iss.length===0, tag2+' '+iss.slice(0,3).join(' | '));
   }
 }
 
