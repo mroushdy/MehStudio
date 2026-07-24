@@ -1,5 +1,17 @@
 # MEH STUDIO — STANDING QUEUE (versioned; update on every landed item)
-## NEXT BUILD — THE DRIVER-MOUNT TRIPLE (his ruling, 2026-07-23 ~8:45pm, ghost-view session)
+## NEXT: AUTO-SPLIT STL EXPORTER (spec = study _2 findings + study _3 §6 tiers)
+1way family CLOSED at build 526 per his call ("we gotta finish with this
+family... lets move on"). Landed 518-526: triple, collar/funnel per
+construction, OS (Geddes/ATH-style) face curve, arc/round taps on the true
+annulus, Martin clearance + tangent rows, CROSSOVER report section, pins
+2/4-8/13/14/15/16/18-22 resolved. STILL OPEN on this family (pin again from
+the live tab when it matters): #3/#9 one-piece question, #10 transition,
+#12 silhouette detail, #17 square-max chamfer-zero (needs facet refactor +
+gate matrix), removable saucer DEPTH datum (La still rides the 38deg rim
+formula - shallow-saucer ruling wanted), and HIS 3 MEASUREMENTS for the BMS
+unit (exit Ø at cone / rim Ø / baffle depth) to replace od-relative guesses.
+
+## SUPERSEDED (landed) — THE DRIVER-MOUNT TRIPLE (his ruling, 2026-07-23 ~8:45pm, ghost-view session)
 "The horn needs to go from the small green circle to the large green circle
 and match the depth of the baffle with an x-max... estimate these 3 numbers
 for every driver." And: the print must NEVER run through the driver.

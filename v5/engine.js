@@ -127,10 +127,20 @@ function profile(S){
        render tore holes through the funnel wall) */
     const rP=(rSM+rimC)/2;
     const thA=d2r(38);
-    const La=Lh+Math.max(0.008,(rDish-rSM)/Math.tan(thA));     // adapter = replaced horn + dish face
-    const xTap=Lh+Math.max(0.004,(rP-rSM)/Math.tan(thA));
+    const La=Lh+Math.max(0.008,(rDish-rSM)/Math.tan(thA));     // adapter depth kept (standoff + 38deg rim datum)
     const htC=rHF;                                             // the horn STARTS at the true exit
-    const rAt=x=> x<=Lh? rHF+(rSM-rHF)*x/Lh : rSM+Math.tan(thA)*(x-Lh);
+    /* ATH-STYLE FACE (his call): the printed face is a TRUE OBLATE-SPHEROID
+       section (Geddes OS - the family ATH builds on): r=sqrt(r0^2+(x tanT)^2),
+       throat-orthogonal at the exit (the trumpet neck), one continuous
+       curvature to the rim - no funnel/saucer crease to print or hear.
+       tanT solved so the curve lands exactly on (La|face span, rDish). */
+    const r0F=(S.hornType==='removable')? rHF : rSM;           // print throat: exit wrap vs collar over the proud mouth
+    const x0F=(S.hornType==='removable')? 0 : Lh;              // where the PRINT face begins
+    const spanF=Math.max(0.008, La-x0F);
+    const tanT=Math.sqrt(Math.max(1e-9,rDish*rDish-r0F*r0F))/spanF;
+    const osR=x=> Math.sqrt(r0F*r0F + Math.pow((x-x0F)*tanT,2));
+    const xTap=x0F+Math.sqrt(Math.max(0,rP*rP-r0F*r0F))/tanT;
+    const rAt=x=> x<=x0F? (x0F>0? rHF+(rSM-rHF)*x/x0F : r0F) : osR(x);
     if(S.style==='angular'){
       /* REFERENCE D (Marwan's build photos, 2026-07-23): the ROUND printed dish
          (nOv:2) drops into a SQUARE straight-walled classic flare - single
@@ -1227,11 +1237,13 @@ function dishMesh(S){
   let sa=Math.max(0.004,(tp[0].slot&&tp[0].slot.sa)||0.008);   // ARC half-length (along the ring)
   let sb=Math.max(0.003,(tp[0].slot&&tp[0].slot.sb)||sa);      // RADIAL half-width (annulus-clamped upstream)
   const N=tp.length, t=S.wallT||0.012;
-  const xOfRaw=r=> r<=rSMm? (r-rHFm)/((rSMm-rHFm)/Lhm) : Lhm+(r-rSMm)/Math.tan(th38);
-  const xOf=r=>{ const bl=0.006;                             // 6mm smoothstep across the funnel-saucer crease (his 'giant mess' zoom)
-    if(Math.abs(r-rSMm)>=bl) return xOfRaw(r);
-    const t=(r-(rSMm-bl))/(2*bl), t2=t*t*(3-2*t);
-    return xOfRaw(rSMm-bl)*(1-t2)+xOfRaw(rSMm+bl)*t2; };
+  /* OS face (matches profile): x(r) inverts r=sqrt(r0^2+((x-x0) tanT)^2) */
+  const rem=(S.hornType==='removable');
+  const r0F=rem? rHFm : rSMm, x0F=rem? 0 : Lhm;
+  const LaD=Lhm+Math.max(0.008,(rDish-rSMm)/Math.tan(th38));
+  const spanF=Math.max(0.008, LaD-x0F);
+  const tanT=Math.sqrt(Math.max(1e-9,rDish*rDish-r0F*r0F))/spanF;
+  const xOf=r=> r<=r0F? x0F : x0F+Math.sqrt(r*r-r0F*r0F)/tanT;
   /* HIS CORRECTION: the print's BACK takes the SHAPE OF THE DRIVER CONE with an
      x-max gap - it nests directly on the driver, no tube, no floating plate.
      Cone depths from the 6FHX51 CAD: 0.03od at the cone rim, 0.10od at the
