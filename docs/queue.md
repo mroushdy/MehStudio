@@ -1,5 +1,42 @@
 # MEH STUDIO — STANDING QUEUE (versioned; update on every landed item)
-## BUILD 533 (2026-07-25): THE PRE-CUT SHELL LANDS (guarded) + HIS 4 RULINGS
+## BUILD 534 (2026-07-25): THE MINING BATCH — real presets, T/S layer, sweep-evidence laws, his rulings wired
+LANDED: (1) PRESETS: 'tall' archetype RETIRED -> SynTripP-class (Welter
+diyaudio 264485; 2x B&C 10CL51; lands at its baked 26.7in, 0 warns; DCX464
+stand-in declared - his N314X floor 800 outlaws v5's ~358Hz tap XO; CAD slot
+stations 104/175/246mm recorded for a future offset-bandpass dialect);
+CoSyne (Waslo) TRUE preset in 3way (every dim from the record; v5-smooth
+holds the real 24in - the ANGULAR seat rules need 34in: Waslo packs tighter
+than the house dialect, angular re-pack queued; CDX1-1445 CDP row with the
+floor-semantics note: 385 = Waslo H-pattern usable floor, 2200 = maker
+direct-radiator min); classic3 kipman/aragorus MINED AND REJECTED (comments
+updated; aragorus tap stations -> tap_laws.md R2, incl. its 60Hz chuffing
+re-cut datum). (2) TABLES: w65 named (B&C 6NDL38 - Sd exact, Fs 72 fits
+subXO 80; the 6FE200 candidate was a 120Hz-Fs midbass), cl10 + ns6 rows,
+T/S DATA LAYER (13/14 sections maker-complete; FHX xm stays derived - Xvar
+recorded per the session ruling; DCX464 publishes no cone T/S; 5CN140 table
+is the 16-ohm variant - Re/Le/BL withheld until pinned), 3 T/S-audit
+corrections (18PZB100 1134/8, 12LW1400 8.25, 8MDN51 220). (3) SWEEP-v2
+EVIDENCE LAWS: pattern row (mouth vs λ/2 at low XO, warn-tier, 21% of
+accepted states were fiction), squeezed-mid-band row, mid>woofer row,
+depth/mouth info band, ROLL CAP clamp in adapt() (≤25% minor mouth dim;
+worst case ate 47%) + gate 2.10 rollR coverage. (4) HIS RULINGS WIRED:
+CALIPER ENTRY for custom coaxes (exit/rim/baffle-depth mm fields; engine +
+battery honor overrides everywhere the CAD ratios lived) + MOUNT RING
+option (integrated | separate ring - pin 9 both-ways ruling; geometry
+next). Preset warn declarations re-blessed with each warn's truth stated.
+ASKS FOR HIM (new): (a) HORNRESP: in his installed Hornresp - Help > Input
+Wizard > three-way MEH template, then File > Export > Hornresp Record for
+each of Nd, ME1, ME2 (three .txt files) - closes the ME2 exporter format
+with canon instead of inference (both manuals lack the file schema);
+(b) SOLANA: download the Drive bundle (link on the PDF p.2) - front chamber
+volumes + port open areas live there; the dialect spec is otherwise ready
+(module 376x376x195mm, 3 rear alignments, laws drafted - miner verdict);
+(c) 5CN140 variant (8 vs 16 ohm) before its Re/Le/BL bake.
+STILL QUEUED: pin-10 round->square adapter part (next build), Solana module
+element, port-patch residuals (pre-cut coverage growth), angular CoSyne
+re-pack, mount-ring geometry + exporter split law, Hornresp exporter (on
+his 3 files), M10 alignment math on the new T/S layer.
+## (prev) BUILD 533 (2026-07-25): THE PRE-CUT SHELL LANDS (guarded) + HIS 4 RULINGS
 HIS RULINGS (2026-07-25): (1) pin 9 = BOTH mount styles as an option
 (integrated one-piece | separate ring; auto-extraction on export splits stays
 mandatory) - option UI next build; (2) Xvar-vs-xm DELEGATED -> decided: derived

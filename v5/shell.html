@@ -102,7 +102,20 @@ select{width:100%;font-family:var(--mono);font-size:11px;background:var(--paper)
     <option value="round">round — the classic hole (drill canon)</option>
   </select>
   <label>DRIVER MOUNT</label>
-  <select id="mountSel">
+  <div id="calipers" style="display:none">
+  <label>CALIPER ENTRY — custom coax (mm; blank = CAD class defaults)</label>
+  <div style="display:flex;gap:6px">
+    <input id="calExit" type="number" min="10" max="200" step="0.5" placeholder="exit Ø at cone">
+    <input id="calRim" type="number" min="10" max="300" step="0.5" placeholder="cone rim Ø">
+    <input id="calBdep" type="number" min="5" max="150" step="0.5" placeholder="baffle depth">
+  </div>
+</div>
+<label>MOUNT RING — pin #9 ruling: both, as an option</label>
+<select id="mountRing">
+  <option value="integrated">integrated — one piece with the horn (printed norm)</option>
+  <option value="ring">separate ring — bolt-on plate (wood/K-402 norm; auto-extracted on export splits regardless)</option>
+</select>
+<select id="mountSel">
     <option value="flush" selected>flush on the wall — tilts with it (Danley)</option>
     <option value="axial">axial spot-face lands — bodies stay straight (print canon)</option>
   </select>
@@ -163,7 +176,7 @@ select{width:100%;font-family:var(--mono);font-size:11px;background:var(--paper)
 <script>
 /*__ENGINE__*/
 /*__CAD__*/
-window.MEH_BUILD=533;
+window.MEH_BUILD=534;
 document.getElementById('bno').textContent=MEH_BUILD;
 "use strict";
 /* ---------------- driver presets (v4 datasheets; mesh = true CAD, meshApprox = nearest body) ---------------- */
@@ -173,15 +186,17 @@ const WPRE={
   cn5:{name:'BMS 5CN140 coax (datasheet)', od:13.5, dp:8.2, sd:74, vtc:30, xm:3.5, meshApprox:'BC_8MDN51'},
   fhx65:{name:'B&C 6FHX51 coax (true CAD)', od:16.7, dp:12, sd:137, vtc:40, xm:4, meshApprox:'BC_8MDN51'},
   w5:{name:'Dayton DC130A-8 (5.25\u2033, datasheet)', od:13.76, dp:6.95, sd:91.6, vtc:35, xm:2.5, meshApprox:'BC_8MDN51'},
-  w65:{name:'6.5\u2033 woofer (class pack \u2014 unsourced)', od:16.7, dp:8.5, sd:132, vtc:45, xm:5, meshApprox:'BC_8MDN51'},
+  w65:{name:'B&C 6NDL38 (6.5\u2033, datasheet)', od:18.7, dp:8.5, sd:132, vtc:45, xm:6, meshApprox:'BC_8MDN51'},   // b534: real driver; Sd matches the old pack exactly, Fs 72 fits subXO 80
+  cl10:{name:'B&C 10CL51 (10\u2033, datasheet)', od:25.7, dp:10.8, sd:320, vtc:130, xm:5.5, meshApprox:'BC_10HPL64'},
+  ns6:{name:'Aurasound NS6-255-8A (6\u2033, xmax retail-sourced)', od:15.64, dp:8.24, sd:126, vtc:40, xm:3.9, meshApprox:'BC_8MDN51'},
   w8:{name:'B&C 8NDL51 (8\u2033, datasheet)', od:22.5, dp:9.0, sd:220, vtc:80, xm:7, meshApprox:'BC_8MDN51'},
-  mdn8:{name:'B&C 8MDN51 (true CAD)', od:22.0, dp:10.5, sd:232, vtc:85, xm:6, mesh:'BC_8MDN51'},
+  mdn8:{name:'B&C 8MDN51 (true CAD)', od:22.0, dp:10.5, sd:220, vtc:85, xm:6, mesh:'BC_8MDN51'},   // b534 T/S audit: maker Sd 220 (the 232 was a CAD-read overshoot)
   hpl10:{name:'B&C 10HPL64 (true CAD)', od:26.1, dp:12.2, sd:320, vtc:130, xm:4, mesh:'BC_10HPL64'},
   ndl12:{name:'B&C 12NDL76 (true CAD)', od:31.5, dp:14.1, sd:522, vtc:180, xm:7, mesh:'BC_12NDL76'},
-  es12:{name:'18Sound 12LW1400 (true CAD)', od:32.2, dp:15, sd:530, vtc:190, xm:9.5, mesh:'ES_12LW1400'},
+  es12:{name:'18Sound 12LW1400 (true CAD)', od:32.2, dp:15, sd:531, vtc:190, xm:8.25, mesh:'ES_12LW1400'},   // b534 T/S audit: maker xm 8.25 (was 9.5), Sd 531
   w15:{name:'15\u2033 woofer', od:39.0, dp:17, sd:855, vtc:320, xm:10, meshApprox:'BC_18SW115'},
   sw18:{name:'B&C 18SW115 (true CAD)', od:46.0, dp:22, sd:1210, vtc:450, xm:14, mesh:'BC_18SW115'},
-  pzb18:{name:'B&C 18PZB100 (true CAD)', od:46.0, dp:20, sd:1150, vtc:420, xm:9, mesh:'BC_18PZB100'}};
+  pzb18:{name:'B&C 18PZB100 (true CAD)', od:46.0, dp:20, sd:1134, vtc:420, xm:8, mesh:'BC_18PZB100'}};   // b534 T/S audit: maker Sd 1134 xm 8 (were 1150/9)
 const MPRE={
   m3:{name:'3\u2033 mid', od:9.3, dp:6.2, sd:31, vtc:25, xm:2.5, meshApprox:'BC_8MDN51'},
   m4:{name:'4\u2033 mid', od:10.3, dp:6.5, sd:50, vtc:40, xm:3, meshApprox:'BC_8MDN51'},
@@ -209,7 +224,34 @@ const CXPRE={
   fhx12:{name:'B&C 12FHX76 — 12″ coax (datasheet)', od:31.5, dp:16.9, sd:522, vtc:150, xm:4.25, hfExit:33, recXO:1200, horn:'fixed'},
   hcx12:{name:'B&C 12HCX76 — 12″ coax (datasheet)', od:31.5, dp:16.8, sd:522, vtc:150, xm:4.25, hfExit:33, recXO:1200, horn:'fixed'},
   fhx15:{name:'B&C 15FHX76 — 15″ coax (datasheet)', od:39.3, dp:19.9, sd:855, vtc:250, xm:4.25, hfExit:33, recXO:1200, horn:'fixed'}};
-const CDP={de500:{td:1.0,floor:900,dep:1.2}, de900:{td:1.4,floor:550,dep:1.7}, dcx464:{td:1.4,floor:300,dep:2.4}};
+const CDP={de500:{td:1.0,floor:900,dep:1.2}, de900:{td:1.4,floor:550,dep:1.7}, dcx464:{td:1.4,floor:300,dep:2.4},
+  n314x:{td:1.4,floor:800,dep:2.53},        // Eminence N314X (SynTripP record) - floor = maker min XO
+  dh450:{td:1.0,floor:1000,dep:1.89},       // BMS? DH450 (Solana record, b534 mining) - for the coming remote-bandpass dialect
+  cdx1445:{td:1.0,floor:385,dep:2.1}};      // Celestion CDX1-1445 (CoSyne). FLOOR SEMANTICS: 385 = Waslo's published H-pattern floor (the in-synergy usable floor, same semantics as dcx464's 300); the MAKER'S direct-radiator min XO is 2200 Hz @12dB - a different quantity, recorded here
+/* ---- M10 T/S (b534, maker-published; 13/14 sections complete) - the data
+   layer; sealed-vs-reflex alignment math is the next slice. FHX/HCX LF xm
+   stays DERIVED (B&C publishes Xvar, a different quantity - session ruling:
+   xm = law basis, Xvar informational). DCX464: no cone T/S exists. 5CN140:
+   site table is the 16-ohm variant - Re/Le/BL withheld until the variant is
+   pinned. ---- */
+const TS={
+  w5:{Fs:53.2,Qts:0.41,Qes:0.51,Qms:1.9,Vas:11.8,Re:5.7,Le:0.75,BL:5.88},
+  w65:{Fs:72,Qts:0.35,Xvar:5.5},
+  w8:{Fs:66,Qts:0.37,Qes:0.41,Qms:3.6,Vas:14,Re:5.3,Le:0.5,BL:12.4},
+  hpl10:{Fs:61,Qts:0.31,Qes:0.33,Qms:4.5,Vas:32,Re:5.4,Le:0.5,BL:15},
+  ndl12:{Fs:50,Qts:0.2,Qes:0.21,Qms:4.2,Vas:73,Re:5.3,Le:1,BL:20.1},
+  cl10:{Fs:59,Qts:0.33,Xvar:6},
+  ns6:{Fs:70},
+  sw18:{Fs:32,Qts:0.3,Qes:0.32,Qms:5.6,Vas:187,Re:5.3,Le:1.9,BL:30.3},
+  pzb18:{Fs:30,Qts:0.24,Qes:0.25,Qms:8.8,Vas:297,Re:5.3,Le:2.1,BL:26},
+  mdn8:{Fs:70,Qts:0.2,Qes:0.21,Qms:3.7,Vas:16,Re:5.1,Le:0.8,BL:15.3},
+  es12:{Fs:45,Qts:0.3,Qes:0.32,Qms:5.0,Vas:55,Re:5.2,Le:1.5,BL:20},
+  cn5:{Fs:138,Qts:0.69,Qes:0.87,Qms:3.4,Vas:1.03},
+  fhx6:{Fs:85,Qts:0.37,Qes:0.4,Qms:7.8,Vas:5,Re:5.5,Le:1,BL:11.3,Xvar:5.7},
+  hcx6:{Fs:89,Qts:0.38,Qes:0.4,Qms:7.5,Vas:5,Re:5.2,Le:0.8,BL:10.9,Xvar:5.5},
+  fhx12:{Fs:48,Qts:0.33,Qes:0.36,Qms:5.4,Vas:88,Re:5.2,Le:1.6,BL:14.4,Xvar:4},
+  hcx12:{Fs:42,Qts:0.19,Qes:0.2,Qms:8,Vas:120,Re:5,Le:0.8,BL:17.6,Xvar:6},
+  fhx15:{Fs:40,Qts:0.43,Qes:0.47,Qms:5.2,Vas:186,Re:5.2,Le:1.5,BL:15.5,Xvar:7}};
 /* ---------------- state ---------------- */
 const S={topo:'2way', style:'smooth', wPre:'w65', mPre:'m4', cdSel:'dcx464', wallT:0.012, seN:6, covH:90, covV:60, mouthW:24, mouthCap:64, throat:1.4, rollR:2,
   fxHi:900, fxLo:300, cdDepth:2.4, td:1.4, coaxRing:4.5, subXO:80,
@@ -940,6 +982,20 @@ function wire(){
   bind('odM','odM',v=>v+' cm'); bind('nM','nM');
   bind('subXO','subXO',v=>v+' Hz');
   bind('coaxTaps','coaxTaps');   // 1way: round holes through the dish (2-4 in the reference photos)   // M6: the sub XO is a real choice (velocity law + displacement ceiling ride it)
+  /* b534 (his ruling): CALIPER ENTRY for custom drivers - the mount triple.
+     Blank = the od-relative CAD class defaults; entered = measured truth. */
+  { const wrap=document.getElementById('calipers');
+    if(wrap){ const upd=()=>{ wrap.style.display=(S.topo==='1way'&&S.wPre==='custom')?'':'none'; };
+      upd(); window.__calipersUpd=upd;
+      for(const [id,key] of [['calExit','exitD'],['calRim','rimD'],['calBdep','bdepD']]){
+        const el=document.getElementById(id); if(!el) continue;
+        el.value=S[key]||'';
+        el.oninput=()=>{ const v=parseFloat(el.value);
+          if(Number.isFinite(v)&&v>0) S[key]=v; else delete S[key];
+          save(); rebuild(); }; } } }
+  { const mr=document.getElementById('mountRing');
+    if(mr){ mr.value=S.mountRing||'integrated';
+      mr.onchange=()=>{ S.mountRing=mr.value; save(); rebuild(); }; } }
   const fillPre=(id,tbl,cur)=>{ const el=document.getElementById(id);
     el.innerHTML=Object.keys(tbl).map(k=>'<option value="'+k+'">'+tbl[k].name+'</option>').join('')+'<option value="custom">custom (sliders)</option>';
     el.value=cur; };

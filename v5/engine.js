@@ -966,8 +966,8 @@ function acoustics(S,L,st){
       /* 6FHX51 CAD (build-504 study): the HF horn owns the center out to
          Ø.60od; the cone rim is Ø.72od. The ring must ride the EXPOSED CONE
          ANNULUS between them - his pin #8 (holes low enough to meet the cone). */
-      const smA=(S.hornType==='removable')? ((S.hfExit||20.1)/1000)/2+0.012 : 0.60*rCone;
-      const rimA=0.72*rCone;
+      const smA=(S.hornType==='removable')? ((S.hfExit||20.1)/1000)/2+0.012 : (S.exitD? S.exitD/2000 : 0.60*rCone);
+      const rimA=(S.rimD? S.rimD/2000 : 0.72*rCone);   // b534 caliper overrides
       add('COAX','Tap ring rides the exposed cone annulus',
         (rT*1000).toFixed(0)+' mm in ['+(smA*1000).toFixed(0)+'..'+(rimA*1000).toFixed(0)+'] (CAD)',
         rT>=smA-0.001&&rT<=rimA+0.001, rT>=smA-0.004&&rT<=rimA+0.004,
@@ -1265,6 +1265,29 @@ function evaluate(S){
   if(S.fxDerived&&S.fxDerived.lo)
     add('XO','Derived crossover (from landed geometry)', (S.topo==='3way'? S.fxDerived.hi+' / ':'')+S.fxDerived.lo+' Hz',
       (S.fxDerived.lo<= (S.topo==='3way'?S.fxLo:S.fxHi)*1.35), true, 'XO falls out of the path length; ceiling from the driver choice');
+  /* b534 SWEEP-EVIDENCE ROWS (settings sweep v2, 82-state acceptance study):
+     the trash classes that 0-fail states could reach - graded warn-tier or
+     informational per the evidence density, never invented thresholds */
+  if(S.topo!=='1way'&&S.fxDerived&&S.fxDerived.lo){
+    const fLow2=(S.topo==='3way'? (S.fxLo||250) : S.fxDerived.lo);
+    const lamH=C/(2*fLow2), mw=S.mouthW*IN;
+    add('LAW','Mouth holds pattern to the low XO',(mw*100).toFixed(0)+' vs '+(lamH*100).toFixed(0)+' cm (λ/2)',
+      mw>=lamH, true,
+      'sweep evidence: 21% of accepted states were pattern fiction - a mouth under λ/2 at the low crossover walks toward omni regardless of the printed angles (warn-tier; grow the mouth or lower expectations)', true);
+  }
+  if(S.topo==='3way'&&S.fxDerived&&S.fxDerived.hi&&S.fxDerived.lo){
+    const ratio9=S.fxDerived.hi/Math.max(1,S.fxDerived.lo);
+    if(ratio9<1.3) add('XO','Mid band squeezed',(S.fxDerived.lo+'-'+S.fxDerived.hi+' Hz'),
+      false, true, 'under 1/3 octave of mid band - the 3way is a 2way wearing extra drivers (sweep-detected class)');
+  }
+  if(S.topo==='3way'&&(S.odM||0)>=(S.odW||1)*0.999)
+    add('LAW','Mid larger than its woofer',(S.odM+' vs '+S.odW+' cm'),
+      false, true, 'reachable via overlapping od sliders (sweep-detected); no real MEH runs mids at woofer size');
+  if(st&&st.depth>0){
+    const dm9=st.depth/(S.mouthW*IN);
+    add('LAW','Depth vs mouth',(dm9).toFixed(2)+'×',
+      dm9>=0.3&&dm9<=2.5, true, 'INFORMATIONAL band [0.3..2.5] from the sweep - outside it the coverage claim decouples from the flare');
+  }
   let ac=acoustics(S,L,st); rows.push(...ac.rows);
   /* ---- M9 (build 528): THE BOX IS TRUE - the viewer draws THIS box ---- */
   { const BX=boxCalc(S,st,L);
@@ -1492,8 +1515,13 @@ function adapt(S0,key,T){
       if(fV) set('vtcM',Math.round(fV.a*Math.pow(S.odM,fV.b)),'Vtc class curve');
       if(fX) set('xmM',+(fX.a*Math.pow(S.odM,fX.b)).toFixed(1),'xmax class curve'); } }
   if(key==='style'&&S.topo==='1way') set('seN',(S.style==='angular')?12:2,'1way form space is ROUND | SQUARE');
-  /* 2. CLAMPS (only evidence-backed ones; more as the sweep report lands) */
+  /* 2. CLAMPS (evidence-backed; sweep v2 2026-07-25) */
   if(S.mouthW>(S.mouthCap||64)) set('mouthW',S.mouthCap||64,'mouth cap');
+  if(['mouthW','covH','covV','rollR'].includes(key)){
+    const ar9=Math.tan((S.covV||60)*Math.PI/360)/Math.tan((S.covH||90)*Math.PI/360);
+    const cap9=+(S.mouthW*Math.min(1,ar9)/8).toFixed(2);
+    if(S.rollR>cap9) set('rollR',cap9,'roll cap: ≤25% of the minor mouth dimension (sweep evidence: worst case ate 47%)');
+  }
   return {S2:S, ledger};
 }
 function solve(S0){
@@ -1897,7 +1925,7 @@ function dishMesh(S){
   const rHFm=((S.hfExit||20.1)/1000)/2;
   const Lhm=(S.hornLen!==undefined)? S.hornLen :
     (S.hornType==='removable'? 0.14*od+((S.xmC||S.xmW||4)/1000)+0.002 : 0.53*od);   // print depth per construction (matches profile)
-  const rSMm=(S.hornType==='removable')? rHFm+0.008 : 0.60*rCone;
+  const rSMm=(S.hornType==='removable')? rHFm+0.008 : (S.exitD? S.exitD/2000 : 0.60*rCone);   // b534: caliper override (his ruling)
   /* the triple (US10506331 + his ruling): FIXED metal horn -> the part starts
      AT the proud-mouth plane and seats a COLLAR over the metal ring (never
      printing into the driver); REMOVABLE bolt-on horn -> the part still owns
@@ -1922,7 +1950,7 @@ function dishMesh(S){
      Cone depths from the 6FHX51 CAD: 0.03od at the cone rim, 0.10od at the
      HF-horn mouth ring. Beyond the cone rim the back is the flat flange seat. */
   const gap=((S.xmC||S.xmW||4)/1000)+0.002;
-  const coneY=r=>{ const r0=0.60*rCone, r1=0.72*rCone;       // CAD: cone rim Ø.72od (was .80 - his pin #8)
+  const coneY=r=>{ const r0=(S.exitD? S.exitD/2000 : 0.60*rCone), r1=(S.rimD? S.rimD/2000 : 0.72*rCone);   // CAD ratios; caliper overrides when entered (b534)
     const tq=Math.max(0,Math.min(1,(r1-r)/(r1-r0)));
     return od*(0.03+0.07*tq); };
   const dishBack=r=>{
@@ -2154,7 +2182,9 @@ const BUILDS=(()=>{
      BMS 5CN140 datasheet (od 135mm dp 82 sd 74 - 'floors unverified' was
      FALSE, recXO 1900 published). vtc all tool-estimated (no maker publishes). */
   const W5 ={wPre:'w5',   odW:13.76,dpW:6.95,sdW:91.6,vtcW:35, xmW:2.5};
-  const W65={wPre:'w65',  odW:16.7,dpW:8.5, sdW:132,vtcW:45, xmW:5};
+  const W65={wPre:'w65',  odW:18.7,dpW:8.5, sdW:132,vtcW:45, xmW:6};   // b534: named B&C 6NDL38 (Sd matches exactly; Fs 72 fits subXO 80)
+  const CL10={wPre:'cl10',odW:25.7,dpW:10.8,sdW:320,vtcW:130,xmW:5.5};  // B&C 10CL51 (SynTripP record)
+  const NS6={wPre:'ns6',  odW:15.64,dpW:8.24,sdW:126,vtcW:40, xmW:3.9}; // Aurasound NS6-255-8A (CoSyne; xm = Parts-Express retail figure, maker states none - provenance-marked)
   const W8 ={wPre:'w8',   odW:22.5,dpW:9.0, sdW:220,vtcW:80, xmW:7};
   const W10={wPre:'hpl10',odW:26.1,dpW:12.2,sdW:320,vtcW:130,xmW:4};
   const W12={wPre:'ndl12',odW:31.5,dpW:14.1,sdW:522,vtcW:180,xmW:7};
@@ -2205,8 +2235,14 @@ const BUILDS=(()=>{
      s:{...B,...CDX,...W5,...M4,  topo:'2way',seN:6, covH:90,covV:60,mouthW:24,nW:4,nM:4}},
     {key:'square',    name:'square-format — 90°×60° · 4× B&C 8NDL51 (house archetype — no real build)',
      s:{...B,...CDX,...W8,...M4,  topo:'2way',seN:12,covH:90,covV:60,mouthW:25,nW:4,nM:4}},   // b531: settled size (8NDL51 od 22.5 needs 25)
-    {key:'tall',      name:'tall — 60°×90° · 4× DC130A-8 (house archetype — no known real build)',
-     s:{...B,...CDX,...W5,...M4,  topo:'2way',seN:6, covH:60,covV:90,mouthW:24,nW:4,nM:4}},
+    /* b534: the 'tall' archetype retires - SynTripP (Art Welter, diyaudio
+       264485) is the real portrait-format record. DCX464 stand-in DECLARED:
+       Welter's N314X floor (800) outlaws v5's ~358Hz tap XO; his CAD mouth
+       is 24.7in, v5 settles 26.7 (angular seN12). CAD slot stations
+       104/175/246mm are the sourced basis for a future offset-bandpass slot
+       dialect (KNOWN_BUILDS/backlog record). */
+    {key:'syntripp',  name:'SynTripP-class — 86°×36° · 2× B&C 10CL51 (Welter · DCX464 stand-in · v5 mouth 26.7″ vs 24.7″ CAD)',
+     s:{...B,...CDX,...CL10,...M4, topo:'2way',style:'angular',seN:12,covH:86,covV:36,mouthW:26.7,nW:2,nM:4}},
     {key:'angular',   name:'classic angular — 90°×60° · 4× DC130A-8 (CoSyne geometry · drivers differ)',
      s:{...B,...CDX,...W5,...M4,  topo:'2way',style:'angular',seN:12,covH:90,covV:60,mouthW:24,nW:4,nM:4}},
    ],
@@ -2228,7 +2264,7 @@ const BUILDS=(()=>{
        re-baked 43. odW/sdW/xmW stay generic-15 proxies (Danley LF
        proprietary); fxLo unsourced (passive box). */
     {key:'sh96',  name:'SH96-class — corner boards · 4×15″ + 6×4″ mids (stand-ins declared · v5 mouth 51″ vs real 45″ front)',
-     expectWarns:1,   // declared: woofer any-pair spacing ~1.5×λ/4 (ruling B tolerates it for the class; the real SH96 measures the same)
+     expectWarns:2,   // declared: woofer any-pair ~1.5×λ/4 (ruling B) + b534 squeezed-mid-band row (v5's derived 276-337Hz band IS under 1/3 octave - a true statement about the λ/4-derived XOs at this scale)
      /* v5's corner-board geometry cannot land 4x15 @ 90x60 under 51in - the
         real unit does it inside a 45.00x26.50in front (18mm birch). The gap
         is MODEL HONESTY, stated in the name: Danley's real pocket/vent
@@ -2244,13 +2280,17 @@ const BUILDS=(()=>{
        The SH50-class label moved to the ANGULAR preset below (the real SH-50
        is angular 13-ply birch); this shape stays as a loud archetype. */
     {key:'arch7070',  name:'70°×70° square · 4×10″ + 4 mids (house archetype — no real build)',
+     expectWarns:1,   // b534 pattern row: 24in mouth < λ/2 at fxLo 250 (61 vs 69cm) - the archetype IS pattern-thin, said out loud
      s:{...B,...CDX,...W10,...M4, topo:'3way',seN:12,covH:70,covV:70,mouthW:24,nW:4,nM:4,fxLo:250}},
     {key:'classic',   name:'classic — 90°×60° · 4×10″ + 4 mids (house archetype — no real build)',
      /* b528: 27 -> 31, the mouth-plane enclosure law - at 27 the 10in frames
         reached 51 mm past the mouth plane (nothing to seal a box against).
         b531 audit: no 3way MEH with FOUR horn-loaded 10s exists anywhere -
-        loud archetype; kipman725/aragorus re-anchor candidates recorded in
-        docs/KNOWN_BUILDS_AUDIT.md 2.13 (need more thread mining first). */
+        loud archetype. b534: kipman725/aragorus MINED AND REJECTED (kipman
+        never built + the donor waveguide is retail-specced 90x40; aragorus
+        is real+measured but coverage unsourceable, complement 2x10+4x4, and
+        Celestion TF0410MR publishes no Sd/Xmax). The aragorus tap-station
+        record joined tap_laws.md as the 2nd measured record after van Ommen. */
      s:{...B,...CDX,...W10,...M4, topo:'3way',seN:6, covH:90,covV:60,mouthW:31,nW:4,nM:4,fxLo:250}},
     /* b531 audit 2.14: the SH50-class label lives HERE now - the real SH-50
        IS angular 13-ply birch. Sourced: 50x50 coverage, 2x12 LF, 4 mids
@@ -2260,6 +2300,19 @@ const BUILDS=(()=>{
        SH-50 number); fxLo unsourced (passive box). Tap-station goldens vs
        the van Ommen record (3/4in@3.5 / 2.5in@10.5 / reflex@14.5) are the
        queued next step. */
+    /* b534: the TRUE CoSyne (Waslo, libinst.com Synergy Calc V5 + Dimensions.png,
+       numbers re-verified from the xls). Gento mids unsourceable (buyout) ->
+       M4 pack DECLARED stand-in; NS6 xm 3.9 retail-sourced; fxLo anchored at
+       Waslo's 385Hz H-pattern floor; CDX1-1445 floor semantics in CDP. */
+    {key:'cosyne', name:'CoSyne (Waslo) — 90°×60° · 4× NS6 + 4 mids (Gento stand-in · CDX1-1445 · v5-smooth at the true 24″)',
+     expectWarns:2,   // declared truths of the record: mid CR 3.5:1 (Waslo runs low-CR mids) + drivers 2.9mm past the mouth plane (the real build packs to the face)
+     /* the REAL CoSyne is flat-panel; v5's ANGULAR seat rules demand 34in for
+        this complement while smooth holds Waslo's documented 24x15.27in
+        exactly - the angular re-pack (Waslo packs tighter than the house
+        diamond/ring dialect) is a queued item. Every dimension here is the
+        record's; mids are the M4 stand-in (Gento buyout, unsourceable). */
+     s:{...B,...NS6,...M4, topo:'3way',seN:12,covH:90,covV:60,mouthW:24,nW:4,nM:4,fxLo:385,
+        cdSel:'cdx1445',td:1.0,throat:1.0,cdFloor:385,cdDepth:2.1,wallT:0.0118,subXO:80}},
     {key:'sh50',   name:'SH50-class — 50°×50° · 2×12″ + 4 mids (stand-ins declared · v5 mouth 29″ vs real 28″ box)',
      s:{...B,...CDX,...W12,...M4, topo:'3way',style:'angular',seN:12,covH:50,covV:50,mouthW:29,nW:2,nM:4,fxLo:250}},   // b531: settled size; real external 28x28x25.5in - the 1in gap is model honesty, declared
    ],

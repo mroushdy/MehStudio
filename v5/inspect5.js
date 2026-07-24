@@ -217,7 +217,8 @@ function inspectState(S0){
   if(S.topo==='1way'){
     if(st.xAdapter===undefined) push('1way without an adapter station');
     if(!L.coax||!(L.coax.od>0)||!(L.coax.dp>0)) push('coax unit body missing from layout');
-    const rCone=(S.odW||22)*MEH2.CM/2, lo=0.60*rCone-1e-4, hi=0.72*rCone+1e-4;
+    const rCone=(S.odW||22)*MEH2.CM/2;
+    const lo=(S.exitD? S.exitD/2000 : 0.60*rCone)-1e-4, hi=(S.rimD? S.rimD/2000 : 0.72*rCone)+1e-4;   // b534 caliper overrides
     for(const d of L){ if(d.kind!=='coaxtap') continue;
       const rT=Math.hypot(d.tap[1],d.tap[2]);
       if(rT<lo||rT>hi) push('coax tap ring at '+(rT*1000).toFixed(1)+' mm - off the exposed cone annulus ['+(lo*1000).toFixed(0)+','+(hi*1000).toFixed(0)+'] (6FHX51 CAD)'); }

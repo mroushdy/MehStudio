@@ -1,4 +1,12 @@
-# MEH STUDIO v5 HANDOFF (2026-07-24 night, build 532 = commit a4522f5)
+# MEH STUDIO v5 HANDOFF (2026-07-25, build 534)
+BUILD 534: the 8-miner batch landed - SynTripP + CoSyne true presets ('tall'
+retired; classic3 mined-and-rejected recorded), named 6NDL38 w65, T/S data
+layer (M10 data slice), sweep-v2 evidence laws + roll clamp, caliper entry +
+mount-ring option (his rulings). b533 landed the PRE-CUT SHELL (guarded
+self-validating; 8/22 preset ports truly open, rest ride correct cutters).
+ASKS FOR HIM in queue.md b534 block (Hornresp 3 exports / Solana Drive
+bundle / 5CN140 variant). Older header below.
+# (prev) MEH STUDIO v5 HANDOFF (2026-07-24 night, build 532 = commit a4522f5)
 BUILD 532 (his ask: "ports actually cut through the horn... the real cutout
 measured, not the illusion"): 5 probe batteries -> 37 claims; the verify
 fleet DIED ON ACCOUNT CREDITS (no subagents from then on - everything

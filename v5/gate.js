@@ -24,7 +24,7 @@ const fin=v=>Number.isFinite(v);
 }
 
 /* ---------- 2. the state lattice ---------- */
-const W={ w5:{od:13.76,dp:6.95,sd:91.6,vtc:35,xm:2.5}, w8:{od:22.5,dp:9.0,sd:220,vtc:80,xm:7},
+const W={ w5:{od:13.76,dp:6.95,sd:91.6,vtc:35,xm:2.5}, w8:{od:22.5,dp:9.0,sd:220,vtc:80,xm:7}, cl10:{od:25.7,dp:10.8,sd:320,vtc:130,xm:5.5},
           hpl10:{od:26.1,dp:12.2,sd:320,vtc:130,xm:4}, w15:{od:39.0,dp:17,sd:855,vtc:320,xm:10} };   // b531 audit re-bake (KNOWN_BUILDS_AUDIT 3.1)
 const M={ m3:{od:9.3,dp:6.2,sd:31,vtc:25,xm:2.5}, m4:{od:10.3,dp:6.5,sd:50,vtc:40,xm:3} };
 const mk=(o)=>{
@@ -308,8 +308,8 @@ for(const S of lattice){
   ck(sh.includes('id="bStl"'), 'export button missing (queue A)');
   /* M8: preset driver/CD numerics must mirror the shell's datasheet tables */
   { const grab=(re)=>{ const m=sh.match(re); return m? new Function('return '+m[1])() : null; };
-    const shW=grab(/const WPRE=([\s\S]*?);\nconst MPRE/), shM=grab(/const MPRE=([\s\S]*?);\n\/\* 1-WAY COAX/),
-          shX=grab(/const CXPRE=([\s\S]*?);\nconst CDP/), shC=grab(/const CDP=(\{.*?\});/);
+    const shW=grab(/const WPRE=([\s\S]*?\})\s*;[^\n]*\nconst MPRE/), shM=grab(/const MPRE=([\s\S]*?\})\s*;[^\n]*\n\/\* 1-WAY COAX/),
+          shX=grab(/const CXPRE=([\s\S]*?\})\s*;[^\n]*\nconst CDP/), shC=grab(/const CDP=(\{[\s\S]*?\});/);
     ck(!!shW&&!!shM&&!!shX&&!!shC, 'could not read shell driver tables for the preset cross-check');
     if(shW&&shM&&shX&&shC) for(const topo of Object.keys(MEH2.BUILDS)) for(const b of MEH2.BUILDS[topo]){
       const s=b.s, tag='[build '+topo+'/'+b.key+']';
@@ -327,14 +327,14 @@ for(const S of lattice){
      DERIVED-class knobs (docs/adaptive_settings_plan.md §1) ---------- */
   { const T={WPRE:null,MPRE:null,CXPRE:null,CDP:null};
     { const grab=(re)=>{ const m=sh.match(re); return m? new Function('return '+m[1])() : null; };
-      T.WPRE=grab(/const WPRE=([\s\S]*?);\nconst MPRE/); T.MPRE=grab(/const MPRE=([\s\S]*?);\n\/\* 1-WAY COAX/);
-      T.CXPRE=grab(/const CXPRE=([\s\S]*?);\nconst CDP/); T.CDP=grab(/const CDP=(\{.*?\});/); }
+      T.WPRE=grab(/const WPRE=([\s\S]*?\})\s*;[^\n]*\nconst MPRE/); T.MPRE=grab(/const MPRE=([\s\S]*?\})\s*;[^\n]*\n\/\* 1-WAY COAX/);
+      T.CXPRE=grab(/const CXPRE=([\s\S]*?\})\s*;[^\n]*\nconst CDP/); T.CDP=grab(/const CDP=(\{[\s\S]*?\});/); }
     ck(!!(T.WPRE&&T.MPRE&&T.CXPRE&&T.CDP), '2.10: could not read shell tables for adapt');
     const DERIVED={ cdSel:['td','throat','cdFloor','cdDepth'],
       wPre:['odW','dpW','sdW','vtcW','xmW','sdC','vtcC','xmC','hfExit','recXO','hornType','cdDepth','mouthW'],
       mPre:['odM','dpM','sdM','vtcM','xmM'],
       odW:['wPre','dpW','sdW','vtcW','xmW'], odM:['mPre','dpM','sdM','vtcM','xmM'],
-      style:['seN'], mouthW:[], covH:[], nW:[] };
+      style:['seN'], mouthW:['rollR'], covH:['rollR'], covV:['rollR'], rollR:['rollR'], nW:[] };
     for(let i=0;i<lattice.length;i+=31){
       const S0={...lattice[i]};
       for(const key of Object.keys(DERIVED)){

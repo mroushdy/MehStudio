@@ -2,7 +2,7 @@
 /* v5 canonical matrix — every case must solve clean (0 fails) or refuse honestly.
    Run: node test_matrix.js   (persisted per the autopilot/testing mandate) */
 const MEH2=require('./engine.js');
-const WPRE={ w65:{od:16.7,dp:8.5,sd:132,vtc:45,xm:5}, w8:{od:22.5,dp:9.0,sd:220,vtc:80,xm:7},
+const WPRE={ w65:{od:18.7,dp:8.5,sd:132,vtc:45,xm:6}, w8:{od:22.5,dp:9.0,sd:220,vtc:80,xm:7},
   hpl10:{od:26.1,dp:12.2,sd:320,vtc:130,xm:4}, w15:{od:39.0,dp:17,sd:855,vtc:320,xm:10} };   // b531 audit re-bake
 const MPRE={ m3:{od:9.3,dp:6.2,sd:31,vtc:25,xm:2.5}, m4:{od:10.3,dp:6.5,sd:50,vtc:40,xm:3} };
 WPRE.w5={od:13.76,dp:6.95,sd:91.6,vtc:35,xm:2.5};   // Dayton DC130A-8 (b531: the 5.25in fiction is retired)

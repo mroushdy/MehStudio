@@ -73,3 +73,15 @@ crossover (air path supplies the missing quarter turn). v5 sums LR4
 (in-phase), so the v4-inherited rule - derive the XO 1.2× BELOW the λ/4
 null - is the matching discipline. The entry-circumference ≤ 1λ boundary
 (transformation vs waveguide zones) is also stated in this patent.
+
+## Measured tap-station records (the reference canon)
+
+R1. **SH-50 (van Ommen tape measure, diyaudio 292379 #4957246)**: mid taps
+    3/4in Ø @ 3.5in from CD; woofer taps 2.5in Ø @ 10.5in; reflex ports
+    2.5in Ø @ 14.5in. The Danley-dialect anchor (b530).
+R2. **aragorus 2×10 3-way (diyaudio 309213, b534 mining)**: mid taps at
+    3 cm station (33.1 cm² local area, spread 8.2 cm); woofer taps at
+    16.5 cm (501 cm², spread 32.1 cm), ports 3.2 cm Ø → re-cut as
+    10×3.2 cm slots after 60 Hz chuffing (a real chuff-limit datum);
+    CD path 5.5 cm. Coverage unsourceable (dead image hosting) — the
+    record is STATIONS, not a preset.
