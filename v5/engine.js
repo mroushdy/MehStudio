@@ -103,9 +103,15 @@ function profile(S){
     const rCone=(S.odW||22)*CM/2;
     const rDish=rCone+0.012;
     const rHF=((S.hfExit||20.1)/1000)/2;
-    const Lh=(S.hornLen!==undefined)? S.hornLen : 0.85*((S.dpW||10)*CM);
+    /* 6FHX51 CAD (build-504 study, od-relative): HF horn mouth Ø.60od PROUD of
+       the cone, throat at depth .53od; cone rim Ø.72od. The print copies the
+       stock horn's length, and the tap ring must land on the EXPOSED CONE
+       ANNULUS [.60,.72]od - his pin #8: the old .70-.80 clamp parked the ring
+       1 mm PAST the true rim on the 6FHX51. */
+    const Lh=(S.hornLen!==undefined)? S.hornLen : 0.53*((S.odW||22)*CM);
     const rSM=0.60*rCone;                                      // stock mouth at the cone plane ("same geometry first")
-    const rP=Math.min(Math.max((S.coaxRing||4.5)*CM, rSM+0.012, 0.70*rCone), rCone*0.8); // tap ring on the EXPOSED cone annulus
+    const rimC=0.72*rCone;
+    const rP=Math.min(Math.max((S.coaxRing||4.5)*CM, rSM+0.004), rimC-0.004);
     const thA=d2r(38);
     const La=Lh+Math.max(0.008,(rDish-rSM)/Math.tan(thA));     // adapter = replaced horn + dish face
     const xTap=Lh+Math.max(0.004,(rP-rSM)/Math.tan(thA));
@@ -579,8 +585,20 @@ function layout(S,st){
     const fxCo=Math.round(Math.min((1/1.2)*C/(4*(Ls+S.cdDepth*IN)), 0.98*C/(8*rMax)));
     S.fxDerived={hi: fxCo, lo: fxCo};
     const sdC=S.sdC|| (S.sdW||150);
-    const apC=sdC/Math.max(4,Math.min(8, 17/(2*Math.PI*fxCo*((S.xmC||S.xmW||4)/1000)) ))/nT;   // cm^2 per slot, velocity-clamped CR
-    const rC=Math.sqrt(apC*1e-4/Math.PI); const saC=rC, sbC=rC;   // Reference D: ROUND holes through the dish face
+    /* compendium law (same as the 2way woofer section): port velocity is
+       evaluated at the BAND'S LOW EDGE - the cone runs from the sub XO up,
+       so the 17 m/s cap sets CR at subXO, not at the crossover. Deriving at
+       fxCo forced CR onto the 4:1 floor and DOUBLED the slot area demand
+       (the very overflow the ring row was failing on). */
+    const apC=sdC/Math.max(1.5,Math.min(8, 17/(2*Math.PI*(S.subXO||80)*((S.xmC||S.xmW||4)/1000)) ))/nT;   // cm^2 per slot, velocity-clamped CR
+    /* ARC SLOTS along the ring (his print photo + Metlako kidneys): the exposed
+       cone annulus (6FHX51 CAD: [.60,.72]od) is only ~0.06od wide radially -
+       ROUND holes cannot carry the velocity-derived area there. A stadium bent
+       along the ring carries it in length; when the demand is small it
+       degenerates to a circle (sa==sb), which IS the Reference D round hole. */
+    const rConeL=(S.odW||22)*CM/2;
+    const sbC=Math.max(0.003, Math.min(Math.sqrt(apC*1e-4/Math.PI), (0.72-0.60)*rConeL/2-0.001));
+    const saC=Math.max(sbC, (apC*1e-4+(4-Math.PI)*sbC*sbC)/(4*sbC));   // exact stadium area: 4·sa·sb-(4-π)·sb²
     for(const [a2,p] of taps){ const nrm=surfN(st,xT,a2);
       out.push({kind:'coaxtap', x:xT, phi:a2, center:p, normal:nrm, od:0.02, dp:0,
         tap:p, seatR:sbC+0.004, slot:{sa:saC, sb:sbC, ap:apC, radial:true}}); }
@@ -723,7 +741,7 @@ function acoustics(S,L,st){
            cone-following back (his correction) - the REAL Lpt, not wallT */
         const rB9=Math.max(S.throat*IN/2,0.60*rC9);
         const xF9=(rT-rB9)/Math.tan(d2r(38));
-        const cy9=od9*(0.03+0.07*Math.max(0,Math.min(1,(0.80*rC9-rT)/(0.20*rC9))));
+        const cy9=od9*(0.03+0.07*Math.max(0,Math.min(1,(0.72*rC9-rT)/(0.12*rC9))));   // 6FHX51 CAD: cone rim .72od
         const gap9=((S.xmC||S.xmW||4)/1000)+0.002;
         const xB9=-0.004-(cy9-od9*0.03)+Math.min(gap9,cy9-od9*0.03);
         const lpt=Math.max(S.wallT||0.012, xF9-xB9)+0.85*Math.sqrt(ap*1e-4/Math.PI);
@@ -734,22 +752,29 @@ function acoustics(S,L,st){
          is a picture, not a speaker. */
       const rCone=(S.odW? S.odW*CM : (S.odC||0.22))/2;
       const sa=(taps[0].slot&&taps[0].slot.sa)||0;
-      add('COAX','Tap ring sits over the coax cone',(rT*1000).toFixed(0)+' vs '+(rCone*1000).toFixed(0)+' mm',
-        rT+sa<=rCone*0.95, rT+sa<=rCone*1.05,
-        'the plate slots must land on the cone that feeds them');
-      /* his pin #18 (2026-07-23): taps must sit ENTIRELY on the dish face AND
-         open into the driver - never "flying". Same clamp math as dishMesh:
-         if the printable hole is smaller than the law-derived hole, the
-         geometry is lying about its area - fail here, not silently in the STL. */
-      { const rB18=((S.hfExit||20.1)/1000)/2, rDish18=rCone+0.012, N18=taps.length;
-        const rhReq=Math.max(0.004, sa||0.008);
-        const w018=Math.min(Math.max(rhReq*1.6,0.012),(rDish18-rB18)/2*0.6);
-        const rIn18=Math.max(rB18+0.004,rT-w018), rOut18=Math.min(rDish18-0.004,rT+w018);
-        const fitR=Math.min((rT-rIn18)*0.75, (rOut18-rT)*0.75, (Math.PI*rT/N18)*0.6);
-        add('COAX','Tap holes land whole on the dish',
-          'Ø '+(2*rhReq*1000).toFixed(0)+' mm need vs '+(2*Math.max(0,fitR)*1000).toFixed(0)+' mm printable',
-          fitR>=rhReq, fitR>=rhReq*0.9,
-          'every hole must be contained between the bore and the dish rim and clear its neighbors - the derived slot area only counts if it prints whole'); }
+      /* 6FHX51 CAD (build-504 study): the HF horn owns the center out to
+         Ø.60od; the cone rim is Ø.72od. The ring must ride the EXPOSED CONE
+         ANNULUS between them - his pin #8 (holes low enough to meet the cone). */
+      const smA=0.60*rCone, rimA=0.72*rCone;
+      add('COAX','Tap ring rides the exposed cone annulus',
+        (rT*1000).toFixed(0)+' mm in ['+(smA*1000).toFixed(0)+'..'+(rimA*1000).toFixed(0)+'] (CAD)',
+        rT>=smA-0.001&&rT<=rimA+0.001, rT>=smA-0.004&&rT<=rimA+0.004,
+        'the holes must open onto the CONE: inside .60od the metal HF horn blocks them, past .72od they land on surround and frame');
+      /* his pin #18 (2026-07-23): taps must sit ENTIRELY on the exposed cone
+         annulus AND clear each other around the ring. Radially the slot width
+         is clamped to the annulus at derivation; what can still run out is ARC
+         ROOM: n slots of arc length 2·sa plus 4 mm lands between them. */
+      { const N18=taps.length, s18=taps[0].slot;
+        const need=N18*(2*s18.sa+0.004), cap=2*Math.PI*rT;
+        add('COAX','Tap slots fit around the ring',
+          (need*1000).toFixed(0)+' vs '+(cap*1000).toFixed(0)+' mm of ring',
+          need<=cap, need<=1.1*cap,
+          'velocity-derived area as arc slots on the CAD annulus: length is the free axis; fewer/narrower slots or a bigger unit if this fails');
+        const wA=(rimA-smA)/2;
+        add('COAX','Slot width vs the cone annulus',
+          (2*s18.sb*1000).toFixed(0)+' vs '+(2*wA*1000).toFixed(0)+' mm wide',
+          s18.sb<=wA-0.0005, s18.sb<=wA,
+          'the radial half-width is clamped to the CAD annulus at derivation - this row states the margin'); }
       const rDish2=rCone+0.012, hmD=(S.mouthW||24)*IN/2;
       add('COAX','Coax unit vs the horn body','Ø '+(2*rCone/IN).toFixed(1)+'″ unit · '+(2*rDish2/IN).toFixed(1)+'″ dish on a '+(S.mouthW||24)+'″ mouth',
         hmD>=1.25*rDish2, hmD>=1.05*rDish2,
@@ -1135,11 +1160,12 @@ function dishMesh(S){
   const rCone=(S.odW||22)*CM/2, rDish=rCone+0.012;
   const od=(S.odW||22)*CM;
   const rHFm=((S.hfExit||20.1)/1000)/2;
-  const Lhm=(S.hornLen!==undefined)? S.hornLen : 0.85*((S.dpW||10)*CM);
+  const Lhm=(S.hornLen!==undefined)? S.hornLen : 0.53*((S.odW||22)*CM);   // 6FHX51 CAD: throat at depth .53od (matches profile)
   const rSMm=0.60*rCone;
   const rB=rHFm;                                             // ONE HORN: the part starts at the TRUE HF exit
   const rP=Math.hypot(tp[0].tap[1],tp[0].tap[2]);
-  let rh=Math.max(0.004,(tp[0].slot&&tp[0].slot.sa)||0.008);
+  let sa=Math.max(0.004,(tp[0].slot&&tp[0].slot.sa)||0.008);   // ARC half-length (along the ring)
+  let sb=Math.max(0.003,(tp[0].slot&&tp[0].slot.sb)||sa);      // RADIAL half-width (annulus-clamped upstream)
   const N=tp.length, t=S.wallT||0.012;
   const xOf=r=> r<=rSMm? (r-rHFm)/((rSMm-rHFm)/Lhm) : Lhm+(r-rSMm)/Math.tan(th38);   // replaced horn, then the dish face
   /* HIS CORRECTION: the print's BACK takes the SHAPE OF THE DRIVER CONE with an
@@ -1147,21 +1173,22 @@ function dishMesh(S){
      Cone depths from the 6FHX51 CAD: 0.03od at the cone rim, 0.10od at the
      HF-horn mouth ring. Beyond the cone rim the back is the flat flange seat. */
   const gap=((S.xmC||S.xmW||4)/1000)+0.002;
-  const coneY=r=>{ const r0=0.60*rCone, r1=0.80*rCone;
+  const coneY=r=>{ const r0=0.60*rCone, r1=0.72*rCone;       // CAD: cone rim Ø.72od (was .80 - his pin #8)
     const tq=Math.max(0,Math.min(1,(r1-r)/(r1-r0)));
     return od*(0.03+0.07*tq); };
   const dishBack=r=>{
     if(r<rSMm) return xOf(r)-t*1.25;                         // the internal-horn shell wall
-    if(r>=0.80*rCone) return Lhm-0.004;                      // flange seat on the frame
+    if(r>=0.72*rCone) return Lhm-0.004;                      // flange seat past the TRUE cone rim (CAD .72od)
     return Lhm-0.004 - (coneY(r)-od*0.03) + Math.min(gap, coneY(r)-od*0.03); };
-  const w0=Math.min(Math.max(rh*1.6,0.012),(rDish-rB)/2*0.6);
+  const w0=Math.min(Math.max(sb*1.6,0.012),(rDish-rB)/2*0.6);
   const rIn=Math.max(rB+0.004,rP-w0), rOut=Math.min(rDish-0.004,rP+w0);
   const COLS=12, NA=N*COLS, NRi=5, NRo=5;
-  /* the hole must sit strictly inside its patch (else the strip folds);
+  /* the slot must sit strictly inside its patch (else the strip folds);
      the LAW rows carry the true velocity-derived area - if this clamp ever
      bites, the geometry was infeasible and the rows already said so */
   const halfArc=Math.PI*rP/N, halfBand=Math.min(rP-rIn, rOut-rP);
-  rh=Math.min(rh, halfBand*0.75, halfArc*0.6);
+  sb=Math.min(sb, halfBand*0.75);
+  sa=Math.max(sb, Math.min(sa, halfArc*0.75));
   const pos=[], tri=[];
   const V=(x,y,z)=>{ pos.push([x,y,z]); return pos.length-1; };
   const F=(r,ph,back)=>V(back? Math.min(dishBack(r), xOf(r)-t*0.35) : xOf(r), r*Math.cos(ph), r*Math.sin(ph));
@@ -1174,7 +1201,8 @@ function dishMesh(S){
       for(let i=0;i<NR;i++) for(let j=0;j<NA;j++)
         quad(rows[i][j],rows[i][(j+1)%NA],rows[i+1][j],rows[i+1][(j+1)%NA],back);
     }
-    /* the hole band: one rect-to-circle patch per tap */
+    /* the hole band: one rect-to-STADIUM patch per tap (arc slots - his print
+       photo; sa==sb degenerates to the Reference D round hole) */
     const bandIn=ring(rIn,back), bandOut=ring(rOut,back);
     for(let k=0;k<N;k++){
       const phC=tp[k].phi, j0=k*COLS;
@@ -1183,12 +1211,15 @@ function dishMesh(S){
       for(let j=COLS;j>=0;j--) loop.push(bandOut[(j0+j)%NA]);                 // top, right->left
       const Mloop=loop.length;
       const circ=[];
+      const Lst=Math.max(0,sa-sb);                                            // straight half-length of the stadium
       for(const li of loop){ const p=pos[li];
         const rr=Math.hypot(p[1],p[2]), ph=Math.atan2(p[2],p[1]);
-        const u=(((ph-phC+Math.PI*3)%(2*Math.PI))-Math.PI)*rP, v=rr-rP;       // local coords on the face
-        const dl=Math.hypot(u,v)||1e-9;
-        const cu=u/dl*rh, cv=v/dl*rh;                                          // RADIAL projection onto the hole circle
-        circ.push(F(rP+cv, phC+cu/rP, back));
+        const u=(((ph-phC+Math.PI*3)%(2*Math.PI))-Math.PI)*rP, v=rr-rP;       // local coords: u along the ring, v radial
+        const dl=Math.hypot(u,v)||1e-9, du=u/dl, dv=v/dl;
+        let tR;                                                                // ray from center -> stadium boundary
+        if(Math.abs(dv)>1e-9 && Math.abs(du)*(sb/Math.abs(dv))<=Lst) tR=sb/Math.abs(dv);
+        else tR=Math.abs(du)*Lst + Math.sqrt(Math.max(0, sb*sb - Lst*Lst*dv*dv));
+        circ.push(F(rP+dv*tR, phC+du*tR/rP, back));
       }
       for(let i=0;i<Mloop;i++){ const i2=(i+1)%Mloop;
         quad(loop[i],loop[i2],circ[i],circ[i2],back); }
