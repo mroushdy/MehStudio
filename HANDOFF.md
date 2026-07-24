@@ -1,4 +1,4 @@
-# MEH STUDIO v5 HANDOFF (2026-07-24 late, build 531)
+# MEH STUDIO v5 HANDOFF (2026-07-24 late, build 531 = commit 3b0c195)
 BUILD 531 (his asks: audit known builds vs the online record; audit settings
 sanity + build the adaptive anti-trash layer; driver-mounting audit): the
 14-agent KNOWN-BUILDS AUDIT (docs/KNOWN_BUILDS_AUDIT.md) re-baked every
