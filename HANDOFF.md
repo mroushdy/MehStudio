@@ -1,4 +1,4 @@
-# MEH STUDIO v5 HANDOFF (2026-07-24 night, build 532)
+# MEH STUDIO v5 HANDOFF (2026-07-24 night, build 532 = commit a4522f5)
 BUILD 532 (his ask: "ports actually cut through the horn... the real cutout
 measured, not the illusion"): 5 probe batteries -> 37 claims; the verify
 fleet DIED ON ACCOUNT CREDITS (no subagents from then on - everything
