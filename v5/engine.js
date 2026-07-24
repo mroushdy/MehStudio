@@ -111,7 +111,9 @@ function profile(S){
     const Lh=(S.hornLen!==undefined)? S.hornLen : 0.53*((S.odW||22)*CM);
     const rSM=0.60*rCone;                                      // stock mouth at the cone plane ("same geometry first")
     const rimC=0.72*rCone;
-    const rP=Math.min(Math.max((S.coaxRing||4.5)*CM, rSM+0.004), rimC-0.004);
+    /* ring pinned MID-ANNULUS: the exposed cone band is ~0.12od wide - with
+       slot width and the collar seat there is exactly one honest station */
+    const rP=(rSM+rimC)/2;
     const thA=d2r(38);
     const La=Lh+Math.max(0.008,(rDish-rSM)/Math.tan(thA));     // adapter = replaced horn + dish face
     const xTap=Lh+Math.max(0.004,(rP-rSM)/Math.tan(thA));
@@ -129,7 +131,12 @@ function profile(S){
         const r=rAt(x); pts.push({x, h:r, v:r, nOv:2}); }                     // replaced horn + ROUND dish
       for(let j=1;j<=32;j++){ const x=La+Da*j/32, t=j/32;
         pts.push({x, h:rDish+Math.tan(th)*(x-La), v:rDish+(vm-rDish)*t}); }   // V flares per-plane from the round rim
-      return {pts, depth, rollR:0, mouthH:hm, xAdapter:La, xTap, rBore:htC};
+      /* xPrint: where the PRINTED part begins (his triple + US10506331).
+         fixed metal horn -> the proud-mouth plane (Lh); removable -> the
+         true exit. The stations BEFORE xPrint stay - they are the driver's
+         own real acoustic path (response/XO laws ride the full ladder). */
+      return {pts, depth, rollR:0, mouthH:hm, xAdapter:La, xTap, rBore:htC,
+              xPrint:(S.hornType==='removable')?0:Lh};
     }
     const D2=Math.max(0.05,(hm-rDish)/Math.tan(th));
     const depth=La+D2, pts=[];
@@ -143,7 +150,8 @@ function profile(S){
     const a0=Math.atan(sl);
     for(let i=1;i<=M2;i++){ const a=a0+(Math.PI/2-a0)*(i/M2)*0.9;
       pts.push({x:depth+rollR*(Math.sin(a)-Math.sin(a0)), h:hEnd+rollR*((1-Math.cos(a))-(1-Math.cos(a0))), roll:true}); }
-    return {pts, depth, rollR, mouthH:hm, xAdapter:La, xTap, rBore:htC};
+    return {pts, depth, rollR, mouthH:hm, xAdapter:La, xTap, rBore:htC,
+            xPrint:(S.hornType==='removable')?0:Lh};
   }
   if(S.style==='angular'){
     /* PIN #12 - THE CLASSIC SHAPE (Waslo Synergy Calc v5, Main Panels sheet):
@@ -202,7 +210,7 @@ function stations(S){
   return { form:'se', n:S.seN, style:S.style,
            pts:pr.pts.map(p=>({x:p.x, a:p.h, b:(p.v!==undefined)?p.v:p.h*ar, roll:p.roll,
              n:(p.nOv!==undefined)?p.nOv:morph(p.x)})),   // Reference D: the dish stays ROUND inside an angular horn
-           depth:pr.depth, rollR:pr.rollR, throat:(pr.rBore!==undefined)?pr.rBore:S.throat*IN/2, ar, xBreak:pr.xBreak, slopeCos:pr.slopeCos, xAdapter:pr.xAdapter, xTap:pr.xTap };
+           depth:pr.depth, rollR:pr.rollR, throat:(pr.rBore!==undefined)?pr.rBore:S.throat*IN/2, ar, xBreak:pr.xBreak, slopeCos:pr.slopeCos, xAdapter:pr.xAdapter, xTap:pr.xTap, xPrint:pr.xPrint };
 }
 function dimsAt(st,x){
   const P=st.pts;
@@ -597,7 +605,7 @@ function layout(S,st){
        along the ring carries it in length; when the demand is small it
        degenerates to a circle (sa==sb), which IS the Reference D round hole. */
     const rConeL=(S.odW||22)*CM/2;
-    const sbC=Math.max(0.003, Math.min(Math.sqrt(apC*1e-4/Math.PI), (0.72-0.60)*rConeL/2-0.001));
+    const sbC=Math.max(0.003, Math.min(Math.sqrt(apC*1e-4/Math.PI), (0.72-0.60)*rConeL/2-0.003));
     const saC=Math.max(sbC, (apC*1e-4+(4-Math.PI)*sbC*sbC)/(4*sbC));   // exact stadium area: 4·sa·sb-(4-π)·sb²
     for(const [a2,p] of taps){ const nrm=surfN(st,xT,a2);
       out.push({kind:'coaxtap', x:xT, phi:a2, center:p, normal:nrm, od:0.02, dp:0,
@@ -775,6 +783,19 @@ function acoustics(S,L,st){
           (2*s18.sb*1000).toFixed(0)+' vs '+(2*wA*1000).toFixed(0)+' mm wide',
           s18.sb<=wA-0.0005, s18.sb<=wA,
           'the radial half-width is clamped to the CAD annulus at derivation - this row states the margin'); }
+      /* US10506331 (Martin Audio, his patent drop): the static waveguide must
+         clear the MOVING cone by 0.5-3 cm preferred (0.3-5 hard), held at max
+         excursion - his "match the depth of the baffle with an x-max". */
+      { const gapM=((S.xmC||S.xmW||4)/1000)+0.002;
+        add('COAX','Print-to-cone clearance (Martin band)',
+          (gapM*1000).toFixed(1)+' mm incl. xmax',
+          gapM>=0.005&&gapM<=0.030, gapM>=0.003&&gapM<=0.050,
+          'US10506331: 0.5-3 cm between static and moving waveguides at maximal displacement');
+        const alpha=Math.atan(0.14/0.19)*180/Math.PI;
+        add('COAX','Dish face continues the cone (β ≥ α)',
+          '38° face vs '+alpha.toFixed(0)+'° cone slope (CAD)',
+          38>=alpha-0.5, 38>=alpha-5,
+          'US10506331: the static waveguide continues the cone curvature outward; β ≥ α opens the pattern'); }
       const rDish2=rCone+0.012, hmD=(S.mouthW||24)*IN/2;
       add('COAX','Coax unit vs the horn body','Ø '+(2*rCone/IN).toFixed(1)+'″ unit · '+(2*rDish2/IN).toFixed(1)+'″ dish on a '+(S.mouthW||24)+'″ mouth',
         hmD>=1.25*rDish2, hmD>=1.05*rDish2,
@@ -847,6 +868,21 @@ function acoustics(S,L,st){
       add('PATTERN','Pattern floor vs the low crossover',worst+' vs '+fx+' Hz'+(worst>fx?' — widens below '+worst+' Hz':''),
         true,true,
         'below the floor the wall angle stops steering (the sections still sum - a MEH keeps loading); grow the mouth to push the floor down');
+    }
+    /* US8284976 read in full (his patent drop): two more Danley sizing truths,
+       INFORMATIONAL - MEHs hand off to subs, so grading them would red-flag
+       every proven build; the numbers still belong in front of the designer. */
+    { const fLo=S.subXO||80, lam=C/fLo;
+      const per=2*Math.PI*Math.sqrt((mo.a*mo.a+(mo.b||mo.a)*(mo.b||mo.a))/2);
+      add('PATTERN','Mouth circumference vs λ at '+fLo+' Hz (US8284976)',
+        (per/lam).toFixed(2)+'λ'+(per<lam?' — full loading wants ~1λ ('+Math.round(lam/Math.PI/IN)+'″ mouth)':''),
+        true,true,
+        'Danley: minimum mouth ≈ 1λ circumference at the horn’s own low cutoff; fractions trade loading for size (fine with a sub below)');
+      const path=st.depth+((S.cdDepth||0)*IN);
+      add('PATTERN','Horn path vs λ/4 at '+fLo+' Hz (US8284976)',
+        (path/(lam/4)).toFixed(2)+'×λ/4',
+        true,true,
+        'Danley: loading begins near λ/4 path, substantial by λ/2 - below that the box (not the horn) carries the bottom');
     }
   }
   /* ---- C. MAX SPL TILE - ported from Horn Studio hornMaxSPL (entry 215):
@@ -1128,16 +1164,20 @@ function shellMesh(S){
       quad(iIn[jm][(i+1)%NV],iIn[jm][i],iOut[jm][(i+1)%NV],iOut[jm][i]);     // mouth face
       quad(iIn[0][i],iIn[0][(i+1)%NV],iOut[0][i],iOut[0][(i+1)%NV]); }      // throat annulus
   } else {
-    const rings=st.pts.map(p=>seRing(p.a,p.b,(p.n!==undefined)?p.n:st.n,M,'smooth'));
-    const pre=st.pts.filter(p=>!p.roll);
+    /* 1way: the SHELL part starts at the dish rim - the dish part owns
+       [xPrint..xAdapter]; printing the deep interior in the shell was only
+       ever right for removable-horn units (his 'never through the driver') */
+    const SPs=(S.topo==='1way'&&st.xAdapter)? st.pts.filter(p=>p.x>=st.xAdapter-1e-9) : st.pts;
+    const rings=SPs.map(p=>seRing(p.a,p.b,(p.n!==undefined)?p.n:st.n,M,'smooth'));
+    const pre=SPs.filter(p=>!p.roll);
     const ringsO=pre.map(p=>offsetRing(st,p.x,wt,M));
-    const iIn=st.pts.map((p,j)=>rings[j].map(q=>P(p.x,q)));
+    const iIn=SPs.map((p,j)=>rings[j].map(q=>P(p.x,q)));
     const iOut=pre.map((p,j)=>ringsO[j].map(q=>P(p.x,q)));
-    for(let j=0;j<st.pts.length-1;j++) for(let i=0;i<M;i++)
+    for(let j=0;j<SPs.length-1;j++) for(let i=0;i<M;i++)
       quad(iIn[j][i],iIn[j][(i+1)%M],iIn[j+1][i],iIn[j+1][(i+1)%M]);
     for(let j=0;j<pre.length-1;j++) for(let i=0;i<M;i++)
       quad(iOut[j][(i+1)%M],iOut[j][i],iOut[j+1][(i+1)%M],iOut[j+1][i]);
-    const jt=st.pts.length-1, jp=pre.length-1;
+    const jt=SPs.length-1, jp=pre.length-1;
     for(let i=0;i<M;i++){
       quad(iIn[jt][(i+1)%M],iIn[jt][i],iOut[jp][(i+1)%M],iOut[jp][i]);      // lip: roll tip -> outer edge
       quad(iIn[0][i],iIn[0][(i+1)%M],iOut[0][i],iOut[0][(i+1)%M]); }        // throat annulus
@@ -1162,7 +1202,12 @@ function dishMesh(S){
   const rHFm=((S.hfExit||20.1)/1000)/2;
   const Lhm=(S.hornLen!==undefined)? S.hornLen : 0.53*((S.odW||22)*CM);   // 6FHX51 CAD: throat at depth .53od (matches profile)
   const rSMm=0.60*rCone;
-  const rB=rHFm;                                             // ONE HORN: the part starts at the TRUE HF exit
+  /* the triple (US10506331 + his ruling): FIXED metal horn -> the part starts
+     AT the proud-mouth plane and seats a COLLAR over the metal ring (never
+     printing into the driver); REMOVABLE bolt-on horn -> the part still owns
+     the replaced horn from the TRUE exit (his funnel build). */
+  const fixedH=(S.hornType!=='removable');
+  const rB=fixedH? rSMm+0.001 : rHFm;
   const rP=Math.hypot(tp[0].tap[1],tp[0].tap[2]);
   let sa=Math.max(0.004,(tp[0].slot&&tp[0].slot.sa)||0.008);   // ARC half-length (along the ring)
   let sb=Math.max(0.003,(tp[0].slot&&tp[0].slot.sb)||sa);      // RADIAL half-width (annulus-clamped upstream)
@@ -1177,11 +1222,12 @@ function dishMesh(S){
     const tq=Math.max(0,Math.min(1,(r1-r)/(r1-r0)));
     return od*(0.03+0.07*tq); };
   const dishBack=r=>{
-    if(r<rSMm) return xOf(r)-t*1.25;                         // the internal-horn shell wall
+    if(fixedH && r<rSMm+0.010) return Lhm-0.010;             // collar seat ring - 6mm recess clears the proud metal lip
+    if(r<rSMm) return xOf(r)-t*1.25;                         // (removable) the internal-horn shell wall
     if(r>=0.72*rCone) return Lhm-0.004;                      // flange seat past the TRUE cone rim (CAD .72od)
     return Lhm-0.004 - (coneY(r)-od*0.03) + Math.min(gap, coneY(r)-od*0.03); };
   const w0=Math.min(Math.max(sb*1.6,0.012),(rDish-rB)/2*0.6);
-  const rIn=Math.max(rB+0.004,rP-w0), rOut=Math.min(rDish-0.004,rP+w0);
+  const rIn=Math.max(rB+0.0005,rP-w0), rOut=Math.min(rDish-0.004,rP+w0);
   const COLS=12, NA=N*COLS, NRi=5, NRo=5;
   /* the slot must sit strictly inside its patch (else the strip folds);
      the LAW rows carry the true velocity-derived area - if this clamp ever

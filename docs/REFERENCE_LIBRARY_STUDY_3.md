@@ -176,3 +176,27 @@ The founding patent. What it confirms with original provenance, and one nuance:
 - Reference ratios from the worked example: starting XO 1 kHz; HF throat
   0.78 in² vs mid section total 10 in²; conic flare "doubles area every
   2.4 inches for a 300 Hz flare" (flare-rate intuition).
+
+### US 8,284,976 (Danley 2012) + US 5,526,456 (Heinz 1996) — read in full, citations verified
+- 8284976: v5's entry-area law is verbatim ("no greater than a round cross
+  section one wavelength in circumference at the upper frequency end"). TWO
+  MORE sizing truths now surfaced as INFORMATIONAL rows: minimum mouth ≈ 1λ
+  circumference at the horn's own low cutoff, and horn path ≥ λ/4 (substantial
+  by λ/2) at that cutoff. Also: thin-gauge cone section shrinks tap Lpt
+  (3/4"->1/16" ports, 8->4 count) - the thin-wall/frustum doctrine; FIG 6 has
+  the cone-angle-continuation sentence (Danley's own version of Martin's
+  tangent rule).
+- 5526456: equidistant drivers about the centerline, coupling passage width
+  < shortest wavelength, passages OPEN AT THE SAME ANGLE AS THE HORN - M3 and
+  the entry-size law are faithful; the passage-angle sentence backs the 45°
+  frustum on the tap cutters.
+
+### US 7,134,523 (Harman/Engebretson 2006, "RBI") + US 10,375,470 (CCPS 2019)
+- RBI: a solid waveguide boundary OVER the mid drivers with openings (their
+  version of the printed facet / Reference B apex insert), optionally POROUS
+  FILLED - transparent to mids, invisible to HF. Patent source for the
+  foam-in-tap-openings option in printed_mounts_spec.
+- CCPS: mids inject through a BAND-PASS CHAMBER (diaphragm | chamber | wall
+  aperture) - the formalism behind v5's chamber low-pass law; sealed vs
+  bass-reflex rear chambers simulated (M9/M10 support); centerbody dialect
+  logged as future form option.

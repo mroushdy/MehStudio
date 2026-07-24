@@ -161,7 +161,7 @@ select{width:100%;font-family:var(--mono);font-size:11px;background:var(--paper)
 <script>
 /*__ENGINE__*/
 /*__CAD__*/
-window.MEH_BUILD=522;
+window.MEH_BUILD=523;
 document.getElementById('bno').textContent=MEH_BUILD;
 "use strict";
 /* ---------------- driver presets (v4 datasheets; mesh = true CAD, meshApprox = nearest body) ---------------- */
@@ -188,13 +188,20 @@ const MPRE={
    hfFloor null = datasheet crossover floor UNVERIFIED - the law row says so. */
 /* datasheet-real B&C coaxes (2026-07-23 drop): od/depth/Sd/exit/recXO from the
    PDFs; xm = (winding-gap)/2 from their own coil numbers; Vtc still estimated */
+/* THE DRIVER-MOUNT TRIPLE (his ruling 2026-07-23 + US10506331): every coax
+   carries (1) exitAtCone - the Ø where the print takes over, (2) rim - the
+   cone rim Ø the dish spans to, (3) bdep - baffle depth to the exit plane.
+   Defaults are od-relative from the 6FHX51 CAD (exit .60od proud mouth,
+   rim .72od, depth .14od); horn:'fixed' = metal horn stays, print seats a
+   collar OVER the proud mouth; horn:'removable' = bolt-on horn comes off,
+   print takes over AT the true exit (BMS style, his funnel build). */
 const CXPRE={
-  cx5:{name:'5″ coax unit (BMS CN-class, floors unverified)', od:14.8, dp:8, sd:75, vtc:30, xm:3.5},
-  fhx6:{name:'B&C 6FHX51 — 6.5″ coax (datasheet + CAD)', od:18.7, dp:12.2, sd:132, vtc:35, xm:3.5, hfExit:20.1, recXO:2500},
-  hcx6:{name:'B&C 6HCX51 — 6.5″ coax (datasheet)', od:18.7, dp:10.4, sd:132, vtc:35, xm:3.5, hfExit:20.1, recXO:2200},
-  fhx12:{name:'B&C 12FHX76 — 12″ coax (datasheet)', od:31.5, dp:16.9, sd:522, vtc:150, xm:4.25, hfExit:33, recXO:1200},
-  hcx12:{name:'B&C 12HCX76 — 12″ coax (datasheet)', od:31.5, dp:16.9, sd:522, vtc:150, xm:4.25, hfExit:33, recXO:1200},
-  fhx15:{name:'B&C 15FHX76 — 15″ coax (datasheet)', od:39.3, dp:19.9, sd:855, vtc:250, xm:4.25, hfExit:33, recXO:1200}};
+  cx5:{name:'5″ coax unit (BMS CN-class, floors unverified)', od:14.8, dp:8, sd:75, vtc:30, xm:3.5, horn:'removable'},
+  fhx6:{name:'B&C 6FHX51 — 6.5″ coax (datasheet + CAD)', od:18.7, dp:12.2, sd:132, vtc:35, xm:3.5, hfExit:20.1, recXO:2500, horn:'fixed'},
+  hcx6:{name:'B&C 6HCX51 — 6.5″ coax (datasheet)', od:18.7, dp:10.4, sd:132, vtc:35, xm:3.5, hfExit:20.1, recXO:2200, horn:'fixed'},
+  fhx12:{name:'B&C 12FHX76 — 12″ coax (datasheet)', od:31.5, dp:16.9, sd:522, vtc:150, xm:4.25, hfExit:33, recXO:1200, horn:'fixed'},
+  hcx12:{name:'B&C 12HCX76 — 12″ coax (datasheet)', od:31.5, dp:16.9, sd:522, vtc:150, xm:4.25, hfExit:33, recXO:1200, horn:'fixed'},
+  fhx15:{name:'B&C 15FHX76 — 15″ coax (datasheet)', od:39.3, dp:19.9, sd:855, vtc:250, xm:4.25, hfExit:33, recXO:1200, horn:'fixed'}};
 const CDP={de500:{td:1.0,floor:900,dep:1.2}, de900:{td:1.4,floor:550,dep:1.7}, dcx464:{td:1.4,floor:300,dep:2.4}};
 /* ---------------- state ---------------- */
 const S={topo:'2way', style:'smooth', wPre:'w65', mPre:'m4', cdSel:'dcx464', wallT:0.012, seN:6, covH:90, covV:60, mouthW:24, mouthCap:64, throat:1.4, rollR:2,
@@ -307,13 +314,23 @@ function coaxBody(od,dp){
     mo.position.y=Y(0.34); g.add(mo); }
   /* ONE HORN (his correction): the stock plastic horn is REMOVED - the center
      is the open cavity down to the HF exit; the PRINTED horn reaches in */
-  { /* cavity floor AT the true throat (CAD .53od) - the printed snout reaches
-       all the way in, so the floor must not stop short of it (his gap note) */
+  if((window.S&&window.S.hornType)==='removable'){
+    /* removable bolt-on horn came OFF: open cavity down to the true exit -
+       the printed snout reaches all the way in (his funnel build) */
     const cav=[[R*0.42,Y(0.145)],[R*0.30,Y(0.22)],[R*0.17,Y(0.36)],[R*0.125,od*0.53]]
       .map(p=>new THREE.Vector2(p[0],p[1]));
     g.add(new THREE.Mesh(new THREE.LatheGeometry(cav,40),DRK));
     const ring=new THREE.Mesh(new THREE.TorusGeometry(R*0.125,R*0.018,10,32),MET);
-    ring.rotation.x=Math.PI/2; ring.position.y=od*0.535; g.add(ring); }
+    ring.rotation.x=Math.PI/2; ring.position.y=od*0.535; g.add(ring);
+  } else {
+    /* FIXED metal horn (6FHX51 CAD): mouth Ø.60od PROUD of the cone, flaring
+       back to the exit at .53od - it STAYS; the print collars over its lip */
+    const met=[[R*0.62,-od*0.025],[R*0.60,-od*0.02],[R*0.44,od*0.16],[R*0.24,od*0.36],[R*0.125,od*0.53]]
+      .map(p=>new THREE.Vector2(p[0],p[1]));
+    g.add(new THREE.Mesh(new THREE.LatheGeometry(met,44),MET));
+    const lip=new THREE.Mesh(new THREE.TorusGeometry(R*0.60,R*0.02,10,44),MET);
+    lip.rotation.x=Math.PI/2; lip.position.y=-od*0.022; g.add(lip);
+  }
   /* tweeter CD stack right behind the horn flange (CAD: .547-.634) */
   { const pot=new THREE.Mesh(new THREE.CylinderGeometry(R*0.140,R*0.140,Y(0.088),24),DRK);
     pot.position.y=Y(0.585); g.add(pot);
@@ -799,7 +816,7 @@ function coax1way(){
     const P=CXPRE[S.wPre];
     if(P){ S.odW=P.od; S.dpW=P.dp; S.sdW=P.sd; S.vtcW=P.vtc; S.xmW=P.xm;
       S.sdC=P.sd; S.vtcC=P.vtc; S.xmC=P.xm;
-      S.hfExit=P.hfExit||20.1; S.recXO=P.recXO||0; delete S.hornLen; }
+      S.hfExit=P.hfExit||20.1; S.recXO=P.recXO||0; S.hornType=P.horn||'fixed'; delete S.hornLen; }
     /* ONE HORN: the print replaces the stock horn from the TRUE HF exit; the
        geometry carries the whole path (cdDepth 0), floors from the datasheet */
     S.td=1.0; S.throat=1.0; S.cdFloor=0; S.cdDepth=0;
@@ -850,7 +867,7 @@ function wire(){
   document.getElementById('wPre').onchange=e=>{ S.wPre=e.target.value;
     const P=(S.topo==='1way'?CXPRE:WPRE)[S.wPre];
     if(P){ S.odW=P.od; S.dpW=P.dp; S.sdW=P.sd; S.vtcW=P.vtc; S.xmW=P.xm; document.getElementById('odW').value=S.odW;
-      if(S.topo==='1way'){ S.sdC=P.sd; S.vtcC=P.vtc; S.xmC=P.xm; S.hfExit=P.hfExit||20.1; S.recXO=P.recXO||0; S.cdDepth=0; delete S.hornLen;
+      if(S.topo==='1way'){ S.sdC=P.sd; S.vtcC=P.vtc; S.xmC=P.xm; S.hfExit=P.hfExit||20.1; S.recXO=P.recXO||0; S.hornType=P.horn||'fixed'; S.cdDepth=0; delete S.hornLen;
         /* his call: the horn RESIZES to the driver. Ratio from the retired
            gate-asserted 1way bundles: mouth/od = 2.31/2.42/2.20/2.40 - mean 2.35 */
         S.mouthW=Math.min(S.mouthCap||64, Math.round(2.35*P.od/2.54));
