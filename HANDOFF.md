@@ -1,7 +1,7 @@
-# MEH STUDIO v5 HANDOFF (2026-07-24, build 526 = commit 2e81e45)
+# MEH STUDIO v5 HANDOFF (2026-07-24, build 527 = commit 6c49386)
 Repo: github.com/mroushdy/MehStudio (main). Tool: v5/meh5.html (assembled by
 `node v5/assemble.js` — run it FROM v5/, it reads shell.html relative).
-RITUAL: `node v5/gate.js` (44,172 checks / 480 states) MUST pass before any
+RITUAL: `node v5/gate.js` (44,138 checks / 480 states) MUST pass before any
 push; push from a scratch clone with GIT_ASKPASS=~/hs/.secrets/askpass.sh and
 `git -c credential.helper=` (macOS keychain injects stale creds otherwise).
 
@@ -25,7 +25,15 @@ along the ring (stadium; degenerates to round), coax CR at the band low edge
 (face at the cone plane, cavity to the true throat). 522 GHOST DRIVERS view
 mode. All pushed, gate ALL PASS at every step.
 
-READ FIRST: docs/queue.md - top block: 1way family CLOSED at 526 (OS face curve, triple, collar, round/arc taps, crossover section); NEXT = the AUTO-SPLIT STL EXPORTER (studies _2/_3 spec). Old note below:
+READ FIRST: docs/queue.md - top block: 1way family CLOSED at 526 (OS face curve, triple, collar, round/arc taps, crossover section); b527: pin 17 landed (TRUE SQUARE = 4 plates at slider top; chamfer dialect
+keeps boards). Marwan SKIPPED the STL exporter for now. Open pins: 3/9
+(one-piece dish question - needs his ruling), 10 (round-to-square
+transition), 12 (driver silhouette detail pass). Untouched queue: M9
+enclosure reality (Pavdan halves are the measured reference), M10/D
+Hornresp ME2 (needs a sample file from him), H polish (angular seams as
+edges, mobile-width layout - he reviews from his PHONE), C tiles, G
+superformula, I v4 parity (needs the v4 build), Solana bandpass dialect.
+Old note below:
 THE next build (his ~8:45pm ruling: exit circle / rim circle / baffle depth
 +xmax per driver; print never runs THROUGH the driver; collar over proud
 fixed horns vs deep print for removable horns). Open pins after this session:
