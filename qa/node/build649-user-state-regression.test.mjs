@@ -249,7 +249,7 @@ test("count availability changes with the selected driver, not a stale mouth lab
   assert.equal(nw10.requested, 32);
   assert.equal(nw10.items.find((item) => item.n === 2)?.impossible, false);
   assert.equal(nw10.items.find((item) => item.n === 4)?.impossible, false);
-  assert.equal(nw10.items.find((item) => item.n === 6)?.impossible, true);
+  assert.equal(nw10.items.find((item) => item.n === 6)?.impossible, false);
 
   const w5 = context.twoWayCountPreflight(
     architecture,

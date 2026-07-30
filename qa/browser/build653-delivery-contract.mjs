@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// Current Build 653 live boot-identity contract.
 import { createReadStream } from "node:fs";
 import { readFile, stat } from "node:fs/promises";
 import http from "node:http";
@@ -24,7 +25,7 @@ const runtime = shell
   .replace("/*__PROFILE_LAWS__*/", profileLaws)
   .replace("/*__ENGINE__*/", engine)
   .replace("/*__TWOWAY__*/", twoWay)
-  .replace("/*__CAD__*/", "/* Build 652 delivery contract */");
+  .replace("/*__CAD__*/", "/* Build 653 delivery contract */");
 
 const mime = {
   ".html": "text/html; charset=utf-8",
@@ -121,7 +122,7 @@ try {
   }));
   assert(refusedErrors.length === 0, `refused boot errors: ${refusedErrors.join(" | ")}`);
   assert(refused.sentinel?.status === "refused", "stale build did not refuse");
-  assert(refused.sentinel?.build === 652, "refusal reports the wrong loaded build");
+  assert(refused.sentinel?.build === 653, "refusal reports the wrong loaded build");
   assert(refused.sentinel?.requestedBuild === "649", "requested build is missing");
   assert(refused.sentinel?.view === "nodrv", "refusal lost the requested view");
   assert(refused.sentinel?.resetApplied === false, "refused reset was applied");
@@ -129,7 +130,7 @@ try {
   assert(refused.storage.removes === 0, "refused boot erased saved geometry");
   assert(refused.canvasCount === 0, "refused boot initialized the 3D runtime");
   assert(refused.dom.runtimeStatus === "refused", "DOM refusal sentinel is missing");
-  assert(refused.text.includes("LOADED SOURCE IS BUILD 652"), "visible refusal is unclear");
+  assert(refused.text.includes("LOADED SOURCE IS BUILD 653"), "visible refusal is unclear");
   await refusedContext.close();
 
   const resetContext = await browser.newContext({
@@ -157,7 +158,7 @@ try {
     if (message.type() === "error") resetErrors.push(message.text());
   });
   await resetPage.goto(
-    `${base}/shell.html?build=652&view=nodrv&reset=1`,
+    `${base}/shell.html?build=653&view=nodrv&reset=1`,
     { waitUntil: "domcontentloaded", timeout: 30_000 },
   );
   await resetPage.waitForFunction(() => (
@@ -178,8 +179,8 @@ try {
     canvasCount: document.querySelectorAll("#v3d canvas").length,
   }));
   assert(resetErrors.length === 0, `accepted boot errors: ${resetErrors.join(" | ")}`);
-  assert(reset.sentinel?.status === "ready", "Build 652 did not become ready");
-  assert(reset.sentinel?.build === 652, "ready sentinel reports the wrong build");
+  assert(reset.sentinel?.status === "ready", "Build 653 did not become ready");
+  assert(reset.sentinel?.build === 653, "ready sentinel reports the wrong build");
   assert(reset.sentinel?.resetApplied === true, "reset=1 was not applied");
   assert(reset.sentinel?.resetStorageRemoved === true, "saved geometry was not removed");
   assert(reset.storage.removes >= 1, "storage removal was not observable");
@@ -190,24 +191,24 @@ try {
   assert(reset.sentinel?.view === "nodrv", "sentinel reports the wrong view");
   assert(
     typeof reset.sentinel?.stateHash === "string"
-      && reset.sentinel.stateHash.startsWith("b652-"),
-    "ready sentinel has no Build 652 state hash",
+      && reset.sentinel.stateHash.startsWith("b653-"),
+    "ready sentinel has no Build 653 state hash",
   );
   assert(reset.sentinel?.revision >= 1, "ready sentinel has no state revision");
-  assert(reset.dom.runtimeBuild === "652", "DOM build sentinel is missing");
+  assert(reset.dom.runtimeBuild === "653", "DOM build sentinel is missing");
   assert(reset.dom.runtimeView === "nodrv", "DOM view sentinel is missing");
   assert(reset.dom.runtimeStateHash === reset.sentinel.stateHash, "DOM hash differs");
   assert(reset.dom.runtimeRevision === String(reset.sentinel.revision), "DOM revision differs");
-  assert(reset.buildText === "652", "visible header build is wrong");
+  assert(reset.buildText === "653", "visible header build is wrong");
   assert(
-    reset.meshPolicyVersion === "b652-differential-cell-terminal-grid-v3",
+    reset.meshPolicyVersion === "b653-differential-cell-terminal-grid-v3",
     `loaded mesh policy is ${reset.meshPolicyVersion}`,
   );
   assert(reset.canvasCount === 1, "accepted boot did not initialize the viewer");
   await resetContext.close();
 
   console.log(
-    `BUILD-652 DELIVERY CONTRACT PASS — refusal preserved saved state; `
+    `BUILD-653 DELIVERY CONTRACT PASS — refusal preserved saved state; `
     + `reset boot ${reset.sentinel.stateHash} rev ${reset.sentinel.revision} `
     + `view ${reset.sentinel.view}`,
   );

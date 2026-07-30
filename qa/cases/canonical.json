@@ -243,12 +243,12 @@
         "driverArrayRotationDeg": 90,
         "shW": "slot",
         "mountRing": "integrated",
-        "mouthW": 24,
+        "mouthW": 35,
         "mouthCap": 64,
         "covH": 90,
         "covV": 60,
         "wallT": 0.018,
-        "twoXO": 500,
+        "twoXO": 310,
         "tapCRW": 6,
         "rearAlign": "external",
         "wPre": "ndl88",
@@ -282,11 +282,11 @@
           "covH": 90,
           "covV": 60,
           "wallT": 0.018,
-          "twoXO": 500,
+          "twoXO": 310,
           "wPre": "ndl88"
         },
         "measurements": {
-          "stationMm": 109.1,
+          "stationMm": 166.5,
           "stationToleranceMm": 0.1,
           "minimumOrientedDriverGapMm": 12
         }

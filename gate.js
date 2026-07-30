@@ -370,6 +370,7 @@ for(const S of lattice){
 {
   const sh=fs.readFileSync('shell.html','utf8');
   ck(sh.includes('/*__ENGINE__*/'), 'shell engine marker missing');
+  ck(sh.includes('/*__THREEWAY__*/'), 'shell three-way marker missing');
   ck(sh.includes("id=\"placeW\"")||sh.includes("id='placeW'"), 'placement selector missing');
   ck(sh.includes('id="buildSel"')||sh.includes("id='buildSel'"), 'known-build selector missing');
   ck(sh.includes('id="reports"'), 'reports panel missing (queue D)');
@@ -487,6 +488,7 @@ for(const S of lattice){
   if(fs.existsSync('meh5.html')){
     const m5=fs.readFileSync('meh5.html','utf8');
     ck(!m5.includes('/*__ENGINE__*/'), 'meh5 not assembled (marker still present)');
+    ck(!m5.includes('/*__THREEWAY__*/'), 'meh5 three-way stack not assembled (marker still present)');
     ck(m5.includes('MEH2'), 'meh5 missing engine');
     const bodies=[...m5.matchAll(/<script(?![^>]*\bsrc=)[^>]*>([\s\S]*?)<\/script>/gi)].map(m=>m[1]);
     ck(bodies.length>0,'meh5 has no inline application script');

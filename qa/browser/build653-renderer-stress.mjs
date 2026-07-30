@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// Current Build 653 renderer-resource stress contract.
 import { createReadStream } from "node:fs";
 import {
   mkdir,
@@ -18,7 +19,7 @@ const appRoot = path.resolve(qaRoot, "..");
 const assembledPath = path.join(appRoot, "meh5.html");
 const output = path.resolve(
   process.env.MEH_RENDER_STRESS_OUTPUT
-    || path.join(qaRoot, "artifacts/build652-renderer-stress"),
+    || path.join(qaRoot, "artifacts/build653-renderer-stress"),
 );
 const requestedCycles = Number.parseInt(
   process.env.MEH_RENDER_STRESS_CYCLES || "10",
@@ -34,8 +35,8 @@ function assert(condition, message) {
 
 const assembled = await readFile(assembledPath, "utf8");
 assert(
-  /window\.MEH_BUILD=652;/.test(assembled),
-  "STALE_ASSEMBLY: meh5.html is not Build 652; run `node assemble.js` first",
+  /window\.MEH_BUILD=653;/.test(assembled),
+  "STALE_ASSEMBLY: meh5.html is not Build 653; run `node assemble.js` first",
 );
 assert(
   !/\/\*__(?:PROFILE_LAWS|ENGINE|TWOWAY|CAD)__\*\//.test(assembled),
@@ -120,8 +121,8 @@ await new Promise((resolve, reject) => {
 const address = server.address();
 assert(address && typeof address !== "string", "QA server did not bind");
 const target = `http://127.0.0.1:${address.port}/meh5.html`
-  + "?build=652&reset=1&view=nodrv&mountFocus=0"
-  + "&qa=build652-renderer-stress";
+  + "?build=653&reset=1&view=nodrv&mountFocus=0"
+  + "&qa=build653-renderer-stress";
 
 const browser = await chromium.launch({
   headless: true,
@@ -604,7 +605,7 @@ try {
     "one or more stress edit/anchor rebuilds did not dispose their old group",
   );
   manifest = {
-    build: 652,
+    build: 653,
     pass: true,
     generatedAt: new Date().toISOString(),
     requestedCycles: cycles,
@@ -652,7 +653,7 @@ try {
     `${JSON.stringify(manifest, null, 2)}\n`,
   );
   console.log(
-    "BUILD 652 RENDERER STRESS PASS"
+    "BUILD 653 RENDERER STRESS PASS"
       + ` · ${cycles} measured cycles after warm-up`
       + ` · ${manifest.totalObservedDisposals} replacement disposals`
       + " · 0 WebGL context losses"

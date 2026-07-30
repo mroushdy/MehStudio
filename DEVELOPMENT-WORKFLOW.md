@@ -14,7 +14,7 @@ without weakening the manufacturing gates.
 | Broad headless selection sweep | `cd qa && npm run qa:headless-sweep` | Exercise the exposed two-way selection matrix without a DOM or GPU |
 | Resource-safe regression tier | `cd qa && npm run qa` | Cross-subsystem policy, placement, state, and source contracts |
 | Exact survivor check | The focused exact test for the changed fixture | Generate and audit printable topology on CPU |
-| Browser contract and inspection | `npm run qa:build652-delivery`, `npm run qa:build652-six-ui`, then render inspection | Verify real UI state, WebGL scene semantics, cameras, and appearance |
+| Browser contract and inspection | `npm run qa:build653-delivery`, `npm run qa:build653-six-ui`, then render inspection | Verify real UI state, WebGL scene semantics, cameras, and appearance |
 | Final serialized gate | `cd qa && npm run qa:release` | Replay the complete current Node, exact, and browser admission sequence |
 
 Do not run the full release tier, an exact export, and browser visual QA in
@@ -164,8 +164,8 @@ npm run qa
 # Exact witnesses are fixture-specific; select one from qa/README.md.
 
 # 5. Finish with current browser identity/state contracts and visual review.
-npm run qa:build652-delivery
-npm run qa:build652-six-ui
+npm run qa:build653-delivery
+npm run qa:build653-six-ui
 
 # 6. After final source assembly, run the complete serialized release tier.
 npm run qa:release

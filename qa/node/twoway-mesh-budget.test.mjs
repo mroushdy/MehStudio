@@ -151,7 +151,7 @@ function sub3(a, b) {
   return [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
 }
 
-test("manufacturing policy uses the Build 652 fixed grid and bounded phase caps", () => {
+test("manufacturing policy uses the Build 653 fixed grid and bounded phase caps", () => {
   const limits = engine.twoWayMeshLimits.manufacturing;
   assert.equal(limits.step, 0.0025);
   assert.equal(limits.maxAxisSamples, 320);
@@ -362,7 +362,7 @@ test("unknown mesh intents fail closed", () => {
   );
 });
 
-test("historical admission matrix remains pinned while current preflights identify the Build 652 policy", () => {
+test("historical admission matrix remains pinned while current preflights identify the Build 653 policy", () => {
   assert.equal(admissionMatrix.schemaVersion, 2);
   assert.equal(admissionMatrix.expectedBuild, 649);
   assert.equal(admissionMatrix.expectedPolicyVersion, "b648-mount-envelope-v2");
@@ -392,7 +392,7 @@ test("historical admission matrix remains pinned while current preflights identi
      immutable historical record. Builds 650 through 652 deliberately changed
      mount/manifold geometry and policy, so replaying those values as current
      certification would be a false assertion. Current preflight/topology is
-     covered by the Build 652 release gates; the named Build 650 exact tests
+     covered by the Build 653 release gates; the named Build 650 exact tests
      remain historical geometry witnesses. */
 });
 
@@ -496,7 +496,11 @@ test("ordinary two-way rendering cannot start an exact worker", () => {
   assert.match(shell, /id="bExact">GENERATE EXACT MESH/);
   assert.match(shell, /exactButton\.onclick=/);
   assert.match(shell, /function cancelTwoWayMesh\(/);
-  assert.match(shell, /addEventListener\('pagehide',\(\)=>cancelTwoWayMesh/);
+  assert.match(
+    shell,
+    /addEventListener\('pagehide',event=>\{[\s\S]*?cancelTwoWayMesh\('Page closed',true\);[\s\S]*?if\(!event\.persisted\)releaseRendererResources\('pagehide'\);/,
+    "page exit must cancel exact work and release non-BFCache renderer resources",
+  );
 });
 
 test("worker completion and STL download both reject stale state identity", () => {

@@ -51,7 +51,7 @@ test("parametric runner is deterministic, cacheable, and browser-free", () => {
   for (const result of coldManifest.results) {
     assert.equal(result.status, "valid");
     assert.equal(result.cacheHit, false);
-    assert.ok(result.solvedStateHash.startsWith("b652-"));
+    assert.ok(result.solvedStateHash.startsWith("b653-"));
     assert.ok(result.artifacts?.obj);
     const obj = fs.readFileSync(
       path.join(coldOutput, result.artifacts.obj),

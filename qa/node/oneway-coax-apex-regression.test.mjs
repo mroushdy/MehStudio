@@ -35,7 +35,6 @@ const CASES = Object.freeze({
     tap: Object.freeze({
       radius: 0.008102556018035717,
       ringRadius: 0.03684455601803572,
-      emittedRingRadius: 0.03643255743063174,
       station: 0.0519249915232615,
       area: 0.00020625,
     }),
@@ -58,7 +57,6 @@ const CASES = Object.freeze({
     tap: Object.freeze({
       radius: 0.006066677887443902,
       ringRadius: 0.028141602887443905,
-      emittedRingRadius: 0.027826865157201515,
       station: 0.04009815226947416,
       area: 0.000115625,
     }),
@@ -175,18 +173,33 @@ for (const [key, expected] of Object.entries(CASES)) {
       const tap = taps[index];
       const expectedPhi = (index + 0.5) * 2 * Math.PI / design.N;
       close(tap.phi, expectedPhi, ANGLE_TOLERANCE, `tap ${index} azimuth`);
-      /*
-       * Angular layout currently evaluates its nominally round n=2 section on
-       * the canonical 18-facet panel perimeter, while dishMesh emits the
-       * acoustic face with the smooth radial sampler. That reviewed difference
-       * moves this diagonal ring inward by 0.31–0.42 mm. Lock both coordinates
-       * so a later shared section kernel has to migrate them deliberately
-       * instead of shifting the hard-won driver fit as a side effect.
-       */
-      close(radius(tap.tap), expected.tap.emittedRingRadius,
+      /* The driver-owned coax interface remains circular through its
+       * registered handoff. An angular downstream horn must not move diagonal
+       * tap centers to the corners of a panel section. */
+      close(radius(tap.tap), expected.tap.ringRadius,
         LENGTH_TOLERANCE, `tap ${index} ring radius`);
-      assert.ok(design.center - radius(tap.tap) > 0);
-      assert.ok(design.center - radius(tap.tap) < 0.0005);
+      close(radius(tap.tap), design.center,
+        LENGTH_TOLERANCE, `tap ${index} canonical ring radius`);
+      close(Math.hypot(...tap.normal), 1,
+        LENGTH_TOLERANCE, `tap ${index} unit normal`);
+      const radial = [
+        0,
+        tap.tap[1] / design.center,
+        tap.tap[2] / design.center,
+      ];
+      const tangent = [0, -radial[2], radial[1]];
+      assert.ok(
+        tap.normal[1] * radial[1] + tap.normal[2] * radial[2] > 0,
+        `tap ${index} normal must point radially outward`,
+      );
+      close(
+        tap.normal[1] * tangent[1] + tap.normal[2] * tangent[2],
+        0,
+        ANGLE_TOLERANCE,
+        `tap ${index} normal must not contain an angular-panel tangent`,
+      );
+      assert.ok(tap.normal[0] < 0,
+        `tap ${index} normal must face back toward the driver`);
       close(tap.tap[0], expected.tap.station,
         LENGTH_TOLERANCE, `tap ${index} station`);
       close(tap.slot.sa, design.r,
