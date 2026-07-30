@@ -1,149 +1,119 @@
-# Build 652 source manifest
+# Build 657 source manifest
 
-Build 652 is the current source. Files whose names begin with `build649-` or
-`build650-`, plus `BUILD650-HANDOFF.md`, are retained regression/history
-records; their ledgers, exact witnesses, screenshots, and hashes are not
-current Build 652 certification. The current contract is
-`BUILD652-HANDOFF.md`.
+Build 657 is the current release source identity. Earlier numbered handoffs,
+browser witnesses, and exact certificates remain historical regression
+evidence and do not certify this build.
 
-The transfer source tree contains the current application plus the source
-material that is most useful for continuing geometry and acoustic work. A
-future transfer archive should preserve this same set. The
-reference basenames listed below live under the archive's `research-sources/`
-directory.
-The application runtime also vendors Three.js r128 and its MIT license under
-`application/v5/vendor/three-r128/`; `qa/node_modules` is not required at
-runtime.
+## Generated application
 
-## Current application geometry source
+`meh5.html` is assembled, in order, from:
 
-- `application/v5/shell.html` — UI and analytic Three.js inspection renderer
-- `application/v5/profile-laws.js` — canonical monotone axial profile laws
-- `application/v5/ath-source-math.js` — standalone, immutable ATH/OS-SE/R-OSSE
-  equation and provenance library; it is regression-linked to the production
-  profile laws but is not part of the generated browser bundle
-- `application/v5/engine.js` — acoustic/geometry solver
-- `application/v5/twoway-core.js` — manufacturing plan, fields, and exact mesh
-- `application/v5/meh5.html` — generated Build 652 application; regenerate it
-  from the four sources above with `node assemble.js`
-- `application/v5/BUILD652-HANDOFF.md` — current delivered behavior, limits,
-  source hashes, and verification workflow
-- `application/v5/qa/perf/` — browser-independent bounded worker runner,
-  benchmark, cache/preview contract, tests, and WebGPU roadmap
-- `application/v5/BUILD650-HANDOFF.md` — historical predecessor retained to
-  explain the six-woofer, mounting-record, and profile-law checkpoint
-- `application/v5/docs/build649-closure-ledger.md` and
-  `application/v5/qa/build649-evidence.json` — superseded historical ledger
-  and inspected-render evidence; do not use them to certify Build 652
-- `application/v5/docs/build649-closure-evidence-map.md` — human review map for
-  every Build 649 closure row
-- `application/v5/docs/build649-curved-facets.md` — distinct four-seam curved
-  facet topology and its manufacturing limits
-- `application/v5/docs/build649-rosse-control-parity.md` — admitted
-  profile/section controls and explicit R-OSSE/rollover refusals
-- `application/v5/docs/build649-source-family-contract.md` — shared
-  one-way/two-way infrastructure and topology-specific boundaries
-- `application/v5/qa/cases/exact-production-admission.json` — superseded
-  Build 649 exact-admission certificates and intentional held cases; the
-  pinned policy and hashes are retained for history, not Build 652 admission
-- `application/v5/docs/build648-mount-containment-and-sections.md` — retained
-  Build 648 predecessor for the historical `b648-mount-envelope-v2`
-  containment-policy record
-- `application/v5/docs/build647-parametric-geometry.md` — retained predecessor
-  for lumen, spacing, throat, profile, mouth/count, LF-reference, and
-  historical Build 647 certification details
-- `application/v5/docs/ath-source-math-audit.md` — five-source equation,
-  parameter, worked-example, limitation, discrepancy, and test coverage map
+1. `shell.html`
+2. `profile-laws.js`
+3. `engine.js`
+4. `twoway-core.js`
+5. the ordered schema-2 modules listed by `assemble.js`
 
-## Current source identity
+The release delivery contract independently reconstructs this sequence and
+requires byte-for-byte equality. The retired schema-1 `threeway-core.js` is
+kept for historical tests only and is deliberately excluded from the browser
+bundle.
 
-The source-frozen Build 652 identities are:
+## Schema-2 three-way modules
 
-| File | Bytes | SHA-256 |
-| --- | ---: | --- |
-| `shell.html` | 390,534 | `5f10652f9bd15a6cdd6a37d02d013ba137d6620e73c4990a51f1772c64a490fa` |
-| `profile-laws.js` | 42,773 | `3d838f83a81a1af250c3bde5f59759dc7fbde1baeb14781e50352b8b05b43878` |
-| `engine.js` | 294,219 | `61b9b1ef91991b2e1735398bf72889bce956881c48e947a4e0e05d99f4abc30f` |
-| `twoway-core.js` | 296,966 | `040a053d3414246326da71fb7ea19b029617e056792a8dae4b37501bb3c71a3e` |
-| generated `meh5.html` | 1,024,449 | `65d7338fa9e3f2c1586ee25fb041ac6c5544495598a621dea74493532f615172` |
+- `threeway-state-contract.js`
+- `threeway-reference-cards.js`
+- `threeway-driver-db.js`
+- `threeway-family-catalog.js`
+- `threeway-analysis-presets.js`
+- `threeway-quick-starts.js`
+- `threeway-acoustics.js`
+- `threeway-chamber-solver.js`
+- `threeway-coupled-network.js`
+- `threeway-horn-surface.js`
+- `threeway-aperture-solver.js`
+- `threeway-station-solver.js`
+- `threeway-interface-planner.js`
+- `threeway-lumen-geometry.js`
+- `threeway-passage-solver.js`
+- `threeway-mount-host.js`
+- `threeway-mount-solver.js`
+- `threeway-package-input.js`
+- `threeway-package-solver.js`
+- `threeway-preview-geometry.js`
+- `threeway-solid-geometry.js`
+- `threeway-solid-intent.js`
+- `threeway-render-assembly.js`
+- `threeway-render-model.js`
+- `threeway-analysis-export.js`
+- `threeway-solver.js`
+- `threeway-renderer.js`
+- `threeway-solid-plan.js`
+- `threeway-exact-kernel.js`
+- `threeway-fabrication-gate.js`
+- `threeway-controller.js`
+- `threeway-ui.js`
 
-`qa/node/build652-delivery-contract.test.mjs` reconstructs the generated file
-from the four source modules and requires exact equality. A read-only
-reconstruction of this frozen source set matches the delivered `meh5.html`
-byte-for-byte at 1,024,449 UTF-8 bytes.
+These modules use explicit schema-2 state and hash parity. Analytic render
+geometry cannot become exact-solid evidence. The exact adapter requires an
+injected, versioned provider/kernel and explicit tolerance, and the separate
+fabrication gate requires a deep current audit before it can emit an
+authorization record. No provider, STL bytes, or file writer is bundled.
 
-The supplementary source-backed math layer added by the ATH audit is not a
-fifth assembled application input:
+## Research and provenance
 
-| File | Bytes | SHA-256 |
-| --- | ---: | --- |
-| `ath-source-math.js` | 44,969 | `2c374a3d57648d3a370480b2aea461b01b2ed0466f3c9f86d7e274526c10d2b4` |
-| `qa/node/ath-source-math.test.mjs` | 16,248 | `3e28c34c9b69d0a8a785ce25ad8eb424dc3c74db8d78343c0e025531f779c86d` |
+Current research records:
 
-## Final verification boundary
+- `docs/threeway-primary-source-ledger.md`
+- `docs/threeway-build-visual-ledger.md`
+- `docs/threeway-research-manifest.md`
+- `docs/threeway-king-2026-math-notes.md`
+- `docs/threeway-rebuild-blueprint.md`
+- `research/threeway-sources/`
+- `reference/known-builds.json`
+- `reference/visual-audit.json`
+- `reference/images/`
 
-- The final focused source/geometry lane passes 27/27 contracts.
-- The retention lane passes 8/8. Its P03 detachable exact witness produces
-  horn plus two cartridge parts with raw component counts `[1, 1, 1]`.
-- The six-woofer exact matrix covers manufacturing and display at both 5 mm
-  and 6.5 mm woofer-fastener diameters; every mesh has raw component count
-  `1`.
-- The fresh angular/conical six-W5 browser state owns and equalizes all 12
-  exact manifold paths, passes exact admission, and leaves the refusal overlay
-  hidden.
-- Exact acceptance uses the raw component counts with zero discarded
-  components. No component filtering is used.
-- The complete elevated, serialized `npm run qa:release` gate passes on these
-  identities, including all Node, exact, and browser lanes, and terminates
-  with `QA RELEASE PASS`.
-- The release headless sweep covers 210 scenarios with 18 intentional
-  explicit refusals and zero failures.
+The source ledger separates documented topology, derived engineering math,
+visual observations, and unknowns. Reference cards do not silently promote
+photographs or remembered dimensions into product geometry.
 
-## Primary acoustic and horn references
+## QA boundary
 
-- `Horn Studio.html`
-- `horn_studio_6.html`
-- `R-OSSE Waveguide rev7.pdf`
-- `ATH/OS-SE Waveguide.pdf`
-- `ATH/Ath-AP1.pdf`
-- `ATH/ATH - Advanced-Transition Horns.html`
-- `ATH/ATH - Segmentizing a horn.html`
-- `ATH/MANIFEST.md` — exact SHA-256 identities and the intentional
-  deduplication reference to the existing R-OSSE PDF
-- `Synergy Calc v5.xls`
-- `Synergy Calc V5.pdf`
-- `Scott Hinson MEH reference.pdf`
-- `JMOD Multiple Entry Horn.pdf`
-- `MEH.pdf`
-- `Solana DIY Guide.pdf`
+- `qa/node/build655-source-contract.test.mjs` checks ordered assembly,
+  browser globals, dependency capture, build identity, and schema-1 exclusion.
+- `qa/node/threeway-*.test.mjs` covers the canonical state, physics, geometry,
+  UI transaction, rendering, solid-plan, exact-adapter, and fabrication gates.
+- `qa/browser/build655-delivery-contract.mjs` is the current live isolation,
+  storage, export-lock, and topology-restoration contract.
+- `qa/release/build655-package-contract.mjs` verifies the frozen archive,
+  per-file hashes, exclusions, and credential-free delivery.
+- The historical Build 653 browser witnesses remain useful for unchanged
+  one/two-way behavior but are not Build 654 admission.
 
-## Driver and tap references
+The final archive-wide file hashes are recorded in
+`BUILD655-FILES.sha256`. The sibling ZIP hash binds the delivered
+archive. Installed dependencies, generated QA artifacts, temporary extraction
+files, local pins, credentials, and Git authentication are excluded.
 
-- `B&C_6FHX51-GC-STEP.stp`
-- `B&C_6FHX51_02_Final-2k.png`
-- `B&C_6FHX51_03_Final-2k.png`
-- `driver-tap-placement-76deg.png`
+`BUILD655-FILES.sha256` intentionally omits itself from its listed-file
+integrity domain. The final private ZIP includes that manifest, while the
+sibling ZIP hash binds the whole archive. Thus the two checks are distinct:
+the manifest verifies the listed source files; the ZIP hash verifies the
+delivered container and its included manifest.
 
-## Extracted model library
+## Truth boundary
 
-`engineering/reference-mount-audit/` contains the already-extracted reference
-models used to study mounting lands, chambers, throats, and tap passages. This
-includes the Synergy Parametric, Optimiert, SB Horn, Celilo, 300 Hz MEH, K-402
-wood, and related STL/SKP/reference material.
-
-## Engineering notes
-
-`engineering/docs/` and `engineering/HANDOFF.md` contain the accumulated audits,
-equations, architecture decisions, known-build studies, and mounting/tap plans
-that live above the v5 application folder in the original workspace.
-
-## Deliberately omitted
-
-- Duplicate copies of the same Scott Hinson PDF
-- Installed `node_modules` and the local CAD Python environment
-- Old/disposable render sweeps and caches; the pinned Build 649 closure
-  artifacts referenced by `qa/build649-evidence.json` are historical release
-  evidence, not current Build 652 certification
-- Credentials, access tokens, browser state, and Git authentication
-- Redundant original ZIP archives whose extracted contents are already present
-  in the reference-mount audit
+- Analysis success is not an exact mesh.
+- An exact closed manifold is not a fabrication admission by itself.
+- A fabrication authorization record is not an acoustic, structural, or
+  hardware validation.
+- T3 and CX3 reference cards remain explicitly incomplete until their missing
+  driver-, station-, chamber-, aperture-, mount-, and package-specific
+  evidence is supplied.
+- H3 can complete the canonical analysis path when explicit compatible driver,
+  horn, and package records are supplied; that still does not authorize
+  manufacturing.
+- Legacy three-way Hornresp export remains quarantined because its ME1/ME2/Nd,
+  direction, unit, and chamber/entry mapping disagrees with the audited source
+  records.

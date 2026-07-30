@@ -194,7 +194,19 @@ test("Hinson and JMOD remain distinct evidence records with different tap proven
   assert.notEqual(hinsonReference.mount, jmodReference.mount);
 });
 
-test("Solana is documented as remote-bandpass printed-cell evidence and refused as panel CAD", () => {
+test("SynTripP and Solana are source-bounded radial adaptations, not recovered CAD", () => {
+  const syntripp = build("2way", "syntripp");
+  assert.equal(syntripp.evidence, "hybrid");
+  assert.equal(syntripp.s.twoArch, "radial");
+  assert.equal(syntripp.s.wPre, "cl10");
+  assert.equal(syntripp.s.nW, 2);
+  assert.equal(syntripp.s.cdSel, "cdx143050");
+  assert.match(syntripp.source, /not SynTripP CAD or validated acoustic performance/i);
+  const syntrippSolve = engine.solve(structuredClone(syntripp.s));
+  assert.equal(syntrippSolve.infeasible, false);
+  assert.equal(syntrippSolve.ev.plan.drivers.length, 2);
+  assert.equal(syntrippSolve.ev.plan.allPorts.length, 4);
+
   assert.match(sourceStudy, /Solana waveguide\s+module/);
   assert.match(sourceStudy, /remote rear \(bandpass\) volume/);
   assert.match(
@@ -202,24 +214,36 @@ test("Solana is documented as remote-bandpass printed-cell evidence and refused 
     /front chamber volume\/port dims themselves \(baked into the model/,
   );
   assert.match(contract, /remote-bandpass \/ integrated printed-cell reference/);
-  assert.match(contract, /not Hinson panel CAD, not JMOD panel CAD/);
-  assert.match(contract, /has no reproducible `solana` named design/);
+  assert.match(contract, /not\s+Hinson panel CAD, not JMOD panel CAD/);
+  assert.match(contract, /generic radial-cell adaptation/);
 
-  for (const topology of Object.keys(engine.BUILDS)) {
-    assert.equal(
-      engine.BUILDS[topology].some(record => /solana/i.test(record.key)),
-      false,
-      `Solana was mislabeled as a reproducible ${topology} preset`,
-    );
-  }
-  assert.equal(
-    knownBuilds.entries.some(entry => /solana/i.test(entry.id)),
-    false,
-    "Solana was mislabeled as recovered dimensional CAD",
+  const solana = build("2way", "solana");
+  assert.equal(solana.evidence, "hybrid");
+  assert.equal(solana.s.twoArch, "radial");
+  assert.equal(solana.s.wPre, "w65");
+  assert.equal(solana.s.nW, 4);
+  assert.equal(solana.s.npW, 1);
+  assert.equal(solana.s.cdSel, "dh450");
+  assert.match(solana.source, /not claim an exact Solana replica or validated acoustics/i);
+  const solanaSolve = engine.solve(structuredClone(solana.s));
+  assert.equal(solanaSolve.infeasible, false);
+  assert.equal(solanaSolve.ev.plan.drivers.length, 4);
+  assert.equal(solanaSolve.ev.plan.allPorts.length, 4);
+
+  const solanaReference = knownBuilds.entries.find(
+    entry => entry.id === "solana-rev103-radial-adaptation",
   );
+  assert.ok(solanaReference);
+  assert.equal(solanaReference.family, "radial");
+  assert.equal(solanaReference.acousticValidation, "not claimed by the MEH Studio adaptation");
+
+  const admitted = engine.migrateTwoWayState({
+    ...structuredClone(solana.s),
+    _smart2waySchema: 3,
+  });
+  assert.equal(admitted.twoDesign, "solana");
 
   for (const [field, value] of [
-    ["twoDesign", "solana"],
     ["twoArch", "solana"],
     ["twoFamily", "solana"],
   ]) {
@@ -238,6 +262,18 @@ test("Solana is documented as remote-bandpass printed-cell evidence and refused 
       `current-schema ${field}=solana did not refuse`,
     );
   }
+
+  const dh350 = knownBuilds.entries.find(
+    entry => entry.id === "local-dh350-meh-half",
+  );
+  assert.ok(dh350);
+  assert.deepEqual(dh350.wooferCounts, []);
+  assert.equal(dh350.acousticValidation, "not claimed");
+  assert.equal(
+    engine.BUILDS["2way"].some(record => /dh350/i.test(record.key)),
+    false,
+    "the unmeasured DH350 reference became a runnable preset",
+  );
 });
 
 test("calculated family bounds keep compact and large valid panel witnesses", () => {

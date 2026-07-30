@@ -66,7 +66,21 @@ These records are separate even though both can use the panel construction
 family. Editing either record creates a calculated design; values are never
 borrowed between them.
 
-## Solana classification and refusal
+### SynTripP
+
+The supplied Art Welter construction drawings establish a 27 × 15 inch
+plywood enclosure, 0.453 inch inner-horn stock, an angular two-part horn, and
+a 6 × 4 inch throat-adapter plate. The project driver record identifies two
+B&C 10CL51 woofers and a Celestion CDX14-3050. The drawings do not publish the
+entry area, passage length, front-chamber volume, or an acoustic coverage
+target.
+
+The selectable `syntripp` record is therefore a **calculated radial-mount
+adaptation** of that source complement and envelope. Its two-driver cell is
+solved by the ordinary radial kernel. It is not the original SynTripP CAD and
+does not claim source-validated acoustic performance.
+
+### Solana
 
 The supplied *Solana DIY Guide* describes a different source topology:
 
@@ -78,18 +92,28 @@ The supplied *Solana DIY Guide* describes a different source topology:
 - fixed front-chamber parameters whose numeric volume and entry dimensions are
   not published in the guide.
 
-Solana is therefore a **remote-bandpass / integrated printed-cell reference**,
-not Hinson panel CAD, not JMOD panel CAD, and not a generic four-woofer panel
+Solana remains a **remote-bandpass / integrated printed-cell reference**, not
+Hinson panel CAD, not JMOD panel CAD, and not a generic four-woofer panel
 preset. Useful transferable construction ideas include quarter splitting,
 locating pins, heat-set inserts, captive throat-adapter bolts, gasket export,
-and rear-alignment records. They do not recover the missing acoustic cell.
+and rear-alignment records. They do not recover the source cell as parametric
+construction evidence.
 
-Build 649 has no reproducible `solana` named design. Loading `solana` (or any
-other unknown source name) as a current-schema `twoDesign`, `twoArch`, or
-`twoFamily` is explicitly refused with `CURRENT_STATE_ENUM_UNSUPPORTED`. A
-future Solana implementation must be a new topology with driver-specific
-front-cell evidence and its own path/package validation; it must not be
-silently normalized to `arch:panel`.
+The selectable `solana` record preserves the documented B&C DH450 plus four
+B&C 6NDL38 complement and the 376 × 376 × 150 mm one-piece print envelope, but
+explicitly solves a **generic radial-cell adaptation**. The supplied STEP/STL
+files are retained as source evidence; the current kernel does not import or
+reverse-engineer those solids. Thus the adaptation is neither an exact Solana
+replica nor a source-validated acoustic model. `twoDesign: "solana"` is
+admitted, while `twoArch: "solana"` and `twoFamily: "solana"` remain refused:
+Solana is a named source adaptation, not a third generic construction family.
+
+### Local DH350 material
+
+`DH350 MEH Half.stl`, `Throat Adapter.stl`, and the associated ADAU1701 project
+are indexed only as a local geometry/provenance reference. The available files
+do not establish a woofer complement, chamber dimensions, crossover, or
+validated acoustic result, so they do not create a runnable design preset.
 
 ## Calculated family limits
 

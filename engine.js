@@ -1979,8 +1979,8 @@ function layout(S,st){
      falls out of the path length. fxHi/fxLo become CEILINGS to respect. */
   const seatW=S.odW*CM/2+0.011+(S._slotPad||0), seatM=S.odM*CM/2+0.011+(S._slotPad||0);   // _slotPad: the tap-footprint fixed point (his 'better system')
   const offW=0;
-  /* DIALECT BY COVERAGE (pin #1): wide format -> woofer PAIRS on top/bottom walls
-     (Danley canon); tall -> side pairs; near-square/round -> ring. */
+  /* COVERAGE-DRIVEN PLACEMENT (pin #1): wide format -> woofer pairs on
+     top/bottom walls; tall -> side pairs; near-square/round -> ring. */
   const ratio=Math.tan(d2r(S.covH/2))/Math.tan(d2r(S.covV/2));
   const nWn=((S.nW|0)||2);
   /* THE PLACEMENT MATRIX (docs/placement_matrix.md - pin #15):
@@ -1996,7 +1996,7 @@ function layout(S,st){
                 :auto;
   const modeW=(S.placeW&&S.placeW!=='auto')? S.placeW : archMode; // architecture owns AUTO; explicit placement remains an advanced override
   S.dialectW=modeW+(S.placeW&&S.placeW!=='auto'?'':' (auto)');
-  /* M7 - SH96 CANON (batch-2 photo correction): big multi-ways run the WOOFERS
+  /* M7 - CORNER-BOARD REFERENCE (batch-2 photo correction): big multi-ways run the WOOFERS
      on the CORNER BOARDS (the 45° chamfer shelves, tight to the throat) and the
      mids in a TIGHT RING around the apex plate. 'chamfer' rides the proven
      diag/chamfer machinery; mids then ALWAYS apex-ring (corners are taken). */
@@ -2060,7 +2060,7 @@ function layout(S,st){
   };
   /* pins #1/#23/#25 - flow direction u and cross direction v IN the wall plane
      at each seat. A straddling pair rides v (both ports on the SAME orthogonal
-     disc = equal throat paths, Danley corner canon), never u ("behind each
+     disc = equal throat paths in the corner-board reference), never u ("behind each
      other" was the v4-era mistake the pins caught). */
   const flowCross=(nrm)=>{
     const fx=[1-nrm[0]*nrm[0], -nrm[0]*nrm[1], -nrm[0]*nrm[2]];
@@ -2176,7 +2176,7 @@ function layout(S,st){
       for(const v2 of offsetVerts(st,x2,S.wallT||0.012)){
         if(Math.abs(v2[0])>hyB) hyB=Math.abs(v2[0]);
         if(Math.abs(v2[1])>hzB) hzB=Math.abs(v2[1]); } }
-    /* DANLEY-DIALECT VENT (the b529 canon fork - ruling (a), SOURCED b530):
+    /* CORNER-BOARD REFERENCE VENT (the b529 reference fork, sourced b530):
        the record's corner taps are SMALL and cut THROUGH THE WALLS AT THE
        SEAM - not bounded by the chamfer chord. SH-50 tape measure: 2.5in
        round taps at 10.5in from the throat (van Ommen, diyaudio 292379
@@ -2298,9 +2298,30 @@ function layout(S,st){
     const tapDesign=coaxTapDesign(S,cgL);
     const nT=tapDesign.N;
     const xT=(st.xTap!==undefined)? st.xTap : (st.xAdapter||0.02)*0.85;   // the ring station derives from the DRIVER (photo canon)
+    /* The protected coax handoff is circular even when the downstream horn
+       uses classic angular panels. `surfPt()` deliberately follows the horn's
+       selected section topology, so using it here turns a diagonal tap ring
+       into the corners of a square (`r * sqrt(2)`) before the registered
+       circular handoff. Build the point and normal from the protected radial
+       meridian instead. This is the same circular surface consumed by
+       dishMesh and keeps the canonical tap-design radius physical. */
+    const coaxPoint=(x,phi)=>{
+      const r=tapDesign.center,[ct,sn]=snappedTrig(phi);
+      return [x,r*ct,r*sn];
+    };
+    const coaxNormal=(x,phi)=>{
+      const e=Math.max(1e-6,st.depth/4096),
+        x0=Math.max(0,x-e),x1=Math.min(st.xAdapter||st.depth,x+e),
+        d0=dimsAt(st,x0),d1=dimsAt(st,x1),
+        r0=(d0.a+d0.b)/2,r1=(d1.a+d1.b)/2,
+        dr=(r1-r0)/Math.max(1e-12,x1-x0),
+        [ct,sn]=snappedTrig(phi),
+        length=Math.hypot(dr,ct,sn)||1;
+      return [-dr/length,ct/length,sn/length];
+    };
     const taps=[]; let rMax=0;
     for(let k=0;k<nT;k++){ const a2=(k+0.5)/nT*2*Math.PI;
-      const p=surfPt(st,xT,a2); taps.push([a2,p]); rMax=Math.max(rMax,Math.hypot(p[1],p[2])); }
+      const p=coaxPoint(xT,a2); taps.push([a2,p]); rMax=Math.max(rMax,Math.hypot(p[1],p[2])); }
     const fxCo=Math.round(tapDesign.fx);
     S.fxDerived={hi: fxCo, lo: fxCo};
     const apC=tapDesign.area*1e4;
@@ -2316,7 +2337,7 @@ function layout(S,st){
       var bandC={w0,rIn:rInL,rOut:rOutL};
     }
     const apEmC=(4*saC*sbC-(4-Math.PI)*sbC*sbC)*1e4;   // cm^2 EMITTED per slot
-    for(const [a2,p] of taps){ const nrm=surfN(st,xT,a2);
+    for(const [a2,p] of taps){ const nrm=coaxNormal(xT,a2);
       out.push({kind:'coaxtap', x:xT, phi:a2, center:p, normal:nrm, od:0.02, dp:0,
         tap:p, seatR:sbC+0.004, slot:{sa:saC, sb:sbC, ap:apC, apEm:apEmC,
           band:bandC, radial:true, design:tapDesign}}); }
@@ -2381,10 +2402,10 @@ function acoustics(S,L,st){
   if(S.topo==='3way') kinds.push(['mid', S.sdM||50, S.vtcM||40, S.xmM||3, [4.0,8.0], S.fxDerived&&S.fxDerived.lo, S.fxDerived&&S.fxDerived.hi, (S.npM|0)||1]);
   for(const [kind,sd,vtc,xm,band,fLow,fx,np] of kinds){
     const drs=L.filter(d=>d.kind===kind); if(!drs.length||!fx||!fLow) continue;
-    /* THE DANLEY DIALECT (b529 canon fork - ruling (a), SOURCED b530): corner-
-       board woofers ride the RECORD's tap, not the velocity-derived one; the
-       apex-ring mids of the same dialect ride the record's 3/4in mid tap. */
-    const danley=(kind==='woof' && !!drs[0].board) || (kind==='mid' && L.some(d=>d.board));
+    /* ARCHIVED REFERENCE-AREA MODE (b529 fork, sourced b530): corner-board
+       woofers ride the SH-50 tape-measured tap, not the velocity-derived one;
+       apex-ring mids in that provisional layout ride its 3/4in mid tap. */
+    const referenceArea=(kind==='woof' && !!drs[0].board) || (kind==='mid' && L.some(d=>d.board));
     const apRec=kind==='mid'? 2.85 : 31.67;              // cm^2: 3/4in mid tap / 2.5in woofer tap (SH-50 tape measure)
     /* VELOCITY FIRST (nc535's diyaudio worst-case heuristic - b530 attribution
        correction: NOT Waslo compendium canon, and Hinson's 17 m/s (MEH.pdf
@@ -2396,9 +2417,9 @@ function acoustics(S,L,st){
     const explicit=two&&(S.tapBasis==='published'||S.tapBasis==='manual')&&(+S.tapAreaW)>0;
     const crVel=17/(2*Math.PI*fLow*(xm/1000));           // diagnostic only on the rebuilt two-way
     const crTarget=Math.max(1.5,Math.min(20,+S.tapCRW||4.5));
-    const cr=danley? sd/apRec : two?(explicit?sd/(+S.tapAreaW):crTarget)
+    const cr=referenceArea? sd/apRec : two?(explicit?sd/(+S.tapAreaW):crTarget)
                                  :Math.max(1.5, Math.min(band[1], crVel));
-    const ap=danley? apRec : two?(explicit?(+S.tapAreaW):sd/crTarget)
+    const ap=referenceArea? apRec : two?(explicit?(+S.tapAreaW):sd/crTarget)
                                  :sd/cr;                 // total open area per driver
     const shp=(kind==='mid'? S.shM : S.shW)||'slot';       // his call: ROUND is classic for many horns
     for(const d of drs){ const apP=ap/(np||1), A=apP*1e-4;  // pin #19: area split across the ports
@@ -2431,15 +2452,15 @@ function acoustics(S,L,st){
        actually cuts) - identical to the demand unless a clamp bit */
     const apEmD=drs[0].slot.apEm, crEm=sd/apEmD;
     add(kind.toUpperCase(),'Compression ratio Sd/Ap',crEm.toFixed(1)+':1',
-      danley||two? crEm>=1.5&&crEm<=12 : crEm>=band[0],
-      danley||two? crEm>=1.2&&crEm<=15 : crEm>=band[0]*0.6,
-      danley? 'DANLEY DIALECT: '+(kind==='mid'?'one 3/4in round tap per mid':'one 2.5in round corner tap per woofer')+' = the SH-50 tape-measured record (van Ommen, diyaudio 292379 #4957246; chrisbln thing:6886663 ships the same 2.5in as canon), shipped as an area-matched '+(drs[0].slot.round?'round hole':'stadium (shape follows the tap-shape knob)')+'. His SH-96 interior shot confirms the CONSTRUCTION but shows no vent (side-wall circles = handle cups, b531). An SH-96 vent measurement would harden this number'
+      referenceArea||two? crEm>=1.5&&crEm<=12 : crEm>=band[0],
+      referenceArea||two? crEm>=1.2&&crEm<=15 : crEm>=band[0]*0.6,
+      referenceArea? 'ARCHIVED REFERENCE AREA: '+(kind==='mid'?'one 3/4in round tap per mid':'one 2.5in round corner tap per woofer')+' comes from the SH-50 tape-measured record (van Ommen, diyaudio 292379 #4957246). It is emitted as an area-matched '+(drs[0].slot.round?'round hole':'stadium (shape follows the tap-shape knob)')+'. This is a provisional input for the calculated corner-board layout, not verified geometry for another commercial model'
             : two? ((explicit?'published/manual total open area':'calculated from the declared target Sd/Ap')+'; Hinson warns that excessive compression can damage cones, so the two-way gate refuses >12:1 before prototype evidence')
             : (crEm<band[0]?'below the classic band - big ports, mild loading (JMOD territory); excursion-limited duty':'derived from the 17 m/s limit, graded against the band; rides the EMITTED cut area (b532)'));
     const vel=crEm*2*Math.PI*fLow*(xm/1000);
     add(kind.toUpperCase(),'Port velocity at band low edge ('+fLow+' Hz)',vel.toFixed(1)+' m/s',
-      danley||two? true : vel<=17.2, danley||two? true : vel<=20,
-      danley? 'DANLEY DIALECT: the worst-case formula (CR*2pi*f*xm, nc535 heuristic) reads this number, yet Danley ships exactly these taps - horn loading keeps real excursion far under xm at the band edge. Stated, not graded'
+      referenceArea||two? true : vel<=17.2, referenceArea||two? true : vel<=20,
+      referenceArea? 'ARCHIVED REFERENCE AREA: the worst-case formula (CR·2π·f·Xmax, nc535 heuristic) is reported but not graded because actual horn loading and excursion are not modeled. Prototype measurement is required'
             : two? 'diagnostic only: 17 m/s is Hinson’s rear bass-reflex chuffing criterion, not a MEH tap-sizing law. Size the entry from Hornresp/BEM, chamber mass and measured SPL/excursion'
             : 'nc535 worst-case heuristic (17 m/s ~ reflex chuffing onset, Hinson MEH.pdf p.19), evaluated at the band bottom on the EMITTED cut area');
     /* his pins #20/#21: the tap must OPEN INTO THE CONE, not the frame. Sd
@@ -2484,12 +2505,12 @@ function acoustics(S,L,st){
            agree on the same port (the probe caught a 17mm skew) */
         lptEff=lpt + (wlMeas>0? wlMeas : 0.7*(((drs[0].seatR)||0.05))*mx); landed=true;
         /* pin #24: on a steeply tilted wall the printed land becomes a monster
-           wedge - say so. Danley uses spot-faces where walls run near-parallel
-           to the axis (Waslo flare 2); past ~30 deg flush is the honest mount. */
+           wedge - say so. Archived builds use spot-faces where walls run
+           near-parallel to the axis; past ~30 deg flush is the honest mount. */
         const wedge=(((drs[0].seatR)||0.05))*mx, tilt=Math.atan(mx)*180/Math.PI;
         add(kind.toUpperCase(),'Axial land wedge (wall tilt '+tilt.toFixed(0)+'°)',(wedge*1000).toFixed(0)+' mm tall',
           tilt<=30, tilt<=45,
-          'the spot-face land grows with wall tilt (seatR·tan); past ~30° the print is a wedge monster - use FLUSH on steep walls (Danley lands live on near-axial walls)');
+          'the spot-face land grows with wall tilt (seatR·tan); past ~30° the print is a wedge monster - use FLUSH on steep walls; spot-face lands belong on near-axial walls');
       }
     }
     let vtcEff=vtc;
@@ -2542,11 +2563,11 @@ function acoustics(S,L,st){
           sLam<=okS, sLam<=wnS,
           kind==='mid'?(apexRing?'apex-ring ruling B (2026-07-23): ~1.5\u00d7\u03bb/4 tolerated on the corner-board dialect - the real SH96 measures the same; strict Waslo tier applies elsewhere'
                                 :'Waslo/Hinson: every mid tap within \u03bb/4 of every other at '+fx+' Hz, or they stop summing as one source')
-                      :'woofer sections tolerate more spread (SH96 canon ~1.5\u00d7\u03bb/4 at its XO); past 2\u00d7 the section combs'); }
+                      :'woofer sections use an experimental calculated tolerance of 1.5\u00d7\u03bb/4; past 2\u00d7 the section combs. This is not verified coverage for a commercial model'); }
       const coneD=2*Math.sqrt(sd*1e-4/Math.PI)/((np||1)>=2?2:1), fCone=C/(2*coneD);
       add(K,'Cone dia vs \u03bb/2 at band top',Math.round(fCone)+' Hz max',
         fCone>=fx, fCone>=0.85*fx,
-        (np>=2?'TWO ports at ONE station straddle the cone toward the corners (Danley canon): equal throat paths, worst cone path halved; ':'')+'path spread across the cone cancels above c/(2\u00b7D); a second straddling port would buy an octave');
+        (np>=2?'TWO ports at ONE station use a symmetric calculated straddle: equal throat paths, worst cone path halved; ':'')+'path spread across the cone cancels above c/(2\u00b7D); a second straddling port would buy an octave');
     }
   }
   /* ---- M2 for the 1-way coax cone section (same laws on the plate tap ring) ---- */
@@ -3018,7 +3039,7 @@ function evaluate(S){
       if(BX.minGap!==null)
         add('BOX','Driver body envelope gap at angle',(BX.minGap*1000).toFixed(0)+' mm'+(BX.minGap<0?' (envelopes overlap)':''),
           true,true,
-          'INFORMATIONAL: full frame-OD cylinders along each mount axis - real baskets TAPER to the magnet, so a negative gap here is not yet a refusal (the SH96-class canon build overlaps on envelopes and exists in the flesh). Grading needs magnet OD per preset - a datasheet field to add, not a guess');
+          'INFORMATIONAL: full frame-OD cylinders along each mount axis - real baskets TAPER to the magnet, so a negative gap is not a pass or a manufacturing clearance. Grading needs the complete basket and magnet envelope per preset - a datasheet field to add, not a guess');
     }
   }
   /* HIS 'BETTER SYSTEM' (2026-07-23): the TAP FOOTPRINT itself - every outline
@@ -3839,16 +3860,22 @@ function shellMeshCore(S,allowCut){
   shellMeshCore._cutReport=ports.map(p=>({kind:p.d.kind, cut:p.cut}));       // battery reads which ports are truly open
   return {pos, tri};
 }
-/* ---- b535 M10/D: HORNRESP ME EXPORT (his three wizard exports, 2026-07-25,
-   archived in docs/hornresp_samples/ - the format is MEASURED canon now, not
-   inference). An ME system = THREE chained records: ME1 entry driver, ME2
-   entry driver, Nd horn carrier (dummy driver Sd 0.01). Horn runs MOUTH ->
-   THROAT: S1..S5 areas (cm2) with per-segment Con lengths (cm); entries tap
-   at S2 (woofers) and S3 (mids); tap chambers ride Vtc(L)/Atc(cm2); rear
-   chamber Vrc(L)/Lrc(mm) on the ME1 record (per the sample). REFUSES when a
-   driver lacks published T/S (doctrine: no invented Bl/Cms/Mmd). ---- */
+/* ---- LEGACY HORNRESP ME EXPORT — QUARANTINED IN BUILD 653.
+   A primary-source audit of the 2026 three-driver correlation record found
+   that this legacy routine disagrees with the documented wizard records in
+   record ownership, horn direction, units, and chamber/entry field meaning.
+   It is retained temporarily as migration evidence only.  Do not repair one
+   field in isolation: the rebuilt exporter must be topology-dispatched and
+   must round-trip complete, source-pinned fixtures before it is enabled. ---- */
 function hornrespME(S,TS){
   if(S.topo!=='3way') return {error:'Hornresp ME wizard is the THREE-way form - 2way/1way export is the next slice'};
+  return {
+    error:'THREEWAY_HORNRESP_MAPPING_UNVERIFIED — export disabled: the legacy '
+      +'ME1/ME2/Nd record ownership, horn direction, units, and chamber/entry '
+      +'field mapping do not match the audited 2026 source records. The rebuilt '
+      +'topology-specific exporter must pass a source-pinned round-trip fixture.'
+  };
+  /* istanbul ignore next -- unreachable legacy migration evidence begins here */
   const r=solve({...S});
   if(r.infeasible) return {error:'state refuses - fix it before exporting'};
   const ev=r.ev, st=ev.st, L=ev.layout;
@@ -4775,7 +4802,7 @@ function dishVisualMesh(S,back){
     if(back) tri.push([rings[i][j],rings[i+1][j],rings[i][k]],[rings[i][k],rings[i+1][j],rings[i+1][k]]);
     else tri.push([rings[i][j],rings[i][k],rings[i+1][j]],[rings[i][k],rings[i+1][k],rings[i+1][j]]); }
   const ports=tp.map(d=>{ const r=Math.hypot(d.tap[1],d.tap[2]),ph=d.phi;
-    const n=surfN(st,d.x,ph), shift=back?Math.min(rDish-r-(d.slot.sb||0)-0.001,
+    const n=d.normal||surfN(st,d.x,ph), shift=back?Math.min(rDish-r-(d.slot.sb||0)-0.001,
       t*Math.hypot(n[1],n[2])):0, rr=r+Math.max(0,shift);
     const p=coord(rr,ph,!!back), dr=5e-5,da=0.003;
     const a=coord(Math.max(rB,rr-dr),ph,!!back),b=coord(Math.min(rDish,rr+dr),ph,!!back);

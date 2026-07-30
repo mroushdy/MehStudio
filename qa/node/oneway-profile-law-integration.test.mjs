@@ -234,7 +234,7 @@ test("unsafe or undersized one-way profile interfaces refuse without fallback", 
 });
 
 test("one-way profile UI is visible, scoped, schema-reset and shares coaxHornMesh", () => {
-  assert.match(shell, /window\.MEH_BUILD=652/);
+  assert.match(shell, /window\.MEH_BUILD=654/);
   assert.match(shell, /const TWO_WAY_STATE_SCHEMA=3/);
   assert.match(
     shell,

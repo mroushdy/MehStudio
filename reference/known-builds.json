@@ -81,6 +81,200 @@
       "images": [
         "images/radial-faceted-module.png"
       ]
+    },
+    {
+      "id": "syntripp-radial-adaptation",
+      "name": "Art Welter SynTripP source complement and envelope",
+      "evidence": "dimensioned-construction-drawings-plus-project-driver-record",
+      "family": "radial",
+      "surface": "angular plywood horn inside rectangular enclosure",
+      "wooferCounts": [2],
+      "mount": "source mounting geometry not recovered; MEH Studio uses a calculated radial mount",
+      "driverAxis": "calculated radial adaptation; not asserted as original SynTripP geometry",
+      "tapTraits": ["source drawings establish the enclosure and throat-adapter package", "entry and chamber dimensions remain calculated", "no acoustic coverage validation is claimed"],
+      "forbiddenTraits": ["calling the calculated manifold SynTripP CAD", "borrowing Hinson or JMOD tap dimensions", "claiming source-validated coverage"],
+      "sourceFiles": [
+        "Final Assembly.pdf",
+        "Inner Horn Sides.pdf",
+        "Inner Horn Top & Bottom.pdf",
+        "Throat Adapter Plate Assembly.pdf",
+        "Throat Adapter Plate Part B.pdf",
+        "Throat Adapter Plate Square Front.pdf"
+      ],
+      "documentedEnvelope": {
+        "enclosureWidthIn": 27,
+        "enclosureHeightIn": 15,
+        "innerHornStockIn": 0.453,
+        "throatAdapterPlateIn": [6, 4]
+      },
+      "acousticValidation": "not claimed"
+    },
+    {
+      "id": "solana-rev103-radial-adaptation",
+      "name": "Solana Waveguide Module DIY Instructions Rev 1.03",
+      "evidence": "official-diy-guide-plus-supplied-step-and-stl",
+      "family": "radial",
+      "surface": "four-quarter integrated printed waveguide module",
+      "wooferCounts": [4],
+      "mount": "source-specific integrated cells; MEH Studio currently uses a calculated radial-cell adaptation",
+      "driverAxis": "source module specific; no reverse-engineered axis is claimed",
+      "tapTraits": ["one B&C DH450", "four B&C 6NDL38", "source STEP/STL retained as construction evidence", "parametric entry and chamber geometry remains calculated"],
+      "forbiddenTraits": ["calling the calculated cell an exact Solana solid", "claiming validated source acoustics", "silently substituting a panel-wall manifold"],
+      "sourceFiles": [
+        "Solana DIY Guide.pdf",
+        "solanafullsize.step",
+        "baffle.step",
+        "quarterA.stl",
+        "quarterB.stl",
+        "throatadapter.stl"
+      ],
+      "documentedEnvelope": {
+        "onePiecePrintMm": [376, 376, 150],
+        "moduleAndDriversDisplacementL": 9.75
+      },
+      "documentedDriverComplement": {
+        "compressionDriver": "B&C DH450",
+        "woofer": "B&C 6NDL38",
+        "wooferCount": 4
+      },
+      "acousticValidation": "not claimed by the MEH Studio adaptation"
+    },
+    {
+      "id": "local-dh350-meh-half",
+      "name": "Local DH350 MEH half-horn and throat-adapter reference",
+      "evidence": "local-stl-and-dsp-project-only",
+      "family": "radial",
+      "surface": "provisional classification from local half-horn solid",
+      "wooferCounts": [],
+      "mount": "unknown from the available filenames and meshes",
+      "driverAxis": "unknown",
+      "tapTraits": ["DH350 MEH Half.stl retained as a geometry reference", "Throat Adapter.stl retained separately", "DSP project retained as provenance only"],
+      "forbiddenTraits": ["assuming a woofer complement", "assuming crossover or chamber dimensions", "claiming acoustic validation", "offering a runnable preset without dimensional evidence"],
+      "sourceFiles": [
+        "DH350 MEH Half.stl",
+        "Throat Adapter.stl",
+        "CoentrantMEH ADAU1701.dspproj"
+      ],
+      "meshFacts": {
+        "halfHorn": {
+          "triangles": 38238,
+          "boundingSizeMm": [180.002, 160.002, 159.792]
+        },
+        "throatAdapter": {
+          "triangles": 10358,
+          "boundingSizeMm": [39.511, 10, 75]
+        },
+        "note": "Axis-aligned mesh bounds and triangle counts only; they do not establish acoustic dimensions or topology."
+      },
+      "acousticValidation": "not claimed"
+    },
+    {
+      "id": "chrisbln-experimental-parametric-meh",
+      "name": "ChrisBLN experimental OpenSCAD multiple-entry horn",
+      "evidence": "local-parametric-scad-plus-dxf-and-one-driver-back-stl",
+      "family": "panel",
+      "surface": "compound angular throat and mouth panels",
+      "wooferCounts": [],
+      "mount": "parametric panel cutouts and driver-envelope witnesses in OpenSCAD",
+      "driverAxis": "panel-local construction defined by the source script",
+      "tapTraits": [
+        "separate MF, LF, and reflex hole parameters",
+        "driver-envelope and surround-clearance witness geometry",
+        "source code exposes horn angles, station distances, and cutting-plan construction"
+      ],
+      "forbiddenTraits": [
+        "treating author comments as universal acoustic laws",
+        "promoting the experimental script to manufacturing validation",
+        "copying guessed LF driver offset as a solver default",
+        "commercial use contrary to the source notice"
+      ],
+      "sourceFiles": [
+        "12-24-MEH..scad",
+        "SH-50-base..dxf",
+        "closed-back-4FE35..scad",
+        "closed-back-wsn041.00..scad",
+        "closed-back-wsn041.00-3mmwalls..stl"
+      ],
+      "documentedDriverContext": {
+        "high": ["LAVOCE DN14.40T", "LAVOCE DN14.300T"],
+        "mid": ["LAVOCE WSN041.00"],
+        "low": ["LAVOCE WAN123.01", "LAVOCE WAF123.01"]
+      },
+      "meshFacts": {
+        "closedBackWsn041": {
+          "triangles": 928,
+          "boundingSizeMm": [99.5, 99.5, 17.5]
+        }
+      },
+      "acousticValidation": "author reports a tested build context; MEH Studio does not independently validate it"
+    },
+    {
+      "id": "local-cleaned-horn-stl-pair",
+      "name": "Local cleaned horn STL pair",
+      "evidence": "local-stl-only",
+      "family": "unclassified",
+      "surface": "unknown until visual and section inspection",
+      "wooferCounts": [],
+      "mount": "unknown",
+      "driverAxis": "unknown",
+      "tapTraits": [
+        "No Woofs Cleaned and V4 Cleaned2 retained as comparative meshes",
+        "similar approximately 270 by 269 by 239 coordinate-unit envelopes"
+      ],
+      "forbiddenTraits": [
+        "assuming millimetres solely from filename or bounds",
+        "assuming source family or driver complement",
+        "claiming acoustic or manufacturing validation"
+      ],
+      "sourceFiles": [
+        "No Woofs Cleaned.stl",
+        "V4 Cleaned2.stl"
+      ],
+      "meshFacts": {
+        "noWoofsCleaned": {
+          "triangles": 21615,
+          "boundingSizeCoordinateUnits": [269.8472, 268.8729, 238.5895]
+        },
+        "v4Cleaned2": {
+          "triangles": 17251,
+          "boundingSizeCoordinateUnits": [270.8015, 269.2073, 238.5]
+        }
+      },
+      "acousticValidation": "not claimed"
+    },
+    {
+      "id": "local-airvolume-and-supportfree-stls",
+      "name": "Local air-volume-plug and no-overhang parametric STL references",
+      "evidence": "local-stl-only",
+      "family": "unclassified",
+      "surface": "printed parametric horn references",
+      "wooferCounts": [],
+      "mount": "unknown until section inspection",
+      "driverAxis": "unknown",
+      "tapTraits": [
+        "air-volume-plug file may preserve negative chamber or passage witness bodies",
+        "no-overhang file may preserve support-free printable construction choices"
+      ],
+      "forbiddenTraits": [
+        "assuming plugs are canonical acoustic negatives without component inspection",
+        "assuming printability from filename",
+        "claiming source topology, dimensions, or acoustic validation"
+      ],
+      "sourceFiles": [
+        "V6 stub with airvolume plugs.stl",
+        "Synergy_Parametric7-no overhangs.STL"
+      ],
+      "meshFacts": {
+        "v6StubWithAirvolumePlugs": {
+          "triangles": 41354,
+          "boundingSizeCoordinateUnits": [198.742, 288.662, 142.824]
+        },
+        "synergyParametricNoOverhangs": {
+          "triangles": 7456,
+          "boundingSizeCoordinateUnits": [182.0104, 182.0104, 123.489]
+        }
+      },
+      "acousticValidation": "not claimed"
     }
   ]
 }

@@ -13,7 +13,8 @@ const check=(ok,msg)=>{if(!ok)failures.push(msg);};
 check(Array.isArray(lib.entries)&&lib.entries.length>=4,
   "reference library must retain the core panel and radial exemplars");
 for(const ref of lib.entries){
-  check(["panel","radial"].includes(ref.family),ref.id+": unknown family");
+  check(["panel","radial","unclassified"].includes(ref.family),
+    ref.id+": unknown family");
   check(ref.tapTraits&&ref.tapTraits.length,ref.id+": no tap traits");
   check(ref.forbiddenTraits&&ref.forbiddenTraits.length,ref.id+": no negative visual traits");
   for(const image of ref.images||[])
@@ -23,8 +24,12 @@ for(const ref of lib.entries){
 const hinson=M.twoWayPlan(M.BUILDS["2way"].find(x=>x.key==="hinson10").s);
 check(hinson.family==="panel"&&hinson.S.style==="angular",
   "Hinson comparison lost its true panel family");
-check(hinson.np===2&&hinson.tapEdgeBias>=0.70,
-  "Hinson entries are no longer biased toward panel intersections");
+check(hinson.np===2&&hinson.pairEdgeObjectiveRatio>=0.90&&
+    hinson.tapEdgeBias>=0.50&&
+    Math.abs(hinson.pairWavelengthRatio-0.25)<1e-9&&
+    hinson.drivers.every(driver=>
+      driver.pairLimitCode==="TAP_PAIR_SPREAD_WAVELENGTH"),
+  "Hinson entries lost their edge target or quarter-wave pair-spacing limit");
 check(hinson.minDriverGap>=0.004&&hinson.minMountSide>0,
   "Hinson reference comparison finds floating/intersecting drivers");
 

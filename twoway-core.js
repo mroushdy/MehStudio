@@ -20,7 +20,7 @@
      unrelated 17 m/s rear bass-reflex chuffing heuristic, and it does not
      pretend to replace a power/SPL-domain Hornresp or nonlinear BEM check. */
   const TAP_MACH_LIMIT=0.10, TAP_MACH_WARN=0.15;
-  const MESH_POLICY_VERSION='b652-differential-cell-terminal-grid-v3';
+  const MESH_POLICY_VERSION='b653-differential-cell-terminal-grid-v3';
   const CURRENT_TWO_WAY_STATE_SCHEMA=3;
   const DRIVER_CELL_SCHEMA_VERSION=1;
   const RETENTION_SCHEMA_VERSION=1;
@@ -251,8 +251,121 @@
         wallT:0.018,nW:2,npW:2,panelAxis:'horizontal',shW:'slot',tapShapeW:'slot',
         twoXO:370,tapCRW:4,rearAlign:'reflex',rearFb:70,
         wPre:'ndl88',odW:31.5,dpW:14,sdW:522,vtcW:180,xmW:8,
-        frameW:'round',boltNW:8,bcdW:298,boltDW:7,gasketW:1.6}}
+        frameW:'round',boltNW:8,bcdW:298,boltDW:7,gasketW:1.6}},
+    {key:'syntripp',name:'SynTripP source complement — calculated radial-mount adaptation',
+      evidence:'hybrid',source:'Art Welter SynTripP construction drawings document a 27 × 15 inch plywood enclosure, 0.453 inch inner horn stock, a two-part angular horn and a 6 × 4 inch throat-adapter plate. The project record identifies 2× B&C 10CL51 + Celestion CDX14-3050. Entry/chamber dimensions and an acoustic coverage target are not published in the supplied drawings, so MEH Studio preserves the complement and envelope but solves a generic two-driver radial manifold; this is not SynTripP CAD or validated acoustic performance.',
+      s:{...common,topo:'2way',twoArch:'radial',twoFamily:'radial',twoDesign:'syntripp',
+        tapBasis:'model',style:'angular',profileLaw:'conical',
+        sectionFamily:'superellipse',seN:12,covH:90,covV:60,mouthW:27,
+        wallT:0.0115062,nW:2,npW:2,shW:'slot',tapShapeW:'slot',
+        driverArrayMode:'manual',driverArrayRotationDeg:0,
+        driverAxisBlend:1,twoXO:1000,tapCRW:5,phaseMargin:1.2,
+        adapterReachMode:'auto',rearAlign:'sealed',
+        wPre:'cl10',odW:25.7,dpW:10.8,sdW:320,vtcW:130,xmW:5.5,
+        cdSel:'cdx143050',td:1.4,throat:1.4,cdFloor:1000,cdDepth:2.205,
+        cdFlangeD:125,cdBCD:102,cdBoltN:4,cdBoltD:6}},
+    {key:'solana',name:'Solana Rev 1.03 source complement — calculated radial-cell adaptation',
+      evidence:'hybrid',source:'John White, Solana Waveguide Module DIY Instructions Rev 1.03 (2025-06-01) documents 1× B&C DH450 + 4× B&C 6NDL38, a 376 × 376 × 150 mm one-piece print envelope, four-quarter construction and a project-specific remote rear enclosure. The supplied STEP/STL files contain the original proprietary cell geometry, but MEH Studio does not import those solids into its parametric kernel; it therefore solves a generic four-driver radial cell and does not claim an exact Solana replica or validated acoustics.',
+      s:{...common,topo:'2way',twoArch:'radial',twoFamily:'radial',twoDesign:'solana',
+        tapBasis:'model',style:'smooth',profileLaw:'conical',
+        sectionFamily:'roundedRectangle',sectionCornerRatio:0.2,seN:6,
+        covH:90,covV:90,mouthW:14.803,wallT:0.012,
+        nW:4,npW:1,shW:'oval',tapShapeW:'oval',
+        driverArrayMode:'auto',driverArrayRotationDeg:0,
+        driverAxisBlend:1,twoXO:1000,tapCRW:5,phaseMargin:1.2,
+        adapterReachMode:'auto',rearAlign:'external',
+        wPre:'w65',odW:18.7,dpW:8.5,sdW:132,vtcW:45,xmW:6,
+        cdSel:'dh450',td:1,throat:1,cdFloor:1000,cdDepth:4.8,
+        cdFlangeD:90,cdBCD:57,cdBoltN:2,cdBoltD:5}}
   ];
+  /* Calculated quick starts are deliberately not evidence records.  They are
+     small, named sets of user-facing intent that exercise the same solver as
+     a hand-built calculated design.  Keeping them out of TWO_BUILDS prevents
+     the report, provenance badges and saved-state identity from ever calling
+     a convenient starting point "documented".
+
+     `unset` is just as important as `s`: a driver change must not inherit the
+     previous driver's bolt circle, gasket record or measured tap package.
+     Every start uses the integrated print topology; detachable cartridges
+     remain an explicit prototype choice after the start has been applied. */
+  const TWO_STARTS=Object.freeze([
+    Object.freeze({
+      key:'compact-2x5-panel',
+      name:'Compact 2×5 panel',
+      family:'panel',
+      evidence:'calculated',
+      summary:'Compact 24-inch four-face starting point with two Dayton 5.25-inch woofers and one round entry per woofer.',
+      s:Object.freeze({
+        topo:'2way',twoArch:'panel',twoFamily:'panel',
+        twoDesign:'arch:panel',tapBasis:'model',
+        driverCellConstruction:'integrated',
+        style:'angular',profileLaw:'conical',
+        sectionFamily:'superellipse',seN:12,
+        covH:90,covV:60,mouthW:24,mouthCap:64,wallT:0.018,
+        nW:2,npW:1,shW:'round',tapShapeW:'round',
+        driverArrayMode:'auto',driverArrayRotationDeg:0,
+        driverMountMode:'shortest',driverMountExtraMm:0,
+        driverAxisBlend:0,tapPairMode:'auto',
+        twoXO:500,tapCRW:6,phaseMargin:1.2,
+        rearAlign:'external',
+        wPre:'w5',odW:13.76,dpW:6.95,sdW:91.6,vtcW:35,xmW:2.5
+      }),
+      unset:Object.freeze([
+        'frameW','boltNW','bcdW','boltDW','gasketW','cutoutW'
+      ])
+    }),
+    Object.freeze({
+      key:'high-output-4x10-panel',
+      name:'High-output 4×10 panel',
+      family:'panel',
+      evidence:'calculated',
+      summary:'Large 44-inch four-face starting point with four B&C 10HPL64 woofers and two solved slot entries per woofer.',
+      s:Object.freeze({
+        topo:'2way',twoArch:'panel',twoFamily:'panel',
+        twoDesign:'arch:panel',tapBasis:'model',
+        driverCellConstruction:'integrated',
+        style:'angular',profileLaw:'conical',
+        sectionFamily:'superellipse',seN:12,
+        covH:90,covV:60,mouthW:44,mouthCap:64,wallT:0.018,
+        nW:4,npW:2,shW:'slot',tapShapeW:'slot',
+        driverArrayMode:'auto',driverArrayRotationDeg:0,
+        driverMountMode:'shortest',driverMountExtraMm:0,
+        driverAxisBlend:0,tapPairMode:'auto',
+        twoXO:450,tapCRW:7,phaseMargin:1.2,
+        rearAlign:'external',
+        wPre:'hpl10',odW:26.1,dpW:12.2,sdW:320,vtcW:130,xmW:4
+      }),
+      unset:Object.freeze([
+        'frameW','boltNW','bcdW','boltDW','gasketW','cutoutW'
+      ])
+    }),
+    Object.freeze({
+      key:'shallow-radial-4x5',
+      name:'Shallow radial 4×5',
+      family:'radial',
+      evidence:'calculated',
+      summary:'Smooth 36-inch radial printed manifold with four Dayton 5.25-inch woofers and one short solved slot per woofer.',
+      s:Object.freeze({
+        topo:'2way',twoArch:'radial',twoFamily:'radial',
+        twoDesign:'arch:radial',tapBasis:'model',
+        driverCellConstruction:'integrated',
+        style:'smooth',profileLaw:'conical',
+        sectionFamily:'superellipse',seN:6,
+        covH:90,covV:60,mouthW:36,mouthCap:64,wallT:0.012,
+        nW:4,npW:1,shW:'slot',tapShapeW:'slot',
+        driverArrayMode:'auto',driverArrayRotationDeg:0,
+        driverMountMode:'shortest',driverMountExtraMm:0,
+        driverAxisBlend:1,tapPairMode:'auto',
+        adapterReach:35,adapterReachMode:'auto',
+        twoXO:400,tapCRW:5,phaseMargin:1.2,
+        rearAlign:'external',
+        wPre:'w5',odW:13.76,dpW:6.95,sdW:91.6,vtcW:35,xmW:2.5
+      }),
+      unset:Object.freeze([
+        'frameW','boltNW','bcdW','boltDW','gasketW','cutoutW'
+      ])
+    })
+  ]);
   const BUILDS={...baseBuilds,'2way':TWO_BUILDS};
 
   function migrate(S0){
@@ -936,6 +1049,11 @@
       dx=point[0]-(a[0]+ab[0]*t),dy=point[1]-(a[1]+ab[1]*t);
     return dx*dx+dy*dy;
   }
+  function pointSegmentDistance3(point,a,b){
+    const ab=sub(b,a),den=dot(ab,ab),
+      t=den>1e-18?clamp(dot(sub(point,a),ab)/den,0,1):0;
+    return len(sub(point,add(a,mul(ab,t))));
+  }
 
   function panelPlacementAt(st,station,phi,topology,point){
     const surface=point||panelSurfacePoint(st,station,phi);
@@ -1585,6 +1703,139 @@
     return best;
   }
 
+  function finalPanelBoltLayout(P,drivers,fs,flangeR,minimumWeb,
+      initialPhase){
+    /* Differential path equalisation moves complete driver cells after the
+       first panel-bolt solve.  Reusing the old phase can then let a deep blind
+       bore from one cell cross a neighbouring driver's gasket, even though
+       both circular frames still have positive projected clearance.
+
+       Re-solve one common round-frame phase on the final bearing datums.  The
+       fastener tools below use the same endpoints and radii as solidField().
+       A candidate is legal only when every foreign bore clears every sampled
+       point of every complete gasket annulus as well as the finite CD flange.
+       The dense verification lattice matches the exact plate audit; the
+       smaller first pass merely ranks the bounded phase candidates. */
+    if(P.family!=='panel'||drivers.length<=2||!fs.boltN)
+      return {
+        phase:initialPhase||0,clearance:0,required:0,
+        foreignGasketClearance:0,foreignGasketRequired:0,
+        foreignGasketPass:true,verified:true
+      };
+    const pitch=2*Math.PI/fs.boltN,
+      phaseSteps=fs.frame==='round'?96:1,
+      cdA=[-0.014,0,0],cdB=[0.006,0,0],
+      rearAccess=Math.max(0.0015,fs.boltD*0.20),
+      foreignRequired=0.00020,
+      gasketSpecs=drivers.map(d=>{
+        const stations=d.cell&&d.cell.coneProfile&&
+            d.cell.coneProfile.relief&&
+            d.cell.coneProfile.relief.cavityStations,
+          openingRadius=Array.isArray(stations)&&stations.length
+            ?stations[stations.length-1].radiusM
+            :fs.activeR+0.002,
+          gasketInset=Math.max(0.00035,
+            Math.min(0.00075,P.minWeb*0.10)),
+          innerRadius=openingRadius+gasketInset,
+          outerRadius=Math.min(d.outerR-gasketInset,
+            fs.frameR-gasketInset),
+          planeInset=Math.max(0.00035,
+            Math.min(0.0008,d.flangeT*0.08)),
+          center=add(d.driverFace,mul(d.mountN,-planeInset)),
+          frame=orthogonalFrame(d.mountN,d.flow,d.cross);
+        return {
+          driverIndex:d.index,innerRadius,outerRadius,center,frame,
+          active:outerRadius>innerRadius+0.001
+        };
+      }),
+      boltRecords=phase=>drivers.flatMap(d=>{
+        const depth=P.S.driverCellConstruction==='cartridge'||
+            P.S.driverMountMode==='extended-manifold'
+          ?localPrintedFastenerPocketDepth(fs,d.flangeT)
+          :panelBlindPocketDepth(fs,d.cellT||d.panelT,
+            d.cellSkin,d.panelSkin);
+        return Array.from({length:fs.boltN},(_,boltIndex)=>{
+          const angle=phase+boltIndex*pitch,
+            off=add(mul(d.flow,Math.cos(angle)*fs.bcd/2),
+              mul(d.cross,Math.sin(angle)*fs.bcd/2)),
+            base=add(d.driverFace,off);
+          return {
+            driverIndex:d.index,boltIndex,
+            a:add(base,mul(d.mountN,-depth)),
+            b:add(base,mul(d.mountN,rearAccess)),
+            r:fs.panelPocketD/2
+          };
+        });
+      }),
+      evaluate=(phase,dense)=>{
+        const bolts=boltRecords(phase),
+          angularSamples=dense?288:48,
+          radialSamples=dense?6:3;
+        let cdClearance=Infinity,foreignGasketClearance=Infinity,
+          foreignWitness=null;
+        for(const bolt of bolts){
+          for(let index=0;index<=16;index++){
+            const point=add(bolt.a,mul(sub(bolt.b,bolt.a),index/16));
+            cdClearance=Math.min(cdClearance,
+              sdCylAxis(point,cdA,cdB,flangeR)-bolt.r);
+          }
+          for(const gasket of gasketSpecs){
+            if(!gasket.active||gasket.driverIndex===bolt.driverIndex)continue;
+            for(let radialIndex=0;radialIndex<radialSamples;radialIndex++){
+              const radius=lerp(gasket.innerRadius,gasket.outerRadius,
+                radialSamples===1?0.5:radialIndex/(radialSamples-1));
+              for(let angleIndex=0;angleIndex<angularSamples;angleIndex++){
+                const angle=angleIndex*2*Math.PI/angularSamples,
+                  point=add(gasket.center,add(
+                    mul(gasket.frame.u,Math.cos(angle)*radius),
+                    mul(gasket.frame.v,Math.sin(angle)*radius))),
+                  clearance=pointSegmentDistance3(
+                    point,bolt.a,bolt.b)-bolt.r;
+                if(clearance<foreignGasketClearance){
+                  foreignGasketClearance=clearance;
+                  foreignWitness={
+                    targetDriverIndex:gasket.driverIndex,
+                    sourceDriverIndex:bolt.driverIndex,
+                    sourceBoltIndex:bolt.boltIndex,
+                    radialIndex,angleIndex,point
+                  };
+                }
+              }
+            }
+          }
+        }
+        if(!Number.isFinite(foreignGasketClearance))
+          foreignGasketClearance=Infinity;
+        const cdMargin=cdClearance-minimumWeb,
+          foreignMargin=foreignGasketClearance-foreignRequired,
+          legal=cdMargin>=-1e-12&&foreignMargin>=-1e-12;
+        return {
+          phase,clearance:cdClearance,required:minimumWeb,
+          foreignGasketClearance,foreignGasketRequired:foreignRequired,
+          foreignGasketPass:foreignMargin>=-1e-12,
+          cdPass:cdMargin>=-1e-12,
+          margin:Math.min(cdMargin,foreignMargin),
+          legal,foreignWitness,verified:dense
+        };
+      },
+      candidates=[];
+    for(let index=0;index<phaseSteps;index++){
+      const phase=phaseSteps===1?(initialPhase||0):index*pitch/phaseSteps;
+      candidates.push(evaluate(phase,false));
+    }
+    candidates.sort((a,b)=>
+      (b.legal?1:0)-(a.legal?1:0)||
+      b.margin-a.margin||
+      a.phase-b.phase);
+    let best=null;
+    for(const candidate of candidates){
+      const dense=evaluate(candidate.phase,true);
+      if(!best||dense.margin>best.margin)best=dense;
+      if(dense.legal){best=dense;break;}
+    }
+    return best||evaluate(initialPhase||0,true);
+  }
+
   function orientedCircleLoop(center,normal,u0,v0,radius,count){
     const n=unit(normal),u=unit(sub(u0,mul(n,dot(u0,n))));
     let v=unit(sub(v0,add(mul(n,dot(v0,n)),mul(u,dot(v0,u)))));
@@ -2087,7 +2338,10 @@
       const reachCap=0.30,
         chamberFitReach=radialPhysicalChamberDepth+wall+
           (cartridge?gasketGap+cellSkin:cellSkin*0.5),
-        solveGuard=0.001,
+        /* Keep a finite search guard without hiding a full millimetre of
+           avoidable manifold length. The dense fallback below already uses
+           the same 0.25 mm manufacturing/numerical allowance. */
+        solveGuard=0.00025,
         denseMetadata=!(options&&options.coarseRadialDiagnostics);
       if(S.adapterReachMode!=='manual')
         adapterReach=Math.min(reachCap,Math.max(adapterReach,chamberFitReach));
@@ -2162,7 +2416,7 @@
       mountOpeningR=f==='panel'?fs.activeR+0.002:radialOpeningR,
       mountOuterR=f==='panel'?fs.frameR+0.010:radialLandR,
       mountProbePlan={S,st,throatMorphL,throatR,family:f},
-      mountEnvelope=mountBearingEnvelopeDiagnostic(
+      mountEnvelopeInitial=mountBearingEnvelopeDiagnostic(
         mountProbePlan,phis,station,adapterReach,fs,mountOpeningR,
         mountOuterR,Math.min(flangeT,adapterReach),wall,gasketGap,minWeb,
         panelBolts.phase,cartridge,
@@ -2172,6 +2426,7 @@
         denseMountEnvelope?180:54,denseMountEnvelope?13:5,
         panelBearingT,boltPanelSkin,
         denseMountEnvelope?7:4);
+    let mountEnvelope=mountEnvelopeInitial;
     const stationsAtPhi=phis.map(phi=>{
       const datum=driverMountDatum(S,st,station,phi,panelTopology,
         null,f);
@@ -2514,6 +2769,24 @@
     solvePanelPairChamberScales(differentialProbe,drivers);
     const differentialSetback=solvePanelDifferentialSetbacks(
       differentialProbe,drivers,adapterReach,manifoldExtraReach);
+    if(f==='panel'&&differentialSetback.active){
+      panelBolts=finalPanelBoltLayout(
+        differentialProbe,drivers,fs,cdFlangeR,boltRequiredWeb,
+        panelBolts.phase);
+      for(const driver of drivers)driver.boltPhase=panelBolts.phase;
+      /* Refresh the phase-sensitive mount-envelope metadata after the final
+         common fastener rotation. The per-cell path setback is audited on the
+         exact field below; this probe retains its original station/reach
+         ownership while no longer reporting the discarded preliminary bolt
+         orientation. */
+      mountEnvelope=mountBearingEnvelopeDiagnostic(
+        mountProbePlan,phis,station,adapterReach,fs,mountOpeningR,
+        mountOuterR,Math.min(flangeT,adapterReach),wall,gasketGap,minWeb,
+        panelBolts.phase,cartridge,
+        denseMountEnvelope?180:54,denseMountEnvelope?13:5,
+        panelBearingT,boltPanelSkin,
+        denseMountEnvelope?7:4);
+    }
     const driverCdFlange=driverBearingCdFlangeDiagnostic(
       drivers,cdFlangeR,minWeb,
       options&&options.coarseRadialDiagnostics?36:96);
@@ -2766,6 +3039,14 @@
       pairLimitCode,pairLimitReason,
       panelBoltPhase:panelBolts.phase,panelBoltClearance:panelBolts.clearance,
       panelBoltRequired:panelBolts.required,
+      panelBoltForeignGasketClearance:
+        panelBolts.foreignGasketClearance,
+      panelBoltForeignGasketRequired:
+        panelBolts.foreignGasketRequired,
+      panelBoltForeignGasketPass:
+        panelBolts.foreignGasketPass!==false,
+      panelBoltForeignGasketWitness:
+        panelBolts.foreignWitness||null,
       driverCdFlangeClearance:driverCdFlange.clearance,
       driverCdFlangeRequired:driverCdFlange.requiredClearance,
       driverCdFlangeCoverage:driverCdFlange.coverage,
@@ -2842,8 +3123,8 @@
   function evaluate2(S0){
     const P=twoWayPlan(S0),S=P.S,rows=[];
     const row=(sec,name,val,ok,warn,why)=>rows.push({sec,name,val,st:ok?'ok':warn?'warn':'fail',why,grow:false});
-    const source=S.twoDesign==='hinson10'?TWO_BUILDS[0].source:
-      S.twoDesign==='jmod88'?TWO_BUILDS[1].source:P.arch.source;
+    const sourceRecord=TWO_BUILDS.find(build=>build.key===S.twoDesign),
+      source=sourceRecord?sourceRecord.source:P.arch.source;
     row('EVIDENCE','Two-way construction family',P.arch.name,true,true,source);
     row('EVIDENCE','Geometry provenance',
       S.tapBasis==='published'?'PUBLISHED DIMENSIONS':S.tapBasis==='manual'?'MEASURED OVERRIDE':'CALCULATED · Sd/Ap + chamber/tap model',
@@ -3201,6 +3482,104 @@
       ledger:adapted.ledger};
   }
 
+  const TWO_START_SOLVER_OWNED=Object.freeze([
+    'tapStationW','tapAreaW','tapLptW','tapSlotL','tapSlotW','tapVtcW',
+    'tapVtcDerivedW','tapAreaDerivedW','tapStationDerivedW',
+    'tapLptDerivedW','tapPairSpreadMm','tapPairDerived',
+    'driverCellDerivedW','mountEnvelopeReachMm','mountEnvelopeMinMouthW',
+    'rearV','rearFb','rearPortArea','rearPortLen','mountRing'
+  ]);
+  function cloneState(value){
+    return value===undefined?undefined:JSON.parse(JSON.stringify(value));
+  }
+  /* Build and prove a quick-start candidate without touching the caller's
+     live object.  The UI commits S2 only after this function returns ok=true,
+     so an unknown key, incompatible count or failed acoustic/package solve
+     leaves both saved state and the previous viewport intact.
+
+     `requestedCount` is intentionally narrow: it lets count-aware clients
+     test/apply the same card with a user-selected family count while refusing
+     counts the family cannot own.  The browser cards omit it and therefore
+     use the count printed in the card name. */
+  function applyTwoWayStart(S0,key,options){
+    const original=cloneState(S0||{}),request=options||{},
+      fail=(code,message,details)=>({
+        ok:false,code,message,details:details||null,
+        S2:cloneState(original)
+      }),
+      start=TWO_STARTS.find(item=>item.key===key);
+    if(!start)
+      return fail('TWO_START_UNKNOWN',
+        'Unknown calculated two-way quick start: '+String(key),
+        {key,allowed:TWO_STARTS.map(item=>item.key)});
+    const A=TWO_ARCH[start.family];
+    if(!A)
+      return fail('TWO_START_FAMILY_UNKNOWN',
+        'Calculated two-way quick start has no supported mechanical family',
+        {key,family:start.family});
+    const requestedCount=request.requestedCount===undefined
+      ?start.s.nW:+request.requestedCount;
+    if(!Number.isInteger(requestedCount)||!A.counts.includes(requestedCount))
+      return fail('TWO_START_COUNT_INCOMPATIBLE',
+        'The requested woofer count is not supported by this quick-start family',
+        {key,family:start.family,requestedCount,allowed:A.counts.slice()});
+    try{
+      const candidate=cloneState(original);
+      for(const field of TWO_START_SOLVER_OWNED)delete candidate[field];
+      for(const field of start.unset||[])delete candidate[field];
+      Object.assign(candidate,cloneState(start.s),{
+        nW:requestedCount,
+        topo:'2way',
+        twoArch:start.family,twoFamily:start.family,
+        twoDesign:'arch:'+start.family,
+        tapBasis:'model',
+        driverCellConstruction:'integrated',
+        requestedMouthW:start.s.mouthW,
+        _smart2waySchema:CURRENT_TWO_WAY_STATE_SCHEMA
+      });
+      const solved=solve(candidate),P=solved&&solved.ev&&solved.ev.plan;
+      if(!solved||solved.infeasible||!solved.ev||solved.ev.fails)
+        return fail('TWO_START_PREFLIGHT_REFUSED',
+          'Calculated two-way quick start did not pass the design-law preflight',
+          {key,failedRows:solved&&solved.ev
+            ?solved.ev.rows.filter(row=>row.st==='fail').map(row=>row.name)
+            :['solver returned no plan']});
+      if(solved.S.twoArch!==start.family||
+          solved.S.twoFamily!==start.family||
+          solved.S.twoDesign!=='arch:'+start.family||
+          solved.S.tapBasis!=='model'||
+          solved.S.driverCellConstruction!=='integrated'||
+          solved.S.nW!==requestedCount)
+        return fail('TWO_START_IDENTITY_DRIFT',
+          'Calculated two-way quick start changed identity during preflight',
+          {key,family:start.family,requestedCount,
+            actual:{twoArch:solved.S.twoArch,twoFamily:solved.S.twoFamily,
+              twoDesign:solved.S.twoDesign,tapBasis:solved.S.tapBasis,
+              driverCellConstruction:solved.S.driverCellConstruction,
+              nW:solved.S.nW}});
+      return {
+        ok:true,code:'TWO_START_READY',start,
+        S2:cloneState(solved.S),
+        solved,
+        ledger:[{
+          knob:'twoQuickStart',from:null,to:start.key,
+          why:'calculated quick start passed the coupled design-law preflight'
+        },...(solved.ledger||[])],
+        preflight:{
+          family:P.family,driverCount:P.drivers.length,
+          passageCount:P.allPorts.length,
+          crossoverHz:P.xo,mouthWidthIn:solved.S.mouthW,
+          stationMm:P.station*1000,
+          stateHash:twoWayStateHash(solved.S)
+        }
+      };
+    }catch(error){
+      return fail(error&&error.code?error.code:'TWO_START_PREFLIGHT_ERROR',
+        error&&error.message?error.message:String(error),
+        error&&error.details?error.details:{key});
+    }
+  }
+
   function smartAdapt2way(S0,key,T){
     let seed={...S0},baseLedger=[];
     const prior=familyKey(seed);
@@ -3351,7 +3730,21 @@
     /* Panel containment is mouth-owned. Never carry a rear-depth workaround
        into a coupled solve; the exact blind-pocket base does not move with it. */
     if(work.twoArch==='panel')delete work.mountEnvelopeReachMm;
-    let p=fastPlan(work);
+    /* AUTO radial reach is a solved value, not history. Normalize it to the
+       same fresh family baseline before deciding whether the incoming
+       package is already contained. Previously this happened inside the
+       fixed-point loop: a first solve starting at 35 mm took the extension
+       branch, while its already-solved 143 mm output took the compact-reset
+       branch and changed XO/reach on pass two. */
+    let p;
+    if(compactRadial){
+      const WA=TWO_ARCH[work.twoArch];
+      p=fastPlan({...work,adapterReach:WA.defaults.adapterReach});
+      work.adapterReach=Math.ceil(p.adapterReach*1000);
+      reasons.adapterReach=
+        'shortest radial spoke that clears every selected frame';
+    }
+    p=fastPlan(work);
     if(S.tapBasis==='model'&&p.tapMach>p.tapMachLimit){
       const machCr=Math.max(1.5,Math.floor(p.maxCrMach*2)/2);
       if(work.tapCRW!==machCr){
@@ -3361,8 +3754,7 @@
       }
     }
     const mountEnvelopeInitiallyLegal=mountEnvelopeLegal(p);
-    let mountMouthSearchPassed=mountEnvelopeInitiallyLegal,
-      mountReachPinned=false;
+    let mountMouthSearchPassed=mountEnvelopeInitiallyLegal;
     if(mountEnvelopeInitiallyLegal)
       work.mountEnvelopeMinMouthW=+work.mouthW;
     if(coupledGeometry&&!mountEnvelopeInitiallyLegal&&
@@ -3402,12 +3794,12 @@
     }
     if(coupledGeometry&&!mountMouthSearchPassed&&
         work.twoArch==='radial'&&
-        work.driverCellConstruction==='integrated'&&
         work.adapterReachMode!=='manual'&&baseGeometryLegal(p)){
       /* Every integer mouth through the declared cap was tested above. A
-         slope-invariant profile may therefore need a local integrated-cell
-         extension. Prove the 300 mm hard bound first, then bisect to the
-         shortest passing millimetre. */
+         slope-invariant profile may therefore need a local radial-cell
+         extension. Integrated cells and detachable cartridges share this
+         same solver-owned petal reach. Prove the 300 mm hard bound first,
+         then bisect to the shortest passing millimetre. */
       const startReach=Math.max(1,Math.ceil(p.adapterReach*1000)),
         capReach=300,
         atCap=fastPlan({...work,adapterReach:capReach});
@@ -3421,10 +3813,9 @@
         work.adapterReach=hi;
         work.mountEnvelopeMinMouthW=+work.mouthW;
         reasons.adapterReach=
-          'shortest integrated cell extension after mouth-cap containment search';
+          'shortest radial cell extension after mouth-cap containment search';
         p=fastPlan(work);
         mountMouthSearchPassed=mountEnvelopeLegal(p);
-        mountReachPinned=mountMouthSearchPassed;
       }
     }
     /* Reach, crossover, tap compression and mouth size are coupled: changing
@@ -3436,12 +3827,7 @@
     for(let pass=0;pass<16;pass++){
       const before=[work.mouthW,work.twoXO,work.tapCRW,work.adapterReach].join('|'),
         WA=TWO_ARCH[work.twoArch];
-      if(compactRadial&&!mountReachPinned){
-        p=fastPlan({...work,adapterReach:WA.defaults.adapterReach});
-        work.adapterReach=Math.ceil(p.adapterReach*1000);
-        reasons.adapterReach='shortest radial spoke that clears every selected frame';
-        p=fastPlan(work);
-      }else p=fastPlan(work);
+      p=fastPlan(work);
       /* Search the smallest mouth / highest crossover that clears the complete
          selected frames and leaves margin under the strict HF-area law.
          Compression, station and mouth are coupled, so test the compression
@@ -3601,6 +3987,21 @@
       const after=[work.mouthW,work.twoXO,work.tapCRW,work.adapterReach].join('|');
       if(after===before)break;
     }
+    /* XO, compression and mouth changes can reduce the shortest radial reach.
+       Re-solve AUTO reach from the family baseline after those coupled knobs
+       settle, before the dense authority check. Without this final
+       normalization, the first pass retained a reach derived from the
+       previous compression/XO and only the second solve discovered the
+       shorter value (PW-004/PW-057). The dense repair below still grows this
+       fresh optimum whenever a narrow unsampled bearing arc requires it. */
+    if(compactRadial){
+      const WA=TWO_ARCH[work.twoArch],
+        baseline=fastPlan({...work,adapterReach:WA.defaults.adapterReach});
+      work.adapterReach=Math.ceil(baseline.adapterReach*1000);
+      reasons.adapterReach=
+        'shortest radial spoke after coupled mouth, crossover and compression settle';
+      p=fastPlan(work);
+    }
     /* Coarse probes only accelerate candidate search; they are never
        manufacturing authority. Rebuild the committed candidate with the
        dense annulus/bolt-land grid. If a narrow missed arc fails, grow to the
@@ -3608,27 +4009,47 @@
     let denseCommitted=densePlan(work);
     if(coupledGeometry&&!mountEnvelopeLegal(denseCommitted)){
       const startMouth=Math.ceil(+work.mouthW||0),
-        capMouth=Math.floor(Math.max(startMouth,+work.mouthCap||64));
+        capMouth=Math.floor(Math.max(startMouth,+work.mouthCap||64)),
+        startXO=Math.max(Math.ceil(Math.max(150,+work.cdFloor||300)/5)*5,
+          Math.round((+work.twoXO||denseCommitted.xo)/5)*5),
+        floorXO=Math.ceil(Math.max(150,+work.cdFloor||300)/5)*5;
       let contained=null;
       for(let mouthW=startMouth;mouthW<=capMouth&&!contained;mouthW++){
-        const q=densePlan({...work,mouthW});
-        if(baseGeometryLegal(q)&&mountEnvelopeLegal(q))
-          contained={mouthW,q};
+        /* A panel bearing can miss the CD flange in a narrow angular arc that
+           the coarse candidate probe does not sample. Mouth growth cannot
+           repair that slope-invariant collision; moving the tap station
+           outward by lowering crossover can. Re-run the same bounded
+           highest-XO search with the authoritative dense annulus probe
+           instead of returning a false refusal at the coarse boundary. */
+        const candidates=work.twoArch==='panel'
+          ?Array.from({length:Math.floor((startXO-floorXO)/5)+1},
+            (_,index)=>startXO-index*5)
+          :[+work.twoXO||denseCommitted.xo];
+        for(const twoXO of candidates){
+          const q=densePlan({...work,mouthW,twoXO});
+          if(baseGeometryLegal(q)&&mountEnvelopeLegal(q)){
+            contained={mouthW,twoXO,q};break;
+          }
+        }
       }
       if(contained){
         if(work.mouthW!==contained.mouthW)
           reasons.mouthW=
             'smallest dense-verified mouth that contains every driver bearing and bolt land';
+        if(work.twoXO!==contained.twoXO)
+          reasons.twoXO=
+            'highest dense-verified crossover that clears the complete CD flange annulus';
         work.mouthW=contained.mouthW;
+        work.twoXO=contained.twoXO;
         work.mountEnvelopeMinMouthW=contained.mouthW;
         denseCommitted=contained.q;
       }
     }
-    if(coupledGeometry&&!mountEnvelopeLegal(denseCommitted)&&
-        work.driverCellConstruction==='integrated'){
+    if(coupledGeometry&&!mountEnvelopeLegal(denseCommitted)){
       /* Mouth growth was exhausted. Only an automatic radial petal may grow
-         locally; panel containment remains mouth-owned, and a manually fixed
-         radial reach is refused rather than rewritten. */
+         locally—whether integrated or detachable. Panel containment remains
+         mouth-owned, and a manually fixed radial reach is refused rather
+         than rewritten. */
       if(work.twoArch==='radial'&&work.adapterReachMode!=='manual'){
         const startReach=Math.max(1,
             Math.ceil(denseCommitted.adapterReach*1000)),
@@ -4690,6 +5111,13 @@
 
   function solidField(P,detachable,partIndex){
     const S=P.S,wall=Math.max(0.004,+P.shellT||+S.wallT||0.012),st=P.st;
+    /* The Boolean zero set can only cross a grid cell whose sampled solid
+       distance is close to zero.  Keep a four-cell guard before taking any
+       broad-phase exit so the marcher still receives the complete local CSG
+       field around every printable/cavity surface.  Samples farther away
+       cannot participate in a zero-crossing cell at either certified mesh
+       step, and need not pay for four complete horn-section evaluations. */
+    const broadPhaseMargin=4*MESH_LIMITS.display.step;
     const throatR=(+S.td||+S.throat||1.4)*IN/2;
     /* UI/catalog mounting dimensions are millimetres; acoustic dimensions
        such as wallT are metres.  Treating the 152 mm DCX464 flange as 152 m
@@ -4711,6 +5139,28 @@
         return record?record.tools:[];
       })
       :P.drivers.map(()=>[]);
+    /* Conservative per-cell AABBs are much cheaper than evaluating four
+       vector-heavy frustum/section CSGs for every point in a mouth-sized
+       Cartesian grid.  Both structural endpoints are expanded by the full
+       driver land radius plus the same zero-crossing guard, so skipping an
+       evaluation outside this box cannot remove any cell surface. */
+    const cellBroadBounds=P.drivers.map(d=>{
+      const radius=d.outerR+broadPhaseMargin,
+        points=[d.surface,d.driverFace,d.cavInner],
+        lo=[Infinity,Infinity,Infinity],
+        hi=[-Infinity,-Infinity,-Infinity];
+      for(const point of points)for(let axis=0;axis<3;axis++){
+        lo[axis]=Math.min(lo[axis],point[axis]-radius);
+        hi[axis]=Math.max(hi[axis],point[axis]+radius);
+      }
+      return {lo,hi};
+    });
+    const insideCellBroadBounds=(p,index)=>{
+      const bounds=cellBroadBounds[index];
+      return p[0]>=bounds.lo[0]&&p[0]<=bounds.hi[0]&&
+        p[1]>=bounds.lo[1]&&p[1]<=bounds.hi[1]&&
+        p[2]>=bounds.lo[2]&&p[2]<=bounds.hi[2];
+    };
     const driverCellRootDiagnostics=P.drivers.map(d=>{
       const active=detachable&&P.family==='panel',
         reliefRadius=driverReliefEnvelopeRadius(d),
@@ -4811,6 +5261,7 @@
             radialCoord*Math.tan(halfSector),-radialCoord);
         body=Math.max(body,sector);
       }
+      if(body>broadPhaseMargin)return body;
       /* Every land/module belongs behind the acoustic surface. A raw frustum
          union crossing a panel or curved wall can leave the exact interior
          artifacts reported in the review renders. Only tap cutters cross it. */
@@ -5309,6 +5760,13 @@
           e.bearingClearanceRequiredM-1e-9;
       }
     }
+    for(const tools of tapTools)for(const tool of tools){
+      const sections=tool.kind==='swept-aperture'?tool.sections:[tool];
+      tool.jointBlendRadius=tool.kind==='swept-aperture'&&sections.length>1
+        ?Math.min(0.0012,P.minWeb*0.33,
+          Math.min(...sections.map(section=>section.sb))*0.25)
+        :0;
+    }
     const tapEndpointAudit=P.drivers.flatMap(d=>
       tapTools[d.index].map((tool,tapIndex)=>{
         const sections=tool.kind==='swept-aperture'
@@ -5397,6 +5855,7 @@
           endpointContained:endpointPass,
           terminalCutterClearanceM:endpoint
             ?endpoint.terminalCutterClearanceM:null,
+          jointBlendRadiusM:tool.jointBlendRadius,
           apertureInvariant,
           turnPass,sectionPass,wallGuardPass,terminalRunPass,
           endpointPass,pass
@@ -5411,6 +5870,9 @@
         maximumSections:10,
         minimumWallExitGuardM:0.001,
         minimumTerminalRunM:0.003,
+        maximumJointBlendRadiusM:tapPathGeometryRecords.length
+          ?Math.max(...tapPathGeometryRecords.map(item=>
+            item.jointBlendRadiusM||0)):0,
         activeCount:tapPathGeometryRecords.filter(item=>item.active).length,
         records:tapPathGeometryRecords,
         pass:tapPathGeometryRecords.every(item=>item.pass)
@@ -5681,7 +6143,7 @@
            and intersects the independently meshed module even though the
            declared gasket plane is clear.  The module's conformal root is
            the registration land; only the tap cavities cross the interface. */
-        if(includeCell(i)){
+        if(includeCell(i)&&insideCellBroadBounds(p,i)){
           solid=Math.min(solid,cellBody(p,d));
           /* Each removable cell owns its two short root bosses. Clip their
              horn-facing ends to the same conformal gasket boundary as the
@@ -5698,6 +6160,11 @@
           }
         }
       }
+      /* Subtraction cannot turn an exterior sample into solid. Farther than
+         the guarded neighbourhood above, returning the already-computed
+         union is sign-identical and leaves all cells that can cross the
+         manufactured surface on the full evaluator. */
+      if(solid>broadPhaseMargin)return solid;
       let cavity=Infinity;
       if(includeHorn){
         cavity=sdCylAxis(p,[-0.022,0,0],[0.028,0,0],throatR);
@@ -5730,11 +6197,22 @@
            Build it once per driver so its chamber-side union can receive a
            finite physical blend rather than a mesh-resolution workaround. */
         for(const tool of tapTools[i]){
-          const sections=tool.kind==='swept-aperture'?tool.sections:[tool];
-          for(const seg of sections)
-            tapCavity=Math.min(tapCavity,
-              sdSlotTube(p,seg.a,seg.b,seg.u,seg.v,
-                seg.sa,seg.sb,seg.shape));
+          const sections=tool.kind==='swept-aperture'?tool.sections:[tool],
+            jointBlend=tool.jointBlendRadius||0;
+          let toolCavity=Infinity;
+          for(const seg of sections){
+            const segmentCavity=sdSlotTube(p,seg.a,seg.b,seg.u,seg.v,
+              seg.sa,seg.sb,seg.shape);
+            /* A bent lumen made from a hard union of straight prisms leaves a
+               closed solid lens at the convex side of some joints.  Chamfer
+               only adjacent segments of the same canonical path: the entry
+               and every ordinary section keep their declared aperture, while
+               the physical elbow receives a bounded local transition. */
+            toolCavity=Number.isFinite(toolCavity)&&jointBlend>0
+              ?sdChamferUnion(toolCavity,segmentCavity,jointBlend)
+              :Math.min(toolCavity,segmentCavity);
+          }
+          tapCavity=Math.min(tapCavity,toolCavity);
         }
         if(ownsCell){
           const cavOuter=add(d.driverFace,mul(d.mountN,0.002));
@@ -6348,6 +6826,58 @@
     return mesh;
   }
 
+  /* Shared constructive-field meshing boundary.
+
+     Three-way uses the same signed-distance convention as the released
+     two-way solid: negative is printable material and positive is air.  Keep
+     this adapter deliberately narrow so another topology can reuse the
+     streamed marcher, sealed-boundary growth, memory budget and topology
+     audit without borrowing any two-way acoustic or placement assumptions.
+
+     The result is a sampled constructive/manifold candidate.  It is not an
+     exact-Boolean provider result, a fabrication authorization or an STL
+     export.  Those remain separate hash-matched gates. */
+  function constructiveImplicitMesh(field,bounds,options){
+    if(typeof field!=='function')
+      throw meshError('CONSTRUCTIVE_FIELD_INVALID',
+        'Constructive implicit meshing requires one signed-distance function');
+    if(!bounds||!Array.isArray(bounds.lo)||!Array.isArray(bounds.hi)||
+        bounds.lo.length!==3||bounds.hi.length!==3||
+        bounds.lo.some(v=>!Number.isFinite(v))||
+        bounds.hi.some(v=>!Number.isFinite(v))||
+        bounds.hi.some((v,axis)=>v<=bounds.lo[axis]))
+      throw meshError('MESH_BOUNDS_INVALID',
+        'Constructive implicit meshing requires finite increasing xyz bounds',
+        {bounds});
+    const settings=options&&typeof options==='object'?options:{},
+      quality=settings.quality||'display',
+      override=settings.limits&&typeof settings.limits==='object'
+        ?settings.limits:null,
+      limits=meshLimitsFor(quality,override),
+      sealed=sealedBounds(field,{
+        lo:bounds.lo.slice(),hi:bounds.hi.slice()
+      },limits.maxBoundGrowthPasses),
+      budget=requireMeshBudget(twoWayMeshBudget(sealed,quality,override)),
+      counts={vertices:0,triangles:0},
+      mesh=implicitMesh(
+        field,sealed,budget.parts[0],counts,limits
+      ),
+      audit=mesh.audit||M.meshAudit(mesh);
+    mesh.audit=audit;
+    mesh.budget=budget;
+    return {
+      mesh,
+      audit,
+      bounds:sealed,
+      budget,
+      classification:'constructive-sampled-manifold-candidate',
+      exactBooleanProviderEvidence:false,
+      exactSolid:false,
+      manufacturing:false,
+      stl:false
+    };
+  }
+
   function cleanMesh(mesh){
     const keep=[],seen=new Set(),q=p=>p.map(v=>Math.round(v*1e9)).join(',');
     for(const t of mesh.tri){
@@ -6412,7 +6942,7 @@
       hash^=BigInt(code>>>8);
       hash=BigInt.asUintN(64,hash*0x100000001b3n);
     }
-    return 'b652-'+hash.toString(36).padStart(13,'0')+
+    return 'b653-'+hash.toString(36).padStart(13,'0')+
       '-'+canonical.length.toString(36);
   }
   function twoWayStateHash(S0){
@@ -7077,7 +7607,7 @@
   }
   function tapCutters(S){return S.topo==='2way'?null:baseTapCutters(S);}
 
-  return {TWO_ARCH,BUILDS,
+  return {TWO_ARCH,TWO_STARTS,BUILDS,
     twoWayMeshPolicyVersion:MESH_POLICY_VERSION,
     twoWayDriverCellSchemaVersion:DRIVER_CELL_SCHEMA_VERSION,
     twoWayCartridgeRetentionSchemaVersion:RETENTION_SCHEMA_VERSION,
@@ -7098,9 +7628,11 @@
     twoWayApertureArea:apertureArea,twoWayApertureOutline:apertureOutline,
     twoWayApertureSupport:apertureSupport,
     twoWaySolidField:solidField,twoWayGeometry,twoWayMeshKey,
+    constructiveImplicitMesh,
     twoWayMeshStateFingerprint,twoWayStateHash,
     twoWayMeshBudget,twoWayMeshPreflight,
     twoWayMeshLimits:MESH_LIMITS,clearTwoWayMeshCache,
-    evaluate,evaluate2way:evaluate2,solve,smartAdapt2way,shellMesh,fabricationAudit,
+    evaluate,evaluate2way:evaluate2,solve,applyTwoWayStart,smartAdapt2way,
+    shellMesh,fabricationAudit,
     assemblyAudit,tapCutters,splitMeshComponents:splitComponents};
 });

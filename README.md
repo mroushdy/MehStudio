@@ -1,61 +1,78 @@
 # MEH Studio
 
-MEH Studio is a pre-release parametric multiple-entry-horn designer with
-interactive 3-D inspection, sourced acoustic/profile laws, driver-cell and tap
-solvers, printable-mesh generation, STL export, and deterministic QA.
+MEH Studio is a pre-release parametric multiple-entry-horn design tool.
+Build 657 keeps the stabilized one-way coax and two-way families and adds a
+guided schema-2 three-way analysis and inspection system.
 
-The current application identity is **Build 652**. Start with
-[`BUILD652-HANDOFF.md`](BUILD652-HANDOFF.md) for the delivered geometry
-contracts, source hashes, focused verification evidence, and known limits.
+Start with [`BUILD657-HANDOFF.md`](BUILD657-HANDOFF.md). It records the current
+capability boundary, QA status, source identity, and remaining physical
+validation work.
 
 ## Run locally
 
-MEH Studio must be served over HTTP:
+From this directory:
 
 ```bash
 node serve.js 8520
 ```
 
-Then open:
+Open:
 
 ```text
-http://127.0.0.1:8520/meh5.html?build=652&reset=1&view=nodrv&rev=release-final
+http://127.0.0.1:8520/meh5.html?build=657&reset=1&view=full-assembly&rev=release-final
 ```
 
-`meh5.html` is the assembled application. Develop in `shell.html`,
-`profile-laws.js`, `engine.js`, and `twoway-core.js`, then regenerate once:
+`build=657` is an assertion: a mismatched URL fails closed before saved state
+is read or WebGL starts. `reset=1` clears the current local design after that
+assertion succeeds.
+
+`meh5.html` is generated. Edit the standalone source modules and run:
 
 ```bash
 node assemble.js
 ```
 
+## Three-way status
+
+Build 657 opens with a calculated 1 HF + 4 MF + 4 LF T3 family, guided practical controls,
+band-specific driver selection, full/no-driver/lumen/cutaway views, and
+closed constructive mount, adapter, and passage operands. Documented CX3 and
+H3 families remain honest reference starts until their missing physical input
+is supplied.
+
+The three-way UI is analysis/preview only. It never enters the retired legacy
+three-way solver or renderer, and it writes only
+`meh5_threeway_state_v2`. Hornresp, exact mesh, STL, and manufacturing remain
+locked unless their separate evidence gates pass. No exact Boolean provider is
+bundled in this release.
+
 ## QA
 
-Install the browser/geometry test dependencies once:
+Browser-independent current-source gate:
 
 ```bash
 cd qa
-npm ci
-npx playwright install chromium
+npm run qa
 ```
 
-Run the current delivery identity and six-cell visual witness:
+Focused release source contract:
 
 ```bash
-npm run qa:build652-delivery
-npm run qa:build652-six-ui
+npm run qa:build655-source
 ```
 
-Use `npm run qa:release` only as a serialized full gate; exact meshing is
-memory intensive and should not run concurrently with another geometry worker.
+When browser automation is available:
 
-## Status
+```bash
+npm run qa:build655-delivery
+npm run qa:release
+```
 
-Build 652 is a development snapshot, not a fresh full-release certificate.
-Focused delivery, topology, tap-lumen, profile-mount, and live six-cell
-browser checks pass for the recorded hashes. The remaining exhaustive-gate
-items are documented in `BUILD652-HANDOFF.md`.
+Run only one exact/browser release process at a time.
 
-Geometry and software checks do not establish an acoustic optimum, BEM
-directivity result, structural load rating, or substitute for printed
-prototypes and measurements.
+## Engineering boundary
+
+Software geometry and topology checks do not establish an acoustic optimum,
+BEM directivity result, structural rating, material suitability, leakage
+performance, or safe finished loudspeaker. Printed prototypes and acoustic,
+thermal, structural, and sealing measurements are still required.

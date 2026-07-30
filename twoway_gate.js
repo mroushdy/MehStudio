@@ -16,8 +16,9 @@ check(JSON.stringify(M.TWO_ARCH.panel.counts)===JSON.stringify([2,4,6]),
   "panel family must expose 2, 4 or 6 woofers");
 check(JSON.stringify(M.TWO_ARCH.radial.counts)===JSON.stringify([2,3,4,5,6,7,8]),
   "radial family must expose 2 through 8 woofers");
-check(JSON.stringify(builds.map(b=>b.key))===JSON.stringify(["hinson10","jmod88"]),
-  "the documented list must contain only Hinson and JMOD");
+check(JSON.stringify(builds.map(b=>b.key))===
+    JSON.stringify(["hinson10","jmod88","syntripp","solana"]),
+  "the source-bounded list must contain Hinson, JMOD, SynTripP and Solana");
 
 for(const [key,A] of Object.entries(M.TWO_ARCH)){
   check(A.tier==="derived",key+" calculated family is not labeled derived");
@@ -32,8 +33,10 @@ for(const b of builds){
   check(P.allPorts.length===b.s.nW*b.s.npW,b.key+" tap count is wrong");
   check(P.drivers.every(d=>Array.isArray(d.cavInner)&&d.branch===undefined),
     b.key+" must expose one canonical chamber-entry datum");
-  check(P.drivers.every(d=>d.ports.every(q=>distance(q.center,d.surface)<0.08)),
-    b.key+" entry is detached from its horn-wall station");
+  check(P.drivers.every(d=>d.ports.every(q=>
+      distance(q.center,M.surfPt(P.st,P.station,q.phi))<1e-9))&&
+      P.maxPortReach<=P.frame.activeR-0.002+1e-9,
+    b.key+" entry is detached from its horn-wall station or active cone");
   check(P.drivers.every(d=>Math.abs(d.normal[0])<0.82),
     b.key+" driver axis points forward instead of into the horn");
   const selected=M.smartAdapt2way({...b.s},"twoDesign",{}).S2;
@@ -147,11 +150,10 @@ for(const nW of M.TWO_ARCH.radial.counts){
   const r3=M.smartAdapt2way({...r8,nW:3},"nW",{}).S2;
   const fresh3=M.smartAdapt2way({...seed,nW:3,
     adapterReach:M.TWO_ARCH.radial.defaults.adapterReach},"nW",{}).S2;
-  /* The conical pre-release default can make the volume-derived chamber,
-     rather than driver-count separation, own the same minimum reach at three
-     and eight drivers. Count reduction must never ratchet the result above a
-     fresh solve; equality is a valid shared chamber optimum. */
-  check(r8.adapterReach>=r3.adapterReach&&
+  /* Driver count does not impose a monotonic reach law: fewer cells can own
+     more chamber volume per spoke. A ratchet exists only when re-solving the
+     same count retains history instead of returning to its fresh optimum. */
+  check(r3.adapterReachMode==="auto"&&fresh3.adapterReachMode==="auto"&&
       near(r3.adapterReach,fresh3.adapterReach,0.01),
     "AUTO radial spoke ratchets instead of returning to the fresh count-3 chamber optimum");
   const locked=M.smartAdapt2way({...r8,nW:3,adapterReachMode:"manual"},"nW",{}).S2;
@@ -191,7 +193,10 @@ for(const nW of M.TWO_ARCH.radial.counts){
   check(refused,
     "held oversized exact preflight did not refuse before allocation");
   try{
-    const budget=M.twoWayMeshPreflight({...base,mouthW:1},"export");
+    /* Use the smallest legal low-size witness. The former 1-inch synthetic
+       horn was physically refused by its exact driver-plate/CD geometry, so
+       admitting it would have weakened the manufacturing preflight. */
+    const budget=M.twoWayMeshPreflight({...base,mouthW:13},"export");
     check(budget.ok&&budget.step===0.0025,
       "QA-only exact preflight did not retain the fixed 2.5 mm grid");
     check(budget.totals.gridPoints<=budget.limits.maxJobGridPoints,
@@ -208,4 +213,4 @@ if(failures.length){
   failures.forEach(x=>console.error("✗ "+x));
   process.exit(1);
 }
-console.log("2-WAY GATE PASS — "+checks+" checks · two truthful families · connected tap/chamber solids");
+console.log("2-WAY GATE PASS — "+checks+" checks · four source-bounded starts · connected tap/chamber solids");

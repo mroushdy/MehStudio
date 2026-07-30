@@ -2,8 +2,8 @@
 
 Build 642 made the two-way implicit manufacturing mesh an explicit operation
 and replaced the former whole-lattice/object-topology path with bounded
-streaming and packed numeric storage. Build 652 retains that runtime contract
-under mesh policy `b652-differential-cell-terminal-grid-v3`.
+streaming and packed numeric storage. Build 653 retains that runtime contract
+under mesh policy `b653-differential-cell-terminal-grid-v3`.
 Opening the application, changing a design, and using the analytic assembly
 views do not construct a `Worker` or allocate an exact lattice.
 
@@ -78,7 +78,7 @@ budget, while every individual part remains under the same 10,040,000-point
 cap.
 Parts are generated sequentially. Exact geometry cache capacity is one result.
 
-The Build 652 six-W5 mixed corner/face release state occupies one
+The Build 653 six-W5 mixed corner/face release state occupies one
 `159 × 302 × 209` manufacturing grid: 10,035,762 points at the unchanged
 2.5 mm step. Its conservative peak allocation estimate is 521,831,536 bytes,
 below the unchanged 1.5 GiB ceiling. The explicit 10,040,000-point ceiling

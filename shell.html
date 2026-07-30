@@ -3,11 +3,21 @@
 <title>MEH Studio v5 — print-only multiple-entry horn designer</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <script>
+window.__MEH_EARLY_ERRORS=[];
+addEventListener('error',event=>{
+  window.__MEH_EARLY_ERRORS.push({
+    message:String(event.message||'runtime error'),
+    source:String(event.filename||''),
+    line:Number(event.lineno||0),
+    column:Number(event.colno||0),
+    stack:event.error&&event.error.stack?String(event.error.stack):null
+  });
+});
 /* The assembled application depends on its HTTP origin for durable pins and
    browser-safe 3D loading. A directly opened source/output file is never a
    supported runtime: send it to the localhost server immediately. */
 if(location.protocol==='file:'){
-  location.replace('http://127.0.0.1:8520/meh5.html?build=652&source=file-redirect');
+  location.replace('http://127.0.0.1:8520/meh5.html?build=657&source=file-redirect');
 }
 </script>
 <style>
@@ -40,18 +50,39 @@ select{width:100%;font-family:var(--mono);font-size:11px;background:var(--paper)
 .compact-grid label{margin-top:2px}
 .compact-grid input,.compact-grid select{width:100%;font-family:var(--mono);font-size:11px;background:var(--paper);border:1px solid var(--line);color:var(--ink);padding:5px 6px;margin-top:3px}
 .compact-grid label.paired-control{grid-column:1/-1}
+.control-help{display:block;clear:both;color:var(--faint);font-size:8.5px;
+  font-weight:400;letter-spacing:0;line-height:1.35;text-transform:none;margin:2px 0 4px}
 .paired-inputs{display:grid;grid-template-columns:minmax(0,1fr) 68px;gap:7px;align-items:center;margin-top:3px}
 .paired-inputs input[type=range]{min-width:0;margin:0;padding:0;border:0;background:transparent}
 .paired-inputs input[type=number]{margin:0;text-align:right}
+.threeway-driver-grid{display:grid;grid-template-columns:1fr;gap:5px;
+  margin:4px 0 8px}
+.threeway-driver-grid label{margin-top:0;border:1px solid var(--line);
+  padding:6px 7px;background:#fff}
+.threeway-driver-grid select{margin-top:4px}
+.threeway-driver-grid select:disabled{opacity:1;color:var(--ink);
+  background:var(--panel);cursor:not-allowed}
+.threeway-driver-grid .control-help.ok{color:var(--ok)}
+.threeway-driver-grid .control-help.warn{color:var(--warn)}
+.threeway-driver-grid .control-help.fail{color:var(--bad)}
 .evidence{font-size:9px;line-height:1.55;color:var(--faint);border-left:2px solid var(--gridmaj);padding:6px 8px;margin:6px 0 2px}
 .evidence[data-tier="validated"]{border-color:var(--ok);color:var(--ok)}
 .evidence[data-tier="published"]{border-color:#55758f;color:#55758f}
 .evidence[data-tier="derived"]{border-color:#7657a8;color:#7657a8}
+.evidence[data-tier="calculated"]{border-color:#7657a8;color:#5f4785}
 .evidence[data-tier="measured"]{border-color:#3b7770;color:#3b7770}
 .evidence[data-tier="reference"]{border-color:var(--warn);color:var(--warn)}
 .evidence.exact-refused{border-color:var(--bad);color:var(--bad);font-weight:700}
 details.advanced{margin-top:7px;border-top:1px solid var(--line);padding-top:5px}
 details.advanced summary{cursor:pointer;color:var(--faint);font-size:9px;letter-spacing:.08em;text-transform:uppercase}
+.quick-start-grid{display:grid;grid-template-columns:1fr;gap:5px;margin-top:7px}
+.quick-start-grid button{width:100%;text-align:left;background:var(--paper);
+  border:1px solid var(--line);color:var(--ink);padding:7px 8px;
+  font-family:var(--mono);font-size:9px;line-height:1.45;cursor:pointer}
+.quick-start-grid button:hover,.quick-start-grid button:focus-visible{
+  border-color:var(--ink);outline:none}
+.quick-start-grid button b{display:block;font-size:10px;letter-spacing:.04em}
+.quick-start-grid button span{display:block;color:var(--faint);margin-top:2px}
 #v3dwrap{position:relative;min-height:520px;}
 #v3d{position:absolute;inset:0;}
 #hud{position:absolute;left:12px;top:12px;z-index:3;display:flex;flex-direction:column;gap:6px;}
@@ -106,6 +137,18 @@ body.capture-mode #v3d{display:block!important;position:absolute!important;inset
 #runtimeSentinel.runtime-refused{color:var(--bad);background:#fff7f5;
   border-bottom-color:var(--bad);font-weight:700}
 body.runtime-refused .cols{opacity:.46;pointer-events:none}
+/* Schema-2 three-way is a separate workspace.  Hide every legacy one-/two-
+   way editor instead of letting an old flat field leak into the candidate.
+   The production viewport and bug-pin control remain shared infrastructure. */
+#threewayV2Ctl[hidden]{display:none!important}
+body.threeway-v2-mode aside>:not(#topologySect):not(#segTopo):not(#threewayV2Ctl){
+  display:none!important
+}
+body.threeway-v2-mode #chartwrap,
+body.threeway-v2-mode #reports,
+body.threeway-v2-mode #twoDesignDiagnostics,
+body.threeway-v2-mode #adaptStrip{display:none!important}
+body.threeway-v2-mode #threewayV2Ctl{display:block}
 </style></head><body>
 <div id="app"><div class="frame">
 <header>
@@ -120,7 +163,7 @@ body.runtime-refused .cols{opacity:.46;pointer-events:none}
 </div>
 <div class="cols">
 <aside>
-  <div class="sec">TOPOLOGY</div>
+  <div class="sec" id="topologySect">TOPOLOGY</div>
   <div class="seg" id="segTopo">
     <button data-v="1way">1-WAY COAX</button><button data-v="2way" class="on">2-WAY COAX</button><button data-v="3way">3-WAY</button>
   </div>
@@ -130,6 +173,13 @@ body.runtime-refused .cols{opacity:.46;pointer-events:none}
     <div id="twoStatusSummary" class="evidence derived" role="status" aria-live="polite">
       CALCULATING DESIGN STATUS…
     </div>
+    <details class="advanced" id="twoQuickStarts">
+      <summary>calculated quick starts — solver-checked, not documented builds</summary>
+      <div id="twoQuickStartGrid" class="quick-start-grid"></div>
+      <div id="twoQuickStartNote" class="evidence derived" role="status" aria-live="polite">
+        SELECTING A START BUILDS A CLONED CANDIDATE FIRST. THE LIVE DESIGN CHANGES ONLY AFTER ITS COUPLED ACOUSTIC AND PACKAGE LAWS PASS.
+      </div>
+    </details>
     <details class="advanced" id="twoWayAdvanced">
       <summary>prototype overrides — advanced</summary>
       <label style="display:flex;gap:7px;align-items:center;margin:8px 0">
@@ -293,7 +343,7 @@ body.runtime-refused .cols{opacity:.46;pointer-events:none}
   <input type="range" id="wallmm" min="6" max="25" step="1" value="12">
   <div class="sec">DRIVERS</div>
   <div id="cdCtl"><label>COMPRESSION DRIVER</label>
-  <select id="cdSel"><option value="de500">1&Prime; CD (to ~900 Hz)</option><option value="de900">1.4&Prime; CD (to ~550 Hz)</option><option value="dcx464" selected>1.4&Prime; COAX DCX464 (to ~300 Hz)</option><option value="de250">B&amp;C DE250 · 1&Prime; (official 1.6 kHz recommendation)</option><option value="dcm50">B&amp;C DCM50 · 2&Prime; (official 400 Hz recommendation)</option><option value="n314x">Eminence N314X · 1.4&Prime; (800 Hz minimum)</option></select>
+  <select id="cdSel"><option value="de500">1&Prime; CD (to ~900 Hz)</option><option value="de900">1.4&Prime; CD (to ~550 Hz)</option><option value="dcx464" selected>1.4&Prime; COAX DCX464 (to ~300 Hz)</option><option value="de250">B&amp;C DE250 · 1&Prime; (official 1.6 kHz recommendation)</option><option value="dcm50">B&amp;C DCM50 · 2&Prime; (official 400 Hz recommendation)</option><option value="n314x">Eminence N314X · 1.4&Prime; (800 Hz minimum)</option><option value="cdx143050">Celestion CDX14-3050 · 1.4&Prime; (official 1 kHz recommendation)</option><option value="dh450">B&amp;C DH450 · 1&Prime; (official 1 kHz recommendation)</option></select>
   <div id="twoCDNote" class="evidence" style="display:none"></div></div>
   <label id="wLbl">WOOFER / LOW-MID</label>
   <select id="wPre"></select>
@@ -498,8 +548,8 @@ body.runtime-refused .cols{opacity:.46;pointer-events:none}
 </div>
 <div id="mountAimCtl">
 <select id="mountSel">
-    <option value="flush" selected>flush on the wall — tilts with it (Danley)</option>
-    <option value="axial">axial spot-face lands — bodies stay straight (print canon)</option>
+    <option value="flush" selected>flush on the wall — follows the local wall normal</option>
+    <option value="axial">axial spot-face lands — bodies stay on the horn axis</option>
   </select></div>
   <div id="twoWayAimNote" class="evidence" style="display:none"></div>
   <div id="placeWCtl">
@@ -509,7 +559,7 @@ body.runtime-refused .cols{opacity:.46;pointer-events:none}
     <option value="ring">ring around the horn</option>
     <option value="pairsH">rows on top + bottom walls</option>
     <option value="pairsV">rows on the side walls</option>
-    <option value="chamfer">corner boards — woofers on the 45° chamfers (SH96 canon)</option>
+    <option value="chamfer">corner boards — calculated 45° chamfer placement</option>
   </select></div></div>
   <div id="midCtl" style="display:none">
     <label>MID</label>
@@ -521,7 +571,7 @@ body.runtime-refused .cols{opacity:.46;pointer-events:none}
     <label>TAPS PER MID</label>
     <select id="npmSel">
       <option value="1" selected>one slot under the cone</option>
-      <option value="2">two, straddling — the X toward the corners (Danley canon)</option>
+      <option value="2">two, straddling — symmetric calculated cone coverage</option>
     </select>
     <label>MID TAP SHAPE</label>
     <select id="shmSel">
@@ -596,8 +646,32 @@ body.runtime-refused .cols{opacity:.46;pointer-events:none}
 /*__PROFILE_LAWS__*/
 /*__ENGINE__*/
 /*__TWOWAY__*/
+/*__THREEWAY__*/
 /*__CAD__*/
-window.MEH_BUILD=652;
+window.MEH_BUILD=657;
+window.__MEH_RUNTIME_ERRORS=[];
+addEventListener('error',event=>{
+  window.__MEH_RUNTIME_ERRORS.push({
+    message:String(event.message||'runtime error'),
+    source:String(event.filename||''),
+    line:Number(event.lineno||0),
+    column:Number(event.colno||0),
+    stack:event.error&&event.error.stack
+      ?String(event.error.stack):null
+  });
+});
+addEventListener('unhandledrejection',event=>{
+  const reason=event.reason;
+  window.__MEH_RUNTIME_ERRORS.push({
+    message:'Unhandled rejection: '+String(
+      reason&&reason.message||reason||'unknown'
+    ),
+    source:'promise',
+    line:0,
+    column:0,
+    stack:reason&&reason.stack?String(reason.stack):null
+  });
+});
 document.getElementById('bno').textContent=MEH_BUILD;
 /* Build identity and saved-state policy are decided before geometry state is
    read. `build=` is an assertion, not a decorative cache-buster: an old
@@ -684,8 +758,9 @@ const CDP={de500:{td:1.0,floor:900,dep:1.2}, de900:{td:1.4,floor:550,dep:1.7},
   dcx464:{td:1.4,floor:300,dep:2.4,bcd:102,boltN:4,boltD:6.5,flangeD:152},
   de250:{td:1.0,floor:1600,dep:2.44},       // B&C DE250 official 2026 sheet
   dcm50:{td:2.0,floor:400,dep:4.25},        // B&C DCM50 official archived sheet; useful 2in low-XO class
-  n314x:{td:1.4,floor:800,dep:2.53},        // Eminence N314X (SynTripP record) - floor = maker min XO
-  dh450:{td:1.0,floor:1000,dep:1.89},       // BMS? DH450 (Solana record, b534 mining) - for the coming remote-bandpass dialect
+  n314x:{td:1.4,floor:800,dep:2.53},        // Eminence N314X - floor = maker minimum crossover
+  cdx143050:{td:1.4,floor:1000,dep:2.205,bcd:102,boltN:4,boltD:6,flangeD:125}, // Celestion official dimensional drawing
+  dh450:{td:1.0,floor:1000,dep:1.89,bcd:57,boltN:2,boltD:5,flangeD:90}, // B&C official sheet; 90 mm across mounting studs
   cdx1445:{td:1.0,floor:385,dep:2.1}};      // Celestion CDX1-1445 (CoSyne). FLOOR SEMANTICS: 385 = Waslo's published H-pattern floor (the in-synergy usable floor, same semantics as dcx464's 300); the MAKER'S direct-radiator min XO is 2200 Hz @12dB - a different quantity, recorded here
 /* ---- M10 T/S (b534, maker-published; 13/14 sections complete) - the data
    layer; sealed-vs-reflex alignment math is the next slice. FHX/HCX LF xm
@@ -716,6 +791,10 @@ const TS={
   hcx12:{Fs:42,Qts:0.19,Qes:0.2,Qms:8,Vas:120,Re:5,Le:0.8,BL:17.6,Xvar:6},
   fhx15:{Fs:40,Qts:0.43,Qes:0.47,Qms:5.2,Vas:186,Re:5.2,Le:1.5,BL:15.5,Xvar:7}};
 /* ---------------- state ---------------- */
+/* The schema-2 three-way controller is intentionally not stored inside S.
+   S remains the one-/two-way legacy-compatible channel; the new workspace
+   persists only through meh5_threeway_state_v2. */
+let THREEWAY_UI_RUNTIME=null;
 const S={topo:'2way', twoDesign:'hinson10', style:'angular', twoArch:'panel', twoFamily:'panel', tapBasis:'published',
   _smart2waySchema:TWO_WAY_STATE_SCHEMA,
   twoXO:500,tapStationW:143.3,tapAreaW:37.24,tapLptW:18,tapSlotL:101.6,tapSlotW:19.1,tapVtcW:1400,tapCRW:8.59,
@@ -740,6 +819,7 @@ let savedState={},savedStateRefusal='';
 try{
   if(BOOT_RESET_APPLIED){
     localStorage.removeItem('meh5_state');
+    localStorage.removeItem('meh5_threeway_state_v2');
     bootResetStorageRemoved=true;
   }
   const candidate=(BOOT_BUILD_MISMATCH||BOOT_RESET_APPLIED)?{}:
@@ -1206,6 +1286,49 @@ function driverBody(od,dp,PRE,frame,faceOffset=0,cell=null){
       Math.abs(bounds.min.z),Math.abs(bounds.max.z))
   };
   g.userData.driverComponents=['frame','frame-gasket','surround','cone','dustcap','magnet','terminal'];
+  return g;
+}
+/* Shared compression-driver inspection silhouette. This is the reusable form
+   of the flange/body presentation used by the mature two-way full assembly.
+   Local +X is the acoustic outlet direction; the motor extends along -X. */
+function compressionDriverBody(flangeDiameter,depth,throatDiameter){
+  const g=new THREE.Group(),
+    flangeR=flangeDiameter/2,
+    throatR=throatDiameter/2,
+    METAL=new THREE.MeshPhongMaterial({
+      color:0xAEB9BD,emissive:0x121719,specular:0x778287,
+      shininess:48,side:THREE.DoubleSide
+    }),
+    DARK=new THREE.MeshPhongMaterial({
+      color:0x424746,specular:0x343938,shininess:28,
+      side:THREE.DoubleSide
+    }),
+    plateDepth=Math.max(0.008,Math.min(0.016,depth*0.14)),
+    plate=annularPlate(
+      flangeR,Math.max(throatR,flangeR*0.18),plateDepth,METAL
+    );
+  plate.position.x=-plateDepth/2;
+  plate.userData.driverComponent='compression-flange';
+  g.add(plate);
+  const motorLength=Math.max(0.03,depth-plateDepth),
+    motor=new THREE.Mesh(new THREE.CylinderGeometry(
+      flangeR*0.56,flangeR*0.70,motorLength,64
+    ),DARK);
+  motor.rotation.z=Math.PI/2;
+  motor.position.x=-plateDepth-motorLength/2;
+  motor.userData.driverComponent='compression-motor';
+  g.add(motor);
+  const rearDepth=Math.max(0.006,depth*0.09),
+    rear=new THREE.Mesh(new THREE.CylinderGeometry(
+      flangeR*0.43,flangeR*0.52,rearDepth,48
+    ),DARK);
+  rear.rotation.z=Math.PI/2;
+  rear.position.x=-plateDepth-motorLength-rearDepth/2;
+  rear.userData.driverComponent='compression-rear-cap';
+  g.add(rear);
+  g.userData.driverComponents=[
+    'compression-flange','compression-motor','compression-rear-cap'
+  ];
   return g;
 }
 /* ---- parametric COAX driver (his photo canon: BMS style) - PRESET-TRUE frame
@@ -4540,6 +4663,74 @@ function add3(a,b,s){return [a[0]+b[0]*s,a[1]+b[1]*s,a[2]+b[2]*s];}
 function userFacingDiagnosticText(value){
   return String(value===undefined||value===null?'':value);
 }
+const THREE_WAY_ANALYSIS_LABEL='ANALYSIS PREVIEW — NOT MANUFACTURING GEOMETRY';
+function threeWayHornrespPreflight(state){
+  if(!state||state.topo!=='3way')
+    return Object.freeze({applicable:false,available:false,reason:'',output:null});
+  try{
+    /* The exporter owns both source mapping and T/S doctrine. Do not duplicate
+       or soften either here: the control is enabled only when the exact
+       topology-specific exporter returns all three records without an error. */
+    const output=MEH2.hornrespME(state,TS),
+      reason=output&&output.error?userFacingDiagnosticText(output.error):'',
+      complete=!!(output&&!reason&&output.ME1&&output.ME2&&output.Nd);
+    return Object.freeze({
+      applicable:true,
+      available:complete,
+      reason:complete?'':reason||'exporter preflight did not return all three records',
+      output:complete?output:null
+    });
+  }catch(error){
+    return Object.freeze({
+      applicable:true,
+      available:false,
+      reason:userFacingDiagnosticText(error&&error.message?error.message:error),
+      output:null
+    });
+  }
+}
+function paintThreeWayContainment(preflight){
+  const active=S.topo==='3way',
+    button=document.getElementById('bHrn');
+  if(!active){
+    const snapshot=Object.freeze({
+      active:false,label:'',stlAvailable:true,hornrespAvailable:true,
+      hornrespReason:''
+    });
+    window.__threeWayContainment=snapshot;
+    document.documentElement.dataset.threeWayContainment='inactive';
+    if(button){
+      button.disabled=false;
+      button.setAttribute('aria-disabled','false');
+      button.removeAttribute('title');
+      button.textContent=S.topo==='2way'?'DESIGN REPORT':'HORNRESP';
+    }
+    return snapshot;
+  }
+  const check=preflight&&preflight.applicable
+      ?preflight:threeWayHornrespPreflight(S),
+    snapshot=Object.freeze({
+      active:true,
+      label:THREE_WAY_ANALYSIS_LABEL,
+      stlAvailable:false,
+      hornrespAvailable:check.available,
+      hornrespReason:check.reason
+    });
+  window.__threeWayContainment=snapshot;
+  document.documentElement.dataset.threeWayContainment='analysis-preview';
+  if(button){
+    button.disabled=!check.available;
+    button.setAttribute('aria-disabled',check.available?'false':'true');
+    button.textContent=check.available
+      ?'HORNRESP EXPORT'
+      :'HORNRESP UNAVAILABLE — T/S';
+    button.title=check.available
+      ?'Exporter preflight passed with complete woofer and midrange T/S inputs.'
+      :'Unavailable until the existing exporter preflight accepts complete woofer and midrange T/S inputs: '
+        +check.reason;
+  }
+  return snapshot;
+}
 /* One machine-readable and human-visible delivery sentinel identifies the
    exact runtime the user is looking at. Tests and handoffs read the same
    object/DOM fields instead of inferring identity from a filename or URL. */
@@ -4623,9 +4814,347 @@ function commitTwoWayStateIdentity(solved){
   document.documentElement.dataset.stateHash=identity.hash;
   return identity;
 }
+/* Schema-2 owns the three-way acoustic datums; the mature two-way visual
+   builder owns the recognizable inspection body. This adapter deliberately
+   reuses driverBody() instead of maintaining a second, weaker loudspeaker
+   renderer. It changes presentation only: the source item transform and
+   explicit driver-record dimensions remain the placement authority. */
+function reuseTwoWayDriverVisualsForThreeWay(rendered,selection){
+  const group=rendered&&rendered.group,
+    items=selection&&Array.isArray(selection.items)?selection.items:[];
+  if(!group||!items.length||typeof driverBody!=='function'||!THREE)return;
+  const nodeById=new Map();
+  for(const node of group.children||[]){
+    const id=node&&node.userData&&node.userData.meh3&&
+      node.userData.meh3.id;
+    if(id)nodeById.set(id,node);
+  }
+  const instances=new Map();
+  for(const item of items){
+    const instanceId=item&&item.instanceId;
+    if(!instanceId||!String(item.id||'').startsWith('driver-part:'))
+      continue;
+    if(!instances.has(instanceId))instances.set(instanceId,[]);
+    instances.get(instanceId).push(item);
+  }
+  for(const [instanceId,parts] of instances){
+    const frameItem=parts.find(item=>
+        item&&item.partRole==='frame'),
+      frameNode=frameItem&&nodeById.get(frameItem.id),
+      metadata=frameItem,
+      diameter=metadata&&+metadata.frameDiameterM,
+      activeDiameter=metadata&&+metadata.activeDiameterM,
+      depth=metadata&&+metadata.driverDepthM;
+    if(!frameNode||!(diameter>0)||!(activeDiameter>0)||
+        !(activeDiameter<diameter)||!(depth>0))continue;
+    frameNode.updateMatrixWorld(true);
+    const matrix=frameNode.matrixWorld.elements,
+      outward=new THREE.Vector3(matrix[0],matrix[1],matrix[2]).normalize(),
+      frameThickness=Math.min(0.008,Math.max(0.003,depth*0.09)),
+      face=new THREE.Vector3(matrix[12],matrix[13],matrix[14])
+        .addScaledVector(outward,frameThickness/2),
+      rearward=outward.clone().multiplyScalar(-1),
+      shared=driverBody(
+        diameter,depth,
+        {motor:'neo',sd:Math.PI*Math.pow(activeDiameter/2,2)*1e4},
+        {activeR:activeDiameter/2},
+        0,null
+      );
+    shared.name='MEH3_SHARED_DRIVER_'+instanceId;
+    shared.quaternion.setFromUnitVectors(
+      new THREE.Vector3(0,1,0),rearward
+    );
+    shared.position.copy(face);
+    shared.userData.meh3=Object.freeze({
+      kind:'shared-two-way-driver-visual',
+      instanceId,
+      sourceTransformItemId:frameItem.id,
+      dimensionsFromDriverRecord:true,
+      commercialCad:false,
+      visualReferenceOnly:true
+    });
+    shared.traverse(node=>{
+      node.userData.tag='driver';
+      node.userData.meh3SharedDriverInstance=instanceId;
+    });
+    for(const part of parts){
+      const node=nodeById.get(part.id);
+      if(node)node.visible=false;
+    }
+    group.add(shared);
+  }
+}
+function reuseTwoWayMountVisualsForThreeWay(rendered,selection){
+  const group=rendered&&rendered.group,
+    items=selection&&Array.isArray(selection.items)?selection.items:[];
+  if(!group||!items.length||typeof annularPlate!=='function'||!THREE)return;
+  const nodeById=new Map();
+  for(const node of group.children||[]){
+    const id=node&&node.userData&&node.userData.meh3&&
+      node.userData.meh3.id;
+    if(id)nodeById.set(id,node);
+  }
+  for(const item of items){
+    if(!item||item.category!=='mount-host')continue;
+    const metadata=item,
+      diameter=+metadata.frameDiameterM,
+      activeDiameter=+metadata.activeDiameterM,
+      face=Array.isArray(metadata.mountFaceM)
+        ?new THREE.Vector3().fromArray(metadata.mountFaceM):null,
+      normal=Array.isArray(metadata.mountNormal)
+        ?new THREE.Vector3().fromArray(metadata.mountNormal).normalize():null,
+      original=nodeById.get(item.id);
+    if(!original||!(diameter>0)||!(activeDiameter>0)||
+        !(activeDiameter<diameter)||!face||!normal)continue;
+    original.visible=false;
+    const plateMaterial=new THREE.MeshPhongMaterial({
+        color:0xB9B6B0,specular:0x505458,shininess:34,
+        side:THREE.DoubleSide,transparent:true,opacity:0.78,
+        depthWrite:true
+      }),
+      plate=annularPlate(
+        diameter*0.515,activeDiameter*0.515,
+        Math.max(0.003,Math.min(0.006,diameter*0.028)),
+        plateMaterial
+      );
+    plate.name='MEH3_SHARED_MOUNT_'+metadata.instanceId;
+    plate.quaternion.setFromUnitVectors(
+      new THREE.Vector3(1,0,0),normal
+    );
+    plate.position.copy(face);
+    plate.userData.meh3=Object.freeze({
+      kind:'shared-two-way-bearing-visual',
+      instanceId:metadata.instanceId,
+      sourceItemId:item.id,
+      mountNormal:normal.toArray(),
+      solverDatumOwned:true,
+      visualReferenceOnly:true
+    });
+    group.add(plate);
+    const adapterItem=items.find(candidate=>
+        candidate&&candidate.category==='mount-adapter'&&
+        candidate.instanceId===metadata.instanceId),
+      adapterNode=adapterItem&&nodeById.get(adapterItem.id);
+    if(adapterNode&&adapterNode.material){
+      adapterNode.material=adapterNode.material.clone();
+      adapterNode.material.color.setHex(0xAEB7B3);
+      adapterNode.material.transparent=false;
+      adapterNode.material.opacity=1;
+      adapterNode.material.depthWrite=true;
+    }
+  }
+}
+function reuseTwoWayCompressionDriverForThreeWay(rendered,selection){
+  const group=rendered&&rendered.group,
+    items=selection&&Array.isArray(selection.items)?selection.items:[],
+    viewId=rendered&&rendered.viewId;
+  if(!group||!items.length||![
+      'full-assembly','section-cutaway','package-bounds'
+    ].includes(viewId)||typeof compressionDriverBody!=='function'||!THREE)
+    return;
+  const throat=items.find(item=>
+    item&&item.category==='throat-interface'&&
+    item.highDriverVisualRequired===true
+  );
+  if(!throat||!(+throat.highFrameDiameterM>0)||
+      !(+throat.highDriverDepthM>0)||
+      !(+throat.highThroatDiameterM>0))return;
+  const transform=throat.transform&&throat.transform.matrix4,
+    matrix=Array.isArray(transform)&&transform.length===16
+      ?transform:null;
+  if(!matrix)return;
+  const axis=new THREE.Vector3(matrix[0],matrix[1],matrix[2]).normalize(),
+    center=new THREE.Vector3(matrix[12],matrix[13],matrix[14]),
+    body=compressionDriverBody(
+      +throat.highFrameDiameterM,
+      +throat.highDriverDepthM,
+      +throat.highThroatDiameterM
+    );
+  body.name='MEH3_SHARED_HIGH_DRIVER_'+throat.highDriverRecordId;
+  body.quaternion.setFromUnitVectors(new THREE.Vector3(1,0,0),axis);
+  body.position.copy(center);
+  body.userData.meh3=Object.freeze({
+    kind:'shared-two-way-compression-driver-visual',
+    driverRecordId:throat.highDriverRecordId,
+    sourceItemId:throat.id,
+    dimensionsFromDriverRecord:true,
+    commercialCad:false,
+    visualReferenceOnly:true
+  });
+  body.traverse(node=>{
+    node.userData.tag='driver';
+    node.userData.meh3SharedHighDriver=true;
+    if(viewId==='section-cutaway'&&node.material){
+      node.material=node.material.clone();
+      node.material.transparent=true;
+      node.material.opacity=0.48;
+      node.material.depthWrite=false;
+    }
+  });
+  group.add(body);
+}
+function fitThreeWayPreviewCamera(){
+  if(!V3D.scene||!THREE)return;
+  const group=V3D.scene.children.find(child=>child&&child.userData&&
+    child.userData.meh3&&child.userData.meh3.kind==='threeway-render-group');
+  if(!group)return;
+  const viewId=group.userData.meh3.viewId,
+    box=new THREE.Box3(),
+    omit=new Set(viewId==='package-bounds'?[]:[
+      'section-plane','package-bounds'
+    ]);
+  for(const child of group.children||[]){
+    const category=child&&child.userData&&child.userData.meh3&&
+      child.userData.meh3.category;
+    if(!omit.has(category))box.expandByObject(child);
+  }
+  if(box.isEmpty())box.setFromObject(group);
+  if(box.isEmpty())return;
+  const sphere=box.getBoundingSphere(new THREE.Sphere());
+  if(!Number.isFinite(sphere.radius)||sphere.radius<=0)return;
+  if(viewId==='no-drivers-mount-assembly'||viewId==='mounts-preview'){
+    const mounts=(group.children||[]).filter(child=>
+      child&&child.userData&&child.userData.meh3&&
+      child.userData.meh3.kind==='shared-two-way-bearing-visual'
+    );
+    if(mounts.length){
+      const target=new THREE.Vector3(),
+        rearDirection=new THREE.Vector3();
+      for(const mount of mounts){
+        target.add(mount.position);
+        rearDirection.add(
+          new THREE.Vector3().fromArray(
+            mount.userData.meh3.mountNormal
+          ).multiplyScalar(-1)
+        );
+      }
+      target.multiplyScalar(1/mounts.length);
+      if(rearDirection.lengthSq()>1e-12){
+        rearDirection.normalize();
+        V3D.tgt.copy(target);
+        V3D.bnd=Math.max(0.04,sphere.radius);
+        V3D.dist=viewId==='mounts-preview'?1.18:1.28;
+        V3D.yaw=Math.atan2(rearDirection.z,rearDirection.x);
+        V3D.pitch=Math.asin(Math.max(-1,Math.min(1,rearDirection.y)));
+        V3D.cameraFitted=true;
+        return;
+      }
+    }
+  }
+  const presets={
+    /* Horn axial +X runs from throat to mouth. Positive-X camera presets
+       therefore look into the mouth; the former ~2.6 rad presets viewed the
+       closed shell from behind and made the complete horn read as a disk. */
+    'full-assembly':{yaw:3.14,pitch:.12,dist:1.36},
+    'horn-only':{yaw:.58,pitch:.18,dist:1.14},
+    'no-drivers-mount-assembly':{yaw:2.52,pitch:.24,dist:1.18},
+    'mounts-preview':{yaw:2.58,pitch:.30,dist:1.12},
+    'lumen-inspection':{yaw:.62,pitch:.26,dist:1.16},
+    'section-cutaway':{yaw:1.56,pitch:.08,dist:1.08},
+    'package-bounds':{yaw:.72,pitch:.3,dist:1.2}
+  },preset=presets[viewId]||presets['full-assembly'];
+  V3D.tgt.copy(sphere.center);
+  V3D.bnd=Math.max(0.04,sphere.radius);
+  /* Leave a small projection margin for the complete assembly. Bounds-based
+     fitting at exactly the nominal orbit could trim extreme driver corners
+     in oblique views even though the horn itself remained visible. */
+  V3D.dist=preset.dist*1.08;
+  V3D.yaw=preset.yaw;
+  V3D.pitch=preset.pitch;
+  V3D.cameraFitted=true;
+}
+let threeWayStateRevision=0,threeWayStateHash='';
+function commitThreeWayStateIdentity(selection){
+  const hash=selection&&typeof selection.solutionHash==='string'
+    ?selection.solutionHash:'';
+  if(!hash)return null;
+  if(!threeWayStateRevision||hash!==threeWayStateHash){
+    threeWayStateRevision+=1;
+    threeWayStateHash=hash;
+  }
+  const identity=Object.freeze({
+    revision:threeWayStateRevision,
+    hash
+  });
+  window.__stateIdentity=identity;
+  document.documentElement.dataset.stateRevision=String(identity.revision);
+  document.documentElement.dataset.stateHash=identity.hash;
+  return identity;
+}
+function createThreeWayV2Runtime(){
+  if(THREEWAY_UI_RUNTIME&&THREEWAY_UI_RUNTIME.ok===true)
+    return THREEWAY_UI_RUNTIME;
+  if(!window.MEH3UI||typeof window.MEH3UI.createRuntime!=='function'){
+    THREEWAY_UI_RUNTIME={
+      ok:false,code:'THREEWAY_UI_DEPENDENCY_UNAVAILABLE',
+      message:'Schema-2 three-way workspace was not assembled.'
+    };
+    return THREEWAY_UI_RUNTIME;
+  }
+  let runtime=null;
+  runtime=window.MEH3UI.createRuntime({
+    document,
+    storage:localStorage,
+    build:MEH_BUILD,
+    THREE,
+    scene:V3D.scene,
+    groupFactory:()=>new THREE.Group(),
+    onActivate:()=>{
+      cancelTwoWayMesh('Schema-2 three-way activated',true);
+      if(V3D.group){
+        const oldGroup=V3D.group;
+        V3D.scene.remove(oldGroup);
+        V3D.group=null;
+        disposeSceneSubtree(oldGroup,'schema-2-threeway-activate');
+      }
+      window.__ev=null;
+      window.__solved=null;
+    },
+    onRender:(rendered,selection)=>{
+      reuseTwoWayMountVisualsForThreeWay(rendered,selection);
+      reuseTwoWayDriverVisualsForThreeWay(rendered,selection);
+      reuseTwoWayCompressionDriverForThreeWay(rendered,selection);
+      fitThreeWayPreviewCamera();
+      render3d();
+      const identity=commitThreeWayStateIdentity(selection);
+      paintRuntimeSentinel(
+        'ready',
+        identity
+          ?'Schema-2 three-way analysis and preview committed.'
+          :'Schema-2 three-way preview rendered without a solution identity.'
+      );
+    }
+  });
+  THREEWAY_UI_RUNTIME=runtime;
+  if(runtime&&runtime.ok===true)runtime.mount();
+  return runtime;
+}
+function activateThreeWayV2(){
+  const runtime=createThreeWayV2Runtime(),
+    requestedView=window.MEH3UI&&
+      window.MEH3UI.viewIds.includes(BOOT_VIEW)?BOOT_VIEW:null;
+  if(!runtime||runtime.ok!==true){
+    const detail=runtime&&runtime.message||
+      'Schema-2 three-way workspace failed closed.';
+    const banner=document.getElementById('refuseBanner');
+    if(banner){banner.style.display='';banner.textContent=detail;}
+    const note=document.getElementById('note');
+    if(note)note.textContent='THREE-WAY REFUSED — '+detail;
+    return runtime;
+  }
+  const banner=document.getElementById('refuseBanner');
+  if(banner)banner.style.display='none';
+  return runtime.activate({viewId:requestedView||'full-assembly'});
+}
 function rebuild(){
   /* Any explicit/committed rebuild supersedes a pending streamed update. */
   cancelPendingGeometryRebuild('direct rebuild');
+  /* No schema-2 three-way state may enter MEH2.solve or the retired
+     independent-object renderer.  Rebuild is a guarded workspace dispatch. */
+  if(S.topo==='3way'){
+    activateThreeWayV2();
+    return;
+  }
   normalizeSectionFamilyState(S,true);
   /* Geometry changes update V3D.bnd, which is part of the orbit-distance
      calculation. Preserve the actual eye/target orbit, not just yaw/pitch. */
@@ -4643,6 +5172,8 @@ function rebuild(){
   const r=MEH2.solve(S), ev=r.ev, st=ev.st,
     stateIdentity=commitTwoWayStateIdentity(r);
   window.__ev=ev; window.__solved=r;
+  const threeWayPreflight=threeWayHornrespPreflight(S),
+    threeWayContainment=paintThreeWayContainment(threeWayPreflight);
   if(S.topo==='2way')refreshTwoWayCountOptions(r.S,ev.plan);
   paintSectionFamilyUI();
   paintProfileLawUI(st);
@@ -5098,7 +5629,10 @@ function rebuild(){
         +(S.topo==='1way'?' · deep self-scan on export'
           :' · '+(a.assembly&&a.assembly.pass?'assembly contact ✓':'assembly contact ✗')
           +' · taps/chambers included'); } }
-    else if(fb){ fb.className=''; fb.textContent='PRINT AUDIT'; } }
+    else if(fb&&S.topo==='3way'){
+      fb.className='fail';
+      fb.textContent=THREE_WAY_ANALYSIS_LABEL+' · STL DISABLED';
+    } else if(fb){ fb.className=''; fb.textContent='PRINT AUDIT'; } }
   const exactManifoldQA=window.__driverManifoldUIQA,
     exactManifoldRefused=S.topo==='2way'&&
       exactManifoldQA&&exactManifoldQA.exactAvailable===true&&
@@ -5112,7 +5646,16 @@ function rebuild(){
         +Math.max(...exactManifoldRecord.drivers.map(item=>
           item.tapMach)).toFixed(4):'';
   const rw=document.getElementById('rows');
-  rw.innerHTML=ev.rows.map(x=>'<div class="'+x.st+'">'+(x.st==='ok'?'✓':x.st==='warn'?'△':'✗')+' '
+  rw.innerHTML=(threeWayContainment.active
+      ?'<div class="warn">△ '+THREE_WAY_ANALYSIS_LABEL
+        +' · STL EXPORT DISABLED</div>'
+        +'<div class="'+(threeWayContainment.hornrespAvailable?'ok':'warn')+'">'
+        +(threeWayContainment.hornrespAvailable?'✓ HORNRESP AVAILABLE'
+          :'△ HORNRESP UNAVAILABLE — COMPLETE T/S REQUIRED · '
+            +userFacingDiagnosticText(threeWayContainment.hornrespReason))
+        +'</div>'
+      :'')
+    +ev.rows.map(x=>'<div class="'+x.st+'">'+(x.st==='ok'?'✓':x.st==='warn'?'△':'✗')+' '
       +userFacingDiagnosticText(x.name)+' — '+userFacingDiagnosticText(x.val)+'</div>').join('')
     +(exactManifoldRefused
       ?'<div class="fail">✗ '+exactManifoldFailureText+'</div>':'')
@@ -5374,6 +5917,22 @@ function drawReports(r){
   const ev=r.ev, st=ev.st, IN=MEH2.IN, Sx=r.S;
   const fmt=v=>(v/IN).toFixed(2)+'″';
   let h='';
+  if(Sx.topo==='3way'){
+    const containment=window.__threeWayContainment&&
+        window.__threeWayContainment.active
+      ?window.__threeWayContainment
+      :paintThreeWayContainment(threeWayHornrespPreflight(S));
+    h+='<b>'+THREE_WAY_ANALYSIS_LABEL+'</b><br>'
+      +'<b>STL EXPORT</b> — REFUSED: the current three-way preview is not '
+      +'Boolean-integrated manufacturing geometry.<br>'
+      +'<b>HORNRESP</b> — '
+      +(containment.hornrespAvailable
+        ?'AVAILABLE: complete woofer and midrange T/S passed the existing exporter preflight.'
+        :'UNAVAILABLE: complete woofer and midrange T/S must pass the existing exporter preflight'
+          +(containment.hornrespReason
+            ?' · '+userFacingDiagnosticText(containment.hornrespReason):''))
+      +'<br><br>';
+  }
   if(Sx.topo==='2way'){
     const P=ev.plan||MEH2.twoWayPlan(Sx);
     const A=P.arch||MEH2.TWO_ARCH.panel,mountSem=twoWayMountSemantics(Sx,P);
@@ -5986,9 +6545,11 @@ function twoWayPlanMountContainment(P,state){
   return {pass:failed.length===0,
     reason:failed.length?failed.join(', ')+' failed':'actual mount containment passed'};
 }
-function twoWayCountPreflight(A,state=S,currentPlan=null){
+function twoWayCountPreflight(A,state=S,currentPlan=null,options=null){
+  options=options||{};
   const requested=Math.max(1,+state.mouthW||A.defaults.mouthW||24),
     cap=Math.max(requested,+state.mouthCap||64),out=[],
+    onlyCount=Number.isFinite(+options.onlyCount)?(+options.onlyCount|0):null,
     ceilHalfStep=value=>{
       const scaled=2*value,nearest=Math.round(scaled),
         tolerance=Number.EPSILON*32*Math.max(1,Math.abs(scaled));
@@ -5996,9 +6557,22 @@ function twoWayCountPreflight(A,state=S,currentPlan=null){
         ?nearest:Math.ceil(scaled))/2;
     };
   for(const n of A.counts){
+    if(onlyCount!==null&&n!==onlyCount)continue;
     try{
       const seed={...state,nW:n,requestedMouthW:requested};
       delete seed.mountEnvelopeMinMouthW;
+      /* A documented package owns its published count. An alternative count is
+         a new calculated design; evaluating it against Hinson/JMOD's fixed tap
+         dimensions is both slow and acoustically false. The selected change is
+         therefore preflighted with the same published→model transition that
+         Smart Adapt commits after the user chooses it. */
+      if(seed.tapBasis==='published'&&
+          (options.publishedCountChange===true||n!==(state.nW|0))){
+        seed.tapBasis='model';
+        seed.twoDesign='arch:'+(seed.twoArch||seed.twoFamily||'panel');
+        for(const key of ['tapStationW','tapAreaW','tapLptW','tapSlotL',
+          'tapSlotW','tapVtcW','tapVtcDerivedW'])delete seed[key];
+      }
       const floor=Math.max(150,+seed.cdFloor||300),
         preferred=Math.max(floor,+seed.twoXO||+A.defaults.twoXO||floor),
         planOptions={deferRetention:true,coarseRadialDiagnostics:true},
@@ -6009,7 +6583,11 @@ function twoWayCountPreflight(A,state=S,currentPlan=null){
           P.boltInnerWebPass&&P.boltOuterWebPass,
         probe=(mouth,twoXO,tapCRW=+seed.tapCRW)=>{
           const candidate={...seed,mouthW:mouth,twoXO,tapCRW},
-            plan=MEH2.twoWayPlan(candidate,planOptions),
+            reusesCurrent=currentPlan&&n===(state.nW|0)&&
+              Math.abs(mouth-(+state.mouthW||requested))<1e-12&&
+              Math.abs(twoXO-(+state.twoXO||preferred))<1e-12&&
+              Math.abs(tapCRW-(+state.tapCRW||tapCRW))<1e-12,
+            plan=reusesCurrent?currentPlan:MEH2.twoWayPlan(candidate,planOptions),
             mountContainment=twoWayPlanMountContainment(plan,candidate);
           return {candidate,plan,mountContainment,
             pass:coreLegal(plan)&&mountContainment.pass&&
@@ -6099,45 +6677,97 @@ function twoWayCountPreflight(A,state=S,currentPlan=null){
   }
   return {requested,cap,items:out};
 }
-function refreshTwoWayCountOptions(state=S,currentPlan=null){
+function refreshTwoWayCountOptions(state=S,currentPlan=null,options=null){
+  options=options||{};
   const count=document.getElementById('nW'),
     countNote=document.getElementById('twoCountNote'),
-    on=state.topo==='2way';
+    on=state.topo==='2way',
+    selectedCount=Math.max(1,state.nW|0);
   if(!count)return null;
   if(!on){
     count.disabled=false;
     count.innerHTML=Array.from({length:7},(_,i)=>{
       const n=i+2;return '<option value="'+n+'">'+n+' woofer'
         +(n===1?'':'s')+'</option>';}).join('');
-    count.value=String(state.nW||4);
+    count.value=String(selectedCount||4);
     count.removeAttribute('data-preflight-mouth');
     if(countNote)countNote.textContent='';
     return null;
   }
   const A=currentPlan&&currentPlan.arch
       ||MEH2.TWO_ARCH[state.twoArch]||MEH2.TWO_ARCH.panel,
-    availability=twoWayCountPreflight(A,state,currentPlan);
+    requested=Math.max(1,+state.mouthW||A.defaults.mouthW||24),
+    deferAlternatives=options.deferAlternatives===true||!!currentPlan,
+    availability=deferAlternatives?(()=>{
+      const planCount=currentPlan&&Array.isArray(currentPlan.drivers)
+          ?currentPlan.drivers.length:null,
+        planMatches=!!currentPlan&&planCount===selectedCount,
+        mountContainment=planMatches
+          ?twoWayPlanMountContainment(currentPlan,state):null,
+        planPass=planMatches&&mountContainment.pass&&
+          currentPlan.minDriverGap>=0.004&&
+          currentPlan.tapFraction<=0.50&&
+          currentPlan.maxPortReach<=currentPlan.frame.activeR-0.002&&
+          (currentPlan.np!==2||currentPlan.pairWeb>=currentPlan.minWeb)&&
+          currentPlan.tapMach<=currentPlan.tapMachLimit+1e-12&&
+          currentPlan.boltInnerWebPass&&currentPlan.boltOuterWebPass&&
+          (+currentPlan.minMouthIn||0)<=requested+1e-9;
+      return {requested,cap:Math.max(requested,+state.mouthCap||64),
+        deferred:true,items:A.counts.map(n=>{
+          if(n!==selectedCount)return {n,minimum:null,impossible:false,
+            growth:false,pending:true,verified:false,
+            reason:(state.tapBasis==='published'
+              ?'count change becomes a calculated design; ':'')
+              +'solve this count on selection'};
+          if(!planMatches)return {n,minimum:null,impossible:false,
+            growth:false,pending:true,verified:false,
+            reason:'saved count preserved; exact check follows the first solved render'};
+          return {n,minimum:Math.max(requested,+currentPlan.minMouthIn||0),
+            impossible:!planPass,growth:false,pending:false,verified:true,
+            mountContainment,
+            reason:planPass
+              ?'current solved package fits the '+requested.toFixed(1)+'″ mouth'
+              :'current solved package refused: '+
+                (mountContainment.pass?'geometry law failed':mountContainment.reason)};
+        })};
+    })():twoWayCountPreflight(A,state,currentPlan);
   count.disabled=false;
-  count.title='Count is user intent. Hard package checks annotate each family-supported count; mouth and fit repair never substitute another count.';
+  count.title='Count is user intent. The current count is verified from the solved plan; another family-supported count is solved transactionally when selected. Mouth and fit repair never substitute another count.';
   count.replaceChildren();
   for(const item of availability.items){
     const option=document.createElement('option');
     option.value=String(item.n);
-    option.disabled=item.impossible;
+    option.disabled=item.impossible&&!item.pending;
     option.textContent=item.n+' woofer'+(item.n===1?'':'s')+' — '
-      +(item.impossible?'UNAVAILABLE · ':item.growth?'GROW MOUTH · ':'FITS · ')
+      +(item.pending?'SOLVE ON SELECT · '
+        :item.impossible?'UNAVAILABLE · ':item.growth?'GROW MOUTH · ':'FITS · ')
       +item.reason;
     option.title=item.reason;
+    option.dataset.countStatus=item.pending?'pending':
+      item.impossible?'unavailable':'verified';
     option.dataset.preflightMouth=availability.requested.toFixed(1);
     count.appendChild(option);
   }
-  if(!A.counts.includes(S.nW))S.nW=A.defaults.nW;
-  count.value=String(S.nW);
+  /* An unsupported saved count is evidence to show, not permission to replace
+     user intent. Migration/Smart Adapt may make an explicit family transition;
+     this paint routine never mutates state. */
+  if(!A.counts.includes(selectedCount)){
+    const unsupported=document.createElement('option');
+    unsupported.value=String(selectedCount);
+    unsupported.disabled=true;
+    unsupported.textContent=selectedCount+' woofers — UNSUPPORTED BY '+
+      String(state.twoArch||'selected').toUpperCase()+' FAMILY · preserved';
+    unsupported.title='Saved count preserved; choose a supported count explicitly.';
+    unsupported.dataset.countStatus='unsupported';
+    count.appendChild(unsupported);
+  }
+  count.value=String(selectedCount);
   count.dataset.preflightMouth=availability.requested.toFixed(1);
-  const selected=availability.items.find(item=>item.n===S.nW);
+  const selected=availability.items.find(item=>item.n===selectedCount);
   if(countNote){
     countNote.className='evidence '+(selected&&selected.impossible?'measured':'derived');
-    countNote.textContent='COUNT PREFLIGHT @ '+availability.requested.toFixed(1)+'″ — '
+    countNote.textContent=(availability.deferred?'COUNT STATUS @ ':'COUNT PREFLIGHT @ ')
+      +availability.requested.toFixed(1)+'″ — '
       +(selected?selected.reason:'unsupported by this family')
       +' · mouth/fit repair never substitutes the selected count or driver';
   }
@@ -6176,6 +6806,62 @@ function applyTwoDesign(key){
   applyAdaptiveState('twoDesign');
   revealTwoWayTaps();
   save(); wire(); rebuild();
+}
+function paintTwoWayQuickStarts(){
+  const box=document.getElementById('twoQuickStarts'),
+    grid=document.getElementById('twoQuickStartGrid');
+  if(box)box.style.display=S.topo==='2way'?'':'none';
+  if(!grid)return;
+  grid.replaceChildren();
+  for(const start of MEH2.TWO_STARTS||[]){
+    const button=document.createElement('button');
+    button.type='button';
+    button.dataset.twoStart=start.key;
+    const title=document.createElement('b'),summary=document.createElement('span');
+    title.textContent=start.name;
+    summary.textContent=start.summary;
+    button.append(title,summary);
+    button.onclick=()=>queueTwoWaySolve('quick start '+start.name,()=>{
+      applyTwoQuickStart(start.key);
+    });
+    grid.appendChild(button);
+  }
+}
+function applyTwoQuickStart(key){
+  const note=document.getElementById('twoQuickStartNote'),
+    result=MEH2.applyTwoWayStart
+      ?MEH2.applyTwoWayStart(S,key):{
+        ok:false,code:'TWO_START_RUNTIME_MISSING',
+        message:'This runtime does not expose calculated two-way quick starts.'
+      };
+  window.__lastTwoWayQuickStart=result;
+  if(!result.ok){
+    if(note){
+      note.className='evidence exact-refused';
+      note.textContent='QUICK START REFUSED · '+result.code+' · '+result.message
+        +' · LIVE DESIGN WAS NOT CHANGED';
+    }
+    return result;
+  }
+  for(const field of Object.keys(S))if(!(field in result.S2))delete S[field];
+  Object.assign(S,result.S2);
+  S.requestedMouthW=S.mouthW;
+  S._smart2waySchema=TWO_WAY_STATE_SCHEMA;
+  paintAdaptLedger(result);
+  revealTwoWayTaps();
+  save();
+  wire();
+  if(note){
+    note.className='evidence derived';
+    note.textContent='CALCULATED START APPLIED · '+result.start.name.toUpperCase()
+      +' · '+result.preflight.driverCount+' DRIVERS / '
+      +result.preflight.passageCount+' PASSAGES · '
+      +Math.round(result.preflight.crossoverHz)+' HZ XO · '
+      +result.preflight.mouthWidthIn.toFixed(1)+'″ MOUTH · '
+      +'COUPLED DESIGN-LAW PREFLIGHT PASSED';
+  }
+  rebuild();
+  return result;
 }
 function paintDriverArrayPlacementUI(P=null){
   const box=document.getElementById('driverArrayCtl'),
@@ -6489,6 +7175,7 @@ function wireTwoWay(skipAudit=false){
   if(on&&!Number.isFinite(+S.requestedMouthW))S.requestedMouthW=+S.mouthW||24;
   if(ctl) ctl.style.display=on?'':'none';
   if(diagnostics) diagnostics.style.display=on?'':'none';
+  paintTwoWayQuickStarts();
   paintDriverCellUI(window.__solved&&window.__solved.ev
     ?window.__solved.ev.plan:null);
   const familyParams=document.getElementById('twoFamilyParams');
@@ -6500,7 +7187,7 @@ function wireTwoWay(skipAudit=false){
   const countCtl=document.getElementById('twoCountCtl');
   if(aimCtl) aimCtl.style.display=on?'none':'';
   if(placeCtl) placeCtl.style.display=on?'none':'';
-  refreshTwoWayCountOptions(S);
+  if(!on)refreshTwoWayCountOptions(S);
   if(countCtl) countCtl.title=on?'Panel: 2, 4 or 6. Radial printed manifold: 2 through 8.':'';
   if(aimNote){ aimNote.style.display=on?'':'none';
     if(on){ aimNote.className='evidence derived';
@@ -6508,6 +7195,11 @@ function wireTwoWay(skipAudit=false){
   if(!on||!MEH2.TWO_ARCH){ paintMountSystemUI(); refreshTwoWayCDOptions(); return; }
   const family=twoWayFamilyForState(S);
   S.twoArch=family;S.twoFamily=family;
+  /* Boot must not solve every alternative count before the actual design has
+     rendered. Paint the family choices immediately; rebuild verifies the
+     selected count from its completed plan and alternatives solve only when
+     the user explicitly selects one. */
+  refreshTwoWayCountOptions(S,null,{deferAlternatives:true});
   const namedDesign=(MEH2.BUILDS['2way']||[]).some(b=>b.key===S.twoDesign),
     calculatedDesign=S.twoDesign==='arch:panel'||S.twoDesign==='arch:radial';
   if(!namedDesign&&!calculatedDesign)S.twoDesign='arch:'+family;
@@ -7145,10 +7837,19 @@ function coax1way(){
 function wire(){
   document.querySelectorAll('#segTopo button').forEach(b=>{
     if(b.dataset.v===S.topo){document.querySelectorAll('#segTopo button').forEach(x=>x.classList.remove('on'));b.classList.add('on');}
-    b.onclick=()=>{ if(S.topo!==b.dataset.v)cancelTwoWayMesh('Topology changed',true);
-      S.topo=b.dataset.v;
+    b.onclick=()=>{ const nextTopology=b.dataset.v;
+      if(S.topo!==nextTopology)cancelTwoWayMesh('Topology changed',true);
+      S.topo=nextTopology;
       document.querySelectorAll('#segTopo button').forEach(x=>x.classList.toggle('on',x===b));
-      document.getElementById('midCtl').style.display=S.topo==='3way'?'':'none';
+      /* The old #midCtl and MEH2 three-way route are retired.  Schema 2 owns
+         its own topology-generated source/station editor and storage key. */
+      document.getElementById('midCtl').style.display='none';
+      if(S.topo==='3way'){
+        activateThreeWayV2();
+        return;
+      }
+      if(THREEWAY_UI_RUNTIME&&THREEWAY_UI_RUNTIME.ok===true)
+        THREEWAY_UI_RUNTIME.deactivate();
       if(S.topo==='2way'){
         const v=S.twoDesign||'hinson10';
         applyTwoDesign(v); return;
@@ -7157,7 +7858,8 @@ function wire(){
   });
   coax1way();
   wireTwoWay();
-  document.getElementById('midCtl').style.display=S.topo==='3way'?'':'none';
+  document.getElementById('midCtl').style.display='none';
+  if(S.topo==='3way')activateThreeWayV2();
   /* ADAPTIVE SETTINGS (his ask - docs/adaptive_settings_plan.md): every knob
      change routes through MEH2.adapt - dependents co-move as ONE atomic
      transition, each move announced on the ADAPT strip; intent knobs never
@@ -7170,13 +7872,30 @@ function wire(){
     show();
     const expensive=()=>S.topo==='2way'&&
       ['seN','sectionCornerRatio','mouthW','covH','covV','rollR','odW','nW'].includes(key);
-    const change=(streamed=false)=>{ const next=+el.value;
+    const change=(streamed=false)=>{ const next=+el.value,previous=S[key];
       const assign=()=>{ S[key]=next;
         if(key==='seN'&&S.style==='smooth'&&S.sectionFamily==='superellipse')
           S.sectionLameN=next;
         if(key==='mouthW')S.requestedMouthW=next; };
       if(expensive()){
         queueTwoWaySolve(key,()=>{ assign();
+          if(key==='nW'&&next!==previous){
+            const A=MEH2.TWO_ARCH[S.twoArch]||MEH2.TWO_ARCH.panel,
+              preflight=twoWayCountPreflight(A,S,null,{
+                onlyCount:next,publishedCountChange:true}),
+              selected=preflight.items.find(item=>item.n===next);
+            if(!selected||selected.impossible){
+              S[key]=previous;el.value=String(previous);show(previous);
+              const note=document.getElementById('twoCountNote');
+              if(note){
+                note.className='evidence measured';
+                note.textContent='COUNT CHANGE REFUSED — '+
+                  (selected?selected.reason:'unsupported by this family')+
+                  ' · previous count and driver preserved';
+              }
+              return;
+            }
+          }
           applyAdapt(key); revealTwoWayTaps();
           show(); save(); if(key==='nW')wireTwoWay(true);
           if(key==='seN'||key==='sectionCornerRatio')paintSectionFamilyUI(); rebuild(); });
@@ -7598,6 +8317,12 @@ function wire(){
   { const exactButton=document.getElementById('bExact');
     if(exactButton){
       exactButton.onclick=()=>{
+        if(S.topo==='3way'){
+          document.getElementById('note').textContent=
+            '✗ EXACT MESH REFUSED — schema-2 three-way is analysis/preview only; '
+            +'the exact-solid kernel and fabrication gate have not admitted this design.';
+          return;
+        }
         if(twoMeshJob){cancelTwoWayMesh('Cancelled by user');return;}
         const solved=window.__solved||MEH2.solve(S),
           failures=(solved.ev&&solved.ev.rows||[]).filter(row=>row.st==='fail');
@@ -7691,6 +8416,13 @@ function wire(){
   document.getElementById('bStl').onclick=async()=>{      // one printable solid per horn
     if(twoMeshJob&&twoMeshJob.kind==='export'){
       cancelTwoWayMesh('STL export cancelled by user');return;
+    }
+    if(S.topo==='3way'){
+      document.getElementById('note').textContent='✗ STL EXPORT REFUSED — '
+        +THREE_WAY_ANALYSIS_LABEL
+        +' · the preview is not Boolean-integrated manufacturing geometry, '
+        +'so no STL or cutter file was downloaded.';
+      return;
     }
     const r=window.__solved||MEH2.solve(S);
     /* b532 EXPORT HONESTY (pin #22 extended): a refused state must not ship
@@ -7809,8 +8541,23 @@ function wire(){
           +'separate tap-cutters file is the explicitly owned negative tool.'
         :' — watertight (gate-asserted)'); };
   { const reportButton=document.getElementById('bHrn');
-    if(reportButton) reportButton.textContent=S.topo==='2way'?'DESIGN REPORT':'HORNRESP'; }
+    if(reportButton&&S.topo==='3way'){
+      reportButton.disabled=true;
+      reportButton.setAttribute('aria-disabled','true');
+      reportButton.textContent='HORNRESP UNAVAILABLE';
+      reportButton.title='Schema-2 three-way does not route through the retired legacy Hornresp exporter.';
+    } else if(reportButton){
+      reportButton.disabled=false;
+      reportButton.setAttribute('aria-disabled','false');
+      reportButton.textContent=S.topo==='2way'?'DESIGN REPORT':'HORNRESP';
+    } }
   document.getElementById('bHrn').onclick=()=>{     // b535 M10/D: the ME exporter (format = his three wizard exports, diff-verified)
+    if(S.topo==='3way'){
+      document.getElementById('note').textContent=
+        '✗ HORNRESP REFUSED — schema-2 three-way has no source-pinned exporter; '
+        +'the retired legacy three-way state and exporter are bypassed.';
+      return;
+    }
     if(S.topo==='2way'){
       const r=window.__solved||MEH2.solve(S),P=r.ev.plan||MEH2.twoWayPlan(r.S);
       const mountSem=twoWayMountSemantics(r.S,P),
@@ -8047,7 +8794,18 @@ function wire(){
       document.getElementById('note').textContent='DESIGN REPORT: geometry, tap math, chamber model, mounting record and every audit row exported as JSON.';
       return;
     }
-    const out=MEH2.hornrespME(S,TS);
+    let out;
+    if(S.topo==='3way'){
+      const preflight=threeWayHornrespPreflight(S);
+      paintThreeWayContainment(preflight);
+      if(!preflight.available){
+        document.getElementById('note').textContent=
+          '✗ HORNRESP UNAVAILABLE — three-way analysis export is fail-closed · '
+          +preflight.reason;
+        return;
+      }
+      out=preflight.output;
+    }else out=MEH2.hornrespME(S,TS);
     if(out.error){ document.getElementById('note').textContent='✗ HORNRESP EXPORT REFUSED — '+out.error; return; }
     for(const [k,txt] of [['ME1',out.ME1],['ME2',out.ME2],['Nd',out.Nd]]){
       const blob=new Blob([txt],{type:'text/plain'});
@@ -8197,6 +8955,7 @@ window.BUGPINS=(function(){
 /* ---------------- boot ---------------- */
 const BOOT_VIEW=BOOT_Q.get('view');
 const BOOT_MOUNT_FOCUS=BOOT_Q.get('mountFocus');
+const BOOT_TOPOLOGY=BOOT_Q.get('topology');
 function applyBootInspectionState(){
   if(BOOT_MOUNT_FOCUS==='assembly'||/^\d+$/.test(BOOT_MOUNT_FOCUS||''))
     V3D.mountFocus=BOOT_MOUNT_FOCUS;
@@ -8232,6 +8991,10 @@ if(BOOT_BUILD_MISMATCH){
     if(!event.persisted)releaseRendererResources('pagehide');
   });
   init3d();
+  /* Explicit visual-QA entry point. This selects the same schema-2 runtime
+     as the visible topology button; it does not bypass solve or render
+     admission and is useful for deterministic capture-mode witnesses. */
+  if(BOOT_TOPOLOGY==='3way')S.topo='3way';
   wire();
   /* Wiring repairs view choices for interactive topology changes. The explicit
      boot view is authoritative for this initial load, so apply it once more
