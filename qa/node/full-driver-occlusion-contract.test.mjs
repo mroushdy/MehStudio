@@ -51,7 +51,7 @@ test("FULL keeps six-driver roots while its thin preview occludes them from horn
   );
 });
 
-test("FULL uses one recessive open lumen wall per tap and never a terminal decal", () => {
+test("FULL uses canonical fragment cuts while inspection views keep open lumen walls", () => {
   const renderTwoWay = extractNamedFunction(shell, "renderTwoWay");
   assert.match(
     renderTwoWay,
@@ -59,7 +59,8 @@ test("FULL uses one recessive open lumen wall per tap and never a terminal decal
   );
   assert.match(
     renderTwoWay,
-    /inspect\|\|view==='taps'\|\|view==='full'\|\|focusedCell/,
+    /tunnel\.visible=selected&&!focusedMount&&[\s\S]{0,100}\(noDriverPhysicalWall\|\|inspect\|\|view==='taps'\|\|focusedCell\)/,
+    "FULL must not composite a helper tunnel over the real driver cone",
   );
   assert.match(
     renderTwoWay,

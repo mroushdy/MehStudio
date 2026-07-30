@@ -1,25 +1,64 @@
 import assert from "node:assert/strict";
+// Current Build 654 delivery identity and source-assembly contract.
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import test from "node:test";
+import vm from "node:vm";
 import { fileURLToPath } from "node:url";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const appRoot = path.resolve(here, "../..");
 const shellPath = path.join(appRoot, "shell.html");
 
-test("assembled application exactly matches the four current source modules", async () => {
-  const [shell, profileLaws, engine, twoWay, assembled] = await Promise.all([
+const threeWayModules = [
+  "threeway-state-contract.js",
+  "threeway-reference-cards.js",
+  "threeway-driver-db.js",
+  "threeway-analysis-presets.js",
+  "threeway-quick-starts.js",
+  "threeway-acoustics.js",
+  "threeway-chamber-solver.js",
+  "threeway-coupled-network.js",
+  "threeway-horn-surface.js",
+  "threeway-aperture-solver.js",
+  "threeway-station-solver.js",
+  "threeway-interface-planner.js",
+  "threeway-lumen-geometry.js",
+  "threeway-passage-solver.js",
+  "threeway-mount-host.js",
+  "threeway-mount-solver.js",
+  "threeway-package-input.js",
+  "threeway-package-solver.js",
+  "threeway-preview-geometry.js",
+  "threeway-solid-intent.js",
+  "threeway-render-assembly.js",
+  "threeway-render-model.js",
+  "threeway-analysis-export.js",
+  "threeway-solver.js",
+  "threeway-renderer.js",
+  "threeway-solid-plan.js",
+  "threeway-exact-kernel.js",
+  "threeway-fabrication-gate.js",
+  "threeway-controller.js",
+  "threeway-ui.js",
+];
+
+test("assembled application exactly matches the ordered Build 654 source modules", async () => {
+  const [shell, profileLaws, engine, twoWay, assembled, ...threeWaySources] = await Promise.all([
     readFile(shellPath, "utf8"),
     readFile(path.join(appRoot, "profile-laws.js"), "utf8"),
     readFile(path.join(appRoot, "engine.js"), "utf8"),
     readFile(path.join(appRoot, "twoway-core.js"), "utf8"),
     readFile(path.join(appRoot, "meh5.html"), "utf8"),
+    ...threeWayModules.map(filename =>
+      readFile(path.join(appRoot, filename), "utf8")),
   ]);
+  const threeWay = threeWaySources.join("\n\n");
   const expected = shell
-    .replace("/*__PROFILE_LAWS__*/", profileLaws)
-    .replace("/*__ENGINE__*/", engine)
-    .replace("/*__TWOWAY__*/", twoWay)
+    .replace("/*__PROFILE_LAWS__*/", () => profileLaws)
+    .replace("/*__ENGINE__*/", () => engine)
+    .replace("/*__TWOWAY__*/", () => twoWay)
+    .replace("/*__THREEWAY__*/", () => threeWay)
     .replace("/*__CAD__*/", "/* parametric */");
   assert.equal(
     assembled,
@@ -28,7 +67,67 @@ test("assembled application exactly matches the four current source modules", as
   );
 });
 
-test("Build 652 boot identity is decided before saved geometry is read", async () => {
+test("ordered three-way stack captures every browser dependency before the controller loads", async () => {
+  const [profileLaws, ...threeWaySources] = await Promise.all([
+    readFile(path.join(appRoot, "profile-laws.js"), "utf8"),
+    ...threeWayModules.map(filename =>
+      readFile(path.join(appRoot, filename), "utf8")),
+  ]);
+  const context = {};
+  context.globalThis = context;
+  vm.createContext(context);
+  vm.runInContext(profileLaws, context, { filename: "profile-laws.js" });
+  for (let index = 0; index < threeWayModules.length; index += 1) {
+    vm.runInContext(threeWaySources[index], context, {
+      filename: threeWayModules[index],
+    });
+  }
+
+  for (const globalName of [
+    "MEH3StateContract",
+    "MEH3ReferenceCards",
+    "MEH3DriverDB",
+    "MEH3AnalysisPresets",
+    "MEH3Acoustics",
+    "MEH3ChamberSolver",
+    "MEH3CoupledNetwork",
+    "MEH3HornSurface",
+    "MEH3ApertureSolver",
+    "MEH3StationSolver",
+    "MEH3InterfacePlanner",
+    "MEH3LumenGeometry",
+    "MEH3PassageSolver",
+    "MEH3MountHost",
+    "MEH3MountSolver",
+    "MEH3PackageInput",
+    "MEH3PackageSolver",
+    "MEH3PreviewGeometry",
+    "MEH3RenderAssembly",
+    "MEH3RenderModel",
+    "MEH3AnalysisExport",
+    "MEH3ThreewaySolver",
+    "MEH3Renderer",
+    "MEH3SolidPlan",
+    "MEH3ExactKernel",
+    "MEH3FabricationGate",
+    "MEH3Controller",
+    "MEH3UI",
+  ]) {
+    assert.ok(context[globalName], `${globalName} was not installed`);
+  }
+  const refused = context.MEH3ThreewaySolver.solveThreeWay({});
+  assert.equal(refused.ok, false);
+  assert.equal(
+    refused.diagnostics.some(item =>
+      item.code === "THREEWAY_SOLVER_DEPENDENCY_UNAVAILABLE"),
+    false,
+    "threeway-solver captured a missing browser dependency",
+  );
+  assert.equal(context.MEH3Controller.storageKey, "meh5_threeway_state_v2");
+  assert.equal(context.MEH3, undefined, "retired schema-1 core was wired");
+});
+
+test("Build 654 boot identity is decided before saved geometry is read", async () => {
   const shell = await readFile(shellPath, "utf8");
   const queryIndex = shell.indexOf(
     "const BOOT_Q=new URLSearchParams(location.search)",
@@ -37,10 +136,10 @@ test("Build 652 boot identity is decided before saved geometry is read", async (
     "localStorage.getItem('meh5_state')",
   );
 
-  assert.match(shell, /window\.MEH_BUILD=652;/);
+  assert.match(shell, /window\.MEH_BUILD=654;/);
   assert.match(
     shell,
-    /meh5\.html\?build=652&source=file-redirect/,
+    /meh5\.html\?build=654&source=file-redirect/,
   );
   assert.ok(queryIndex >= 0, "boot query contract is missing");
   assert.ok(savedStateIndex >= 0, "saved-state read is missing");
@@ -60,15 +159,15 @@ test("Build 652 boot identity is decided before saved geometry is read", async (
   );
 });
 
-test("Build 652 owns the corner-plate swept-tap mesh namespace", async () => {
+test("Build 654 preserves the frozen Build 653 corner-plate mesh namespace", async () => {
   const twoWay = await readFile(path.join(appRoot, "twoway-core.js"), "utf8");
   assert.match(
     twoWay,
-    /const MESH_POLICY_VERSION='b652-differential-cell-terminal-grid-v3';/,
+    /const MESH_POLICY_VERSION='b653-differential-cell-terminal-grid-v3';/,
   );
   assert.match(
     twoWay,
-    /return 'b652-'\+hash\.toString\(36\)/,
+    /return 'b653-'\+hash\.toString\(36\)/,
   );
 });
 

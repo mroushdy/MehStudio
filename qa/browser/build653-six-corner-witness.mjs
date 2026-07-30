@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// Current Build 653 six-corner visual/topology witness.
 import { createHash } from "node:crypto";
 import { createReadStream } from "node:fs";
 import {
@@ -18,8 +19,8 @@ const here = path.dirname(fileURLToPath(import.meta.url));
 const qaRoot = path.resolve(here, "..");
 const appRoot = path.resolve(qaRoot, "..");
 const output = path.resolve(
-  process.env.MEH_BUILD652_SIX_CORNER_OUTPUT
-    || path.join(qaRoot, "artifacts/build652-six-corner"),
+  process.env.MEH_BUILD653_SIX_CORNER_OUTPUT
+    || path.join(qaRoot, "artifacts/build653-six-corner"),
 );
 
 function assert(condition, message) {
@@ -36,10 +37,10 @@ const runtime = shell
   .replace("/*__PROFILE_LAWS__*/", profileLaws)
   .replace("/*__ENGINE__*/", engine)
   .replace("/*__TWOWAY__*/", twoWay)
-  .replace("/*__CAD__*/", "/* Build 652 six-corner browser witness */");
+  .replace("/*__CAD__*/", "/* Build 653 six-corner browser witness */");
 assert(
-  /window\.MEH_BUILD=652;/.test(runtime),
-  "source runtime is not Build 652",
+  /window\.MEH_BUILD=653;/.test(runtime),
+  "source runtime is not Build 653",
 );
 assert(
   !/\/\*__(?:PROFILE_LAWS|ENGINE|TWOWAY|CAD)__\*\//.test(runtime),
@@ -113,8 +114,8 @@ await new Promise((resolve, reject) => {
 const address = server.address();
 assert(address && typeof address !== "string", "QA server did not bind");
 const target = `http://127.0.0.1:${address.port}/shell.html`
-  + "?build=652&reset=1&view=nodrv&mountFocus=0"
-  + "&capture=1&qa=build652-six-corner";
+  + "?build=653&reset=1&view=nodrv&mountFocus=0"
+  + "&capture=1&qa=build653-six-corner";
 
 function imageRecord(bytes) {
   const png = PNG.sync.read(bytes);
@@ -701,8 +702,8 @@ async function sceneSnapshot(page) {
 }
 
 function assertCommon(snapshot, label) {
-  assert(snapshot.build === 652, `${label}: runtime build drift`);
-  assert(snapshot.stateHash.startsWith("b652-"), `${label}: state hash drift`);
+  assert(snapshot.build === 653, `${label}: runtime build drift`);
+  assert(snapshot.stateHash.startsWith("b653-"), `${label}: state hash drift`);
   assert(!snapshot.infeasible && snapshot.failCount === 0,
     `${label}: solver refused the six-W5 fixture`);
   assert(snapshot.driverCount === 6, `${label}: ${snapshot.driverCount}/6 drivers`);
@@ -1204,7 +1205,7 @@ try {
   assert(browserErrors.length === 0,
     `browser errors:\n${browserErrors.join("\n")}`);
   const manifest = {
-    build: 652,
+    build: 653,
     fixture: "six-W5 angular 90×60 panel; AUTO seam placement",
     pass: true,
     generatedAt: new Date().toISOString(),
@@ -1215,7 +1216,7 @@ try {
     `${JSON.stringify(manifest, null, 2)}\n`,
   );
   console.log(
-    "BUILD 652 SIX-CORNER BROWSER PASS"
+    "BUILD 653 SIX-CORNER BROWSER PASS"
       + " · 4 corner + 2 face"
       + " · 6 complete roots/bearings"
       + " · 8 corner wings"

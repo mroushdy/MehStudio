@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// Current Build 653 six-woofer UI and persistence contract.
 import { createReadStream } from "node:fs";
 import { readFile, stat } from "node:fs/promises";
 import http from "node:http";
@@ -17,8 +18,8 @@ function assert(condition, message) {
 
 const assembled = await readFile(assembledPath, "utf8");
 assert(
-  /window\.MEH_BUILD=652;/.test(assembled),
-  "STALE_ASSEMBLY: meh5.html is not Build 652; run `node assemble.js` first",
+  /window\.MEH_BUILD=653;/.test(assembled),
+  "STALE_ASSEMBLY: meh5.html is not Build 653; run `node assemble.js` first",
 );
 assert(
   !/\/\*__(?:PROFILE_LAWS|ENGINE|TWOWAY|CAD)__\*\//.test(assembled),
@@ -297,10 +298,10 @@ async function sixPreflightDiagnostics(page) {
 }
 
 function assertSix(record, label) {
-  assert(record.build === 652, `${label}: runtime build is ${record.build}`);
+  assert(record.build === 653, `${label}: runtime build is ${record.build}`);
   assert(record.sentinel?.status === "ready", `${label}: runtime is not ready`);
-  assert(record.stateHash?.startsWith("b652-"), `${label}: invalid state hash`);
-  assert(record.meshKey?.startsWith("b652-"), `${label}: invalid mesh key`);
+  assert(record.stateHash?.startsWith("b653-"), `${label}: invalid state hash`);
+  assert(record.meshKey?.startsWith("b653-"), `${label}: invalid mesh key`);
   assert(record.state.twoDesign === "arch:panel", `${label}: design is not calculated panel`);
   assert(record.state.twoArch === "panel", `${label}: family is not panel`);
   assert(record.state.wPre === "w5", `${label}: W5 was not retained`);
@@ -371,7 +372,7 @@ page.on("console", (message) => {
 
 try {
   await page.goto(
-    `${baseUrl}?build=652&reset=1&view=cell&mountFocus=0&rev=six-ui-reset`,
+    `${baseUrl}?build=653&reset=1&view=cell&mountFocus=0&rev=six-ui-reset`,
     { waitUntil: "domcontentloaded", timeout: 60_000 },
   );
   await settle(page);
@@ -429,7 +430,7 @@ try {
   assert(selectedSix.saved.nW === 6, "six-woofer state was not saved");
 
   await page.goto(
-    `${baseUrl}?build=652&view=cell&mountFocus=0&rev=six-ui-persisted`,
+    `${baseUrl}?build=653&view=cell&mountFocus=0&rev=six-ui-persisted`,
     { waitUntil: "domcontentloaded", timeout: 60_000 },
   );
   await settle(page);

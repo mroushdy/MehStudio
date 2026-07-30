@@ -486,6 +486,18 @@ test("six Dayton cells retain one plate/horn solid and twelve symmetric lumens",
   assert.equal(plan.mountEnvelopeComplete, true);
   assert.ok(plan.minDriverGap > 0);
   assert.ok(plan.pairWeb > plan.minWeb);
+  assert.equal(plan.panelBoltForeignGasketPass, true);
+  assert.ok(
+    plan.panelBoltForeignGasketClearance
+      >= plan.panelBoltForeignGasketRequired,
+  );
+  assert.ok(plan.panelBoltClearance >= plan.panelBoltRequired);
+  assert.ok(
+    plan.drivers.every((driver) => (
+      Math.abs(driver.boltPhase - plan.panelBoltPhase) < 1e-12
+    )),
+    "the final gasket-safe bolt phase is not shared by every driver",
+  );
 
   const field = engine.twoWaySolidField(plan);
   assert.ok(field.retentionTools.every((tools) => tools.length === 0));

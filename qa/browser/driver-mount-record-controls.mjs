@@ -197,7 +197,7 @@ try {
       if (message.type() === "error") errors.push(message.text());
     });
     await page.goto(
-      `http://127.0.0.1:${address.port}/shell.html?build=652`
+      `http://127.0.0.1:${address.port}/shell.html?build=653`
         + `&view=${mutation.view}&mountFocus=0&rev=mount-${mutation.field}`,
       { waitUntil: "domcontentloaded", timeout: 30_000 },
     );

@@ -146,7 +146,7 @@ test("saved optional mount records preserve source ownership across reload", {
       if (message.type() === "error") errors.push(message.text());
     });
     await page.goto(
-      `http://127.0.0.1:${address.port}/shell.html?build=652&view=cell`,
+      `http://127.0.0.1:${address.port}/shell.html?build=654&view=cell`,
       { waitUntil: "domcontentloaded", timeout: 30_000 },
     );
     await page.waitForFunction(() => (

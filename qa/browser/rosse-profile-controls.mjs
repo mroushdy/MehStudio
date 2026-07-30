@@ -27,7 +27,7 @@ const runtime = shell
   .replace("/*__PROFILE_LAWS__*/", profileLaws)
   .replace("/*__ENGINE__*/", engineSource)
   .replace("/*__TWOWAY__*/", twoWay)
-  .replace("/*__CAD__*/", "/* Build 652 R-OSSE control contract */");
+  .replace("/*__CAD__*/", "/* Build 653 R-OSSE control contract */");
 
 const mime = {
   ".html": "text/html; charset=utf-8",
@@ -148,7 +148,7 @@ try {
       if (message.type() === "error") errors.push(message.text());
     });
     await page.goto(
-      `http://127.0.0.1:${address.port}/shell.html?build=652&view=horn&rev=rosse-${field}`,
+      `http://127.0.0.1:${address.port}/shell.html?build=653&view=horn&rev=rosse-${field}`,
       { waitUntil: "domcontentloaded", timeout: 30_000 },
     );
     await page.waitForFunction(() => (
