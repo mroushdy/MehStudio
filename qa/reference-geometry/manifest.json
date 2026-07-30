@@ -1,0 +1,433 @@
+{
+  "schemaVersion": 1,
+  "title": "MEH Studio reference-geometry contracts",
+  "method": {
+    "kind": "normalized-geometry-regression",
+    "pixelMatching": false,
+    "statement": "Reference images establish observable topology, orientation, continuity, and packaging contracts. Numeric thresholds come only from published dimensions, catalogue geometry, or explicit engineering invariants."
+  },
+  "provenance": [
+    {
+      "id": "hinson-front-observation",
+      "label": "observed-photograph",
+      "authority": "topology-and-layout-only",
+      "files": [
+        "/Users/marwanroushdy/Downloads/1000018802.jpg",
+        "/Users/marwanroushdy/Downloads/1000018803.jpg",
+        "/Users/marwanroushdy/Downloads/1000018804.jpg"
+      ],
+      "observations": [
+        "The acoustic flare is assembled from four flat wall planes.",
+        "The throat is circular.",
+        "Four rounded slots occupy the four wall quadrants and are biased toward the wall-intersection diagonals."
+      ],
+      "limitations": "Perspective photographs do not authorize dimensional measurements."
+    },
+    {
+      "id": "hinson-rear-observation",
+      "label": "observed-photograph",
+      "authority": "topology-and-layout-only",
+      "files": [
+        "/Users/marwanroushdy/Downloads/1000018627.jpg",
+        "/Users/marwanroushdy/Downloads/1000018648.jpg"
+      ],
+      "observations": [
+        "Two complete woofer frames remain behind the acoustic wall.",
+        "Woofer frames seal to continuous structural driver-bearing panels.",
+        "The driver plates and braces meet the horn structure without floating gaps."
+      ],
+      "limitations": "Occluded gasket and chamber dimensions are not inferred from photographs."
+    },
+    {
+      "id": "hinson-published-geometry",
+      "label": "published-dimension",
+      "authority": "numeric",
+      "files": [
+        "/Users/marwanroushdy/Downloads/303b9e618394104d6a72e34bc18bfe61e7e118d97ecfd6db8b563819530e533b (1).pdf",
+        "/Users/marwanroushdy/Downloads/MEH dimensions freedom units.jpg"
+      ],
+      "observations": [
+        "The Hinson record uses two woofers, two racetrack entries per woofer, an 18 mm driver-bearing panel, and a central circular compression-driver throat."
+      ],
+      "limitations": "Only dimensions explicitly represented by the documented build record are treated as published."
+    },
+    {
+      "id": "radial-manifold-observation",
+      "label": "observed-photograph",
+      "authority": "topology-and-layout-only",
+      "files": [
+        "/Users/marwanroushdy/Downloads/Screenshot 2026-07-20 at 4.08.15 PM.png",
+        "/Users/marwanroushdy/Downloads/Screenshot 2026-07-19 at 2.58.32 PM.png",
+        "/Users/marwanroushdy/Downloads/Unity_Horn_Side (1).png",
+        "/Users/marwanroushdy/Downloads/Unity_Horn_Fusion.png"
+      ],
+      "observations": [
+        "Woofer modules repeat at equal angular intervals around a central HF hub.",
+        "Complete circular driver frames and gaskets sit on continuous mounting lands.",
+        "Driver bodies remain outside the acoustic flare and aim into the central manifold."
+      ],
+      "limitations": "Photographs establish rotational organization, not acoustic validity or exact adapter dimensions."
+    },
+    {
+      "id": "manufacturing-invariants",
+      "label": "derived-engineering-invariant",
+      "authority": "numeric",
+      "files": [],
+      "observations": [
+        "A through-wall tap envelope must remain under the active cone footprint.",
+        "Driver and gasket envelopes must not overlap or protrude into horn air.",
+        "A driver-bearing plate must be continuous from horn wall to gasket seat.",
+        "A radial N-driver layout must use N equal angular sectors."
+      ],
+      "limitations": "These are manufacturability and topology gates, not substitutes for BEM/FEM or prototype measurements."
+    },
+    {
+      "id": "render-descriptor-contract",
+      "label": "runtime-descriptor",
+      "authority": "numeric",
+      "files": [],
+      "observations": [
+        "The renderer exposes mount, gasket, driver-body, tap-interface, rear-envelope, and pair-clearance descriptors."
+      ],
+      "limitations": "Evaluated only when a render descriptor JSON file is supplied to the gate."
+    }
+  ],
+  "fixtures": [
+    {
+      "id": "hinson-published-2x10",
+      "source": {
+        "type": "build",
+        "key": "hinson10"
+      },
+      "tags": [
+        "panel",
+        "hinson",
+        "published",
+        "two-woofer"
+      ]
+    },
+    {
+      "id": "radial-2",
+      "source": {
+        "type": "family",
+        "key": "radial"
+      },
+      "overrides": {
+        "nW": 2,
+        "mouthW": 42,
+        "mouthCap": 64,
+        "covH": 90,
+        "covV": 60,
+        "td": 1.4,
+        "throat": 1.4,
+        "wallT": 0.012
+      },
+      "tags": [
+        "radial",
+        "count-sweep"
+      ]
+    },
+    {
+      "id": "radial-3",
+      "source": {
+        "type": "family",
+        "key": "radial"
+      },
+      "overrides": {
+        "nW": 3,
+        "mouthW": 42,
+        "mouthCap": 64,
+        "covH": 90,
+        "covV": 60,
+        "td": 1.4,
+        "throat": 1.4,
+        "wallT": 0.012
+      },
+      "tags": [
+        "radial",
+        "count-sweep"
+      ]
+    },
+    {
+      "id": "radial-4",
+      "source": {
+        "type": "family",
+        "key": "radial"
+      },
+      "overrides": {
+        "nW": 4,
+        "mouthW": 42,
+        "mouthCap": 64,
+        "covH": 90,
+        "covV": 60,
+        "td": 1.4,
+        "throat": 1.4,
+        "wallT": 0.012
+      },
+      "tags": [
+        "radial",
+        "count-sweep"
+      ]
+    },
+    {
+      "id": "radial-5",
+      "source": {
+        "type": "family",
+        "key": "radial"
+      },
+      "overrides": {
+        "nW": 5,
+        "mouthW": 42,
+        "mouthCap": 64,
+        "covH": 90,
+        "covV": 60,
+        "td": 1.4,
+        "throat": 1.4,
+        "wallT": 0.012
+      },
+      "tags": [
+        "radial",
+        "count-sweep"
+      ]
+    },
+    {
+      "id": "radial-6",
+      "source": {
+        "type": "family",
+        "key": "radial"
+      },
+      "overrides": {
+        "nW": 6,
+        "mouthW": 48,
+        "mouthCap": 64,
+        "covH": 90,
+        "covV": 60,
+        "td": 1.4,
+        "throat": 1.4,
+        "wallT": 0.012
+      },
+      "tags": [
+        "radial",
+        "count-sweep"
+      ]
+    },
+    {
+      "id": "radial-7",
+      "source": {
+        "type": "family",
+        "key": "radial"
+      },
+      "overrides": {
+        "nW": 7,
+        "mouthW": 48,
+        "mouthCap": 64,
+        "covH": 90,
+        "covV": 60,
+        "td": 1.4,
+        "throat": 1.4,
+        "wallT": 0.012
+      },
+      "tags": [
+        "radial",
+        "count-sweep"
+      ]
+    },
+    {
+      "id": "radial-8",
+      "source": {
+        "type": "family",
+        "key": "radial"
+      },
+      "overrides": {
+        "nW": 8,
+        "mouthW": 48,
+        "mouthCap": 64,
+        "covH": 90,
+        "covV": 60,
+        "td": 1.4,
+        "throat": 1.4,
+        "wallT": 0.012
+      },
+      "tags": [
+        "radial",
+        "count-sweep"
+      ]
+    }
+  ],
+  "contracts": [
+    {
+      "id": "hinson-four-planar-walls",
+      "evaluator": "fourPlaneAngular",
+      "scope": {
+        "tagsAll": [
+          "hinson"
+        ]
+      },
+      "provenance": [
+        "hinson-front-observation",
+        "hinson-published-geometry",
+        "manufacturing-invariants"
+      ],
+      "limits": {
+        "facetCount": 4,
+        "maxPlaneResidualNormalized": 0.001
+      }
+    },
+    {
+      "id": "hinson-seam-biased-x-slots",
+      "evaluator": "hinsonTapLayout",
+      "scope": {
+        "tagsAll": [
+          "hinson",
+          "two-woofer"
+        ]
+      },
+      "provenance": [
+        "hinson-front-observation",
+        "hinson-published-geometry",
+        "manufacturing-invariants"
+      ],
+      "limits": {
+        "driverCount": 2,
+        "portsPerDriver": 2,
+        "quadrantCoverage": 1,
+        "minimumEdgeBias": 0.7,
+        "minimumDiagonalShare": 0.15,
+        "minimumRadialAlignment": 0.9063077870366499,
+        "minimumActiveConeMarginNormalized": 0,
+        "minimumPairWebRatio": 1
+      }
+    },
+    {
+      "id": "circular-hf-throat",
+      "evaluator": "throatCircularity",
+      "scope": {
+        "tagsAny": [
+          "hinson",
+          "radial"
+        ]
+      },
+      "provenance": [
+        "hinson-front-observation",
+        "radial-manifold-observation",
+        "manufacturing-invariants"
+      ],
+      "limits": {
+        "maximumRadialSpreadNormalized": 0.000001
+      }
+    },
+    {
+      "id": "rear-only-driver-envelope",
+      "evaluator": "rearOnlyDrivers",
+      "scope": {
+        "tagsAny": [
+          "hinson",
+          "radial"
+        ]
+      },
+      "provenance": [
+        "hinson-rear-observation",
+        "radial-manifold-observation",
+        "manufacturing-invariants"
+      ],
+      "limits": {
+        "minimumWallOffsetNormalized": 0.75,
+        "minimumSignedOffset": 0
+      }
+    },
+    {
+      "id": "continuous-driver-bearing-plates",
+      "evaluator": "plateContinuity",
+      "scope": {
+        "tagsAny": [
+          "hinson",
+          "radial"
+        ]
+      },
+      "provenance": [
+        "hinson-rear-observation",
+        "radial-manifold-observation",
+        "manufacturing-invariants"
+      ],
+      "limits": {
+        "minimumBearingReachToWallRatio": 1,
+        "requireIntegratedFixture": true
+      }
+    },
+    {
+      "id": "no-driver-overlap-or-horn-protrusion",
+      "evaluator": "packagingClearance",
+      "scope": {
+        "tagsAny": [
+          "hinson",
+          "radial"
+        ]
+      },
+      "provenance": [
+        "hinson-rear-observation",
+        "radial-manifold-observation",
+        "manufacturing-invariants"
+      ],
+      "limits": {
+        "minimumFrameGapNormalized": 0,
+        "minimumMountSideNormalized": 0.75,
+        "minimumPortWebRatio": 1
+      }
+    },
+    {
+      "id": "driver-gasket-frame-cone-proportions",
+      "evaluator": "driverProportions",
+      "scope": {
+        "tagsAny": [
+          "hinson",
+          "radial"
+        ]
+      },
+      "provenance": [
+        "hinson-rear-observation",
+        "radial-manifold-observation",
+        "manufacturing-invariants"
+      ],
+      "limits": {
+        "minimumActiveToFrameRatio": 0.45,
+        "maximumActiveToFrameRatio": 0.95,
+        "minimumGasketToFrameRatio": 0.002,
+        "maximumGasketToFrameRatio": 0.08
+      }
+    },
+    {
+      "id": "radial-equal-count-spacing",
+      "evaluator": "radialCountSpacing",
+      "scope": {
+        "tagsAll": [
+          "radial",
+          "count-sweep"
+        ]
+      },
+      "provenance": [
+        "radial-manifold-observation",
+        "manufacturing-invariants"
+      ],
+      "limits": {
+        "maximumSectorErrorNormalized": 0.000001
+      }
+    },
+    {
+      "id": "runtime-render-assembly-interface",
+      "evaluator": "renderAssembly",
+      "scope": {
+        "descriptor": true
+      },
+      "provenance": [
+        "render-descriptor-contract",
+        "hinson-rear-observation",
+        "radial-manifold-observation",
+        "manufacturing-invariants"
+      ],
+      "limits": {
+        "minimumBodyWallClearance": 0,
+        "minimumPairFrameClearance": 0
+      }
+    }
+  ]
+}

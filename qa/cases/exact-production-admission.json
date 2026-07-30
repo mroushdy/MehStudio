@@ -1,0 +1,412 @@
+{
+  "schemaVersion": 2,
+  "description": "Fail-closed production exact-mesh admission expectations. P03 integrated, its explicitly derived retained-cartridge fixture, and radial R02 run as independent fresh-process certificates. Change an expectedStatus to admitted only after --probe has produced complete pinned counts, per-file hashes, deep audits, and resource ceilings.",
+  "intent": "export",
+  "fixedStepMeters": 0.0025,
+  "expectedBuild": 649,
+  "expectedPolicyVersion": "b648-mount-envelope-v2",
+  "certificateCases": [
+    "P03",
+    "P03-CARTRIDGE",
+    "R02"
+  ],
+  "cases": [
+    {
+      "id": "P03",
+      "role": "production-certificate",
+      "expectedStatus": "admitted",
+      "expectedRefusalCode": null,
+      "expectedComponents": 1,
+      "expectedDetachable": false,
+      "expectedPreflight": {
+        "partCount": 1,
+        "gridPoints": 7171515,
+        "cells": 7051872,
+        "estimatedPeakBytes": 521816952,
+        "dimensions": [
+          [117, 299, 205]
+        ]
+      },
+      "expectedCertificate": {
+        "policyVersion": "b648-mount-envelope-v2",
+        "stateFingerprintSha256": "6f882926c32e4a6c966a3c47549fca4b1dc44358e9977015a02067b46a3b3cfa",
+        "detachable": false,
+        "printablePartCount": 1,
+        "vertices": 589900,
+        "triangles": 1179824,
+        "stlBytes": 58991284,
+        "stlSha256": "84e3a0ba97905893a175b0363c52a17a4dafa401c4f721ddb8f6c6ccc4a0732d",
+        "files": [
+          {
+            "index": 0,
+            "triangles": 1179824,
+            "stlBytes": 58991284,
+            "stlSha256": "84e3a0ba97905893a175b0363c52a17a4dafa401c4f721ddb8f6c6ccc4a0732d"
+          }
+        ],
+        "audit": {
+          "pass": true,
+          "badEdges": 0,
+          "badOrientation": 0,
+          "orientationConflict": 0,
+          "degenerate": 0,
+          "duplicateFaces": 0,
+          "nonFinite": 0,
+          "components": 1,
+          "expectedComponents": 1,
+          "rawComponents": 1,
+          "discardedComponents": 0,
+          "namedPartsConnected": true,
+          "selfIntersections": 0,
+          "intersectionPairs": 1844740,
+          "intersectionPairVisits": 80868071,
+          "auditBinReferences": 1785576,
+          "auditPeakBinOccupancy": 210,
+          "auditBinsPerAxis": 128
+        }
+      },
+      "resourceCeilings": {
+        "maxElapsedMs": 60000,
+        "maxRssBytes": 536870912
+      }
+    },
+    {
+      "id": "P03-CARTRIDGE",
+      "title": "P03 compact panel horn with two retained printable driver cartridges",
+      "sourceCase": "P03",
+      "overrides": {
+        "driverCellConstruction": "cartridge"
+      },
+      "role": "retained-production-certificate",
+      "expectedStatus": "admitted",
+      "expectedRefusalCode": null,
+      "expectedComponents": 3,
+      "expectedDetachable": true,
+      "expectedPartNames": [
+        "horn",
+        "cartridge-1",
+        "cartridge-2"
+      ],
+      "expectedRetention": {
+        "cartridgeCount": 2,
+        "countPerCartridge": 2,
+        "totalScrews": 4
+      },
+      "expectedPreflight": {
+        "partCount": 3,
+        "gridPoints": 9022815,
+        "cells": 8846448,
+        "estimatedPeakBytes": 565762048,
+        "dimensions": [
+          [117, 299, 205],
+          [99, 85, 110],
+          [99, 85, 110]
+        ]
+      },
+      "expectedCertificate": {
+        "policyVersion": "b648-mount-envelope-v2",
+        "stateFingerprintSha256": "18875cb5c56ae86cc89306694acaf0eb226f82d679f754fd141f99891df79d44",
+        "detachable": true,
+        "printablePartCount": 3,
+        "vertices": 679086,
+        "triangles": 1358252,
+        "stlBytes": 67912852,
+        "stlSha256": "7c6935e870e0d0a1840a8a0d30798563520b327c07c5ecfa9e36ed3be706c5cb",
+        "files": [
+          {
+            "index": 0,
+            "name": "horn",
+            "triangles": 1179556,
+            "stlBytes": 58977884,
+            "stlSha256": "494806836c54462f0b18f3c00d38e7cd9b85a103355e5bb19e1a344acd1bddec"
+          },
+          {
+            "index": 1,
+            "name": "cartridge-1",
+            "triangles": 86044,
+            "stlBytes": 4302284,
+            "stlSha256": "52592f63c90268388936b0fc1e4050b6a37e3037cef9e4a6dabe3d637178d252"
+          },
+          {
+            "index": 2,
+            "name": "cartridge-2",
+            "triangles": 92652,
+            "stlBytes": 4632684,
+            "stlSha256": "bf82b61aa733923c161eb5653d9c1645183613f78e705643a2be874f65624861"
+          }
+        ],
+        "namedParts": [
+          {
+            "index": 0,
+            "name": "horn",
+            "connected": true,
+            "vertices": 589766,
+            "triangles": 1179556,
+            "topology": {
+              "badEdges": 0,
+              "badOrientation": 0,
+              "orientationConflict": 0,
+              "degenerate": 0,
+              "duplicateFaces": 0,
+              "nonFinite": 0,
+              "components": 1
+            },
+            "deepAudit": {
+              "selfIntersections": 0,
+              "intersectionPairs": 1851303,
+              "intersectionPairVisits": 80787953,
+              "auditBinReferences": 1784960,
+              "auditPeakBinOccupancy": 210,
+              "auditBinsPerAxis": 128
+            }
+          },
+          {
+            "index": 1,
+            "name": "cartridge-1",
+            "connected": true,
+            "vertices": 43008,
+            "triangles": 86044,
+            "topology": {
+              "badEdges": 0,
+              "badOrientation": 0,
+              "orientationConflict": 0,
+              "degenerate": 0,
+              "duplicateFaces": 0,
+              "nonFinite": 0,
+              "components": 1
+            },
+            "deepAudit": {
+              "selfIntersections": 0,
+              "intersectionPairs": 80847,
+              "intersectionPairVisits": 4887726,
+              "auditBinReferences": 140571,
+              "auditPeakBinOccupancy": 190,
+              "auditBinsPerAxis": 42
+            }
+          },
+          {
+            "index": 2,
+            "name": "cartridge-2",
+            "connected": true,
+            "vertices": 46312,
+            "triangles": 92652,
+            "topology": {
+              "badEdges": 0,
+              "badOrientation": 0,
+              "orientationConflict": 0,
+              "degenerate": 0,
+              "duplicateFaces": 0,
+              "nonFinite": 0,
+              "components": 1
+            },
+            "deepAudit": {
+              "selfIntersections": 0,
+              "intersectionPairs": 80441,
+              "intersectionPairVisits": 5456327,
+              "auditBinReferences": 148929,
+              "auditPeakBinOccupancy": 190,
+              "auditBinsPerAxis": 42
+            }
+          }
+        ],
+        "retention": {
+          "active": true,
+          "ok": true,
+          "pass": true,
+          "code": null,
+          "fastener": "M4 × 0.7",
+          "cartridgeCount": 2,
+          "countPerCartridge": 2,
+          "totalScrews": 4,
+          "driverToolCounts": [2, 2],
+          "exactFieldToolCount": 4,
+          "ownership": {
+            "hornPocket": 4,
+            "moduleBoss": 4,
+            "moduleBore": 4,
+            "moduleCounterbore": 4
+          },
+          "audit": {
+            "active": true,
+            "ok": true,
+            "pass": true,
+            "code": null,
+            "toolCount": 4,
+            "rows": [
+              {
+                "name": "cartridge retention matches construction",
+                "pass": true,
+                "value": 4
+              },
+              {
+                "name": "retention insert pockets preserve blind acoustic caps",
+                "pass": true,
+                "value": 0.013080290284166457
+              },
+              {
+                "name": "retention dimensions and ownership are represented in the exact solid",
+                "pass": true,
+                "value": 4
+              }
+            ]
+          }
+        },
+        "audit": {
+          "pass": true,
+          "badEdges": 0,
+          "badOrientation": 0,
+          "orientationConflict": 0,
+          "degenerate": 0,
+          "duplicateFaces": 0,
+          "nonFinite": 0,
+          "components": 3,
+          "expectedComponents": 3,
+          "rawComponents": 3,
+          "discardedComponents": 0,
+          "namedPartsConnected": true,
+          "selfIntersections": 0,
+          "intersectionPairs": 2035036,
+          "intersectionPairVisits": 96132569,
+          "auditBinReferences": 2057957,
+          "auditPeakBinOccupancy": 303,
+          "auditBinsPerAxis": 128
+        }
+      },
+      "resourceCeilings": {
+        "maxElapsedMs": 90000,
+        "maxRssBytes": 805306368
+      }
+    },
+    {
+      "id": "P01",
+      "role": "held-production-case",
+      "expectedStatus": "refused",
+      "expectedRefusalCode": "MESH_AXIS_LIMIT",
+      "expectedPreflight": {
+        "partCount": 1,
+        "gridPoints": 10276952,
+        "dimensions": [
+          [158, 322, 202]
+        ]
+      }
+    },
+    {
+      "id": "R02",
+      "role": "production-certificate",
+      "expectedStatus": "admitted",
+      "expectedRefusalCode": null,
+      "expectedComponents": 1,
+      "expectedDetachable": false,
+      "expectedPreflight": {
+        "partCount": 1,
+        "gridPoints": 6668475,
+        "cells": 6558464,
+        "estimatedPeakBytes": 521715992,
+        "dimensions": [
+          [137, 275, 177]
+        ]
+      },
+      "expectedCertificate": {
+        "policyVersion": "b648-mount-envelope-v2",
+        "stateFingerprintSha256": "d79721758a48cafbbad6b4e5c36d0f404772e77ebbab350bacdfbe1c4eebc63f",
+        "detachable": false,
+        "printablePartCount": 1,
+        "vertices": 650326,
+        "triangles": 1300684,
+        "stlBytes": 65034284,
+        "stlSha256": "3e5f4bfed127ccec4b708d439f4e241abbaf96f242e6c52b9e27e3487425e9e1",
+        "files": [
+          {
+            "index": 0,
+            "triangles": 1300684,
+            "stlBytes": 65034284,
+            "stlSha256": "3e5f4bfed127ccec4b708d439f4e241abbaf96f242e6c52b9e27e3487425e9e1"
+          }
+        ],
+        "audit": {
+          "pass": true,
+          "badEdges": 0,
+          "badOrientation": 0,
+          "orientationConflict": 0,
+          "degenerate": 0,
+          "duplicateFaces": 0,
+          "nonFinite": 0,
+          "components": 1,
+          "expectedComponents": 1,
+          "rawComponents": 1,
+          "discardedComponents": 0,
+          "namedPartsConnected": true,
+          "selfIntersections": 0,
+          "intersectionPairs": 1089386,
+          "intersectionPairVisits": 76996818,
+          "auditBinReferences": 2064295,
+          "auditPeakBinOccupancy": 199,
+          "auditBinsPerAxis": 128
+        }
+      },
+      "resourceCeilings": {
+        "maxElapsedMs": 60000,
+        "maxRssBytes": 536870912
+      }
+    },
+    {
+      "id": "R03",
+      "role": "held-production-case",
+      "expectedStatus": "refused",
+      "expectedRefusalCode": "MESH_PART_GRID_LIMIT",
+      "expectedPreflight": {
+        "partCount": 4,
+        "gridPoints": 12622194,
+        "dimensions": [
+          [157, 316, 195],
+          [78, 117, 117],
+          [78, 131, 92],
+          [78, 92, 131]
+        ]
+      }
+    },
+    {
+      "id": "P04",
+      "role": "held-production-case",
+      "expectedStatus": "refused",
+      "expectedRefusalCode": "MESH_AXIS_LIMIT",
+      "expectedPreflight": {
+        "partCount": 1,
+        "gridPoints": 33463320,
+        "dimensions": [
+          [202, 502, 330]
+        ]
+      }
+    },
+    {
+      "id": "R04-D",
+      "role": "held-production-case",
+      "expectedStatus": "refused",
+      "expectedRefusalCode": "MESH_AXIS_LIMIT",
+      "expectedPreflight": {
+        "partCount": 5,
+        "gridPoints": 29785878,
+        "dimensions": [
+          [197, 397, 242],
+          [113, 155, 155],
+          [113, 155, 155],
+          [113, 155, 155],
+          [113, 155, 155]
+        ]
+      }
+    },
+    {
+      "id": "R08",
+      "role": "held-production-case",
+      "expectedStatus": "refused",
+      "expectedRefusalCode": "MESH_AXIS_LIMIT",
+      "expectedPreflight": {
+        "partCount": 1,
+        "gridPoints": 32877796,
+        "dimensions": [
+          [238, 478, 289]
+        ]
+      }
+    }
+  ]
+}

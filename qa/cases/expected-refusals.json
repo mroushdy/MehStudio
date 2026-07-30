@@ -1,0 +1,168 @@
+{
+  "schemaVersion": 1,
+  "description": "States that must be rejected with stable, named laws instead of crashing, silently changing intent, or emitting incomplete geometry.",
+  "baseState": {
+    "topo": "2way",
+    "wallT": 0.012,
+    "rollR": 2,
+    "mouthCap": 64,
+    "placeW": "auto",
+    "mount": "flush",
+    "fxHi": 900,
+    "fxLo": 300,
+    "coaxRing": 4.5,
+    "cdSel": "dcx464",
+    "td": 1.4,
+    "throat": 1.4,
+    "cdFloor": 300,
+    "cdDepth": 2.4,
+    "covH": 90,
+    "covV": 60,
+    "phaseMargin": 1.2
+  },
+  "cases": [
+    {
+      "id": "F01",
+      "title": "Eight 15-inch radial drivers cannot fit a 24-inch capped mouth",
+      "source": {
+        "type": "family",
+        "key": "radial"
+      },
+      "overrides": {
+        "twoDesign": "arch:radial",
+        "nW": 8,
+        "npW": 1,
+        "driverCellConstruction": "cartridge",
+        "mountRing": "ring",
+        "mouthW": 24,
+        "mouthCap": 24,
+        "twoXO": 300,
+        "wPre": "w15",
+        "odW": 39,
+        "dpW": 17,
+        "sdW": 855,
+        "vtcW": 320,
+        "xmW": 10
+      },
+      "tags": [
+        "plan",
+        "expected-refusal",
+        "packing"
+      ],
+      "expected": {
+        "status": "refused",
+        "refusalClass": "hard-packaging",
+        "reason": "Eight complete 390 mm woofer frames plus the required inter-frame clearance cannot be placed on a radial ring inside a 609.6 mm capped envelope.",
+        "hardPackaging": {
+          "layout": "radial-ring",
+          "driverCount": 8,
+          "driverOuterDiameterMm": 390,
+          "minimumFrameClearanceMm": 4,
+          "availableEnvelopeDiameterMm": 609.6
+        },
+        "lawAny": [
+          "radial packaging envelope",
+          "complete driver-frame packing",
+          "driver frames clear",
+          "pack",
+          "mounting faces"
+        ],
+        "intent": {
+          "twoArch": "radial",
+          "nW": 8,
+          "wPre": "w15",
+          "mouthCap": 24
+        }
+      }
+    },
+    {
+      "id": "F02",
+      "title": "Compression-driver floor above the LF cone path ceiling",
+      "source": {
+        "type": "family",
+        "key": "panel"
+      },
+      "overrides": {
+        "twoDesign": "arch:panel",
+        "nW": 2,
+        "npW": 1,
+        "mountRing": "integrated",
+        "mouthW": 28,
+        "twoXO": 500,
+        "cdFloor": 1500,
+        "wPre": "w65",
+        "odW": 18.7,
+        "dpW": 8.5,
+        "sdW": 132,
+        "vtcW": 45,
+        "xmW": 6
+      },
+      "tags": [
+        "plan",
+        "expected-refusal",
+        "crossover"
+      ],
+      "expected": {
+        "status": "refused",
+        "lawAny": [
+          "CD floor inside LF overlap",
+          "overlap",
+          "cone path"
+        ],
+        "intent": {
+          "twoArch": "panel",
+          "nW": 2,
+          "npW": 1,
+          "cdFloor": 1500
+        }
+      }
+    },
+    {
+      "id": "F03",
+      "title": "Low compression target overwhelms the throat-side HF section",
+      "source": {
+        "type": "family",
+        "key": "panel"
+      },
+      "overrides": {
+        "twoDesign": "arch:panel",
+        "nW": 2,
+        "npW": 1,
+        "mountRing": "integrated",
+        "mouthW": 18,
+        "mouthCap": 18,
+        "twoXO": 300,
+        "tapCRW": 1.5,
+        "wPre": "w15",
+        "odW": 39,
+        "dpW": 17,
+        "sdW": 855,
+        "vtcW": 320,
+        "xmW": 10
+      },
+      "tags": [
+        "plan",
+        "expected-refusal",
+        "tap-area"
+      ],
+      "expected": {
+        "status": "refused",
+        "lawAny": [
+          "Tap area vs local horn area",
+          "active cone",
+          "driver frames clear",
+          "driver-frame clearance",
+          "Complete driver bearing and bolt lands",
+          "Woofer fasteners clear HF flange"
+        ],
+        "intent": {
+          "twoArch": "panel",
+          "nW": 2,
+          "npW": 1,
+          "wPre": "w15",
+          "mouthCap": 18
+        }
+      }
+    }
+  ]
+}

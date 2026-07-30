@@ -1,0 +1,86 @@
+{
+  "schema": "MEH Studio known-build reference library v1",
+  "purpose": "Visual references constrain packaging and construction traits. Published or measured numbers remain the only source for numeric geometry.",
+  "entries": [
+    {
+      "id": "hinson-panel-2",
+      "name": "Scott Hinson classic angular two-woofer MEH",
+      "evidence": "documented-build-plus-photographs",
+      "family": "panel",
+      "surface": "angular-planar",
+      "wooferCounts": [2],
+      "mount": "direct relieved panel",
+      "driverAxis": "local panel normal",
+      "tapTraits": ["two entries per woofer", "long racetrack slots", "edge/intersection biased", "literal through-cuts"],
+      "forbiddenTraits": ["rounded angular walls", "floating driver frames", "tap decals", "interior mounting plates"],
+      "images": [
+        "images/hinson-front.png",
+        "images/hinson-rear.png",
+        "images/hinson-section.png"
+      ]
+    },
+    {
+      "id": "jmod-panel-2",
+      "name": "JW Sound JMOD Rev 2.02",
+      "evidence": "official-diy-guide",
+      "family": "panel",
+      "surface": "angular-planar",
+      "wooferCounts": [2],
+      "mount": "two external 12-inch woofer bays sealing to the inner flares",
+      "driverAxis": "local panel normal",
+      "tapTraits": ["four rounded rectangular wall entries", "entries remain close to the throat-side panel intersections", "flat gap-free transition from throat adapter into inner flares"],
+      "forbiddenTraits": ["gap between throat adapter and flare", "woofer frames inside the horn air path", "floating drivers", "decorative tap solids"],
+      "images": [
+        "images/jmod-guide-overview.png",
+        "images/jmod-guide-transitions.png",
+        "images/jmod-guide-driver-mounts.png"
+      ]
+    },
+    {
+      "id": "unity-panel-manifold",
+      "name": "Unity-style panel mounting and throat entries",
+      "evidence": "photographic-and-cad-reference",
+      "family": "panel",
+      "surface": "angular-planar",
+      "wooferCounts": [2, 4],
+      "mount": "driver flange clamped to a relieved external plate",
+      "driverAxis": "local panel normal",
+      "tapTraits": ["ports near panel intersections", "rounded slot ends", "front chamber behind the panel"],
+      "forbiddenTraits": ["long decorative tubes inside horn", "forward-facing woofer axes"],
+      "images": [
+        "images/unity-side.png",
+        "images/unity-fusion.png"
+      ]
+    },
+    {
+      "id": "radial-perpendicular-4",
+      "name": "Four-woofer perpendicular radial printed hub",
+      "evidence": "photographic-packaging-reference",
+      "family": "radial",
+      "surface": "printed-radial",
+      "wooferCounts": [4],
+      "mount": "one sealed printed cone adapter per woofer",
+      "driverAxis": "perpendicular to HF axis and aimed toward the hub",
+      "tapTraits": ["short equal radial passages", "shared near-throat station", "sealed cone-following chambers"],
+      "forbiddenTraits": ["drivers detached from adapters", "drivers overlapping", "station pushed down the horn to fake clearance"],
+      "images": [
+        "images/radial-perpendicular-4.png"
+      ]
+    },
+    {
+      "id": "radial-faceted-module",
+      "name": "Faceted radial printed driver module",
+      "evidence": "photographic-packaging-reference",
+      "family": "radial",
+      "surface": "faceted printed module",
+      "wooferCounts": [2, 3, 4],
+      "mount": "external flange, gasket land, cone-following front chamber",
+      "driverAxis": "perpendicular to HF axis",
+      "tapTraits": ["module wall becomes the front chamber", "entry is a cavity, not a rendered object"],
+      "forbiddenTraits": ["flat chamber cap facing the cone", "unsealed hidden chamber"],
+      "images": [
+        "images/radial-faceted-module.png"
+      ]
+    }
+  ]
+}

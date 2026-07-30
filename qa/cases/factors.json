@@ -1,0 +1,565 @@
+{
+  "schemaVersion": 1,
+  "description": "Deterministic pairwise plan-level coverage. Mesh generation is intentionally handled by canonical geometry cases.",
+  "seed": 619,
+  "baseState": {
+    "topo": "2way",
+    "wallT": 0.012,
+    "rollR": 2,
+    "mouthCap": 64,
+    "placeW": "auto",
+    "mount": "flush",
+    "fxHi": 900,
+    "fxLo": 300,
+    "coaxRing": 4.5,
+    "cdSel": "dcx464",
+    "td": 1.4,
+    "throat": 1.4,
+    "cdFloor": 300,
+    "cdDepth": 2.4,
+    "covH": 90,
+    "covV": 60,
+    "mouthW": 36,
+    "twoXO": 450,
+    "tapCRW": 6,
+    "phaseMargin": 1.2,
+    "style": "smooth",
+    "seN": 6,
+    "npW": 1,
+    "shW": "slot",
+    "wPre": "w5",
+    "odW": 13.76,
+    "dpW": 6.95,
+    "sdW": 91.6,
+    "vtcW": 35,
+    "xmW": 2.5
+  },
+  "intentFields": [
+    "twoArch",
+    "nW",
+    "wPre",
+    "npW",
+    "shW",
+    "driverCellConstruction",
+    "style",
+    "cdSel"
+  ],
+  "factors": [
+    {
+      "key": "package",
+      "values": [
+        {
+          "id": "panel-2",
+          "patch": {
+            "twoArch": "panel",
+            "twoFamily": "panel",
+            "twoDesign": "arch:panel",
+            "nW": 2
+          }
+        },
+        {
+          "id": "panel-4",
+          "patch": {
+            "twoArch": "panel",
+            "twoFamily": "panel",
+            "twoDesign": "arch:panel",
+            "nW": 4
+          }
+        },
+        {
+          "id": "radial-2",
+          "patch": {
+            "twoArch": "radial",
+            "twoFamily": "radial",
+            "twoDesign": "arch:radial",
+            "nW": 2
+          }
+        },
+        {
+          "id": "radial-3",
+          "patch": {
+            "twoArch": "radial",
+            "twoFamily": "radial",
+            "twoDesign": "arch:radial",
+            "nW": 3
+          }
+        },
+        {
+          "id": "radial-4",
+          "patch": {
+            "twoArch": "radial",
+            "twoFamily": "radial",
+            "twoDesign": "arch:radial",
+            "nW": 4
+          }
+        },
+        {
+          "id": "radial-5",
+          "patch": {
+            "twoArch": "radial",
+            "twoFamily": "radial",
+            "twoDesign": "arch:radial",
+            "nW": 5
+          }
+        },
+        {
+          "id": "radial-6",
+          "patch": {
+            "twoArch": "radial",
+            "twoFamily": "radial",
+            "twoDesign": "arch:radial",
+            "nW": 6
+          }
+        },
+        {
+          "id": "radial-7",
+          "patch": {
+            "twoArch": "radial",
+            "twoFamily": "radial",
+            "twoDesign": "arch:radial",
+            "nW": 7
+          }
+        },
+        {
+          "id": "radial-8",
+          "patch": {
+            "twoArch": "radial",
+            "twoFamily": "radial",
+            "twoDesign": "arch:radial",
+            "nW": 8
+          }
+        }
+      ]
+    },
+    {
+      "key": "lfDriver",
+      "values": [
+        {
+          "id": "w5",
+          "patch": {
+            "wPre": "w5",
+            "odW": 13.76,
+            "dpW": 6.95,
+            "sdW": 91.6,
+            "vtcW": 35,
+            "xmW": 2.5
+          }
+        },
+        {
+          "id": "w65",
+          "patch": {
+            "wPre": "w65",
+            "odW": 18.7,
+            "dpW": 8.5,
+            "sdW": 132,
+            "vtcW": 45,
+            "xmW": 6
+          }
+        },
+        {
+          "id": "w8",
+          "patch": {
+            "wPre": "w8",
+            "odW": 22.5,
+            "dpW": 9,
+            "sdW": 220,
+            "vtcW": 80,
+            "xmW": 7
+          }
+        },
+        {
+          "id": "hpl10",
+          "patch": {
+            "wPre": "hpl10",
+            "odW": 26.1,
+            "dpW": 12.2,
+            "sdW": 320,
+            "vtcW": 130,
+            "xmW": 4
+          }
+        },
+        {
+          "id": "ndl88",
+          "patch": {
+            "wPre": "ndl88",
+            "odW": 31.5,
+            "dpW": 14,
+            "sdW": 522,
+            "vtcW": 180,
+            "xmW": 8
+          }
+        },
+        {
+          "id": "w15",
+          "patch": {
+            "wPre": "w15",
+            "odW": 39,
+            "dpW": 17,
+            "sdW": 855,
+            "vtcW": 320,
+            "xmW": 10
+          }
+        }
+      ]
+    },
+    {
+      "key": "compressionDriver",
+      "values": [
+        {
+          "id": "dcx464",
+          "patch": {
+            "cdSel": "dcx464",
+            "td": 1.4,
+            "throat": 1.4,
+            "cdFloor": 300,
+            "cdDepth": 2.4
+          }
+        },
+        {
+          "id": "one-inch",
+          "patch": {
+            "cdSel": "de250",
+            "td": 1,
+            "throat": 1,
+            "cdFloor": 700,
+            "cdDepth": 2
+          }
+        },
+        {
+          "id": "two-inch",
+          "patch": {
+            "cdSel": "de500",
+            "td": 2,
+            "throat": 2,
+            "cdFloor": 500,
+            "cdDepth": 3
+          }
+        }
+      ]
+    },
+    {
+      "key": "entries",
+      "values": [
+        {
+          "id": "one-round",
+          "patch": {
+            "npW": 1,
+            "shW": "round"
+          }
+        },
+        {
+          "id": "one-oval",
+          "patch": {
+            "npW": 1,
+            "shW": "oval"
+          }
+        },
+        {
+          "id": "two-slot",
+          "patch": {
+            "npW": 2,
+            "shW": "slot"
+          }
+        }
+      ]
+    },
+    {
+      "key": "mount",
+      "values": [
+        {
+          "id": "integrated",
+          "patch": {
+            "driverCellConstruction": "integrated"
+          }
+        },
+        {
+          "id": "detachable",
+          "patch": {
+            "driverCellConstruction": "cartridge"
+          }
+        }
+      ]
+    },
+    {
+      "key": "surface",
+      "values": [
+        {
+          "id": "smooth",
+          "patch": {
+            "style": "smooth",
+            "seN": 6
+          }
+        },
+        {
+          "id": "angular",
+          "patch": {
+            "style": "angular",
+            "seN": 12
+          }
+        }
+      ]
+    },
+    {
+      "key": "coverage",
+      "values": [
+        {
+          "id": "40x30",
+          "patch": {
+            "covH": 40,
+            "covV": 30
+          }
+        },
+        {
+          "id": "60x60",
+          "patch": {
+            "covH": 60,
+            "covV": 60
+          }
+        },
+        {
+          "id": "90x60",
+          "patch": {
+            "covH": 90,
+            "covV": 60
+          }
+        },
+        {
+          "id": "120x90",
+          "patch": {
+            "covH": 120,
+            "covV": 90
+          }
+        },
+        {
+          "id": "120x120",
+          "patch": {
+            "covH": 120,
+            "covV": 120
+          }
+        }
+      ]
+    },
+    {
+      "key": "mouth",
+      "values": [
+        {
+          "id": "12",
+          "patch": {
+            "mouthW": 12
+          }
+        },
+        {
+          "id": "18",
+          "patch": {
+            "mouthW": 18
+          }
+        },
+        {
+          "id": "24",
+          "patch": {
+            "mouthW": 24
+          }
+        },
+        {
+          "id": "36",
+          "patch": {
+            "mouthW": 36
+          }
+        },
+        {
+          "id": "52",
+          "patch": {
+            "mouthW": 52
+          }
+        },
+        {
+          "id": "64",
+          "patch": {
+            "mouthW": 64
+          }
+        }
+      ]
+    },
+    {
+      "key": "crossover",
+      "values": [
+        {
+          "id": "300",
+          "patch": {
+            "twoXO": 300
+          }
+        },
+        {
+          "id": "400",
+          "patch": {
+            "twoXO": 400
+          }
+        },
+        {
+          "id": "500",
+          "patch": {
+            "twoXO": 500
+          }
+        },
+        {
+          "id": "700",
+          "patch": {
+            "twoXO": 700
+          }
+        },
+        {
+          "id": "900",
+          "patch": {
+            "twoXO": 900
+          }
+        }
+      ]
+    },
+    {
+      "key": "compression",
+      "values": [
+        {
+          "id": "1.5",
+          "patch": {
+            "tapCRW": 1.5
+          }
+        },
+        {
+          "id": "2.5",
+          "patch": {
+            "tapCRW": 2.5
+          }
+        },
+        {
+          "id": "4",
+          "patch": {
+            "tapCRW": 4
+          }
+        },
+        {
+          "id": "6",
+          "patch": {
+            "tapCRW": 6
+          }
+        },
+        {
+          "id": "8",
+          "patch": {
+            "tapCRW": 8
+          }
+        },
+        {
+          "id": "12",
+          "patch": {
+            "tapCRW": 12
+          }
+        },
+        {
+          "id": "16",
+          "patch": {
+            "tapCRW": 16
+          }
+        },
+        {
+          "id": "20",
+          "patch": {
+            "tapCRW": 20
+          }
+        }
+      ]
+    },
+    {
+      "key": "wall",
+      "values": [
+        {
+          "id": "4mm",
+          "patch": {
+            "wallT": 0.004
+          }
+        },
+        {
+          "id": "8mm",
+          "patch": {
+            "wallT": 0.008
+          }
+        },
+        {
+          "id": "12mm",
+          "patch": {
+            "wallT": 0.012
+          }
+        },
+        {
+          "id": "18mm",
+          "patch": {
+            "wallT": 0.018
+          }
+        }
+      ]
+    },
+    {
+      "key": "rotation",
+      "values": [
+        {
+          "id": "0",
+          "patch": {
+            "radialRotation": 0
+          }
+        },
+        {
+          "id": "22.5",
+          "patch": {
+            "radialRotation": 22.5
+          }
+        },
+        {
+          "id": "45",
+          "patch": {
+            "radialRotation": 45
+          }
+        },
+        {
+          "id": "90",
+          "patch": {
+            "radialRotation": 90
+          }
+        }
+      ]
+    },
+    {
+      "key": "adapterReach",
+      "values": [
+        {
+          "id": "18",
+          "patch": {
+            "adapterReach": 18
+          }
+        },
+        {
+          "id": "35",
+          "patch": {
+            "adapterReach": 35
+          }
+        },
+        {
+          "id": "65",
+          "patch": {
+            "adapterReach": 65
+          }
+        },
+        {
+          "id": "120",
+          "patch": {
+            "adapterReach": 120
+          }
+        },
+        {
+          "id": "240",
+          "patch": {
+            "adapterReach": 240
+          }
+        }
+      ]
+    }
+  ]
+}

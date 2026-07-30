@@ -1,0 +1,751 @@
+{
+  "schemaVersion": 1,
+  "description": "Canonical two-way designs. A case tagged geometry-smoke is meshed by the dependency-free quick gate.",
+  "baseState": {
+    "topo": "2way",
+    "wallT": 0.012,
+    "rollR": 2,
+    "mouthCap": 64,
+    "placeW": "auto",
+    "mount": "flush",
+    "fxHi": 900,
+    "fxLo": 300,
+    "coaxRing": 4.5,
+    "cdSel": "dcx464",
+    "td": 1.4,
+    "throat": 1.4,
+    "cdFloor": 300,
+    "cdDepth": 2.4,
+    "covH": 90,
+    "covV": 60,
+    "phaseMargin": 1.2
+  },
+  "cases": [
+    {
+      "id": "P01",
+      "title": "Hinson published 2 × 10-inch panel horn",
+      "source": {
+        "type": "build",
+        "key": "hinson10"
+      },
+      "overrides": {
+        "style": "angular",
+        "seN": 12,
+        "wallT": 0.018,
+        "mountRing": "integrated",
+        "tapVtcW": 700
+      },
+      "tags": [
+        "plan",
+        "geometry-smoke",
+        "geometry-release",
+        "published",
+        "panel"
+      ],
+      "expected": {
+        "status": "valid",
+        "components": 1,
+        "intent": {
+          "twoArch": "panel",
+          "nW": 2,
+          "npW": 2,
+          "mountRing": "integrated",
+          "shW": "slot",
+          "style": "angular",
+          "seN": 12,
+          "wallT": 0.018,
+          "tapBasis": "published"
+        },
+        "construction": {
+          "paradigm": "angular-integrated-driver-bearing-panels",
+          "assemblyTopology": "integrated-one-piece",
+          "driverBearingPanelMm": 18,
+          "detachableDriverModules": 0
+        },
+        "provenance": {
+          "construction": "published",
+          "tapCad": "published",
+          "frontChamberValue": "published-total-normalized-per-woofer"
+        },
+        "measurements": {
+          "stationMm": 143.3,
+          "stationToleranceMm": 0.1,
+          "totalAreaCm2": 37.24,
+          "areaToleranceCm2": 0.03,
+          "slotLengthMm": 101.6,
+          "slotWidthMm": 19.1,
+          "slotToleranceMm": 0.1,
+          "frontChamberPerWooferCm3": 700,
+          "frontChamberTotalCm3": 1400,
+          "frontChamberPortedDriverCount": 2,
+          "frontChamberToleranceCm3": 1,
+          "panelMm": 18,
+          "panelToleranceMm": 0.1,
+          "maximumPairWavelengthRatio": 0.25
+        }
+      }
+    },
+    {
+      "id": "P02",
+      "title": "JMOD documented package with calculated front geometry",
+      "source": {
+        "type": "build",
+        "key": "jmod88"
+      },
+      "overrides": {
+        "style": "angular",
+        "seN": 12,
+        "wallT": 0.018,
+        "mountRing": "integrated",
+        "tapBasis": "model"
+      },
+      "tags": [
+        "plan",
+        "geometry-smoke",
+        "geometry-release",
+        "hybrid",
+        "panel"
+      ],
+      "expected": {
+        "status": "valid",
+        "components": 1,
+        "intent": {
+          "twoArch": "panel",
+          "nW": 2,
+          "npW": 2,
+          "mountRing": "integrated",
+          "shW": "slot",
+          "style": "angular",
+          "seN": 12,
+          "wallT": 0.018,
+          "tapBasis": "model"
+        },
+        "construction": {
+          "paradigm": "angular-integrated-driver-bearing-panels",
+          "assemblyTopology": "integrated-one-piece",
+          "driverBearingPanelMm": 18,
+          "detachableDriverModules": 0
+        },
+        "provenance": {
+          "construction": "documented",
+          "tapCad": "calculated",
+          "tapDimensionsPublished": false
+        },
+        "measurements": {
+          "panelMm": 18,
+          "panelToleranceMm": 0.1
+        }
+      }
+    },
+    {
+      "id": "P03",
+      "title": "Compact calculated panel horn, 2 × 5.25-inch, one round entry",
+      "source": {
+        "type": "family",
+        "key": "panel"
+      },
+      "overrides": {
+        "twoDesign": "arch:panel",
+        "style": "angular",
+        "seN": 12,
+        "nW": 2,
+        "npW": 1,
+        "shW": "round",
+        "mountRing": "integrated",
+        "mouthW": 24,
+        "twoXO": 500,
+        "tapCRW": 6,
+        "wPre": "w5",
+        "odW": 13.76,
+        "dpW": 6.95,
+        "sdW": 91.6,
+        "vtcW": 35,
+        "xmW": 2.5
+      },
+      "tags": [
+        "plan",
+        "geometry-release",
+        "calculated",
+        "panel"
+      ],
+      "expected": {
+        "status": "valid",
+        "components": 1,
+        "intent": {
+          "twoArch": "panel",
+          "nW": 2,
+          "npW": 1,
+          "mountRing": "integrated",
+          "shW": "round",
+          "wPre": "w5"
+        }
+      }
+    },
+    {
+      "id": "P04",
+      "title": "Calculated panel horn, 4 × 10-inch, two slots per woofer",
+      "source": {
+        "type": "family",
+        "key": "panel"
+      },
+      "overrides": {
+        "twoDesign": "arch:panel",
+        "style": "angular",
+        "seN": 12,
+        "nW": 4,
+        "npW": 2,
+        "shW": "slot",
+        "mountRing": "integrated",
+        "mouthW": 44,
+        "twoXO": 450,
+        "tapCRW": 7,
+        "wPre": "hpl10",
+        "odW": 26.1,
+        "dpW": 12.2,
+        "sdW": 320,
+        "vtcW": 130,
+        "xmW": 4
+      },
+      "tags": [
+        "plan",
+        "geometry-release",
+        "calculated",
+        "panel"
+      ],
+      "expected": {
+        "status": "valid",
+        "components": 1,
+        "intent": {
+          "twoArch": "panel",
+          "nW": 4,
+          "npW": 2,
+          "mountRing": "integrated",
+          "shW": "slot",
+          "wPre": "hpl10"
+        }
+      }
+    },
+    {
+      "id": "P05",
+      "title": "Renderer regression: calculated 2 × 12-inch top/bottom panel horn",
+      "source": {
+        "type": "family",
+        "key": "panel"
+      },
+      "overrides": {
+        "twoDesign": "arch:panel",
+        "tapBasis": "model",
+        "style": "angular",
+        "seN": 12,
+        "nW": 2,
+        "npW": 2,
+        "driverArrayMode": "manual",
+        "driverArrayRotationDeg": 90,
+        "shW": "slot",
+        "mountRing": "integrated",
+        "mouthW": 24,
+        "mouthCap": 64,
+        "covH": 90,
+        "covV": 60,
+        "wallT": 0.018,
+        "twoXO": 500,
+        "tapCRW": 6,
+        "rearAlign": "external",
+        "wPre": "ndl88",
+        "odW": 31.5,
+        "dpW": 14,
+        "sdW": 522,
+        "vtcW": 180,
+        "xmW": 8
+      },
+      "tags": [
+        "plan",
+        "calculated",
+        "panel",
+        "browser-regression"
+      ],
+      "expected": {
+        "status": "valid",
+        "components": 1,
+        "intent": {
+          "twoArch": "panel",
+          "twoDesign": "arch:panel",
+          "tapBasis": "model",
+          "style": "angular",
+          "seN": 12,
+          "nW": 2,
+          "npW": 2,
+          "driverArrayMode": "manual",
+          "driverArrayRotationDeg": 90,
+          "shW": "slot",
+          "mountRing": "integrated",
+          "covH": 90,
+          "covV": 60,
+          "wallT": 0.018,
+          "twoXO": 500,
+          "wPre": "ndl88"
+        },
+        "measurements": {
+          "stationMm": 109.1,
+          "stationToleranceMm": 0.1,
+          "minimumOrientedDriverGapMm": 12
+        }
+      }
+    },
+    {
+      "id": "R02",
+      "title": "Calculated radial horn, 2 × 5.25-inch, integrated",
+      "source": {
+        "type": "family",
+        "key": "radial"
+      },
+      "overrides": {
+        "twoDesign": "arch:radial",
+        "nW": 2,
+        "npW": 1,
+        "shW": "round",
+        "mountRing": "integrated",
+        "mouthW": 24,
+        "twoXO": 450,
+        "wPre": "w5",
+        "odW": 13.76,
+        "dpW": 6.95,
+        "sdW": 91.6,
+        "vtcW": 35,
+        "xmW": 2.5
+      },
+      "tags": [
+        "plan",
+        "geometry-smoke",
+        "geometry-release",
+        "calculated",
+        "radial"
+      ],
+      "expected": {
+        "status": "valid",
+        "components": 1,
+        "intent": {
+          "twoArch": "radial",
+          "nW": 2,
+          "npW": 1,
+          "mountRing": "integrated",
+          "shW": "round",
+          "wPre": "w5"
+        }
+      }
+    },
+    {
+      "id": "R03",
+      "title": "Calculated radial horn, 3 × 5.25-inch, detachable oval entries",
+      "source": {
+        "type": "family",
+        "key": "radial"
+      },
+      "overrides": {
+        "twoDesign": "arch:radial",
+        "nW": 3,
+        "npW": 1,
+        "shW": "oval",
+        "driverCellConstruction": "cartridge",
+        "mountRing": "ring",
+        "mouthW": 28,
+        "twoXO": 425,
+        "wPre": "w5",
+        "odW": 13.76,
+        "dpW": 6.95,
+        "sdW": 91.6,
+        "vtcW": 35,
+        "xmW": 2.5,
+        "driverCellConstruction": "cartridge"
+      },
+      "tags": [
+        "plan",
+        "geometry-release",
+        "calculated",
+        "radial",
+        "browser-regression"
+      ],
+      "expected": {
+        "status": "valid",
+        "components": 4,
+        "intent": {
+          "twoArch": "radial",
+          "nW": 3,
+          "npW": 1,
+          "driverCellConstruction": "cartridge",
+          "mountRing": "ring",
+          "shW": "oval",
+          "wPre": "w5"
+        }
+      }
+    },
+    {
+      "id": "R04-I",
+      "title": "Calculated radial horn, 4 × 8-inch, integrated",
+      "source": {
+        "type": "family",
+        "key": "radial"
+      },
+      "overrides": {
+        "twoDesign": "arch:radial",
+        "nW": 4,
+        "npW": 1,
+        "shW": "slot",
+        "mountRing": "integrated",
+        "mouthW": 36,
+        "twoXO": 400,
+        "wPre": "w8",
+        "odW": 22.5,
+        "dpW": 9,
+        "sdW": 220,
+        "vtcW": 80,
+        "xmW": 7
+      },
+      "tags": [
+        "plan",
+        "geometry-release",
+        "calculated",
+        "radial"
+      ],
+      "expected": {
+        "status": "valid",
+        "components": 1,
+        "intent": {
+          "twoArch": "radial",
+          "nW": 4,
+          "npW": 1,
+          "mountRing": "integrated",
+          "wPre": "w8"
+        }
+      }
+    },
+    {
+      "id": "R04-D",
+      "title": "Calculated radial horn, 4 × 8-inch, detachable modules",
+      "source": {
+        "type": "family",
+        "key": "radial"
+      },
+      "overrides": {
+        "twoDesign": "arch:radial",
+        "nW": 4,
+        "npW": 1,
+        "shW": "slot",
+        "driverCellConstruction": "cartridge",
+        "mountRing": "ring",
+        "mouthW": 36,
+        "twoXO": 400,
+        "wPre": "w8",
+        "odW": 22.5,
+        "dpW": 9,
+        "sdW": 220,
+        "vtcW": 80,
+        "xmW": 7
+      },
+      "tags": [
+        "plan",
+        "geometry-release",
+        "calculated",
+        "radial"
+      ],
+      "expected": {
+        "status": "valid",
+        "components": 5,
+        "intent": {
+          "twoArch": "radial",
+          "nW": 4,
+          "npW": 1,
+          "driverCellConstruction": "cartridge",
+          "mountRing": "ring",
+          "wPre": "w8"
+        }
+      }
+    },
+    {
+      "id": "R06",
+      "title": "Calculated radial horn, 6 × 5.25-inch, detachable",
+      "source": {
+        "type": "family",
+        "key": "radial"
+      },
+      "overrides": {
+        "twoDesign": "arch:radial",
+        "nW": 6,
+        "npW": 1,
+        "shW": "slot",
+        "driverCellConstruction": "cartridge",
+        "mountRing": "ring",
+        "mouthW": 36,
+        "twoXO": 400,
+        "wPre": "w5",
+        "odW": 13.76,
+        "dpW": 6.95,
+        "sdW": 91.6,
+        "vtcW": 35,
+        "xmW": 2.5
+      },
+      "tags": [
+        "plan",
+        "geometry-release",
+        "calculated",
+        "radial"
+      ],
+      "expected": {
+        "status": "valid",
+        "components": 7,
+        "intent": {
+          "twoArch": "radial",
+          "nW": 6,
+          "npW": 1,
+          "driverCellConstruction": "cartridge",
+          "mountRing": "ring",
+          "wPre": "w5"
+        }
+      }
+    },
+    {
+      "id": "R08",
+      "title": "Calculated radial horn, 8 × 5.25-inch",
+      "source": {
+        "type": "family",
+        "key": "radial"
+      },
+      "overrides": {
+        "twoDesign": "arch:radial",
+        "nW": 8,
+        "npW": 1,
+        "shW": "slot",
+        "mountRing": "integrated",
+        "mouthW": 44,
+        "twoXO": 400,
+        "wPre": "w5",
+        "odW": 13.76,
+        "dpW": 6.95,
+        "sdW": 91.6,
+        "vtcW": 35,
+        "xmW": 2.5
+      },
+      "tags": [
+        "plan",
+        "geometry-release",
+        "calculated",
+        "radial"
+      ],
+      "expected": {
+        "status": "valid",
+        "components": 1,
+        "intent": {
+          "twoArch": "radial",
+          "nW": 8,
+          "npW": 1,
+          "mountRing": "integrated",
+          "wPre": "w5"
+        }
+      }
+    },
+    {
+      "id": "B649-USER-I",
+      "title": "Build 649 reported state — smooth Classic OS panel, integrated cells",
+      "source": {
+        "type": "family",
+        "key": "panel"
+      },
+      "overrides": {
+        "twoDesign": "arch:panel",
+        "tapBasis": "model",
+        "style": "smooth",
+        "profileLaw": "classicOS",
+        "sectionFamily": "superellipse",
+        "sectionLameN": 6,
+        "seN": 6,
+        "covH": 90,
+        "covV": 60,
+        "nW": 2,
+        "npW": 2,
+        "driverArrayMode": "manual",
+        "driverArrayRotationDeg": 0,
+        "shW": "slot",
+        "tapPairMode": "auto",
+        "driverCellConstruction": "integrated",
+        "mountRing": "integrated",
+        "mouthW": 32,
+        "requestedMouthW": 32,
+        "mouthCap": 64,
+        "wallT": 0.018,
+        "twoXO": 430,
+        "tapCRW": 9,
+        "wPre": "nw10",
+        "odW": 26.1,
+        "dpW": 11.9,
+        "sdW": 320,
+        "vtcW": 1400,
+        "xmW": 6.8,
+        "frameW": "round",
+        "boltNW": 8,
+        "bcdW": 244,
+        "boltDW": 6.5,
+        "gasketW": 1.6,
+        "coneProfileMode": "flat",
+        "coneDepthMm": 0,
+        "coneDepthKnown": false,
+        "coneAxialClearanceMm": 0,
+        "coneRadialClearanceMm": 0
+      },
+      "tags": [
+        "browser-regression",
+        "build649-user-state",
+        "calculated",
+        "panel"
+      ],
+      "expected": {
+        "status": "valid",
+        "components": 1,
+        "intent": {
+          "twoArch": "panel",
+          "nW": 2,
+          "npW": 2,
+          "driverArrayMode": "manual",
+          "driverArrayRotationDeg": 0,
+          "driverCellConstruction": "integrated",
+          "mountRing": "integrated",
+          "wPre": "nw10",
+          "profileLaw": "classicOS"
+        }
+      }
+    },
+    {
+      "id": "B649-USER-C",
+      "title": "Build 649 reported state — smooth Classic OS panel, M4 cartridge cells",
+      "source": {
+        "type": "family",
+        "key": "panel"
+      },
+      "overrides": {
+        "twoDesign": "arch:panel",
+        "tapBasis": "model",
+        "style": "smooth",
+        "profileLaw": "classicOS",
+        "sectionFamily": "superellipse",
+        "sectionLameN": 6,
+        "seN": 6,
+        "covH": 90,
+        "covV": 60,
+        "nW": 2,
+        "npW": 2,
+        "driverArrayMode": "manual",
+        "driverArrayRotationDeg": 0,
+        "shW": "slot",
+        "tapPairMode": "auto",
+        "driverCellConstruction": "cartridge",
+        "mountRing": "ring",
+        "mouthW": 32,
+        "requestedMouthW": 32,
+        "mouthCap": 64,
+        "wallT": 0.018,
+        "twoXO": 430,
+        "tapCRW": 9,
+        "wPre": "nw10",
+        "odW": 26.1,
+        "dpW": 11.9,
+        "sdW": 320,
+        "vtcW": 1400,
+        "xmW": 6.8,
+        "frameW": "round",
+        "boltNW": 8,
+        "bcdW": 244,
+        "boltDW": 6.5,
+        "gasketW": 1.6,
+        "coneProfileMode": "flat",
+        "coneDepthMm": 0,
+        "coneDepthKnown": false,
+        "coneAxialClearanceMm": 0,
+        "coneRadialClearanceMm": 0
+      },
+      "tags": [
+        "browser-regression",
+        "build649-user-state",
+        "calculated",
+        "panel"
+      ],
+      "expected": {
+        "status": "valid",
+        "components": 3,
+        "intent": {
+          "twoArch": "panel",
+          "nW": 2,
+          "npW": 2,
+          "driverArrayMode": "manual",
+          "driverArrayRotationDeg": 0,
+          "driverCellConstruction": "cartridge",
+          "mountRing": "ring",
+          "wPre": "nw10",
+          "profileLaw": "classicOS"
+        }
+      }
+    },
+    {
+      "id": "M01",
+      "title": "Measured/manual station, area, passage, slot, and chamber overrides",
+      "source": {
+        "type": "family",
+        "key": "panel"
+      },
+      "overrides": {
+        "twoDesign": "arch:panel",
+        "tapBasis": "manual",
+        "style": "angular",
+        "seN": 12,
+        "nW": 2,
+        "npW": 2,
+        "shW": "slot",
+        "mountRing": "integrated",
+        "mouthW": 36,
+        "twoXO": 450,
+        "tapStationW": 155,
+        "tapAreaW": 41.4350432,
+        "tapLptW": 24,
+        "tapSlotL": 80,
+        "tapSlotW": 28,
+        "tapVtcW": 900,
+        "wPre": "ndl88",
+        "odW": 31.5,
+        "dpW": 14,
+        "sdW": 522,
+        "vtcW": 180,
+        "xmW": 8
+      },
+      "tags": [
+        "plan",
+        "geometry-release",
+        "manual",
+        "panel"
+      ],
+      "expected": {
+        "status": "valid",
+        "components": 1,
+        "intent": {
+          "twoArch": "panel",
+          "nW": 2,
+          "npW": 2,
+          "mountRing": "integrated",
+          "tapBasis": "manual"
+        },
+        "measurements": {
+          "stationMm": 155,
+          "stationToleranceMm": 0.01,
+          "totalAreaCm2": 41.4350432,
+          "areaToleranceCm2": 0.002,
+          "slotLengthMm": 80,
+          "slotWidthMm": 28,
+          "slotToleranceMm": 0.01,
+          "passageMm": 24,
+          "passageToleranceMm": 0.01,
+          "frontChamberPerWooferCm3": 900,
+          "frontChamberTotalCm3": 1800,
+          "frontChamberPortedDriverCount": 2,
+          "frontChamberToleranceCm3": 0.1
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MEH Studio - known-build comparison</title>
+<style>
+:root{--ink:#1d1d1b;--muted:#74746f;--line:#deded8;--paper:#f6f6f2;--card:#fff;--ok:#3d7535}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:14px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace}
+header{position:sticky;top:0;z-index:3;background:#fffffff2;border-bottom:1px solid var(--line);padding:14px 20px}
+h1{font-size:17px;margin:0}.sub{font-size:11px;color:var(--muted);margin-top:3px}
+main{max-width:1500px;margin:auto;padding:18px;display:grid;gap:18px}
+.case{background:var(--card);border:1px solid var(--line);padding:14px}
+.case-head{display:flex;gap:10px;align-items:flex-start;justify-content:space-between}
+h2{font-size:15px;margin:0 0 4px}.status{color:var(--ok);font-weight:700;text-transform:uppercase}
+.cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.35fr);gap:14px;margin-top:12px}
+.panel{border-top:1px solid var(--line);padding-top:9px}.label{font-size:10px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;margin-bottom:8px}
+.images{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px}
+figure{margin:0;border:1px solid var(--line);background:#fafafa}
+img{display:block;width:100%;height:230px;object-fit:contain;background:#fafafa;cursor:zoom-in}
+figcaption{padding:5px 7px;border-top:1px solid var(--line);font-size:10px;color:var(--muted)}
+ul{margin:8px 0 0;padding-left:19px}.pass{color:var(--ok)}
+.traits{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px;font-size:11px}
+dialog{border:0;padding:0;max-width:95vw;max-height:95vh;background:#111}dialog::backdrop{background:#000c}
+dialog img{width:auto;height:auto;max-width:95vw;max-height:92vh;object-fit:contain;background:#111}
+@media(max-width:850px){.cols,.traits{grid-template-columns:1fr}img{height:210px}}
+</style>
+</head>
+<body>
+<header><h1>MEH STUDIO - KNOWN-BUILD VISUAL GATE</h1><div class="sub" id="meta">loading reference library...</div></header>
+<main id="app"></main>
+<dialog id="zoom"><img alt=""><form method="dialog"><button style="position:absolute;right:8px;top:8px">close</button></form></dialog>
+<script>
+Promise.all([fetch('known-builds.json').then(r=>r.json()),fetch('visual-audit.json').then(r=>r.json())])
+.then(([lib,audit])=>{
+  document.getElementById('meta').textContent='BUILD '+audit.build+' - '+audit.method;
+  const refs=new Map(lib.entries.map(x=>[x.id,x]));
+  const app=document.getElementById('app');
+  for(const c of audit.cases){
+    const used=c.referenceIds.map(id=>refs.get(id)).filter(Boolean);
+    const source=used.flatMap(r=>r.images.map(path=>({path,name:r.name})));
+    const required=[...new Set(used.flatMap(r=>r.tapTraits||[]))];
+    const forbidden=[...new Set(used.flatMap(r=>r.forbiddenTraits||[]))];
+    const el=document.createElement('section');el.className='case';
+    el.innerHTML=`<div class="case-head"><div><h2>${c.title}</h2><div class="sub">${c.expected.family} - ${c.expected.count} woofer axes - ${c.expected.entriesPerWoofer} entries/woofer - ${c.expected.mountRing}</div></div><div class="status">${c.status}</div></div>
+      <div class="cols"><div class="panel"><div class="label">Known construction references</div><div class="images">${source.map(x=>`<figure><img src="${x.path}" alt="${x.name}"><figcaption>${x.name}</figcaption></figure>`).join('')}</div></div>
+      <div class="panel"><div class="label">MEH Studio fixed-view renders</div><div class="images">${c.renders.map(x=>`<figure><img src="${x.path}" alt="${c.title} ${x.view}"><figcaption>${x.view}</figcaption></figure>`).join('')}</div></div></div>
+      <div class="traits"><div><div class="label">Compared traits</div><ul>${required.map(x=>`<li>${x}</li>`).join('')}</ul></div>
+      <div><div class="label">Forbidden failures</div><ul>${forbidden.map(x=>`<li>${x}</li>`).join('')}</ul></div></div>
+      <div class="panel"><div class="label">Latest review</div><ul>${c.checks.map(x=>`<li class="${x.status}">${x.status.toUpperCase()} - ${x.name}</li>`).join('')}</ul></div>`;
+    app.appendChild(el);
+  }
+  const dlg=document.getElementById('zoom'),zoom=dlg.querySelector('img');
+  document.querySelectorAll('figure img').forEach(img=>img.onclick=()=>{zoom.src=img.src;zoom.alt=img.alt;dlg.showModal()});
+}).catch(err=>{document.getElementById('meta').textContent='FAILED TO LOAD: '+err.message});
+</script>
+</body>
+</html>

@@ -1,0 +1,113 @@
+{
+  "schema": "MEH Studio fixed-view visual audit v1",
+  "build": 619,
+  "captureMode": "?capture=1&view=<full|ghost|taps|mount|section>",
+  "method": "Known-build photographs define construction traits and forbidden visual failures. Fixed-camera application renders are reviewed beside them, while analytic and mesh gates verify contact, clearance, cavity continuity, and printable topology.",
+  "resolvedDuringAudit": [
+    "The full-assembly review renderer exposed external pod crescents through an opaque horn. Build 619 now hides external hardware in the mouth view and exposes it only in Ghost, Mount, and Section.",
+    "Capture mode removes controls and reports from the frame so geometry cannot be hidden by the narrow side-viewer layout."
+  ],
+  "cases": [
+    {
+      "id": "hinson-panel-2",
+      "title": "Hinson documented two-woofer panel build",
+      "referenceIds": ["hinson-panel-2"],
+      "design": {"kind": "build", "key": "hinson10"},
+      "expected": {"family": "panel", "count": 2, "entriesPerWoofer": 2, "mountRing": "integrated", "style": "angular"},
+      "renders": [
+        {"view": "full", "path": "renders/b619/hinson-full.png"},
+        {"view": "ghost", "path": "renders/b619/hinson-ghost.png"},
+        {"view": "taps", "path": "renders/b619/hinson-taps.png"},
+        {"view": "mount", "path": "renders/b619/hinson-mount.png"},
+        {"view": "section", "path": "renders/b619/hinson-section.png"}
+      ],
+      "checks": [
+        {"name": "true planar angular walls", "status": "pass"},
+        {"name": "two external woofer frames seated on relieved panel lands", "status": "pass"},
+        {"name": "four literal racetrack apertures with no colored cutter objects", "status": "pass"},
+        {"name": "mouth view contains no driver plates or floating bodies", "status": "pass"}
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "jmod-panel-2",
+      "title": "JMOD Rev 2.02 documented panel build",
+      "referenceIds": ["jmod-panel-2"],
+      "design": {"kind": "build", "key": "jmod88"},
+      "expected": {"family": "panel", "count": 2, "entriesPerWoofer": 2, "mountRing": "integrated", "style": "angular"},
+      "renders": [
+        {"view": "full", "path": "renders/b619/jmod-full.png"},
+        {"view": "taps", "path": "renders/b619/jmod-taps.png"},
+        {"view": "mount", "path": "renders/b619/jmod-mount.png"},
+        {"view": "section", "path": "renders/b619/jmod-section.png"}
+      ],
+      "checks": [
+        {"name": "two 12-inch drivers remain outside the horn air path", "status": "pass"},
+        {"name": "18 mm inner flare panels are the direct sealed driver-bearing mounts", "status": "pass"},
+        {"name": "four rounded rectangular entries remain close to the common throat-side station", "status": "pass"},
+        {"name": "section view shows continuous adapter-to-wall passages", "status": "pass"}
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "radial-4-integrated",
+      "title": "Calculated four-woofer perpendicular radial hub - integrated",
+      "referenceIds": ["radial-perpendicular-4", "radial-faceted-module"],
+      "design": {"kind": "architecture", "key": "radial", "overrides": {"nW": 4, "mountRing": "integrated"}},
+      "expected": {"family": "radial", "count": 4, "entriesPerWoofer": 1, "mountRing": "integrated", "style": "smooth"},
+      "renders": [
+        {"view": "full", "path": "renders/b619/radial4-integrated-full.png"},
+        {"view": "ghost", "path": "renders/b619/radial4-integrated-ghost.png"},
+        {"view": "taps", "path": "renders/b619/radial4-integrated-taps.png"},
+        {"view": "mount", "path": "renders/b619/radial4-integrated-mount.png"},
+        {"view": "section", "path": "renders/b619/radial4-integrated-section.png"}
+      ],
+      "checks": [
+        {"name": "four woofer axes are perpendicular to the HF axis and aimed into one hub", "status": "pass"},
+        {"name": "drivers are seated on compact external cone-following pods without overlap", "status": "pass"},
+        {"name": "mouth view shows only the circular HF throat and four literal entries", "status": "pass"},
+        {"name": "section view shows short wall-to-chamber cavities", "status": "pass"}
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "radial-4-detachable",
+      "title": "Calculated four-woofer perpendicular radial hub - detachable",
+      "referenceIds": ["radial-perpendicular-4", "radial-faceted-module"],
+      "design": {"kind": "architecture", "key": "radial", "overrides": {"nW": 4, "driverCellConstruction": "cartridge"}},
+      "expected": {"family": "radial", "count": 4, "entriesPerWoofer": 1, "mountRing": "ring", "style": "smooth"},
+      "renders": [
+        {"view": "full", "path": "renders/b619/radial4-detachable-full.png"},
+        {"view": "mount", "path": "renders/b619/radial4-detachable-mount.png"},
+        {"view": "section", "path": "renders/b619/radial4-detachable-section.png"}
+      ],
+      "checks": [
+        {"name": "one independently sealed adapter exists per woofer", "status": "pass"},
+        {"name": "gasket seams distinguish detachable modules from the integrated solid", "status": "pass"},
+        {"name": "driver faces remain outside the horn wall", "status": "pass"},
+        {"name": "horn plus four modules is the expected five-part export", "status": "pass"}
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "panel-4-calculated",
+      "title": "Calculated four-woofer panel manifold",
+      "referenceIds": ["unity-panel-manifold"],
+      "design": {"kind": "architecture", "key": "panel", "overrides": {"nW": 4, "mountRing": "integrated"}},
+      "expected": {"family": "panel", "count": 4, "entriesPerWoofer": 2, "mountRing": "integrated", "style": "angular"},
+      "renders": [
+        {"view": "full", "path": "renders/b619/panel4-calculated-full.png"},
+        {"view": "taps", "path": "renders/b619/panel4-calculated-taps.png"},
+        {"view": "mount", "path": "renders/b619/panel4-calculated-mount.png"},
+        {"view": "section", "path": "renders/b619/panel4-calculated-section.png"}
+      ],
+      "checks": [
+        {"name": "four complete driver frames clear one another in 3D", "status": "pass"},
+        {"name": "eight edge-biased literal entries stay under active cone area", "status": "pass"},
+        {"name": "mounting lands remain behind planar horn walls", "status": "pass"},
+        {"name": "full view stays free of external hardware", "status": "pass"}
+      ],
+      "status": "pass"
+    }
+  ]
+}

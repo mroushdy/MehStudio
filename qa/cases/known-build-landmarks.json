@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "description": "Numeric and visual landmarks point to source evidence without copying or pretending photographs are pixel baselines.",
+  "builds": [
+    {
+      "id": "hinson10",
+      "caseId": "P01",
+      "evidence": "published",
+      "numeric": {
+        "slotLengthMm": 101.6,
+        "slotWidthMm": 19.1,
+        "totalAreaCm2PerWoofer": 37.24,
+        "stationMm": 143.3,
+        "frontChamberCm3Total": 1400,
+        "frontChamberCm3PerWoofer": 700,
+        "frontChamberPortedDriverCount": 2,
+        "panelMm": 18
+      },
+      "semantics": {
+        "frontChamber": "Synergy Calc Vtc is the total across Nd=2 ported drivers; the UI and solver store the normalized per-woofer value.",
+        "construction": "Published angular panel construction with integrated 18 mm driver-bearing panels and no detachable driver pods."
+      },
+      "visualLandmarks": [
+        "circular compression-driver throat",
+        "four edge-biased racetrack entries",
+        "flat conical panel facets",
+        "woofer frames directly sealed to cone-relieved 18 mm driver-bearing panels",
+        "no detachable rear driver modules"
+      ]
+    },
+    {
+      "id": "jmod88",
+      "caseId": "P02",
+      "evidence": "hybrid",
+      "constructionEvidence": "documented",
+      "tapCadEvidence": "calculated",
+      "numeric": {
+        "coverageHorizontalDeg": 90,
+        "coverageVerticalDeg": 60,
+        "wooferCount": 2,
+        "assemblyWidthMm": 750,
+        "assemblyHeightMm": 470,
+        "assemblyDepthMm": 420,
+        "cabinetPanelMm": 12,
+        "driverBearingPanelMm": 18,
+        "hornSidePortRoundoverMm": 6.35
+      },
+      "semantics": {
+        "construction": "The documented JMOD package uses angular 18 mm driver-bearing flare panels integrated into the horn assembly.",
+        "tapCad": "The archive documents the construction paradigm, but not a complete numeric tap CAD definition; generated tap dimensions remain calculated/hybrid."
+      },
+      "visualLandmarks": [
+        "central circular compression-driver throat",
+        "planar angular flare panels",
+        "two directly mounted woofers behind integrated 18 mm driver-bearing panels",
+        "cone-following rear reliefs rather than flat plates or floating pods",
+        "calculated tap passages with rounded horn-side entry lips"
+      ]
+    }
+  ]
+}

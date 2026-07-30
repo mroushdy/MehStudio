@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "description": "Independent semantic and coarse pixel admission for renderer regressions. These are reviewed invariants, not hashes emitted by the renderer under test.",
+  "captures": {
+    "P05/side-oblique-full": {
+      "expectedWooferDriverCount": 2,
+      "maxWooferDatumErrorMm": 0.5,
+      "expectedCompressionDriverRoots": 1,
+      "expectedMountLandRoots": 2,
+      "expectedGasketRoots": 0,
+      "expectedTapInterfaceRoots": 0,
+      "maxTapCapMeshes": 0,
+      "minimumForegroundFraction": 0.02,
+      "maximumForegroundFraction": 0.9,
+      "minimumForegroundWidthFraction": 0.2,
+      "minimumForegroundHeightFraction": 0.2
+    }
+  }
+}

@@ -1,0 +1,433 @@
+{
+  "schema": "meh-build649-closure-evidence-v1",
+  "build": 649,
+  "rows": {
+    "B649-G01": {
+      "source": [
+        "qa/node/panel-profile-mount-preview.test.mjs"
+      ],
+      "numeric": [
+        "qa/node/panel-profile-mount-preview.test.mjs",
+        "qa/node/ui-regression-contracts.test.mjs"
+      ],
+      "render": [
+        "qa/artifacts/build649-closure/user-integrated/no-driver-assembly.png"
+      ]
+    },
+    "B649-G02": {
+      "source": [
+        "qa/node/panel-profile-mount-preview.test.mjs"
+      ],
+      "numeric": [
+        "qa/node/exact-mesh-diagnostics.test.mjs"
+      ],
+      "render": [
+        "qa/artifacts/build649-closure/user-integrated/mount-plate-1.png",
+        "qa/artifacts/build649-closure/user-integrated/no-driver-assembly.png"
+      ]
+    },
+    "B649-G03": {
+      "source": [
+        "qa/node/tap-lumen-render-contract.test.mjs"
+      ],
+      "numeric": [
+        "qa/node/tap-lumen-continuity.test.mjs"
+      ],
+      "render": [
+        "qa/artifacts/build649-closure/tap-lumen/contact-sheet.png"
+      ]
+    },
+    "B649-G04": {
+      "source": [
+        "qa/node/panel-profile-mount-preview.test.mjs",
+        "qa/node/tap-lumen-render-contract.test.mjs"
+      ],
+      "numeric": [
+        "qa/node/tap-lumen-continuity.test.mjs"
+      ],
+      "render": [
+        "qa/artifacts/build649-closure/tap-lumen/contact-sheet.png"
+      ]
+    },
+    "B649-G05": {
+      "source": [
+        "qa/node/panel-profile-mount-preview.test.mjs",
+        "qa/node/cartridge-retention-regression.test.mjs"
+      ],
+      "numeric": [
+        "qa/node/cartridge-retention-regression.test.mjs",
+        "qa/node/tap-lumen-continuity.test.mjs"
+      ],
+      "render": [
+        "qa/artifacts/build649-closure/user-cartridge/mount-assembly.png",
+        "qa/artifacts/build649-closure/user-cartridge/no-driver-assembly.png"
+      ]
+    },
+    "B649-G06": {
+      "source": [
+        "qa/node/build649-user-state-regression.test.mjs"
+      ],
+      "numeric": [
+        "qa/node/tap-station-diagnostics.test.mjs",
+        "qa/node/tap-pair-spacing-regression.test.mjs"
+      ],
+      "render": [
+        "qa/artifacts/build649-closure/user-integrated/literal-taps.png",
+        "qa/artifacts/build649-closure/ui/tap-station-diagnostics.png"
+      ]
+    },
+    "B649-G07": {
+      "source": [
+        "qa/node/tap-lumen-render-contract.test.mjs"
+      ],
+      "numeric": [
+        "qa/node/tap-lumen-continuity.test.mjs",
+        "qa/node/panel-profile-mount-preview.test.mjs"
+      ],
+      "render": [
+        "qa/artifacts/build649-closure/tap-lumen/contact-sheet.png"
+      ]
+    },
+    "B649-G08": {
+      "source": [
+        "qa/node/mount-envelope-regression.test.mjs"
+      ],
+      "numeric": [
+        "qa/node/mount-envelope-regression.test.mjs"
+      ],
+      "render": [
+        "qa/artifacts/build649-closure/user-integrated/no-driver-assembly.png",
+        "qa/artifacts/build649-closure/ui/mouth-package-summary.png"
+      ]
+    },
+    "B649-G09": {
+      "source": [
+        "qa/node/throat-morph-regression.test.mjs"
+      ],
+      "numeric": [
+        "qa/node/throat-morph-regression.test.mjs"
+      ],
+      "render": [
+        "qa/artifacts/build649-closure/throat-morph/contact-sheet.png"
+      ]
+    },
+    "B649-G10": {
+      "source": [
+        "qa/node/throat-morph-regression.test.mjs"
+      ],
+      "numeric": [
+        "qa/node/throat-morph-regression.test.mjs",
+        "qa/node/exact-mesh-diagnostics.test.mjs",
+        "qa/node/packed-mesh-compatibility.test.mjs"
+      ],
+      "render": [
+        "qa/artifacts/build649-closure/throat-morph/contact-sheet.png"
+      ]
+    },
+    "B649-G11": {
+      "source": [
+        "qa/node/ui-regression-contracts.test.mjs",
+        "qa/mount-interface-universal.test.js"
+      ],
+      "numeric": [
+        "qa/node/panel-profile-mount-preview.test.mjs",
+        "qa/node/cartridge-retention-regression.test.mjs"
+      ],
+      "render": [
+        "qa/artifacts/build649-closure/user-integrated/no-driver-assembly.png",
+        "qa/artifacts/build649-closure/user-cartridge/no-driver-assembly.png"
+      ]
+    },
+    "B649-G12": {
+      "source": [
+        "qa/browser/build649-closure-render-board.mjs"
+      ],
+      "numeric": [
+        "qa/node/build649-user-state-regression.test.mjs",
+        "qa/browser/render-inspection.mjs"
+      ],
+      "render": [
+        "qa/artifacts/build649-closure/user-integrated/contact-sheet.png",
+        "qa/artifacts/build649-closure/user-cartridge/contact-sheet.png",
+        "qa/artifacts/build649-closure/tap-lumen/contact-sheet.png",
+        "qa/artifacts/build649-closure/profile-laws/contact-sheet.png",
+        "qa/artifacts/build649-closure/throat-morph/contact-sheet.png",
+        "qa/artifacts/build649-closure/wall-topologies/contact-sheet.png"
+      ]
+    },
+    "B649-P01": {
+      "source": [
+        "qa/node/profile-law-integration.test.mjs"
+      ],
+      "numeric": [
+        "qa/node/profile-law-integration.test.mjs",
+        "qa/node/build649-user-state-regression.test.mjs"
+      ],
+      "render": [
+        "qa/artifacts/build649-closure/profile-laws/contact-sheet.png"
+      ]
+    },
+    "B649-P02": {
+      "source": [
+        "qa/node/oneway-profile-law-integration.test.mjs"
+      ],
+      "numeric": [
+        "qa/node/oneway-profile-law-integration.test.mjs",
+        "qa/node/oneway-coax-apex-regression.test.mjs"
+      ],
+      "render": [
+        "qa/artifacts/build649-closure/ui/oneway-profile-control.png",
+        "qa/artifacts/build649-closure/ui/oneway-profile-conical.png",
+        "qa/artifacts/build649-closure/ui/oneway-profile-classic-os.png",
+        "qa/artifacts/build649-closure/ui/oneway-profile-osse.png"
+      ]
+    },
+    "B649-P03": {
+      "source": [
+        "qa/node/profile-control-parity.test.mjs",
+        "docs/build649-rosse-control-parity.md"
+      ],
+      "numeric": [
+        "qa/node/profile-laws-regression.test.mjs",
+        "qa/node/profile-law-integration.test.mjs"
+      ],
+      "render": [
+        "qa/artifacts/build649-closure/ui/profile-advanced.png",
+        "qa/artifacts/build649-closure/profile-laws/contact-sheet.png"
+      ]
+    },
+    "B649-P04": {
+      "source": [
+        "qa/node/section-family-control.test.mjs"
+      ],
+      "numeric": [
+        "qa/node/rounded-rectangle-section.test.mjs"
+      ],
+      "render": [
+        "qa/artifacts/build649-closure/ui/rounded-rectangle-control.png",
+        "qa/artifacts/build649-closure/ui/rounded-rectangle-corner.png",
+        "qa/artifacts/build649-closure/ui/rounded-rectangle-section.png"
+      ]
+    },
+    "B649-P05": {
+      "source": [
+        "qa/node/ui-regression-contracts.test.mjs"
+      ],
+      "numeric": [
+        "qa/node/build649-user-state-regression.test.mjs"
+      ],
+      "render": [
+        "qa/artifacts/build649-closure/ui/count-nw10-32.png",
+        "qa/artifacts/build649-closure/ui/count-w5-32.png"
+      ]
+    },
+    "B649-P06": {
+      "source": [
+        "qa/node/ui-regression-contracts.test.mjs"
+      ],
+      "numeric": [
+        "qa/node/build649-user-state-regression.test.mjs",
+        "qa/browser/build649-closure-render-board.mjs"
+      ],
+      "render": [
+        "qa/artifacts/build649-closure/ui/count-nw10-32.png",
+        "qa/artifacts/build649-closure/ui/count-nw10-40.png"
+      ]
+    },
+    "B649-P07": {
+      "source": [
+        "qa/node/tap-station-diagnostics.test.mjs",
+        "qa/node/tap-pair-spacing-regression.test.mjs"
+      ],
+      "numeric": [
+        "qa/node/tap-station-diagnostics.test.mjs",
+        "qa/node/tap-pair-spacing-regression.test.mjs"
+      ],
+      "render": [
+        "qa/artifacts/build649-closure/ui/tap-station-diagnostics.png",
+        "qa/artifacts/build649-closure/user-integrated/literal-taps.png"
+      ]
+    },
+    "B649-P08": {
+      "source": [
+        "qa/node/tap-station-diagnostics.test.mjs",
+        "qa/node/tap-pair-spacing-regression.test.mjs"
+      ],
+      "numeric": [
+        "qa/node/tap-station-diagnostics.test.mjs",
+        "qa/node/tap-pair-spacing-regression.test.mjs"
+      ],
+      "render": [
+        "qa/artifacts/build649-closure/ui/tap-station-diagnostics.png",
+        "qa/artifacts/build649-closure/user-integrated/literal-taps.png"
+      ]
+    },
+    "B649-P09": {
+      "source": [
+        "qa/node/ui-regression-contracts.test.mjs",
+        "qa/node/profile-control-parity.test.mjs"
+      ],
+      "numeric": [
+        "qa/node/mount-envelope-regression.test.mjs",
+        "qa/node/profile-control-parity.test.mjs"
+      ],
+      "render": [
+        "qa/artifacts/build649-closure/ui/profile-advanced.png",
+        "qa/artifacts/build649-closure/ui/mouth-package-summary.png"
+      ]
+    },
+    "B649-P10": {
+      "source": [
+        "qa/node/ui-regression-contracts.test.mjs"
+      ],
+      "numeric": [
+        "qa/node/subxo-semantics-regression.test.mjs"
+      ],
+      "render": [
+        "qa/artifacts/build649-closure/ui/lf-system-reference.png"
+      ]
+    },
+    "B649-P11": {
+      "source": [
+        "qa/node/ui-regression-contracts.test.mjs"
+      ],
+      "numeric": [
+        "qa/node/build649-state-depth-contract.test.mjs"
+      ],
+      "render": [
+        "qa/artifacts/build649-closure/ui/driver-cell-collapsed.png",
+        "qa/artifacts/build649-closure/ui/driver-cell-measured.png"
+      ]
+    },
+    "B649-P12": {
+      "source": [
+        "qa/node/ui-regression-contracts.test.mjs",
+        "qa/node/section-family-control.test.mjs"
+      ],
+      "numeric": [
+        "qa/node/build649-state-depth-contract.test.mjs"
+      ],
+      "render": [
+        "qa/artifacts/build649-closure/ui/current-schema-refusal.png"
+      ]
+    },
+    "B649-P13": {
+      "source": [
+        "qa/node/build649-source-family-contract.test.mjs",
+        "docs/build649-source-family-contract.md"
+      ],
+      "numeric": [
+        "qa/node/oneway-profile-law-integration.test.mjs",
+        "qa/node/oneway-coax-apex-regression.test.mjs"
+      ],
+      "render": [
+        "qa/artifacts/build649-closure/ui/oneway-profile-control.png",
+        "qa/artifacts/build649-closure/ui/oneway-profile-conical.png",
+        "qa/artifacts/build649-closure/ui/oneway-profile-classic-os.png",
+        "qa/artifacts/build649-closure/ui/oneway-profile-osse.png",
+        "qa/artifacts/build649-closure/profile-laws/contact-sheet.png"
+      ]
+    },
+    "B649-P14": {
+      "source": [
+        "qa/node/build649-source-family-contract.test.mjs",
+        "docs/build649-source-family-contract.md"
+      ],
+      "numeric": [
+        "qa/node/build649-source-family-contract.test.mjs",
+        "qa/node/twoway-audio-golden-rules.mjs"
+      ],
+      "render": [
+        "qa/artifacts/build649-closure/user-integrated/front-full.png",
+        "qa/artifacts/build649-closure/user-cartridge/front-full.png"
+      ]
+    },
+    "B649-P15": {
+      "source": [
+        "qa/node/curved-facets-contract.test.mjs",
+        "docs/build649-curved-facets.md"
+      ],
+      "numeric": [
+        "qa/node/curved-facets-contract.test.mjs"
+      ],
+      "render": [
+        "qa/artifacts/build649-closure/wall-topologies/contact-sheet.png"
+      ]
+    },
+    "B649-U01": {
+      "source": [
+        "qa/node/ui-regression-contracts.test.mjs"
+      ],
+      "numeric": [
+        "qa/browser/build649-closure-render-board.mjs"
+      ],
+      "render": [
+        "qa/artifacts/build649-closure/ui/diagnostics-below-render.png"
+      ]
+    },
+    "B649-U02": {
+      "source": [
+        "qa/node/ui-regression-contracts.test.mjs"
+      ],
+      "numeric": [
+        "qa/node/build649-state-depth-contract.test.mjs"
+      ],
+      "render": [
+        "qa/artifacts/build649-closure/ui/driver-cell-collapsed.png"
+      ]
+    },
+    "B649-U03": {
+      "source": [
+        "qa/node/build649-state-depth-contract.test.mjs"
+      ],
+      "numeric": [
+        "qa/node/build649-state-depth-contract.test.mjs",
+        "qa/browser/build649-state-mutation-contract.mjs"
+      ],
+      "render": [
+        "qa/artifacts/build649-closure/ui/release-state-identity.png",
+        "qa/artifacts/build649-closure/user-integrated/front-full.png"
+      ]
+    },
+    "B649-R01": {
+      "source": [
+        "qa/node/build649-closure-gate.mjs",
+        "qa/browser/build649-closure-render-board.mjs",
+        "docs/build649-closure-evidence-map.md"
+      ],
+      "numeric": [
+        "qa/node/run.mjs",
+        "qa/browser/build649-closure-render-board.mjs"
+      ],
+      "render": [
+        "qa/artifacts/build649-closure/manifest.json",
+        "qa/artifacts/build649-closure/user-integrated/contact-sheet.png",
+        "qa/artifacts/build649-closure/ui/diagnostics-below-render.png"
+      ]
+    },
+    "B649-R02": {
+      "source": [
+        "assemble.js",
+        "gate.js",
+        "qa/node/build649-closure-gate.mjs"
+      ],
+      "numeric": [
+        "qa/browser/build649-state-mutation-contract.mjs",
+        "qa/artifacts/build649-closure/manifest.json"
+      ],
+      "render": [
+        "qa/artifacts/build649-closure/final-in-app/build649-header.png",
+        "qa/artifacts/build649-closure/final-in-app/build649-no-driver-render.png"
+      ],
+      "finalUrl": "http://127.0.0.1:8520/meh5.html?build=649&view=nodrv&rev=release-final",
+      "inspection": {
+        "personallyInspected": true,
+        "visibleBuild": 649,
+        "stateHash": "b649-2yhurk7dfwkr7-31q",
+        "stateRevision": 1,
+        "view": "nodrv",
+        "runtimeErrors": 0
+      }
+    }
+  }
+}
