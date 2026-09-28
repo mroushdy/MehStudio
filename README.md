@@ -4,7 +4,7 @@ A browser-based multiple-entry-horn study tool. The current editor is one self-c
 
 ## Open the editor
 
-Download [`index.html`](index.html) using **Download raw file**, then open it in a modern browser. Keep that one file to use the editor offline.
+Use the [live editor](https://mroushdy.github.io/MehStudio/), or download [`index.html`](index.html) using **Download raw file**, then open it in a modern browser. Keep that one file to use the editor offline.
 
 Or clone this repository and serve it locally:
 
@@ -16,8 +16,9 @@ Open **http://127.0.0.1:8520/**.
 
 ## What it does
 
-- Manual and Assisted design with R-OSSE rev7 horn profiles.
+- Manual and Assisted design with R-OSSE rev7 horn profiles. Assisted accepts a 40–120° nominal coverage angle, carries it into generated profiles and saved briefs, and offers tap-to-open field help. This axisymmetric angle is not a predicted frequency-dependent beamwidth.
 - Round, capsule and teardrop entries; two, four or six cone mids.
+- Continuous front adapters with smooth neck-to-chamber transitions. Entry tube length is adjustable separately from driver standoff; the acoustic model adds a fixed 3 mm passage allowance.
 - Individual pods or a shared rear enclosure, with sealed or ported loading and a cylindrical or curved shared shell.
 - Driver selection grouped by nominal size in inches. Manufacturer-referenced dimensions distinguish sourced geometry from representative appearance and clearance envelopes.
 - 3D assembly, section and entry-footprint views, point measurements, and saved comparisons.
@@ -29,7 +30,7 @@ Manual edits update the design immediately. Design checks highlight affected con
 
 Assisted starts from its own goals, rather than carrying over Manual dimensions. Failed fitting calculations preserve the current design. Acoustic screening and Assisted candidate acceptance still require geometry supported by their models.
 
-The straight collector model requires the entire entry projection to lie inside the equivalent active piston disk and requires positive collector depth. Invalid coupling cannot run the acoustic screen or pass rear-port fitting. This conservative geometric policy does not establish an acoustic alignment or rule out separately engineered side-entry arrangements.
+The direct collector model requires the entire entry projection to lie inside the equivalent active piston disk and requires positive collector depth. Invalid coupling cannot run the acoustic screen or pass rear-port fitting. This conservative geometric policy does not establish an acoustic alignment or rule out separately engineered side-entry arrangements.
 
 The optional **Annular insert** occupies part of the collector and assumed cone recess, leaving a central opening around the full projected entry. Its clearance is measured axially from an assumed conical diaphragm; the central keepout is a provisional fraction of piston radius, not measured dust-cap geometry. The reported displaced volume comes from the same closed mesh used in the assembly. It is a volume study, not a path-equalizing phase plug or production part. Acoustic screening is unavailable while the insert is enabled because the current model does not include narrow-gap loading. Choose **Open collector** to return to the existing acoustic screen.
 

@@ -1,5 +1,17 @@
 # Changes
 
+## Build 10 — 2026-09-28
+
+- Replace stacked entry-cartridge, socket and collector surfaces with one continuous front-adapter mesh, without intermediate caps.
+- Use a smooth transition for collector cross-section and offset, with flat endpoint slopes into the straight neck and mounting land. Share shading normals across axial joins.
+- Calculate front volume, shared-enclosure displacement and enclosure bounds from the same curved transition; update section view to match.
+- Rename Local neck length to Entry tube length. The model retains its fixed 3 mm passage allowance.
+
+- Add a 40–120° nominal coverage goal to Assisted; use it throughout the profile, candidate search, export and import. Keep 60° as the default for older briefs.
+- Add accessible tap-to-open information buttons to Assisted fields, including drive voltage and coverage.
+
+Validation: 28 regression checks passed, including exact opening preservation, endpoint slopes and independent closed-mesh volume integration. Source geometry section was inspected; browser visual QA remains unavailable under the browser policy restriction.
+
 ## Build 9 — 2026-09-28
 
 - Add an offset-outlet cone insert that follows the entry shape, rotation and driver offset, with adjustable opening, axial clearance and center relief.

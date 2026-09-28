@@ -153,3 +153,34 @@ test('Offset insert relief and opening remain editable, serializable and explici
  const roundtrip=M.normalize(JSON.parse(JSON.stringify(high.p)));assert.equal(roundtrip.frontFiller,'offset');assert.equal(roundtrip.fillerRelief,20);
  const meshes=c.MEHMeshes(low,true);assert.equal(meshes.filter(m=>m.name.startsWith('Cone contour insert')).length,low.p.count);for(const mesh of meshes)assert.ok(mesh.data.every(Number.isFinite),mesh.name);
 });
+test('Front adapter is continuous with smooth endpoint slopes and mesh-consistent air volume',()=>{
+ const eps=1e-5;assert.ok(M.collectorBlend(eps)/eps<1e-7);assert.ok((1-M.collectorBlend(1-eps))/eps<1e-7);
+ for(const shape of ['round','slot','teardrop'])for(const offset of [0,30]){
+  const a=M.analyze({...starter,shape,slotL:55,slotW:25,slotAngle:45,offset,gap:42}),ss=a.collectorSections;
+  assert.equal(ss.length,25);assert.equal(ss[0].offsetMM,0);assert.equal(ss.at(-1).offsetMM,offset);assert.equal(ss[0].zMM,0);assert.ok(Math.abs(ss.at(-1).zMM-(a.p.gap-a.p.neck-9))<1e-9);
+  assert.equal(JSON.stringify(ss[0].uv),JSON.stringify(a.collectorSmallUV));assert.equal(JSON.stringify(ss.at(-1).uv),JSON.stringify(a.collectorLargeUV));
+  const rings=ss.map(s=>s.uv.map(([x,y])=>[x+s.offsetMM,y,s.zMM]));let v=0;
+  const triangle=(a,b,c)=>{v+=M.dot(a,M.cross(b,c))/6};
+  for(let k=0;k<rings.length-1;k++)for(let j=0;j<rings[k].length;j++){const n=(j+1)%rings[k].length;triangle(rings[k][j],rings[k][n],rings[k+1][n]);triangle(rings[k][j],rings[k+1][n],rings[k+1][j]);}
+  for(let j=1;j<rings[0].length-1;j++){triangle(rings[0][0],rings[0][j+1],rings[0][j]);triangle(rings.at(-1)[0],rings.at(-1)[j],rings.at(-1)[j+1]);}
+  assert.ok(Math.abs(v/1000-a.collectorLoftV)<1e-7);
+  const meshes=c.MEHMeshes(a,true),adapters=meshes.filter(m=>m.name.startsWith('Continuous front adapter'));assert.equal(adapters.length,a.p.count);assert.ok(!meshes.some(m=>/Entry cartridge|Integral socket|Front chamber and mounting land/.test(m.name)));
+  for(const m of adapters)assert.ok(m.data.every(Number.isFinite));
+ }
+});
+test('Assisted coverage controls the independent profile and validates its supported range',()=>{
+ const O=c.MEHDesignOptimizer,depths=[];
+ for(const coverage of [40,60,90,120]){const r=O.resolveGoals({...O.goalDefaults,coverage},{...starter,coverage:70});assert.equal(r.ok,true);assert.equal(r.state.coverage,coverage);assert.equal(r.state.targetCoverage,coverage);assert.equal(r.baseline.profile.coverage,coverage);assert.equal(r.baseline.nominalCoverageDegrees,coverage);assert.equal(r.brief.coverage,coverage);assert.equal(r.provenance.coverage.source,'provided');depths.push(M.analyze(r.state).depth);}
+ assert.equal(new Set(depths.map(v=>v.toFixed(5))).size,4);
+ const legacy={...O.goalDefaults};delete legacy.coverage;assert.equal(O.resolveGoals(legacy).state.coverage,60);
+ for(const coverage of [39,121,NaN,true,'oops']){const r=O.resolveGoals({...O.goalDefaults,coverage});assert.equal(r.ok,false);assert.ok(r.issues.some(x=>x.fields.includes('coverage')));}
+});
+test('Assisted help opens a named dialog without submitting the form',()=>{
+ const rows=[],nodes=new Map(),opened=[];
+ const dollar=selector=>{if(!nodes.has(selector))nodes.set(selector,{textContent:selector,before(row){rows.push(row)}});return nodes.get(selector)};
+ const doc={createElement(tag){return {tag,attributes:{},setAttribute(k,v){this.attributes[k]=v},append(...children){this.children=children}}}};
+ vm.runInNewContext(between('const briefHelp=','const assistedDefaults='),{$:dollar,document:doc,dialog:id=>opened.push(id)});
+ assert.equal(rows.length,10);
+ for(const row of rows){const [label,button]=row.children;assert.equal(button.type,'button');assert.equal(button.attributes['aria-haspopup'],'dialog');assert.equal(button.attributes['aria-controls'],'fieldHelpDialog');button.onclick();assert.equal(dollar('#fieldHelpTitle').textContent,label.textContent);assert.ok(dollar('#fieldHelpText').textContent.length>25);}
+ assert.equal(opened.length,10);assert.ok(opened.every(x=>x==='fieldHelpDialog'));
+});
