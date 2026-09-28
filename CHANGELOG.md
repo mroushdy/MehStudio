@@ -1,5 +1,13 @@
 # Changes
 
+## Build 8 — 2026-09-28
+
+- Remove repeated sidebar explanations, field captions and workspace descriptions.
+- Shorten driver, editing and calculation status text while retaining actionable warnings.
+- Keep detailed conventions and assumptions in Methods or closed disclosures.
+
+Validation: all 23 existing regression checks passed. Visual browser checks remain unavailable because of the browser security-policy check.
+
 ## Manual / contour build 7 — 2026-09-28
 
 - Make Manual edits live even when design checks report invalid dimensions. Keep warnings beside affected fields and in an expandable summary; allow study saving and exports.
