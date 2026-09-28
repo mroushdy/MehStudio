@@ -49,19 +49,64 @@ test('large-driver mesh and smooth enclosure contain finite coordinates',()=>{
   assert.equal(a.sharedRear.smoothJoin,true);assert.equal(a.sharedRear.valid,true);
  }
 });
-test('Manual edits preserve the last valid geometry, retain corrections, and block export until resolved',()=>{
- const setup=`(()=>{const M=MEH;let state=${JSON.stringify(starter)},analysis=M.analyze(state),manualDraft=null,pending=0,title='start';const nodes=new Map();const $=id=>{if(!nodes.has(id))nodes.set(id,{});return nodes.get(id)};let updates=0;function markEdited(){manualDraft=null}function sync(){}function update(){analysis=M.analyze(state);updates++;renderRearEditNotice()}function cancelAnimationFrame(){}function fitManualRearPort(){throw Error('Unexpected fitting route')}
- ${between('function manualIssues(','async function fitManualRearPort')}
- ${between('function renderRearEditNotice()',"$('#discardRearEdits').onclick")}
- return {edit:editManualParameter,apply:applyManualEdit,get state(){return state},get draft(){return manualDraft},get updates(){return updates},get disabled(){return $('#export').disabled}};})()`;
- const ui=vm.runInContext(setup,c),original=JSON.stringify(ui.state);
- ui.edit('offset',70);assert.equal(JSON.stringify(ui.state),original);assert.equal(ui.draft.p.offset,70);assert.equal(ui.disabled,true);assert.equal(ui.updates,0);
- ui.edit('gap',42);assert.equal(ui.draft.p.offset,70);assert.equal(ui.draft.p.gap,42);assert.equal(ui.updates,0);
- ui.edit('offset',0);assert.equal(ui.draft,null);assert.equal(ui.state.gap,42);assert.equal(ui.disabled,false);assert.equal(ui.updates,1);
- ui.edit('offset',40);const safe=JSON.stringify(ui.state);
- ui.apply({...ui.state,port:50.42,shape:'round',areaLocked:false});assert.equal(JSON.stringify(ui.state),safe);assert.equal(ui.disabled,true);
- ui.edit('port',40);assert.equal(ui.draft,null);assert.equal(ui.state.port,40);assert.equal(ui.disabled,false);
- ui.edit('gap',17);assert.ok(ui.draft.directCouplingIssues.length);assert.notEqual(ui.state.gap,17);assert.equal(ui.disabled,true);
+function manualHarness(){
+ const setup=`(()=>{const M=MEH;let state=${JSON.stringify(starter)},analysis=M.analyze(state),manualDraft=null,pending=0,title='start';const nodes=new Map();const $=id=>{if(!nodes.has(id))nodes.set(id,{});return nodes.get(id)};const esc=s=>String(s);let updates=0,nextFrame=0;const frames=new Map();function requestAnimationFrame(fn){frames.set(++nextFrame,fn);return nextFrame}function cancelAnimationFrame(id){frames.delete(id)}function markEdited(){manualDraft=null}function syncDriverStatus(){}function fitAllViews(){}let driverFitMessage='';function update(){pending=0;analysis=M.analyze(state);state=analysis.p;updates++;renderRearEditNotice()}
+ ${between('function flushPendingGeometry(','async function fitManualRearPort')}
+ ${between('function renderRearEditNotice()','function seedRearLayout(')}
+ ${between('function selectMidDriver(','async function fitSelectedMidDriver(')}
+ return {edit:editManualParameter,apply:applyManualEdit,select:selectMidDriver,flush:flushPendingGeometry,get state(){return state},get analysis(){return analysis},get draft(){return manualDraft},get updates(){return updates},get disabled(){return $('#export').disabled||$('#save').disabled},get pendingFrames(){return frames.size},get warning(){return $('#manualWarningSummary').textContent}};})()`;
+ return vm.runInContext(setup,c);
+}
+test('Manual warnings leave geometry, subsequent edits, saving and export live',()=>{
+ const ui=manualHarness();
+ ui.edit('mouth',710);assert.equal(ui.state.mouth,710);assert.ok(ui.analysis.rearIssues.length);assert.equal(ui.disabled,false);
+ ui.edit('offset',70);assert.equal(ui.state.offset,70);assert.ok(ui.analysis.directCouplingIssues.length);assert.equal(ui.disabled,false);
+ ui.edit('gap',42);assert.equal(ui.state.offset,70);assert.equal(ui.analysis.p.gap,42);assert.equal(ui.updates,3);
+ ui.edit('offset',0);assert.equal(ui.state.gap,42);assert.equal(ui.draft,null);assert.equal(ui.disabled,false);
+ ui.edit('gap',17);assert.equal(ui.analysis.p.gap,17);assert.ok(ui.analysis.directCouplingIssues.length);assert.match(ui.warning,/edits are live/);
+});
+test('Manual ported transitions and driver selection apply directly without implicit fitting',()=>{
+ const ui=manualHarness(),back=ui.state.sharedBack;
+ ui.edit('rearConcept','reflex');assert.equal(ui.state.rearConcept,'reflex');assert.equal(ui.state.sharedBack,back);
+ ui.edit('offset',100);ui.select('bc10ndl64');assert.equal(ui.state.midDriver,'bc10ndl64');assert.equal(ui.state.offset,100);assert.equal(ui.analysis.p.frame,M.drivers.mid.bc10ndl64.parameters.frame);assert.equal(ui.disabled,false);
+});
+test('Manual sliders coalesce frames and export flushing uses the latest normalized values',()=>{
+ const ui=manualHarness();ui.edit('mouth',710,{defer:true});ui.edit('mouth',720,{defer:true});ui.edit('offset',70,{defer:true});
+ assert.equal(ui.updates,0);assert.equal(ui.pendingFrames,1);assert.equal(ui.state.mouth,720);
+ ui.flush();assert.equal(ui.updates,1);assert.equal(ui.pendingFrames,0);assert.equal(ui.analysis.p.offset,70);assert.equal(ui.disabled,false);
+ ui.edit('gap',1e6);assert.equal(ui.state.gap,M.specs.gap[1]);assert.equal(ui.analysis.p.gap,ui.state.gap);
+ assert.ok(between('function designJSON()',"$('#jsonExport')").includes('flushPendingGeometry()'));
+ assert.ok(!between('function syncRearManual()',"for(let el of document.querySelectorAll('[data-range]").includes('.open=true'));
+});
+test('Open collector preserves previous front volume and acoustic availability',()=>{
+ const a=M.analyze(starter);assert.equal(a.frontFiller.enabled,false);assert.equal(a.frontFiller.volumeCM3,0);
+ assert.ok(Math.abs(a.frontV-(a.collectorV+a.coneV+a.neckV))<1e-9);assert.equal(acoustic(a).available,true);
+});
+test('Contour insert is a closed consistently wound mesh with the reported displaced volume',()=>{
+ for(const shape of ['round','slot','teardrop']){
+  const a=M.analyze({...starter,frontFiller:'annular',shape,slotL:60,slotW:25,slotAngle:45}),f=a.frontFiller;
+  assert.equal(f.available,true);const edges=new Map();let vol=0;
+  for(const face of f.faces){const [i,j,k]=face;vol+=M.dot(f.vertices[i],M.cross(f.vertices[j],f.vertices[k]))/6000;for(let n=0;n<3;n++){const u=face[n],v=face[(n+1)%3],key=[Math.min(u,v),Math.max(u,v)].join(':');if(!edges.has(key))edges.set(key,[]);edges.get(key).push(u<v?1:-1);}}
+  for(const [key,directions]of edges){assert.equal(directions.length,2,key);assert.equal(directions[0]+directions[1],0,key);}
+  assert.ok(vol>0);assert.ok(Math.abs(vol-f.volumeCM3)<1e-7);assert.ok(Math.abs(a.frontV-(a.collectorV+a.coneV+a.neckV-f.volumeCM3))<1e-8);
+  for(const [x,y,z]of f.vertices){const coneZ=a.p.coneDepth*Math.max(0,1-Math.hypot(x,y)/a.pistonR);assert.ok(coneZ-z>=a.p.fillerClearance-1e-8);}
+  const bound=Math.max(...a.uv.map(([u,v])=>Math.hypot(u-a.p.offset,v)));assert.ok(f.innerR>=bound+2-1e-8);
+  const meshes=c.MEHMeshes(a,true),inserts=meshes.filter(m=>m.name.startsWith('Cone contour insert'));assert.equal(inserts.length,a.p.count);for(const mesh of meshes)assert.ok(mesh.data.every(Number.isFinite),mesh.name);
+ }
+});
+test('Contour insert displacement decreases with larger clearance or opening',()=>{
+ const base={...starter,frontFiller:'annular'};
+ assert.ok(M.analyze({...base,fillerClearance:1}).frontFiller.volumeCM3>M.analyze({...base,fillerClearance:4}).frontFiller.volumeCM3);
+ assert.ok(M.analyze({...base,fillerOpening:50}).frontFiller.volumeCM3>M.analyze({...base,fillerOpening:100}).frontFiller.volumeCM3);
+ const bad=M.analyze({...base,offset:100});assert.equal(bad.frontFiller.available,false);assert.equal(bad.frontFiller.volumeCM3,0);assert.ok(bad.frontFiller.issues.some(i=>i.code==='filler-opening'));assert.ok(bad.frontCavityV>0);
+ const tight=M.analyze({...base,fillerClearance:1,excursion:2});assert.equal(tight.frontFiller.available,true);assert.ok(tight.frontFiller.issues.some(i=>i.code==='filler-travel'));
+});
+test('Contour study is preserved by serialization and cannot imply a supported acoustic prediction',()=>{
+ const p=M.normalize({...starter,frontFiller:'annular',fillerClearance:2.5,fillerOpening:65}),roundtrip=M.normalize(JSON.parse(JSON.stringify(p)));
+ for(const key of ['frontFiller','fillerClearance','fillerOpening'])assert.equal(roundtrip[key],p[key]);
+ for(const load of ['webster','resistive']){const r=acoustic(M.analyze(p),load);assert.equal(r.available,false);assert.match(r.reason,/contour|insert|narrow-gap/i);}
+ assert.equal(acoustic(M.analyze({...p,frontFiller:'none'})).available,true);
+ assert.equal(c.MEHDesignOptimizer.resolveGoals(c.MEHDesignOptimizer.goalDefaults).state.frontFiller,'none');
 });
 test('driver selectors group by nominal inches without dropping catalogue entries',()=>{
  const groups=vm.runInContext(`(()=>{const esc=s=>s;${between('function driverLabel(',"const driverControl=")};return driverOptions(MEH.drivers.mid)})()`,c);
@@ -73,4 +118,14 @@ test('Assisted goals ignore manual geometry and reject invalid coupling',()=>{
  const a=O.resolveGoals(goals),b=O.resolveGoals(goals,{...starter,mouth:300,offset:100,gap:15});
  assert.equal(JSON.stringify(a.state),JSON.stringify(b.state));
  assert.ok(O.geometryReasons(M.analyze({...starter,offset:70})).some(s=>s.includes('projection')));
+});
+test('JSON exports retain acoustic choices during pending or unavailable calculations',()=>{
+ const nodes=new Map(),input=(key,value)=>({dataset:{maInput:key},value,min:'0',max:'100',addEventListener(){}}),choice=(key,value)=>({dataset:{maChoice:key},value,addEventListener(){}});
+ const numbers=[input('voltageRms','2.83'),input('endCorrection','1.7'),input('rearLossQ','9')],choices=[choice('hornLoad','resistive'),choice('mouthTermination','matched'),choice('throatTermination','closed')];
+ for(const el of numbers)nodes.set(`[data-ma-input="${el.dataset.maInput}"]`,el);for(const el of choices)nodes.set(`[data-ma-choice="${el.dataset.maChoice}"]`,el);
+ const host={querySelector(sel){if(!nodes.has(sel))nodes.set(sel,{checked:true,getContext:()=>null,addEventListener(){},setAttribute(){}});return nodes.get(sel)},querySelectorAll(sel){return sel==='[data-ma-input]'?numbers:sel==='[data-ma-choice]'?choices:[]}};
+ const panel=c.MEHAcousticPanel.init(host);panel.update(M.analyze(starter),{defer:true});assert.equal(panel.result,null);assert.equal(panel.options.voltageRms,2.83);
+ c.exportTestPanel=panel;c.exportTestState=M.normalize({...starter,frontFiller:'annular'});
+ const value=vm.runInContext(`(()=>{const acousticPanel=exportTestPanel,state=exportTestState,analysis=MEH.analyze(state),origin='visual',generation=null,variants=[];const readBrief=()=>({}),flushPendingGeometry=()=>{};${between('function designJSON()',"$('#jsonExport')")};return designJSON()})()`,c);
+ assert.equal(value.acousticScreen.options.voltageRms,2.83);assert.equal(value.acousticScreen.options.hornLoad,'resistive');assert.equal(value.validation.acousticStatus,'unavailable-or-pending');assert.equal(value.state.frontFiller,'annular');panel.dispose();delete c.exportTestPanel;delete c.exportTestState;
 });

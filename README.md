@@ -21,12 +21,17 @@ Open **http://127.0.0.1:8520/**.
 - Individual pods or a shared rear enclosure, with sealed or ported loading and a cylindrical or curved shared shell.
 - Driver selection grouped by nominal size in inches. Manufacturer-referenced dimensions distinguish sourced geometry from representative appearance and clearance envelopes.
 - 3D assembly, section and entry-footprint views, point measurements, and saved comparisons.
+- Optional cone-contour insert study with opening and axial-clearance controls, a closed mesh and displaced-air-volume accounting.
 - Reduced linear acoustic screening using supported driver motor data and a one-dimensional Webster horn network.
 - A measured-response crossover workbench, plus JSON, CSV and section-image exports.
 
-Assisted starts from its own goals, rather than carrying over Manual dimensions. Failed calculations preserve the current design. An invalid manual entry, driver offset or rear-chamber edit stays pending, with the affected controls highlighted and the last valid geometry still visible. Correct it or choose **Discard edits**.
+Manual edits update the design immediately. Design checks highlight affected controls and collect warnings without freezing the preview or blocking saved comparisons and exports. Driver selection loads dimensions directly; **Fit driver placement** and **Size chamber & port to fit** are explicit actions. Sliders batch geometry updates and briefly defer acoustic screening.
+
+Assisted starts from its own goals, rather than carrying over Manual dimensions. Failed fitting calculations preserve the current design. Acoustic screening and Assisted candidate acceptance still require geometry supported by their models.
 
 The straight collector model requires the entire entry projection to lie inside the equivalent active piston disk and requires positive collector depth. Invalid coupling cannot run the acoustic screen or pass rear-port fitting. This conservative geometric policy does not establish an acoustic alignment or rule out separately engineered side-entry arrangements.
+
+The optional **Cone contour insert (study)** occupies part of the collector and assumed cone recess, leaving a central opening around the full projected entry. Its clearance is measured axially from an assumed conical diaphragm; the central keepout is a provisional fraction of piston radius, not measured dust-cap geometry. The reported displaced volume comes from the same closed mesh used in the assembly. It is a volume study, not a path-equalizing phase plug or production part. Acoustic screening is unavailable while the insert is enabled because the current model does not include narrow-gap loading. Choose **Open collector** to return to the existing acoustic screen.
 
 ## Engineering limits
 
@@ -42,7 +47,7 @@ Edit `index.html` directly. It includes the catalogue, geometry, renderer, acous
 node --test tests/editor-regression.cjs
 ```
 
-The tests cover large-driver placement, individual/shared sealed and ported chambers, collector coupling, finite mesh coordinates, driver grouping and Manual edit transactions. They do not replace visual browser testing or acoustic measurements.
+The tests cover large-driver placement, individual/shared sealed and ported chambers, collector coupling, finite mesh coordinates, driver grouping, live Manual edits, export setting preservation, and insert mesh closure, volume, clearance and acoustic-model boundaries. They do not replace visual browser testing or acoustic measurements.
 
 ## Previous application
 
