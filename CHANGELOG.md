@@ -1,5 +1,14 @@
 # Changes
 
+## Build 11 — front chamber study (proposed)
+
+- Compare nearby shorter-entry/larger-cavity and longer-entry/smaller-cavity geometries at fixed driver, horn, rear net volume, entry area and acoustic settings. Solve real standoff from the shared curved collector volume; retain failed targets with reasons.
+- Add common-reference flow, relative phase, electrical impedance, excursion, air-speed and collector-area plots. Matching the bare LC frequency remains an optional comparison, never an equivalence or ranking.
+- Expose assumed end-correction sensitivity, geometry inertance/clearance diagnostics and frequency-dependent model limits. Inserts stay outside acoustic predictions and retain geometry-only comparisons.
+- Keep explanation in Methods/details, add CSV with complete comparison conditions, and include a sourced engineering reference.
+
+Validation: 59 numerical/source regressions and DOM behavior checks passed. No rendered browser QA or acoustic validation. Browser visual QA remains unavailable under the existing browser policy restriction.
+
 ## Build 10 — 2026-09-28
 
 - Replace stacked entry-cartridge, socket and collector surfaces with one continuous front-adapter mesh, without intermediate caps.

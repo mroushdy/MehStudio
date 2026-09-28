@@ -24,6 +24,7 @@ Open **http://127.0.0.1:8520/**.
 - 3D assembly, section and entry-footprint views, point measurements, and saved comparisons.
 - Optional annular or offset-outlet cone inserts with opening, clearance and center-relief controls, section inspection and mesh-based displaced-air-volume accounting.
 - Reduced linear acoustic screening using supported driver motor data and a one-dimensional Webster horn network.
+- Front chamber tradeoffs: nearby actual tube/cavity geometries, common-reference response and phase comparisons, impedance, excursion, entry speed and geometry-only insert diagnostics.
 - A measured-response crossover workbench, plus JSON, CSV and section-image exports.
 
 Manual edits update the design immediately. Design checks highlight affected controls and collect warnings without freezing the preview or blocking saved comparisons and exports. Driver selection loads dimensions directly; **Fit driver placement** and **Size chamber & port to fit** are explicit actions. Sliders batch geometry updates and briefly defer acoustic screening.
@@ -36,6 +37,14 @@ The optional **Annular insert** occupies part of the collector and assumed cone 
 
 The **Offset-outlet insert** follows the projected horn entry, including its shape, rotation and driver offset. Opening size sets a minimum equivalent diameter; the aperture retains the entry outline with a 2 mm edge allowance. **Center relief depth** lowers the assumed cone apex to leave a flat dust-cap recess. **Inspect insert** zooms into a section cut from the same closed mesh used for rendering and volume. The mesh conservatively maintains at least the entered axial clearance to the assumed cone, but actual diaphragm and dust-cap fit still require measurements. Narrow-gap acoustics remain outside the model.
 
+## Front chamber tradeoffs
+
+Open **Manual → Front chamber → Compare entry / cavity**, or expand **Front chamber tradeoffs** below the design workspace. Compare the current geometry with shorter/larger-cavity and longer/smaller-cavity choices. Set the tube step and cavity change, or match the bare LC reference to inspect why equal nominal resonance does not mean equal response. Standoff is solved from the actual curved volume, and Apply changes only tube length and standoff.
+
+The sweep uses the design’s low target and probe frequency, with voltage, end correction and horn assumptions from Acoustic screen. All curves use the current design’s peak flow reference; no candidate is ranked as a universal winner. Frequency shading, fit failures and model limits remain visible. Inserts retain geometry, area and clearance diagnostics without acoustic predictions. CSV records the baseline design, study settings, matched acoustic conditions, actual geometry, results and unavailable cases.
+
+Read the concise [engineering reference](docs/front-chamber-reference.md) for primary evidence, equations, units, limitations and next validation steps. The offline editor embeds its essential methods and source links.
+
 ## Engineering limits
 
 This is a design-study tool, not a validated loudspeaker design or manufacturing CAD system. It does not predict full-field directivity, replace BEM/FEM, or provide tolerance-checked production STEP geometry. Rear-port and horn radiation are not summed. Driver appearance, cone recess and some displacement/clearance assumptions remain approximate; read the in-app **Methods** and manufacturer links.
@@ -47,10 +56,10 @@ Candidate rankings apply only within the reduced model. Verify physical fit, con
 Edit `index.html` directly. It includes the catalogue, geometry, renderer, acoustic model and interface. Node.js 22 or newer runs the source-level regression checks without installing packages:
 
 ```sh
-node --test tests/editor-regression.cjs
+node --test tests/editor-regression.cjs tests/front-study-regression.cjs tests/front-study-ui.cjs
 ```
 
-The tests cover large-driver placement, individual/shared sealed and ported chambers, collector coupling, finite mesh coordinates, driver grouping, live Manual edits, export setting preservation, and insert mesh closure, volume, clearance and acoustic-model boundaries. They do not replace visual browser testing or acoustic measurements.
+The tests cover large-driver placement, individual/shared sealed and ported chambers, collector coupling, finite mesh coordinates, driver grouping, live Manual edits, export setting preservation, and insert mesh closure, volume, clearance and acoustic-model boundaries. Additional comparison tests cover actual volume targets, fixed conditions, matched-LC non-equivalence, shared normalization, voltage scaling, insert gating, inertance quadrature and interface state invalidation. They do not replace visual browser testing or acoustic measurements.
 
 ## Previous application
 
