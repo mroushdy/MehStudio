@@ -1,78 +1,51 @@
 # MEH Studio
 
-MEH Studio is a pre-release parametric multiple-entry-horn design tool.
-Build 657 keeps the stabilized one-way coax and two-way families and adds a
-guided schema-2 three-way analysis and inspection system.
+A browser-based multiple-entry-horn study tool. The current editor is one self-contained HTML file with no installation, build step, or external JavaScript dependencies.
 
-Start with [`BUILD657-HANDOFF.md`](BUILD657-HANDOFF.md). It records the current
-capability boundary, QA status, source identity, and remaining physical
-validation work.
+## Open the editor
 
-## Run locally
+Download [`index.html`](index.html) using **Download raw file**, then open it in a modern browser. Keep that one file to use the editor offline.
 
-From this directory:
+Or clone this repository and serve it locally:
 
-```bash
-node serve.js 8520
+```sh
+python3 -m http.server 8520 --bind 127.0.0.1
 ```
 
-Open:
+Open **http://127.0.0.1:8520/**.
 
-```text
-http://127.0.0.1:8520/meh5.html?build=657&reset=1&view=full-assembly&rev=release-final
+## What it does
+
+- Manual and Assisted design with R-OSSE rev7 horn profiles.
+- Round, capsule and teardrop entries; two, four or six cone mids.
+- Individual pods or a shared rear enclosure, with sealed or ported loading and a cylindrical or curved shared shell.
+- Driver selection grouped by nominal size in inches. Manufacturer-referenced dimensions distinguish sourced geometry from representative appearance and clearance envelopes.
+- 3D assembly, section and entry-footprint views, point measurements, and saved comparisons.
+- Reduced linear acoustic screening using supported driver motor data and a one-dimensional Webster horn network.
+- A measured-response crossover workbench, plus JSON, CSV and section-image exports.
+
+Assisted starts from its own goals, rather than carrying over Manual dimensions. Failed calculations preserve the current design. An invalid manual entry, driver offset or rear-chamber edit stays pending, with the affected controls highlighted and the last valid geometry still visible. Correct it or choose **Discard edits**.
+
+The straight collector model requires the entire entry projection to lie inside the equivalent active piston disk and requires positive collector depth. Invalid coupling cannot run the acoustic screen or pass rear-port fitting. This conservative geometric policy does not establish an acoustic alignment or rule out separately engineered side-entry arrangements.
+
+## Engineering limits
+
+This is a design-study tool, not a validated loudspeaker design or manufacturing CAD system. It does not predict full-field directivity, replace BEM/FEM, or provide tolerance-checked production STEP geometry. Rear-port and horn radiation are not summed. Driver appearance, cone recess and some displacement/clearance assumptions remain approximate; read the in-app **Methods** and manufacturer links.
+
+Candidate rankings apply only within the reduced model. Verify physical fit, construction, acoustic response, crossover, excursion and thermal behavior through detailed engineering and measurements. Imported crossover traces must share microphone position, timing reference and calibrated level.
+
+## Development and checks
+
+Edit `index.html` directly. It includes the catalogue, geometry, renderer, acoustic model and interface. Node.js 22 or newer runs the source-level regression checks without installing packages:
+
+```sh
+node --test tests/editor-regression.cjs
 ```
 
-`build=657` is an assertion: a mismatched URL fails closed before saved state
-is read or WebGL starts. `reset=1` clears the current local design after that
-assertion succeeds.
+The tests cover large-driver placement, individual/shared sealed and ported chambers, collector coupling, finite mesh coordinates, driver grouping and Manual edit transactions. They do not replace visual browser testing or acoustic measurements.
 
-`meh5.html` is generated. Edit the standalone source modules and run:
+## Previous application
 
-```bash
-node assemble.js
-```
+The earlier modular Build 657 application, documentation, tests and third-party notices are preserved in [`legacy/build657/`](legacy/build657/). That is a separate historical implementation; its assembly scripts and test claims do not apply to the current editor. Git history is retained.
 
-## Three-way status
-
-Build 657 opens with a calculated 1 HF + 4 MF + 4 LF T3 family, guided practical controls,
-band-specific driver selection, full/no-driver/lumen/cutaway views, and
-closed constructive mount, adapter, and passage operands. Documented CX3 and
-H3 families remain honest reference starts until their missing physical input
-is supplied.
-
-The three-way UI is analysis/preview only. It never enters the retired legacy
-three-way solver or renderer, and it writes only
-`meh5_threeway_state_v2`. Hornresp, exact mesh, STL, and manufacturing remain
-locked unless their separate evidence gates pass. No exact Boolean provider is
-bundled in this release.
-
-## QA
-
-Browser-independent current-source gate:
-
-```bash
-cd qa
-npm run qa
-```
-
-Focused release source contract:
-
-```bash
-npm run qa:build655-source
-```
-
-When browser automation is available:
-
-```bash
-npm run qa:build655-delivery
-npm run qa:release
-```
-
-Run only one exact/browser release process at a time.
-
-## Engineering boundary
-
-Software geometry and topology checks do not establish an acoustic optimum,
-BEM directivity result, structural rating, material suitability, leakage
-performance, or safe finished loudspeaker. Printed prototypes and acoustic,
-thermal, structural, and sealing measurements are still required.
+No project-wide open-source license has been added. Existing third-party license notices remain with the legacy dependencies.
