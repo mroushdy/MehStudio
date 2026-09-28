@@ -18,7 +18,7 @@ Open **http://127.0.0.1:8520/**.
 
 - Manual and Assisted design with R-OSSE rev7 horn profiles. Assisted accepts a 40–120° nominal coverage angle, carries it into generated profiles and saved briefs, and offers tap-to-open field help. This axisymmetric angle is not a predicted frequency-dependent beamwidth.
 - Round, capsule and teardrop entries; two, four or six cone mids.
-- Continuous front adapters with smooth neck-to-chamber transitions. Entry tube length is adjustable separately from driver standoff; the acoustic model adds a fixed 3 mm passage allowance.
+- Continuous front adapters with closed wall meshes and smooth neck-to-chamber transitions, shared by the 3D and section views. Entry tube length is adjustable separately from driver standoff; the acoustic model adds a fixed 3 mm passage allowance.
 - Individual pods or a shared rear enclosure, with sealed or ported loading and a cylindrical or curved shared shell.
 - Driver selection grouped by nominal size in inches. Manufacturer-referenced dimensions distinguish sourced geometry from representative appearance and clearance envelopes.
 - 3D assembly, section and entry-footprint views, point measurements, and saved comparisons.
@@ -34,7 +34,7 @@ The direct collector model requires the entire entry projection to lie inside th
 
 The optional **Annular insert** occupies part of the collector and assumed cone recess, leaving a central opening around the full projected entry. Its clearance is measured axially from an assumed conical diaphragm; the central keepout is a provisional fraction of piston radius, not measured dust-cap geometry. The reported displaced volume comes from the same closed mesh used in the assembly. It is a volume study, not a path-equalizing phase plug or production part. Acoustic screening is unavailable while the insert is enabled because the current model does not include narrow-gap loading. Choose **Open collector** to return to the existing acoustic screen.
 
-The **Offset-outlet insert** follows the projected horn entry, including its shape, rotation and driver offset. Opening size sets a minimum equivalent diameter; the aperture retains the entry outline with a 2 mm edge allowance. **Center relief depth** lowers the assumed cone apex to leave a flat dust-cap recess. **Inspect insert** zooms into a section cut from the same closed mesh used for rendering and volume. The mesh conservatively maintains at least the entered axial clearance to the assumed cone, but actual diaphragm and dust-cap fit still require measurements. Narrow-gap acoustics remain outside the model.
+The **Offset-outlet insert** follows the projected horn entry, including its shape, rotation and driver offset. Opening size sets a minimum equivalent diameter; the aperture retains the entry outline with a 2 mm edge allowance. **Center relief depth** lowers the assumed cone apex to leave a flat dust-cap recess. **Inspect insert** zooms into a section cut from the same closed mesh used for rendering and volume. The collector transitions directly into the insert opening; its air volume uses that same passage boundary. The mesh conservatively maintains at least the entered axial clearance to the assumed cone, but actual diaphragm and dust-cap fit still require measurements. Narrow-gap acoustics remain outside the model.
 
 ## Engineering limits
 

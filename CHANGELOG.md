@@ -1,5 +1,15 @@
 # Changes
 
+## Build 10.1 — 2026-09-28
+
+- Define the complete front-adapter passage and shell once, and share the rings between 3D and section views. Include the exterior of the narrow entry tube in section view.
+- Close the adapter wall with annular returns, correct its face winding, and merge nearly duplicate angular stations before renderer precision conversion. Both air openings remain open.
+- Intersect the actual outer horn profile and bury the joint 0.5 mm into the wall, avoiding daylight between independently sampled curved surfaces.
+- When an insert fits, transition directly into its opening instead of expanding to the full cutout and contracting at the insert. Account for the smaller collector air volume using the same passage geometry.
+- Keep insert acoustics unavailable; no measured directivity, acoustic optimization or production-ready union of the horn and adapter is claimed.
+
+Validation: all 30 regression checks pass, including rendered wall topology and independent passage-volume integration. An additional 36-case sweep covers all three entry shapes, both insert modes and open collectors, two offsets and two standoffs without open wall seams or collapsed rendered triangles. Source geometry sections inspected; browser visual QA remains blocked.
+
 ## Build 10 — 2026-09-28
 
 - Replace stacked entry-cartridge, socket and collector surfaces with one continuous front-adapter mesh, without intermediate caps.
