@@ -91,7 +91,7 @@ test('Contour insert is a closed consistently wound mesh with the reported displ
   assert.ok(vol>0);assert.ok(Math.abs(vol-f.volumeCM3)<1e-7);assert.ok(Math.abs(a.frontV-(a.collectorV+a.coneV+a.neckV-f.volumeCM3))<1e-8);
   for(const [x,y,z]of f.vertices){const coneZ=a.p.coneDepth*Math.max(0,1-Math.hypot(x,y)/a.pistonR);assert.ok(coneZ-z>=a.p.fillerClearance-1e-8);}
   const bound=Math.max(...a.uv.map(([u,v])=>Math.hypot(u-a.p.offset,v)));assert.ok(f.innerR>=bound+2-1e-8);
-  const meshes=c.MEHMeshes(a,true),inserts=meshes.filter(m=>m.name.startsWith('Cone contour insert'));assert.equal(inserts.length,a.p.count);for(const mesh of meshes)assert.ok(mesh.data.every(Number.isFinite),mesh.name);
+  const meshes=c.MEHMeshes(a,true),inserts=meshes.filter(m=>m.name.startsWith('Continuous front adapter'));assert.equal(inserts.length,a.p.count);for(const mesh of meshes)assert.ok(mesh.data.every(Number.isFinite),mesh.name);
  }
 });
 test('Contour insert displacement decreases with larger clearance or opening',()=>{
@@ -151,7 +151,7 @@ test('Offset insert relief and opening remain editable, serializable and explici
  const ui=manualHarness();ui.apply({...base,fillerOpening:200});assert.equal(ui.state.frontFiller,'offset');assert.equal(ui.disabled,false);assert.equal(ui.analysis.frontFiller.available,false);assert.ok(ui.analysis.frontFiller.issues.some(i=>i.code==='filler-opening'));ui.edit('fillerOpening',50);assert.equal(ui.analysis.frontFiller.available,true);
  for(const load of ['resistive','webster'])assert.equal(acoustic(low,load).available,false);
  const roundtrip=M.normalize(JSON.parse(JSON.stringify(high.p)));assert.equal(roundtrip.frontFiller,'offset');assert.equal(roundtrip.fillerRelief,20);
- const meshes=c.MEHMeshes(low,true);assert.equal(meshes.filter(m=>m.name.startsWith('Cone contour insert')).length,low.p.count);for(const mesh of meshes)assert.ok(mesh.data.every(Number.isFinite),mesh.name);
+ const meshes=c.MEHMeshes(low,true);assert.equal(meshes.filter(m=>m.name.startsWith('Continuous front adapter')).length,low.p.count);for(const mesh of meshes)assert.ok(mesh.data.every(Number.isFinite),mesh.name);
 });
 test('Front adapter is continuous with smooth endpoint slopes and mesh-consistent air volume',()=>{
  const eps=1e-5;assert.ok(M.collectorBlend(eps)/eps<1e-7);assert.ok((1-M.collectorBlend(1-eps))/eps<1e-7);
@@ -208,5 +208,20 @@ test('Insert passage meets its opening directly with mesh-consistent volume and 
   for(let k=0;k<rings.length-1;k++)for(let i=0;i<rings[k].length;i++){const j=(i+1)%rings[k].length;tri(rings[k][i],rings[k][j],rings[k+1][j]);tri(rings[k][i],rings[k+1][j],rings[k+1][i]);}
   for(let j=1;j<rings[0].length-1;j++){tri(rings[0][0],rings[0][j+1],rings[0][j]);tri(rings.at(-1)[0],rings.at(-1)[j],rings.at(-1)[j+1]);}
   assert.ok(Math.abs(volume-a.collectorLoftV)<1e-7);assert.equal(acoustic(a).available,false);
+ }
+});
+test('User opening-87 case and offset nonround inserts form one joined skin without a duplicate seat',()=>{
+ for(const patch of [{shape:'round',offset:0,fillerOpening:87,fillerClearance:2.75,gap:28.05},{shape:'slot',offset:40,fillerOpening:25,slotL:55,slotW:25,slotAngle:45,gap:42},{shape:'teardrop',offset:30,fillerOpening:40,slotL:55,slotW:25,slotAngle:45,gap:42}]){
+  const a=M.analyze({...starter,frontFiller:'offset',...patch}),f=a.frontFiller,g=M.frontAdapterGeometry(a),meshes=c.MEHMeshes(a,true),m=meshes.find(m=>m.name==='Continuous front adapter 1');assert.equal(f.available,true);
+  assert.ok(!meshes.some(m=>m.name.startsWith('Cone contour insert')),'No overlapping second insert solid in the rendered assembly');
+  assert.ok(g.inner.every(r=>r.length===g.inner[0].length),'Corresponding ring vertices through the complete passage');
+  const key=p=>p.map(x=>Math.round(x*10000)||0).join(','),faceKey=vs=>vs.map(key).sort().join('|'),faces=new Set(),edges=new Map();let seat=0;
+  for(let i=0;i<m.data.length;i+=18){const vs=[0,6,12].map(j=>Array.from(m.data.slice(i+j,i+j+3))),ks=vs.map(key);assert.equal(new Set(ks).size,3);const id=faceKey(vs);assert.ok(!faces.has(id),'No coincident surface triangles');faces.add(id);
+   if(vs.every(v=>Math.abs(M.dot(M.sub(v,a.F),a.n)+6)<1e-4))seat++;
+   for(let j=0;j<3;j++){const u=ks[j],v=ks[(j+1)%3],id=[u,v].sort().join('|');if(!edges.has(id))edges.set(id,[]);edges.get(id).push(u<v?1:-1);}
+  }
+  assert.equal(seat,0,'The buried flat adapter/insert contact face is absent');for(const dirs of edges.values()){assert.equal(dirs.length,2);assert.equal(dirs[0]+dirs[1],0);}
+  const topStart=f.vertices.length/2,world=([u,v,z])=>M.add(a.F,M.add(M.mul(a.t,u),M.add([0,v,0],M.mul(a.n,z))));
+  for(const face of f.faces.filter(v=>v.every(i=>i>=topStart)))assert.ok(faces.has(faceKey(face.map(i=>Array.from(new Float32Array(world(f.vertices[i])))))),'Joined skin preserves the exact cone-clearance surface triangles');
  }
 });
