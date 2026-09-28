@@ -144,6 +144,82 @@ test('both insert modes remain diagnostics-only without calling acoustic analysi
  });
 });
 
+test('insert alternatives attain actual cavity targets across openings and offsets without changing fixed inputs',()=>withAcousticSpy(calls=>{
+ let accepted=0,rejected=0;
+ for(const frontFiller of ['annular','offset'])for(const offset of [0,20,35])for(const fillerOpening of [30,70,100]){
+  const a=geometry({frontFiller,offset,fillerOpening}),before=JSON.stringify(a),r=F.compare(a,study,options),label=`${frontFiller}/${offset}/${fillerOpening}`;
+  assertNoCurves(r);assert.equal(JSON.stringify(a),before,`${label}: inputs are immutable`);
+  if(!a.frontFiller.available){
+   rejected++;assert.ok(current(r).geometryReason,`${label}: unavailable insert retains geometry reason`);
+   for(const item of r.cases.slice(1)){assert.equal(item.analysis,null);assert.ok(item.geometryReason,item.id);}
+   continue;
+  }
+  accepted++;
+  // Measure the cavity slope independently by changing only standoff. This
+  // catches using the full driver cutout instead of the active insert outlet.
+  const slope=M.analyze({...a.p,gap:a.p.gap+1}).frontCavityV-a.frontCavityV;
+  assert.ok(slope>0,label);
+  const open=M.analyze({...a.p,frontFiller:'none'}),openSlope=M.analyze({...open.p,gap:open.p.gap+1}).frontCavityV-open.frontCavityV;
+  assert.ok(slope<openSlope*.95,`${label}: fixture distinguishes active and open collectors`);
+  for(const [i,item]of r.cases.entries()){
+   assert.ok(item.analysis,`${label}/${item.id}: ${item.reason}`);assert.equal(item.geometryReason,'',`${label}/${item.id}`);
+   const checked=M.analyze(item.analysis.p),target=a.frontCavityV*(i===1?1.1:i===2?.9:1);
+   near(checked.frontCavityV,target,1e-7,1e-6,`${label}/${item.id}: actual target`);
+   near(item.targetCavityCM3,target);near(item.diagnostics.cavityCM3,target,1e-7,1e-6);
+   near(checked.p.gap,a.p.gap+(checked.p.neck-a.p.neck)+(target-a.frontCavityV)/slope,1e-8,1e-7,`${label}: measured volume slope`);
+   for(const key of Object.keys(a.p))if(!['neck','gap'].includes(key))assert.deepEqual(plain(checked.p[key]),plain(a.p[key]),`${label}/${item.id}: fixed ${key}`);
+   near(checked.frontV,checked.frontCavityV+checked.neckV);
+   near(checked.neckV,checked.collectorSmallArea*(checked.p.neck+3)/1000);
+   near(checked.frontCavityV,checked.collectorLoftV+6*checked.collectorLargeArea/1000+checked.coneV-checked.frontFiller.volumeCM3);
+   assert.equal(item.diagnostics.lcHz,null);assert.equal(item.diagnostics.lcLowHz,null);assert.equal(item.diagnostics.lcHighHz,null);
+  }
+ }
+ assert.ok(accepted>=12,`meaningful valid coverage: ${accepted}`);assert.ok(rejected>=3,`invalid aperture coverage: ${rejected}`);
+ assert.equal(calls.length,0,'even valid geometry alternatives must not invoke the acoustic model');
+}));
+
+test('nonround inserted alternatives use their corresponding actual passage and keep LC matching unavailable',()=>withAcousticSpy(calls=>{
+ for(const frontFiller of ['annular','offset'])for(const shape of ['slot','teardrop']){
+  const a=geometry({frontFiller,shape,slotL:55,slotW:25,slotAngle:45,offset:30,gap:42,fillerOpening:30}),r=F.compare(a,study,options);
+  assert.ok(a.frontFiller.available,`${frontFiller}/${shape}`);assertNoCurves(r);
+  for(const item of r.cases){
+   assert.ok(item.analysis,item.reason);assert.equal(item.geometryReason,'');
+   near(M.analyze(item.analysis.p).frontCavityV,item.targetCavityCM3,1e-7,1e-6);
+   for(const key of Object.keys(a.p))if(!['neck','gap'].includes(key))assert.deepEqual(plain(item.analysis.p[key]),plain(a.p[key]),`${frontFiller}/${shape}: ${key}`);
+   assert.deepEqual(plain(item.analysis.collectorSections.at(-1).uv),plain(item.analysis.collectorOutletUV));
+   near(item.diagnostics.collectorInertance,F.integrateAxialInertance(item.analysis.collectorSections,options.density));
+  }
+  const matched=F.compare(a,{...study,matchLC:true},options);assertNoCurves(matched);
+  for(const item of matched.cases.slice(1)){assert.equal(item.analysis,null);assert.match(item.reason,/Matched LC.*unavailable/i);}
+ }
+ assert.equal(calls.length,0);
+}));
+
+test('insert passage-area SVG follows the actual aperture and excludes the full mounting land',()=>{
+ for(const frontFiller of ['annular','offset'])for(const shape of ['round','teardrop']){
+  const a=geometry({frontFiller,shape,slotL:55,slotW:25,slotAngle:45,offset:20,fillerOpening:30,gap:42}),d=F.diagnostics(a,options);
+  assert.ok(a.frontFiller.available);
+  const aperture=frontFiller==='offset'?a.frontFiller.openingUV:a.collectorLargeUV.map(([u,v])=>{const scale=a.frontFiller.innerR/Math.hypot(u,v);return [u*scale,v*scale];});
+  const outletArea=M.polygonArea(aperture)/100,sections=a.collectorSections;
+  near(M.polygonArea(sections.at(-1).uv)/100,outletArea,1e-8,1e-8,'actual aperture area at plot endpoint');
+  assert.ok(outletArea<a.collectorLargeArea/100*.8,'fixture separates insert aperture from full cutout');
+  const result={cases:[{label:'Current',analysis:a,diagnostics:d,rows:[]}]},svg=c.MEHFrontStudyPanel.plotSVG(result,'area',720);
+  assert.ok(!/NaN|Infinity|undefined/.test(svg));assert.match(svg,/cone-facing gap excluded/);
+  const path=svg.match(/<path d="([^"]*)" fill="none"/)[1],points=[...path.matchAll(/[ML]([\d.-]+),([\d.-]+)/g)].map(m=>[+m[1],+m[2]]);
+  const values=[{x:0,y:a.collectorSmallArea/100},{x:a.p.neck+3,y:a.collectorSmallArea/100},...sections.map(s=>({x:a.p.neck+3+s.zMM,y:M.polygonArea(s.uv)/100}))];
+  const maxX=a.p.neck+3+a.collectorLoftLength,maxY=Math.max(...values.map(p=>p.y))*1.06;
+  assert.equal(points.length,values.length);
+  for(let i=0;i<values.length;i++){
+   near(points[i][0],63+values[i].x/maxX*(700-63),0,.0051,'axial plot coordinate');
+   near(points[i][1],203-values[i].y/maxY*(203-25),0,.0051,'actual section area coordinate');
+  }
+  near(values.at(-1).x,a.p.gap-6);near(values.at(-1).y,outletArea,1e-8,1e-8);
+  // The plotted passage cannot silently substitute the larger mounting rim.
+  const changed={...a,collectorLargeUV:a.collectorLargeUV.map(([u,v])=>[u*2,v*2]),collectorLargeArea:a.collectorLargeArea*4};
+  assert.equal(c.MEHFrontStudyPanel.plotSVG({cases:[{...result.cases[0],analysis:changed}]},'area',720),svg);
+ }
+});
+
 test('custom motor data and invalid entry geometry clear acoustic rows before any sweep',()=>{
  for(const patch of [{midDriver:'custom'},{sd:starter.sd+1},{offset:100},{gap:15}])withAcousticSpy(calls=>{
   const r=compare(patch);assert.equal(calls.length,0,JSON.stringify(patch));assertNoCurves(r);

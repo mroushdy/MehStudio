@@ -184,3 +184,29 @@ test('Assisted help opens a named dialog without submitting the form',()=>{
  for(const row of rows){const [label,button]=row.children;assert.equal(button.type,'button');assert.equal(button.attributes['aria-haspopup'],'dialog');assert.equal(button.attributes['aria-controls'],'fieldHelpDialog');button.onclick();assert.equal(dollar('#fieldHelpTitle').textContent,label.textContent);assert.ok(dollar('#fieldHelpText').textContent.length>25);}
  assert.equal(opened.length,10);assert.ok(opened.every(x=>x==='fieldHelpDialog'));
 });
+test('Front adapter wall is closed and consistently wound after renderer precision conversion',()=>{
+ const key=p=>p.map(x=>Math.round(x*100000)||0).join(',');
+ for(const frontFiller of ['none','annular','offset'])for(const shape of ['round','slot','teardrop']){
+  const a=M.analyze({...starter,frontFiller,fillerOpening:30,shape,slotL:55,slotW:25,slotAngle:45,offset:30,gap:42}),g=M.frontAdapterGeometry(a),m=c.MEHMeshes(a,true).find(x=>x.name.startsWith('Continuous front adapter')),edges=new Map();
+  assert.equal(g.rootIntersectionFailures,0);assert.ok(a.frontV>0);
+  for(let i=0;i<m.data.length;i+=18){const points=[0,6,12].map(j=>Array.from(m.data.slice(i+j,i+j+3))),keys=points.map(key);assert.equal(new Set(keys).size,3,'No collapsed triangle in the rendered tube');
+   for(let j=0;j<3;j++){const u=keys[j],v=keys[(j+1)%3],id=[u,v].sort().join('|');if(!edges.has(id))edges.set(id,[]);edges.get(id).push(u<v?1:-1);}
+  }
+  for(const dirs of edges.values()){assert.equal(dirs.length,2,'Every wall edge has exactly two faces');assert.equal(dirs[0]+dirs[1],0,'Adjacent faces have opposing winding');}
+ }
+});
+test('Insert passage meets its opening directly with mesh-consistent volume and no smaller passage area',()=>{
+ for(const frontFiller of ['annular','offset'])for(const shape of ['round','slot','teardrop']){
+  const a=M.analyze({...starter,frontFiller,fillerOpening:30,shape,slotL:55,slotW:25,slotAngle:45,offset:30,gap:42}),f=a.frontFiller,ss=a.collectorSections;
+  assert.equal(f.available,true);assert.equal(JSON.stringify(ss.at(-1).uv),JSON.stringify(a.collectorOutletUV));
+  const aperture=f.mode==='offset'?f.openingUV:a.collectorLargeUV.map(([x,y])=>{const r=Math.hypot(x,y);return[x*f.innerR/r,y*f.innerR/r]});
+  assert.ok(Math.abs(M.polygonArea(a.collectorOutletUV)-M.polygonArea(aperture))<1e-6);
+  assert.ok(M.polygonArea(a.collectorOutletUV)<a.collectorLargeArea);
+  for(const s of ss)assert.ok(M.polygonArea(s.uv)>=a.collectorSmallArea-1e-6);
+  if(frontFiller==='offset')for(const s of ss)for(const [x,y]of a.uv){const point=[x-s.offsetMM,y];for(let i=0;i<s.uv.length;i++){const u=s.uv[i],v=s.uv[(i+1)%s.uv.length];assert.ok((v[0]-u[0])*(point[1]-u[1])-(v[1]-u[1])*(point[0]-u[0])>=-1e-6,'Projected entry remains inside the complete passage');}}
+  const rings=ss.map(s=>s.uv.map(([x,y])=>[x+s.offsetMM,y,s.zMM]));let volume=0;const tri=(a,b,c)=>volume+=M.dot(a,M.cross(b,c))/6000;
+  for(let k=0;k<rings.length-1;k++)for(let i=0;i<rings[k].length;i++){const j=(i+1)%rings[k].length;tri(rings[k][i],rings[k][j],rings[k+1][j]);tri(rings[k][i],rings[k+1][j],rings[k+1][i]);}
+  for(let j=1;j<rings[0].length-1;j++){tri(rings[0][0],rings[0][j+1],rings[0][j]);tri(rings.at(-1)[0],rings.at(-1)[j],rings.at(-1)[j+1]);}
+  assert.ok(Math.abs(volume-a.collectorLoftV)<1e-7);assert.equal(acoustic(a).available,false);
+ }
+});

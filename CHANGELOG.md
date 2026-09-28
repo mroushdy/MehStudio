@@ -6,8 +6,19 @@
 - Add common-reference flow, relative phase, electrical impedance, excursion, air-speed and collector-area plots. Matching the bare LC frequency remains an optional comparison, never an equivalence or ranking.
 - Expose assumed end-correction sensitivity, geometry inertance/clearance diagnostics and frequency-dependent model limits. Inserts stay outside acoustic predictions and retain geometry-only comparisons.
 - Keep explanation in Methods/details, add CSV with complete comparison conditions, and include a sourced engineering reference.
+- Include the Build 10.1 adapter repair. Volume targets use the analyzed collector passage ending at the fitted insert aperture, with candidate volume verified by reanalysis.
 
-Validation: 59 numerical/source regressions and DOM behavior checks passed. No rendered browser QA or acoustic validation. Browser visual QA remains unavailable under the existing browser policy restriction.
+Validation: 64 numerical/source regressions and DOM behavior checks passed, including actual inserted-passage volume targets and plot coordinates. No rendered browser QA or acoustic validation. Browser visual QA remains unavailable under the existing browser policy restriction.
+
+## Build 10.1 — 2026-09-28
+
+- Define the complete front-adapter passage and shell once, and share the rings between 3D and section views. Include the exterior of the narrow entry tube in section view.
+- Close the adapter wall with annular returns, correct its face winding, and merge nearly duplicate angular stations before renderer precision conversion. Both air openings remain open.
+- Intersect the actual outer horn profile and bury the joint 0.5 mm into the wall, avoiding daylight between independently sampled curved surfaces.
+- When an insert fits, transition directly into its opening instead of expanding to the full cutout and contracting at the insert. Account for the smaller collector air volume using the same passage geometry.
+- Keep insert acoustics unavailable; no measured directivity, acoustic optimization or production-ready union of the horn and adapter is claimed.
+
+Validation: all 30 regression checks pass, including rendered wall topology and independent passage-volume integration. An additional 36-case sweep covers all three entry shapes, both insert modes and open collectors, two offsets and two standoffs without open wall seams or collapsed rendered triangles. Source geometry sections inspected; browser visual QA remains blocked.
 
 ## Build 10 — 2026-09-28
 
@@ -17,7 +28,7 @@ Validation: 59 numerical/source regressions and DOM behavior checks passed. No r
 - Rename Local neck length to Entry tube length. The model retains its fixed 3 mm passage allowance.
 
 - Add a 40–120° nominal coverage goal to Assisted; use it throughout the profile, candidate search, export and import. Keep 60° as the default for older briefs.
-- Add accessible tap-to-open information buttons to Assisted fields, including drive voltage and coverage.
+- Add accessible tap-to-open information buttons to Assisted fields, including drive voltage and coverage. Keep icons small, borderless and aligned to the far right of each label row.
 
 Validation: 28 regression checks passed, including exact opening preservation, endpoint slopes and independent closed-mesh volume integration. Source geometry section was inspected; browser visual QA remains unavailable under the browser policy restriction.
 

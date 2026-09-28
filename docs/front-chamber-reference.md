@@ -31,7 +31,7 @@ Front compliance and entry inertance:
     req = √(S/π)                          [m]
     fLC = 1 / (2π√(MC))                    [Hz]
 
-Vc excludes the narrow-tube air under this lumped partition, which neglects tube compressibility. A distributed tube model can represent both inertia and compressibility of the same air. MEH Studio uses the exact polygonal entry area and physical Ln = entered tube length + 3 mm allowance. Vc is collector + mounting land + conical recess − insert displacement; it is the modeled air volume, not a measurement of an actual cone, dust cap or surround. α is an assumed *total* correction coefficient, not COMSOL's single infinite-flange coefficient.
+Vc excludes the narrow-tube air under this lumped partition, which neglects tube compressibility. A distributed tube model can represent both inertia and compressibility of the same air. MEH Studio uses the exact polygonal entry area and physical Ln = entered tube length + 3 mm allowance. With a fitted insert, the collector terminates at its actual aperture rather than the driver cutout. Nearby volume targets use the analyzed collector volume per axial length, retain the other modeled air contributions, and are checked by reanalyzing the candidate. Vc is collector + mounting land + conical recess − insert displacement; it is the modeled air volume, not a measurement of an actual cone, dust cap or surround. α is an assumed *total* correction coefficient, not COMSOL's single infinite-flange coefficient.
 
 Let Zh [Pa·s/m³] be shared junction pressure / total flow for N identical coherently driven mids. With Upiston = Sd vcone and I = Vrms/Zelectrical, define:
 
