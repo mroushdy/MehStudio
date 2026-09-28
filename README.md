@@ -21,7 +21,7 @@ Open **http://127.0.0.1:8520/**.
 - Individual pods or a shared rear enclosure, with sealed or ported loading and a cylindrical or curved shared shell.
 - Driver selection grouped by nominal size in inches. Manufacturer-referenced dimensions distinguish sourced geometry from representative appearance and clearance envelopes.
 - 3D assembly, section and entry-footprint views, point measurements, and saved comparisons.
-- Optional cone-contour insert study with opening and axial-clearance controls, a closed mesh and displaced-air-volume accounting.
+- Optional annular or offset-outlet cone inserts with opening, clearance and center-relief controls, section inspection and mesh-based displaced-air-volume accounting.
 - Reduced linear acoustic screening using supported driver motor data and a one-dimensional Webster horn network.
 - A measured-response crossover workbench, plus JSON, CSV and section-image exports.
 
@@ -31,7 +31,9 @@ Assisted starts from its own goals, rather than carrying over Manual dimensions.
 
 The straight collector model requires the entire entry projection to lie inside the equivalent active piston disk and requires positive collector depth. Invalid coupling cannot run the acoustic screen or pass rear-port fitting. This conservative geometric policy does not establish an acoustic alignment or rule out separately engineered side-entry arrangements.
 
-The optional **Cone contour insert (study)** occupies part of the collector and assumed cone recess, leaving a central opening around the full projected entry. Its clearance is measured axially from an assumed conical diaphragm; the central keepout is a provisional fraction of piston radius, not measured dust-cap geometry. The reported displaced volume comes from the same closed mesh used in the assembly. It is a volume study, not a path-equalizing phase plug or production part. Acoustic screening is unavailable while the insert is enabled because the current model does not include narrow-gap loading. Choose **Open collector** to return to the existing acoustic screen.
+The optional **Annular insert** occupies part of the collector and assumed cone recess, leaving a central opening around the full projected entry. Its clearance is measured axially from an assumed conical diaphragm; the central keepout is a provisional fraction of piston radius, not measured dust-cap geometry. The reported displaced volume comes from the same closed mesh used in the assembly. It is a volume study, not a path-equalizing phase plug or production part. Acoustic screening is unavailable while the insert is enabled because the current model does not include narrow-gap loading. Choose **Open collector** to return to the existing acoustic screen.
+
+The **Offset-outlet insert** follows the projected horn entry, including its shape, rotation and driver offset. Opening size sets a minimum equivalent diameter; the aperture retains the entry outline with a 2 mm edge allowance. **Center relief depth** lowers the assumed cone apex to leave a flat dust-cap recess. **Inspect insert** zooms into a section cut from the same closed mesh used for rendering and volume. The mesh conservatively maintains at least the entered axial clearance to the assumed cone, but actual diaphragm and dust-cap fit still require measurements. Narrow-gap acoustics remain outside the model.
 
 ## Engineering limits
 

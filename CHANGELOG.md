@@ -1,5 +1,14 @@
 # Changes
 
+## Build 9 — 2026-09-28
+
+- Add an offset-outlet cone insert that follows the entry shape, rotation and driver offset, with adjustable opening, axial clearance and center relief.
+- Use a closed mesh for displaced volume and exact section contours. Conservatively maintain the requested axial clearance to the assumed cone.
+- Add an Inspect insert action and show the opening in footprint view. Preserve settings in JSON and include relief and outlet offset in metrics CSV.
+- Reject impossible insert openings without freezing Manual editing. Acoustic screening remains unavailable with an insert enabled.
+
+Validation: 25 regression checks passed; an additional 144-case geometry sweep found no folded surfaces, nonpositive front volumes or incomplete section contours among fitting inserts. Rendered browser verification remains blocked by the browser security-policy check.
+
 ## Build 8 — 2026-09-28
 
 - Remove repeated sidebar explanations, field captions and workspace descriptions.

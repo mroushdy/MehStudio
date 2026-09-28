@@ -129,3 +129,27 @@ test('JSON exports retain acoustic choices during pending or unavailable calcula
  const value=vm.runInContext(`(()=>{const acousticPanel=exportTestPanel,state=exportTestState,analysis=MEH.analyze(state),origin='visual',generation=null,variants=[];const readBrief=()=>({}),flushPendingGeometry=()=>{};${between('function designJSON()',"$('#jsonExport')")};return designJSON()})()`,c);
  assert.equal(value.acousticScreen.options.voltageRms,2.83);assert.equal(value.acousticScreen.options.hornLoad,'resistive');assert.equal(value.validation.acousticStatus,'unavailable-or-pending');assert.equal(value.state.frontFiller,'annular');panel.dispose();delete c.exportTestPanel;delete c.exportTestState;
 });
+test('Offset-outlet insert follows the entry while preserving closed geometry and cone clearance',()=>{
+ for(const shape of ['round','slot','teardrop'])for(const offset of [0,20,35]){
+  const a=M.analyze({...starter,frontFiller:'offset',fillerOpening:20,shape,slotL:50,slotW:25,slotAngle:45,offset}),f=a.frontFiller;
+  assert.equal(f.available,true,`${shape} ${offset}`);assert.equal(f.openingCenterMM[0],-offset);assert.equal(f.sectionContours.length,2);assert.ok(f.edgeMarginMM>=.5);
+  const edges=new Map();let volume=0;
+  for(const face of f.faces){const [i,j,k]=face,vs=face.map(i=>f.vertices[i]);volume+=M.dot(vs[0],M.cross(vs[1],vs[2]))/6000;
+   for(let n=0;n<3;n++){const u=face[n],v=face[(n+1)%3],key=[Math.min(u,v),Math.max(u,v)].join(':');if(!edges.has(key))edges.set(key,[]);edges.get(key).push(u<v?1:-1);}
+   for(const weights of [[1,0,0],[.5,.5,0],[1/3,1/3,1/3],[.1,.4,.5]]){const [x,y,z]=[0,1,2].map(d=>vs.reduce((v,p,i)=>v+p[d]*weights[i],0)),r=Math.hypot(x,y),target=Math.min(a.p.coneDepth*Math.max(0,1-r/a.pistonR),Math.max(0,a.p.coneDepth-a.p.fillerRelief));assert.ok(z<=target-a.p.fillerClearance+1e-7,`${shape}: cone clearance`);}
+  }
+  for(const [key,dir]of edges){assert.equal(dir.length,2,key);assert.equal(dir[0]+dir[1],0,key);}
+  assert.ok(volume>0);assert.ok(Math.abs(volume-f.volumeCM3)<1e-7);assert.ok(a.frontCavityV>0);assert.ok(Math.abs(a.frontV-(a.collectorV+a.coneV+a.neckV-f.volumeCM3))<1e-7);
+  // Every entry boundary point lies inside every half-plane of the aperture.
+  const dense=M.portUV(a.p,256);for(const q of dense){const pt=[q[0]-offset,q[1]];for(let i=0;i<f.openingUV.length;i++){const u=f.openingUV[i],v=f.openingUV[(i+1)%f.openingUV.length],dx=v[0]-u[0],dy=v[1]-u[1];assert.ok(dx*(pt[1]-u[1])-dy*(pt[0]-u[0])>=-1e-7);}}
+ }
+});
+test('Offset insert relief and opening remain editable, serializable and explicitly outside acoustics',()=>{
+ const base={...starter,frontFiller:'offset',offset:30};
+ const low=M.analyze({...base,fillerRelief:0}),high=M.analyze({...base,fillerRelief:20});assert.ok(low.frontFiller.volumeCM3>high.frontFiller.volumeCM3);
+ const wide=M.analyze({...base,fillerOpening:65});assert.ok(wide.frontFiller.volumeCM3<M.analyze(base).frontFiller.volumeCM3);
+ const ui=manualHarness();ui.apply({...base,fillerOpening:200});assert.equal(ui.state.frontFiller,'offset');assert.equal(ui.disabled,false);assert.equal(ui.analysis.frontFiller.available,false);assert.ok(ui.analysis.frontFiller.issues.some(i=>i.code==='filler-opening'));ui.edit('fillerOpening',50);assert.equal(ui.analysis.frontFiller.available,true);
+ for(const load of ['resistive','webster'])assert.equal(acoustic(low,load).available,false);
+ const roundtrip=M.normalize(JSON.parse(JSON.stringify(high.p)));assert.equal(roundtrip.frontFiller,'offset');assert.equal(roundtrip.fillerRelief,20);
+ const meshes=c.MEHMeshes(low,true);assert.equal(meshes.filter(m=>m.name.startsWith('Cone contour insert')).length,low.p.count);for(const mesh of meshes)assert.ok(mesh.data.every(Number.isFinite),mesh.name);
+});
