@@ -8,7 +8,7 @@
 - Rename Local neck length to Entry tube length. The model retains its fixed 3 mm passage allowance.
 
 - Add a 40–120° nominal coverage goal to Assisted; use it throughout the profile, candidate search, export and import. Keep 60° as the default for older briefs.
-- Add accessible tap-to-open information buttons to Assisted fields, including drive voltage and coverage.
+- Add accessible tap-to-open information buttons to Assisted fields, including drive voltage and coverage. Keep icons small, borderless and aligned to the far right of each label row.
 
 Validation: 28 regression checks passed, including exact opening preservation, endpoint slopes and independent closed-mesh volume integration. Source geometry section was inspected; browser visual QA remains unavailable under the browser policy restriction.
 
