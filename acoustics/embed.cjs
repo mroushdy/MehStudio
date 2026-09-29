@@ -12,8 +12,10 @@ let html=fs.readFileSync(file,'utf8');
 const optimizer='/* Bounded, reproducible acoustic screening from independent Assisted goals. Never a field-solver optimum. */\nwindow.MEHDesignOptimizer=('+fs.readFileSync(path.join(__dirname,'design-optimizer.cjs'),'utf8').replace('module.exports=','').trim().replace(/;$/,'' )+')(window.MEH,window.MEHAcoustics);';
 html=html.replace(/\/\* Bounded, reproducible acoustic screening from independent Assisted goals\.[\s\S]*?(?=<\/script>)/,()=>optimizer);
 
+// Catalogue source migration: exact native payload parity is recorded in
+// driver-research/geometry-source-migration.json; original solve provenance is untouched.
 const geometry=[...html.matchAll(/<script[^>]*>([\s\S]*?)<\/script>/g)][4][1];
-if(crypto.createHash('sha256').update(geometry).digest('hex')!=='cb1b9bebd9ff0f155f9a20dd4db4d707f4ef9666cce444b8141586ce626964ec')throw Error('Geometry implementation changed. Recalculate spatial data and update its provenance before embedding.');
+if(crypto.createHash('sha256').update(geometry).digest('hex')!=='c79b805955f8037f3a9e234e80e7b3d6c76e37387223f039f46cec09fd44867e')throw Error('Geometry implementation changed. Recalculate spatial data and update its provenance before embedding.');
 if(html.includes('/* BEGIN COUPLED SYSTEM */'))html=html.replace(/\/\* BEGIN COUPLED SYSTEM \*\/[\s\S]*?\/\* END COUPLED SYSTEM \*\//,()=>code);
 else html=html.replace('/* END FRONT CHAMBER STUDY */','/* END FRONT CHAMBER STUDY */\n'+code);
 fs.writeFileSync(file,html);

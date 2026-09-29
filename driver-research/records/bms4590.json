@@ -1,0 +1,238 @@
+{
+  "schemaVersion": 1,
+  "id": "bms4590",
+  "name": "BMS 4590",
+  "category": "coaxial-compression",
+  "variant": "8 or 16 ohm; shared mechanical family",
+  "modelStatus": "envelope-only",
+  "sources": [
+    {
+      "id": "product",
+      "url": "https://bmsspeakers.com/product/2-coaxial-compression-driver/",
+      "kind": "product-page",
+      "inspection": "text-only",
+      "sha256": "630b7d24d271aee62f96d1bd1a352f8960e37e4df4839465c051241d06fa3733",
+      "notes": "Manufacturer page extracted by web reader on 2026-09-28. This local file is a text snapshot, not original HTML.",
+      "accessDate": "2026-09-29",
+      "redistribution": "Reference retained locally; public redistribution rights not established.",
+      "localArchivePath": "manufacturer-sources/bms/4590/2-coaxial-compression-driver.html",
+      "downloadStatus": "downloaded"
+    },
+    {
+      "url": "https://bmsspeakers.com/wp-content/uploads/2021/12/bd42e6dbf2.png",
+      "kind": "drawing-image",
+      "id": "drawing-20260929",
+      "accessDate": "2026-09-29",
+      "redistribution": "Reference retained locally; public redistribution rights not established.",
+      "inspection": "drawing-reviewed",
+      "inspectionDate": "2026-09-29",
+      "localArchivePath": "manufacturer-sources/bms/4590/bd42e6dbf2.png",
+      "sha256": "05f6f046fd3c4aec7036dc32af144c738a52ad7a6437a1238c223064dd86dda0",
+      "downloadStatus": "downloaded",
+      "localRenderedPaths": [
+        "manufacturer-sources/bms/4590/bd42e6dbf2.png"
+      ]
+    }
+  ],
+  "dimensions": {
+    "overallDiameter": {
+      "value": 182,
+      "unit": "mm",
+      "status": "published",
+      "sourceId": "product",
+      "location": "Mounting information / dimensional specification table",
+      "tolerance": 3
+    },
+    "depth": {
+      "value": 130.5,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing-20260929",
+      "location": "Manufacturer mechanical drawing, reviewed 2026-09-29",
+      "notes": ""
+    },
+    "exitDiameter": {
+      "value": 50.8,
+      "unit": "mm",
+      "status": "published",
+      "sourceId": "product",
+      "location": "Mounting information / dimensional specification table",
+      "notes": "Published millimetre value retained; nominal inch class is not substituted."
+    },
+    "boltCircleDiameter": {
+      "value": 101.6,
+      "unit": "mm",
+      "status": "published",
+      "sourceId": "product",
+      "location": "Mounting information / dimensional specification table"
+    },
+    "boltCount": {
+      "value": 4,
+      "unit": "count",
+      "status": "published",
+      "sourceId": "product",
+      "location": "Mounting information / dimensional specification table"
+    },
+    "boltThread": {
+      "value": "M6",
+      "unit": "thread",
+      "status": "published",
+      "sourceId": "product",
+      "location": "Mounting information / dimensional specification table"
+    },
+    "boltHoleDiameter": {
+      "value": null,
+      "unit": "mm",
+      "status": "unresolved",
+      "sourceId": null,
+      "location": "Not established in inspected text"
+    },
+    "flangeThickness": {
+      "value": null,
+      "unit": "mm",
+      "status": "unresolved",
+      "sourceId": null,
+      "location": "Not established in inspected text"
+    },
+    "terminalClearance": {
+      "value": null,
+      "unit": "mm",
+      "status": "unresolved",
+      "sourceId": null,
+      "location": "Not established in inspected text"
+    },
+    "productPageDepth": {
+      "value": 129,
+      "unit": "mm",
+      "status": "published",
+      "sourceId": "product",
+      "location": "Mounting information / dimensional specification table",
+      "notes": "Axial package depth; assumed mounting-face datum for screening envelope only. Axial shoulders and terminal projection are not resolved."
+    },
+    "drawingDepth": {
+      "value": 130.5,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing-20260929",
+      "location": "Manufacturer mechanical drawing, reviewed 2026-09-29",
+      "notes": ""
+    },
+    "rearDepth": {
+      "value": 130.5,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing-20260929",
+      "location": "Manufacturer mechanical drawing, reviewed 2026-09-29",
+      "notes": ""
+    },
+    "drawingDiameter": {
+      "value": 180,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing-20260929",
+      "location": "Manufacturer mechanical drawing, reviewed 2026-09-29",
+      "notes": ""
+    },
+    "boltStartAngle": {
+      "value": 15,
+      "unit": "deg",
+      "status": "drawing-verified",
+      "sourceId": "drawing-20260929",
+      "location": "Manufacturer mechanical drawing, reviewed 2026-09-29",
+      "notes": ""
+    }
+  },
+  "geometry": {
+    "units": "mm",
+    "datum": "mounting face z=0; positive z rearward; table-only axial datum requires drawing confirmation",
+    "parts": [
+      {
+        "name": "Nominal external screening envelope",
+        "type": "cylinder",
+        "status": "envelope",
+        "sourceIds": [
+          "product",
+          "drawing-20260929"
+        ],
+        "dimensionRefs": [
+          "overallDiameter",
+          "depth"
+        ],
+        "notes": "Bounding cylinder only; entire cross-section is NOT physically solid. No axial profile or acoustic internal volume is implied. Terminal clearance is unknown.",
+        "params": {
+          "radius": 91.0,
+          "z": 0,
+          "depth": 130.5,
+          "center": [
+            0,
+            0
+          ]
+        }
+      },
+      {
+        "name": "Mounting thread axes (display guides)",
+        "type": "bolt-pattern",
+        "status": "dimensioned",
+        "sourceIds": [
+          "drawing-20260929"
+        ],
+        "dimensionRefs": [
+          "boltCircleDiameter",
+          "boltCount",
+          "boltThread"
+        ],
+        "notes": "Thread axes shown at drawing orientation. M6 glyph is nominal thread diameter, not drilled clearance/minor diameter; depth is display-only unless separately dimensioned.",
+        "params": {
+          "count": 4,
+          "circleDiameter": 101.6,
+          "startAngleDeg": 15,
+          "holeDiameter": 6,
+          "z": 0,
+          "depth": 1,
+          "thread": "M6"
+        },
+        "displayRole": "dimension-guide"
+      },
+      {
+        "name": "Exit aperture guide",
+        "type": "ring",
+        "params": {
+          "outerRadius": 25.799999999999997,
+          "innerRadius": 25.4,
+          "z": -0.4,
+          "depth": 0.4
+        },
+        "status": "dimensioned",
+        "dimensionRefs": [
+          "exitDiameter"
+        ],
+        "sourceIds": [
+          "product"
+        ],
+        "notes": "Published/drawing exit diameter only. The 0.4 mm line width/depth is a display glyph, not throat wall thickness or a front projection. Internal acoustic passage is unspecified.",
+        "displayRole": "dimension-guide"
+      }
+    ]
+  },
+  "unresolved": [
+    "Complete outer profile, front shoulder and rear cover geometry are not established by the mounting table.",
+    "Terminal projection, cable bend allowance and service/fastener access remain unverified.",
+    "Threaded-hole depth and manufacturing tolerances require a drawing or part measurement.",
+    "Product page literally states overall-diameter tolerance +/-3 mm; this may be a typographical error and must be resolved against exact revision drawing. Nominal envelope does not include tolerance.",
+    "Drawing \u00d8180 mm conflicts with product \u00d8182 mm; conservative \u00d8182 envelope kept. Drawing axial span130.5 mm replaces shorter129 mm table for screening."
+  ],
+  "notes": [
+    "Manufacturer table dimensions support a screening envelope, not a detailed CAD reconstruction.",
+    "Internal acoustic passages, phase plug and diaphragms are intentionally absent. Do not infer acoustic volume from this mesh."
+  ],
+  "audit": {
+    "date": "2026-09-29",
+    "scope": "Existing-catalogue geometry, units, source identities and mounting datum audit",
+    "freshlyReviewedDrawingSourceIds": [
+      "drawing-20260929"
+    ],
+    "manufacturerCADModel": false,
+    "fitCheckStatus": "screening-only",
+    "reason": "Manufacturing tolerances, terminal/wire/tool clearance and some external profiles are incomplete. Drawing dimensions and conservative bounds are not exact CAD."
+  }
+}

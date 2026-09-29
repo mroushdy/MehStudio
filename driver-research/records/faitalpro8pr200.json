@@ -1,0 +1,618 @@
+{
+  "schemaVersion": 1,
+  "id": "faitalpro8pr200",
+  "name": "FaitalPRO 8PR200",
+  "category": "cone",
+  "variant": "8 ohm",
+  "nominalDiameterInches": 8,
+  "modelStatus": "dimensioned-reconstruction",
+  "sources": [
+    {
+      "id": "datasheet",
+      "url": "https://faitalpro.com/products/files/8PR200/8/8PR200_datasheet_8.pdf",
+      "kind": "pdf",
+      "localArchivePath": "manufacturer-sources/faitalpro/8PR200/8PR200_datasheet_8.pdf",
+      "sha256": "fe28f3d1b11e6943309fbe5f989ae3afcc0dc36f7993e98cc1cc414261f96606",
+      "accessDate": "2026-09-29",
+      "inspection": "parameters-reviewed",
+      "redistribution": "Not cleared; retain original document locally only.",
+      "notes": "Exact 8-ohm variant; page 1 parameters and mounting information. Original download may use a different display language; English product page independently cross-checked."
+    },
+    {
+      "id": "drawing",
+      "url": "https://faitalpro.com/products/files/8PR200/8/8PR200_drawing_8.pdf",
+      "kind": "pdf",
+      "localArchivePath": "manufacturer-sources/faitalpro/8PR200/8PR200_drawing_8.pdf",
+      "sha256": "20d819fb2cd81baed11d3bfec8c3753b456a0313c902f56b4b9d51460abdc32c",
+      "accessDate": "2026-09-29",
+      "inspection": "drawing-reviewed",
+      "redistribution": "Not cleared; retain original document locally only.",
+      "inspectionNotes": "Rendered with Poppler and visually inspected front/rear and side mechanical views. Dimensions are millimetres. No STEP/DXF/IGES file was linked by this product page."
+    },
+    {
+      "id": "product",
+      "url": "https://faitalpro.com/en/products/LF_Loudspeakers/product_details/index.php?id=101030200",
+      "kind": "product-page",
+      "localArchivePath": "manufacturer-sources/faitalpro/8PR200/product.html",
+      "sha256": "508b61736b27ac1459ef8415bc11dd643b63c4bdfef9b808e1f73cc4b5b4e517",
+      "accessDate": "2026-09-29",
+      "inspection": "text-only",
+      "redistribution": "Not cleared; retain original document locally only."
+    }
+  ],
+  "dimensions": {
+    "nominalDiameterInches": {
+      "value": 8,
+      "unit": "in",
+      "status": "published",
+      "sourceId": "datasheet",
+      "location": "Specifications table",
+      "notes": ""
+    },
+    "overallDiameter": {
+      "value": 223.75,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Mechanical drawing, page 1",
+      "notes": "Published maximum circumscribed frame dimension; frame itself is noncircular."
+    },
+    "depth": {
+      "value": 116.7,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Mechanical drawing, page 1",
+      "notes": "Total frontmost rim to rear endpoint; not installed rear projection."
+    },
+    "flangeAssemblyDepth": {
+      "value": 10.7,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Mechanical drawing, page 1",
+      "notes": "Frontmost flange/gasket face to rear mounting datum. Does not establish individual metal or compressed gasket thickness."
+    },
+    "mountingFaceOffset": {
+      "value": 10.7,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Mechanical drawing, page 1",
+      "notes": "Rear underside of flange/gasket is z=0; frontmost rim has negative z."
+    },
+    "rearProjection": {
+      "value": 106.0,
+      "unit": "mm",
+      "status": "derived",
+      "sourceId": "drawing",
+      "location": "Mechanical drawing, page 1",
+      "notes": "116.7 mm total depth - 10.7 mm front-to-mounting offset = 106.0 mm."
+    },
+    "cutoutDiameter": {
+      "value": 183,
+      "unit": "mm",
+      "status": "published",
+      "sourceId": "datasheet",
+      "location": "Mounting specifications",
+      "notes": "Recommended baffle cutout; do not substitute the smaller basket neck dimension."
+    },
+    "basketNeckDiameter": {
+      "value": 181,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Mechanical drawing, page 1",
+      "notes": "Dimensioned basket neck below flange; distinct from recommended baffle cutout."
+    },
+    "boltCircleDiameter": {
+      "value": 210,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Mechanical drawing, page 1",
+      "notes": ""
+    },
+    "boltCount": {
+      "value": 8,
+      "unit": "count",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Mechanical drawing, page 1",
+      "notes": ""
+    },
+    "boltStartAngle": {
+      "value": 22.5,
+      "unit": "deg",
+      "status": "derived",
+      "sourceId": "drawing",
+      "location": "Mechanical drawing, page 1",
+      "notes": "Pattern phase read from the rear view; holes or slots are rotationally symmetric. Angle measured from model +x."
+    },
+    "driverDisplacement": {
+      "value": 1,
+      "unit": "L",
+      "status": "published",
+      "sourceId": "datasheet",
+      "location": "Mounting/technical specifications",
+      "notes": "Published occupied air volume; 1 dm3 = 1 L. Never integrated from the appearance mesh."
+    },
+    "terminalClearance": {
+      "value": null,
+      "unit": "mm",
+      "status": "unresolved",
+      "sourceId": null,
+      "location": "Mechanical drawing, page 1",
+      "notes": "No dimensioned cable bend, tool or installation clearance in these sources."
+    },
+    "overallAcrossFlats": {
+      "value": 207.9,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Mechanical drawing, page 1",
+      "notes": "Across flat sides. The appearance octagon simplifies rounded corners; never a manufacturing outline."
+    },
+    "boltHoleDiameter": {
+      "value": 5.5,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Mechanical drawing, page 1",
+      "notes": "Explicit diameter callout; no bolt thread inferred."
+    },
+    "rearBasketDiameter": {
+      "value": 152,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Mechanical drawing, page 1",
+      "notes": "Dimensioned rear basket/body outside envelope. Not identified as magnet diameter."
+    },
+    "magnetDiameter": {
+      "value": null,
+      "unit": "mm",
+      "status": "unresolved",
+      "sourceId": null,
+      "location": "Mechanical drawing, page 1",
+      "notes": "Motor is partly inside the basket; drawing does not identify its external diameter separately."
+    }
+  },
+  "geometry": {
+    "units": "mm",
+    "datum": "mounting face z=0; positive z rearward. Rear underside of flange/gasket is datum; frontmost rim z=-10.7 mm and rear endpoint z=106.0 mm.",
+    "parts": [
+      {
+        "name": "Maximum clearance envelope",
+        "type": "cylinder",
+        "params": {
+          "radius": 111.875,
+          "z": -10.7,
+          "depth": 116.7,
+          "center": [
+            0,
+            0
+          ]
+        },
+        "status": "envelope",
+        "sourceIds": [
+          "drawing"
+        ],
+        "dimensionRefs": [
+          "overallDiameter",
+          "depth",
+          "mountingFaceOffset"
+        ],
+        "notes": "Conservative full-depth circumscribed screening cylinder, not driver material or displaced air volume.",
+        "displayRole": "clearance-only"
+      },
+      {
+        "name": "Octagonal flange appearance",
+        "type": "extruded-outline",
+        "params": {
+          "outline": [
+            [
+              103.35902,
+              42.81271
+            ],
+            [
+              42.81271,
+              103.35902
+            ],
+            [
+              -42.81271,
+              103.35902
+            ],
+            [
+              -103.35902,
+              42.81271
+            ],
+            [
+              -103.35902,
+              -42.81271
+            ],
+            [
+              -42.81271,
+              -103.35902
+            ],
+            [
+              42.81271,
+              -103.35902
+            ],
+            [
+              103.35902,
+              -42.81271
+            ]
+          ],
+          "holes": [
+            [
+              [
+                90.5,
+                0.0
+              ],
+              [
+                90.06422,
+                8.87055
+              ],
+              [
+                88.76107,
+                17.65567
+              ],
+              [
+                86.6031,
+                26.27076
+              ],
+              [
+                83.6111,
+                34.63285
+              ],
+              [
+                79.81387,
+                42.6614
+              ],
+              [
+                75.248,
+                50.27911
+              ],
+              [
+                69.95745,
+                57.41259
+              ],
+              [
+                63.99316,
+                63.99316
+              ],
+              [
+                57.41259,
+                69.95745
+              ],
+              [
+                50.27911,
+                75.248
+              ],
+              [
+                42.6614,
+                79.81387
+              ],
+              [
+                34.63285,
+                83.6111
+              ],
+              [
+                26.27076,
+                86.6031
+              ],
+              [
+                17.65567,
+                88.76107
+              ],
+              [
+                8.87055,
+                90.06422
+              ],
+              [
+                0.0,
+                90.5
+              ],
+              [
+                -8.87055,
+                90.06422
+              ],
+              [
+                -17.65567,
+                88.76107
+              ],
+              [
+                -26.27076,
+                86.6031
+              ],
+              [
+                -34.63285,
+                83.6111
+              ],
+              [
+                -42.6614,
+                79.81387
+              ],
+              [
+                -50.27911,
+                75.248
+              ],
+              [
+                -57.41259,
+                69.95745
+              ],
+              [
+                -63.99316,
+                63.99316
+              ],
+              [
+                -69.95745,
+                57.41259
+              ],
+              [
+                -75.248,
+                50.27911
+              ],
+              [
+                -79.81387,
+                42.6614
+              ],
+              [
+                -83.6111,
+                34.63285
+              ],
+              [
+                -86.6031,
+                26.27076
+              ],
+              [
+                -88.76107,
+                17.65567
+              ],
+              [
+                -90.06422,
+                8.87055
+              ],
+              [
+                -90.5,
+                0.0
+              ],
+              [
+                -90.06422,
+                -8.87055
+              ],
+              [
+                -88.76107,
+                -17.65567
+              ],
+              [
+                -86.6031,
+                -26.27076
+              ],
+              [
+                -83.6111,
+                -34.63285
+              ],
+              [
+                -79.81387,
+                -42.6614
+              ],
+              [
+                -75.248,
+                -50.27911
+              ],
+              [
+                -69.95745,
+                -57.41259
+              ],
+              [
+                -63.99316,
+                -63.99316
+              ],
+              [
+                -57.41259,
+                -69.95745
+              ],
+              [
+                -50.27911,
+                -75.248
+              ],
+              [
+                -42.6614,
+                -79.81387
+              ],
+              [
+                -34.63285,
+                -83.6111
+              ],
+              [
+                -26.27076,
+                -86.6031
+              ],
+              [
+                -17.65567,
+                -88.76107
+              ],
+              [
+                -8.87055,
+                -90.06422
+              ],
+              [
+                -0.0,
+                -90.5
+              ],
+              [
+                8.87055,
+                -90.06422
+              ],
+              [
+                17.65567,
+                -88.76107
+              ],
+              [
+                26.27076,
+                -86.6031
+              ],
+              [
+                34.63285,
+                -83.6111
+              ],
+              [
+                42.6614,
+                -79.81387
+              ],
+              [
+                50.27911,
+                -75.248
+              ],
+              [
+                57.41259,
+                -69.95745
+              ],
+              [
+                63.99316,
+                -63.99316
+              ],
+              [
+                69.95745,
+                -57.41259
+              ],
+              [
+                75.248,
+                -50.27911
+              ],
+              [
+                79.81387,
+                -42.6614
+              ],
+              [
+                83.6111,
+                -34.63285
+              ],
+              [
+                86.6031,
+                -26.27076
+              ],
+              [
+                88.76107,
+                -17.65567
+              ],
+              [
+                90.06422,
+                -8.87055
+              ]
+            ]
+          ],
+          "z": -10.7,
+          "depth": 10.7
+        },
+        "status": "approximate",
+        "sourceIds": [
+          "drawing"
+        ],
+        "dimensionRefs": [
+          "overallDiameter",
+          "flangeAssemblyDepth"
+        ],
+        "notes": "Simplified circumscribed octagon; rounded corners, recesses and inner opening are approximate. Not a machining outline."
+      },
+      {
+        "name": "Baffle cutout guide",
+        "type": "ring",
+        "params": {
+          "outerRadius": 91.5,
+          "innerRadius": 91.1,
+          "z": 0,
+          "depth": 0.5
+        },
+        "status": "dimensioned",
+        "sourceIds": [
+          "datasheet"
+        ],
+        "dimensionRefs": [
+          "cutoutDiameter"
+        ],
+        "notes": "0.4 mm display stroke marking the manufacturer recommended cutout, not driver material."
+      },
+      {
+        "name": "Mounting round-hole guides",
+        "type": "bolt-pattern",
+        "params": {
+          "count": 8,
+          "circleDiameter": 210,
+          "startAngleDeg": 22.5,
+          "holeDiameter": 5.5,
+          "z": -10.7,
+          "depth": 10.7
+        },
+        "status": "dimensioned",
+        "sourceIds": [
+          "drawing"
+        ],
+        "dimensionRefs": [
+          "boltCircleDiameter",
+          "boltCount",
+          "boltHoleDiameter",
+          "boltStartAngle"
+        ],
+        "notes": "Source-sized round-hole guides; do not subtract holes from flange. Minimum diameter where explicitly noted; no tolerance asserted."
+      },
+      {
+        "name": "Basket appearance surface",
+        "type": "lathe",
+        "params": {
+          "profile": [
+            [
+              90.5,
+              0
+            ],
+            [
+              90.5,
+              4.24
+            ],
+            [
+              86.88,
+              16.96
+            ],
+            [
+              82.08,
+              67.84
+            ],
+            [
+              76.0,
+              102.82
+            ],
+            [
+              70.68,
+              106.0
+            ]
+          ],
+          "closed": false
+        },
+        "status": "approximate",
+        "sourceIds": [
+          "drawing"
+        ],
+        "dimensionRefs": [
+          "basketNeckDiameter",
+          "rearBasketDiameter",
+          "rearProjection"
+        ],
+        "notes": "Rotationalized external basket envelope approximated from the side drawing. Rear body is dimensioned but intermediate contour is not; actual basket is open and hides part of the motor. No separate magnet shape asserted."
+      }
+    ]
+  },
+  "unresolved": [
+    "Cone, dustcap, surround and acoustic front-chamber profiles are not dimensioned; no profiles or cone-depth values are invented.",
+    "Basket windows, ribs, motor internals and local flange recesses are not reconstructed; visible exterior surfaces are explicitly approximate.",
+    "Gasket compression, manufacturing tolerances and installed terminal/cable clearance require manufacturer confirmation or real-part measurement.",
+    "Published small-signal motor data supports response screening; MEH suitability still requires the selected horn, loading, excursion, thermal and crossover checks."
+  ],
+  "notes": [
+    "Longer published excursion 8-inch neodymium option; aluminum demodulation ring and 58 Hz Fs.",
+    "All motor values are from the exact 8-ohm datasheet; no other model or impedance variant supplies parameters.",
+    "Manufacturer drawings were visually inspected; rendered reconstructions are not manufacturer CAD.",
+    "Acoustic occupied volume uses the published value, never the full clearance envelope or approximate appearance mesh."
+  ]
+}

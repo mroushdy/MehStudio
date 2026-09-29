@@ -1,0 +1,104 @@
+{
+  "bc10ndl64": {
+    "id": "bc10ndl64",
+    "name": "B&C 10NDL64 (8 ohm)",
+    "source": "https://www.bcspeakers.com/en/products/lf-driver/10/8/10NDL64",
+    "nominalDiameterIn": 10,
+    "sd": 320,
+    "fs": 56,
+    "qts": 0.26,
+    "vas": 31,
+    "re": 5.7,
+    "leMH": 0.9,
+    "mmsG": 37,
+    "bl": 16.2,
+    "qms": 3.4,
+    "qes": 0.29,
+    "xmaxMM": 6,
+    "nominalPowerW": 250,
+    "driverVol": 1.5,
+    "review": {
+      "status": "manufacturer-published-reviewed",
+      "variant": "8 ohm",
+      "reviewedAt": "2026-09-28",
+      "sourceUrl": "https://www.bcspeakers.com/en/products/lf-driver/10/8/10NDL64",
+      "datasheetUrl": "https://www.bcspeakers.com/en/products/lf-driver/10-0/8/10ndl64.pdf",
+      "datasheetSHA256": "5c95d86333a2ed0a49d3a247583a865d4eef090c7ae97342d05715b5dc737ccb",
+      "productSHA256": "211589f7deda3ed7ca08c0e8f9975fe8a3cd9e069318272c570aece94ca80f97",
+      "location": "Manufacturer datasheet PDF page 2, Parameters / Specifications / Mounting and Shipping Info; independently matches product page.",
+      "units": {
+        "sd": "cm2",
+        "fs": "Hz",
+        "vas": "L",
+        "re": "ohm",
+        "leMH": "mH",
+        "mmsG": "g",
+        "bl": "Tm",
+        "xmaxMM": "mm",
+        "nominalPowerW": "W",
+        "driverVol": "L"
+      },
+      "notes": [
+        "T/S parameters are published after manufacturer high-level 20 Hz sine-wave preconditioning.",
+        "Xmax is the published 6 mm value; it is not replaced by winding-minus-gap geometry.",
+        "Nominal power is 250 W; the 500 W continuous program figure is not substituted.",
+        "Driver displacement is explicitly published as 1.5 dm3 (1.5 L).",
+        "Recommended 26 L / 62 Hz box is a direct-radiator reference, not an automatic MEH rear-chamber recommendation."
+      ]
+    }
+  },
+  "bc8ndl51": {
+    "id": "bc8ndl51",
+    "name": "B&C 8NDL51 (8 ohm)",
+    "source": "https://bcspeakers.com/en/products/lf-driver/8-0/8/8ndl51-8",
+    "nominalDiameterIn": 8,
+    "nominalDiameterInches": 8,
+    "sd": 220,
+    "fs": 66,
+    "qts": 0.37,
+    "vas": 14,
+    "re": 5.3,
+    "leMH": 0.5,
+    "mmsG": 28,
+    "bl": 12.4,
+    "qms": 3.6,
+    "qes": 0.41,
+    "xmaxMM": 7,
+    "nominalPowerW": 200,
+    "driverVol": 1.1,
+    "review": {
+      "status": "manufacturer-published-reviewed",
+      "variant": "8 ohm",
+      "reviewedDate": "2026-09-28",
+      "sourceIds": [
+        "datasheet",
+        "product"
+      ],
+      "sourceRecord": "records/bc8ndl51.json",
+      "pdfUrl": "https://www.bcspeakers.com/en/products/lf-driver/8-0/8/8ndl51-8.pdf",
+      "pdfSha256": "231b93f02ab131e46e5cc442ab6307804c5c876c2d04a79415fd31ac74046619",
+      "pageUrl": "https://bcspeakers.com/en/products/lf-driver/8-0/8/8ndl51-8",
+      "pageSha256": "fcd27c921393d6b4ae163ec51fcbe5152745c72572ede775f971948a1571a3b7",
+      "location": "PDF page 2: Parameters, Specifications, Mounting and shipping tables",
+      "units": {
+        "sd": "cm2",
+        "fs": "Hz",
+        "vas": "L",
+        "re": "ohm",
+        "leMH": "mH",
+        "mmsG": "g",
+        "bl": "T m",
+        "xmaxMM": "mm",
+        "nominalPowerW": "W",
+        "driverVol": "L"
+      },
+      "notes": [
+        "T/S parameters stated measured after high-level 20 Hz sine-wave preconditioning.",
+        "Published nominal power is 200 W, distinct from 400 W continuous program rating.",
+        "Published Xmax 7 mm retained without inferring a different one-way stroke from winding/gap geometry.",
+        "Published volume displacement is not an appearance-mesh estimate.",
+        "Manufacturer rounded parameters may not close derived motor identities exactly; retain published values."
+      ]
+    }
+  }
+}

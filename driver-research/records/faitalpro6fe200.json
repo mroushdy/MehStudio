@@ -1,0 +1,304 @@
+{
+  "schemaVersion": 1,
+  "id": "faitalpro6fe200",
+  "name": "FaitalPRO 6FE200",
+  "category": "cone",
+  "variant": "8 ohm",
+  "modelStatus": "dimensioned-reconstruction",
+  "sources": [
+    {
+      "id": "product",
+      "url": "https://faitalpro.com/en/products/LF_Loudspeakers/product_details/index.php?id=401020110",
+      "kind": "product-page",
+      "inspection": "text-only",
+      "sha256": "935c30ce87cf13d148db45852aeb3cfe59ee1d61cc6179e96fc831a6676c8276",
+      "accessDate": "2026-09-29",
+      "redistribution": "Reference retained locally; public redistribution rights not established.",
+      "localArchivePath": "manufacturer-sources/faitalpro/6FE200/index.php",
+      "downloadStatus": "downloaded"
+    },
+    {
+      "id": "drawing",
+      "url": "https://faitalpro.com/products/files/6FE200/8/6FE200_drawing_8.pdf",
+      "kind": "pdf",
+      "sha256": "5005bf681d1242deac76f78c25980e335ecdb482ae2c27e1949d5b17bffeea5f",
+      "inspection": "drawing-reviewed",
+      "accessDate": "2026-09-29",
+      "redistribution": "Reference retained locally; public redistribution rights not established.",
+      "inspectionDate": "2026-09-29",
+      "localArchivePath": "manufacturer-sources/faitalpro/6FE200/6FE200_drawing_8.pdf",
+      "downloadStatus": "downloaded",
+      "localRenderedPaths": [
+        "manufacturer-sources/faitalpro/6FE200/previews/6FE200_drawing_8-1.png"
+      ]
+    }
+  ],
+  "dimensions": {
+    "overallDiameter": {
+      "value": 167.4,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Mechanical drawing, page 1",
+      "notes": ""
+    },
+    "overallWidth": {
+      "value": null,
+      "unit": "mm",
+      "status": "unresolved",
+      "sourceId": null,
+      "location": "Mechanical drawing, page 1",
+      "notes": ""
+    },
+    "overallHeight": {
+      "value": null,
+      "unit": "mm",
+      "status": "unresolved",
+      "sourceId": null,
+      "location": "Mechanical drawing, page 1",
+      "notes": ""
+    },
+    "overallDiagonal": {
+      "value": null,
+      "unit": "mm",
+      "status": "unresolved",
+      "sourceId": null,
+      "location": "Mechanical drawing, page 1",
+      "notes": ""
+    },
+    "depth": {
+      "value": 77,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Mechanical drawing, page 1",
+      "notes": ""
+    },
+    "rearDepth": {
+      "value": 69,
+      "unit": "mm",
+      "status": "derived",
+      "sourceId": "drawing",
+      "location": "Depth minus flange/gasket stack",
+      "notes": "Coordinate conversion from total front-to-rear depth to underside mounting face."
+    },
+    "cutoutDiameter": {
+      "value": 144,
+      "unit": "mm",
+      "status": "published",
+      "sourceId": "product",
+      "location": "Nominal specifications / baffle cutout",
+      "notes": ""
+    },
+    "flangeThickness": {
+      "value": 8,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Mechanical drawing, page 1",
+      "notes": ""
+    },
+    "boltCircleDiameter": {
+      "value": 154,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Mechanical drawing, page 1",
+      "notes": ""
+    },
+    "boltCount": {
+      "value": 4,
+      "unit": "count",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Mechanical drawing, page 1",
+      "notes": ""
+    },
+    "boltHoleDiameter": {
+      "value": null,
+      "unit": "mm",
+      "status": "unresolved",
+      "sourceId": null,
+      "location": "Mechanical drawing, page 1",
+      "notes": ""
+    },
+    "boltThread": {
+      "value": null,
+      "unit": "thread",
+      "status": "unresolved",
+      "sourceId": null,
+      "location": "Mechanical drawing, page 1",
+      "notes": ""
+    },
+    "magnetDiameter": {
+      "value": 115.3,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Mechanical drawing, page 1",
+      "notes": ""
+    },
+    "magnetDepth": {
+      "value": 34.7,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Mechanical drawing, page 1",
+      "notes": ""
+    },
+    "terminalClearance": {
+      "value": null,
+      "unit": "mm",
+      "status": "unresolved",
+      "sourceId": null,
+      "location": "Mechanical drawing, page 1",
+      "notes": ""
+    },
+    "basketNeckDiameter": {
+      "value": 142,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Mechanical drawing, page 1",
+      "notes": ""
+    },
+    "boltStartAngle": {
+      "value": 45,
+      "unit": "deg",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Mechanical drawing, page 1",
+      "notes": ""
+    },
+    "boltSlotWidth": {
+      "value": 5.7,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Mechanical drawing, page 1",
+      "notes": ""
+    },
+    "boltSlotLength": {
+      "value": 6.3,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Mechanical drawing, page 1",
+      "notes": ""
+    }
+  },
+  "geometry": {
+    "units": "mm",
+    "datum": "mounting face z=0; positive z rearward. For front mounting, mounting face is rear underside of flange/gasket stack; overall front is at negative flangeThickness.",
+    "parts": [
+      {
+        "name": "Flange maximum circular envelope",
+        "type": "cylinder",
+        "params": {
+          "radius": 83.7,
+          "z": -8,
+          "depth": 8,
+          "center": [
+            0,
+            0
+          ]
+        },
+        "dimensionRefs": [
+          "overallDiameter",
+          "flangeThickness"
+        ],
+        "sourceIds": [
+          "drawing"
+        ],
+        "status": "envelope",
+        "notes": "Bounding envelope only. Noncircular frame lobes/edges are deliberately not asserted by this cylinder."
+      },
+      {
+        "name": "Rear basket clearance envelope",
+        "type": "cylinder",
+        "params": {
+          "radius": 71.0,
+          "z": 0,
+          "depth": 69,
+          "center": [
+            0,
+            0
+          ]
+        },
+        "dimensionRefs": [
+          "basketNeckDiameter",
+          "rearDepth"
+        ],
+        "sourceIds": [
+          "drawing"
+        ],
+        "status": "envelope",
+        "notes": "Cylindrical rear envelope, not a solid basket. A cutout-derived envelope is provisional; terminals and local protrusions may extend beyond it."
+      },
+      {
+        "name": "Motor envelope",
+        "type": "cylinder",
+        "params": {
+          "radius": 57.65,
+          "z": 34.3,
+          "depth": 34.7,
+          "center": [
+            0,
+            0
+          ]
+        },
+        "dimensionRefs": [
+          "magnetDiameter",
+          "magnetDepth",
+          "rearDepth"
+        ],
+        "sourceIds": [
+          "drawing"
+        ],
+        "status": "envelope",
+        "notes": "Dimensioned maximum motor envelope; tapers, recesses and internal magnetic parts are not represented."
+      },
+      {
+        "name": "Slotted mounting-hole center guides",
+        "type": "bolt-pattern",
+        "params": {
+          "count": 4,
+          "circleDiameter": 154,
+          "startAngleDeg": 45,
+          "holeDiameter": 5.7,
+          "z": -8,
+          "depth": 8
+        },
+        "status": "dimensioned",
+        "dimensionRefs": [
+          "boltCircleDiameter",
+          "boltCount",
+          "boltSlotWidth",
+          "boltSlotLength"
+        ],
+        "sourceIds": [
+          "drawing"
+        ],
+        "displayRole": "dimension-guide",
+        "notes": "Guide circles use the specified slot width and centers; they do not replace the full oblong slot contour, orientation or clearance tolerance. Slot length remains a separate dimension."
+      }
+    ]
+  },
+  "unresolved": [
+    "6FE200 holes are slots 5.7 \u00d7 6.3 mm, not circular; no circular bolt guides generated.",
+    "Terminal, wire bend and tool-access clearances are not dimensioned; allow additional clearance.",
+    "Cone, dustcap and basket-window contours are not mechanically reconstructed. No internal acoustic volume may be inferred from these envelope meshes.",
+    "Manufacturer manufacturing tolerances are not published in the inspected sources."
+  ],
+  "notes": [],
+  "audit": {
+    "date": "2026-09-29",
+    "scope": "Existing-catalogue geometry, units, source identities and mounting datum audit",
+    "freshlyReviewedDrawingSourceIds": [
+      "drawing"
+    ],
+    "manufacturerCADModel": false,
+    "fitCheckStatus": "screening-only",
+    "reason": "Manufacturing tolerances, terminal/wire/tool clearance and some external profiles are incomplete. Drawing dimensions and conservative bounds are not exact CAD."
+  }
+}

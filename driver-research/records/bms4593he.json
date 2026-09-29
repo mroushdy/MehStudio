@@ -1,0 +1,285 @@
+{
+  "schemaVersion": 1,
+  "id": "bms4593he",
+  "name": "BMS 4593HE",
+  "category": "coaxial-compression",
+  "variant": "8 or 16 ohm; shared mechanical family",
+  "modelStatus": "envelope-only",
+  "sources": [
+    {
+      "id": "product",
+      "url": "https://bmsspeakers.com/product/1-4-coaxial-neodymium-compression-driver-4593he/",
+      "kind": "product-page",
+      "inspection": "text-only",
+      "sha256": "b7b44b6e344e4b32962afb0e0fbbf94869faa56161941bb17942040f08181190",
+      "notes": "Manufacturer page extracted by web reader on 2026-09-28. This local file is a text snapshot, not original HTML.",
+      "accessDate": "2026-09-29",
+      "redistribution": "Reference retained locally; public redistribution rights not established.",
+      "localArchivePath": "manufacturer-sources/bms/4593HE/1-4-coaxial-neodymium-compression-driver-4593he.html",
+      "downloadStatus": "downloaded"
+    },
+    {
+      "id": "drawing",
+      "url": "https://bmsspeakers.com/wp-content/uploads/2021/12/6928ca08ed.jpg",
+      "kind": "drawing-image",
+      "inspection": "drawing-reviewed",
+      "sha256": "b29056ae0febb13ab34306c0e3b0f5e73c46aabef83e547376302bbd45ad89b5",
+      "accessDate": "2026-09-29",
+      "redistribution": "Reference retained locally; public redistribution rights not established.",
+      "inspectionDate": "2026-09-29",
+      "localArchivePath": "manufacturer-sources/bms/4593HE/6928ca08ed.jpg",
+      "downloadStatus": "downloaded",
+      "localRenderedPaths": [
+        "manufacturer-sources/bms/4593HE/6928ca08ed.jpg"
+      ]
+    }
+  ],
+  "dimensions": {
+    "overallDiameter": {
+      "value": 133,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Side view, outer heat-sink diameter"
+    },
+    "depth": {
+      "value": 111.2,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Side view extreme terminal-to-phase-plug extent",
+      "notes": "Total axial length is not rear depth from mounting face."
+    },
+    "exitDiameter": {
+      "value": 35.56,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Front view diameter 35.56 (1.4 inch)",
+      "notes": "Product page rounds to 36 mm."
+    },
+    "boltCircleDiameter": {
+      "value": 101.6,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Front view 101.6 +/-0.1",
+      "tolerance": 0.1
+    },
+    "boltCount": {
+      "value": 4,
+      "unit": "count",
+      "status": "published",
+      "sourceId": "product",
+      "location": "Mounting information / dimensional specification table"
+    },
+    "boltThread": {
+      "value": "M6-6H",
+      "unit": "thread",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Manufacturer mechanical drawing, reviewed 2026-09-29",
+      "notes": ""
+    },
+    "boltHoleDiameter": {
+      "value": null,
+      "unit": "mm",
+      "status": "unresolved",
+      "sourceId": null,
+      "location": "Not established in inspected text"
+    },
+    "flangeThickness": {
+      "value": null,
+      "unit": "mm",
+      "status": "unresolved",
+      "sourceId": null,
+      "location": "Not established in inspected text"
+    },
+    "terminalClearance": {
+      "value": null,
+      "unit": "mm",
+      "status": "unresolved",
+      "sourceId": null,
+      "location": "Not established in inspected text"
+    },
+    "flangeDiameter": {
+      "value": 124,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Manufacturer mechanical drawing, reviewed 2026-09-29",
+      "notes": ""
+    },
+    "phasePlugProjection": {
+      "value": 26.5,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Side view parenthesized reference dimension ahead of mounting face",
+      "notes": "Reference dimension; projection extends forward to negative z."
+    },
+    "mountingDepth": {
+      "value": 84.7,
+      "unit": "mm",
+      "status": "derived",
+      "sourceId": "drawing",
+      "location": "Derived 111.2 total axial span minus 26.5 reference forward projection",
+      "notes": "Includes rear terminal extremity; body contour remains an envelope."
+    },
+    "mountingFaceDiameter": {
+      "value": 124,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Manufacturer mechanical drawing, reviewed 2026-09-29",
+      "notes": ""
+    },
+    "rearBodyDepth": {
+      "value": 81.8,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Manufacturer mechanical drawing, reviewed 2026-09-29",
+      "notes": ""
+    },
+    "rearDepth": {
+      "value": 84.7,
+      "unit": "mm",
+      "status": "derived",
+      "sourceId": "drawing",
+      "location": "Manufacturer mechanical drawing, reviewed 2026-09-29",
+      "notes": "111.2 minus 26.5 forward projection; includes rear terminals."
+    },
+    "bodyDepth": {
+      "value": 108.3,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Manufacturer mechanical drawing, reviewed 2026-09-29",
+      "notes": "Rear body to forward nose tip."
+    },
+    "boltStartAngle": {
+      "value": 0,
+      "unit": "deg",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Manufacturer mechanical drawing, reviewed 2026-09-29",
+      "notes": ""
+    }
+  },
+  "geometry": {
+    "units": "mm",
+    "datum": "mounting face z=0; positive z rearward; phase-plug envelope extends forward to z=-26.5",
+    "parts": [
+      {
+        "name": "Nominal external screening envelope",
+        "type": "cylinder",
+        "status": "envelope",
+        "sourceIds": [
+          "drawing"
+        ],
+        "dimensionRefs": [
+          "overallDiameter",
+          "mountingDepth"
+        ],
+        "notes": "Rearward clearance cylinder includes rear terminals; no detailed heat-sink profile implied.",
+        "params": {
+          "radius": 66.5,
+          "z": 0,
+          "depth": 84.7,
+          "center": [
+            0,
+            0
+          ]
+        }
+      },
+      {
+        "name": "Mounting thread axes (display guides)",
+        "type": "bolt-pattern",
+        "status": "dimensioned",
+        "sourceIds": [
+          "drawing"
+        ],
+        "dimensionRefs": [
+          "boltCircleDiameter",
+          "boltCount",
+          "boltThread"
+        ],
+        "notes": "Thread axes shown at drawing orientation. M6 glyph is nominal thread diameter, not drilled clearance/minor diameter; depth is display-only unless separately dimensioned.",
+        "params": {
+          "count": 4,
+          "circleDiameter": 101.6,
+          "startAngleDeg": 0,
+          "holeDiameter": 6,
+          "z": 0,
+          "depth": 1,
+          "thread": "M6"
+        },
+        "displayRole": "dimension-guide"
+      },
+      {
+        "name": "Protruding phase-plug clearance envelope",
+        "type": "cylinder",
+        "status": "envelope",
+        "sourceIds": [
+          "drawing"
+        ],
+        "dimensionRefs": [
+          "exitDiameter",
+          "phasePlugProjection"
+        ],
+        "notes": "Conservative cylinder bounds the forward projection. Actual nose is tapered; no phase-plug internal geometry reconstructed.",
+        "params": {
+          "radius": 17.78,
+          "z": -26.5,
+          "depth": 26.5,
+          "center": [
+            0,
+            0
+          ]
+        }
+      },
+      {
+        "name": "Exit aperture guide",
+        "type": "ring",
+        "params": {
+          "outerRadius": 18.18,
+          "innerRadius": 17.78,
+          "z": -0.4,
+          "depth": 0.4
+        },
+        "status": "dimensioned",
+        "dimensionRefs": [
+          "exitDiameter"
+        ],
+        "sourceIds": [
+          "drawing"
+        ],
+        "notes": "Published/drawing exit diameter only. The 0.4 mm line width/depth is a display glyph, not throat wall thickness or a front projection. Internal acoustic passage is unspecified.",
+        "displayRole": "dimension-guide"
+      }
+    ]
+  },
+  "unresolved": [
+    "Complete outer profile, front shoulder and rear cover geometry are not established by the mounting table.",
+    "Terminal projection, cable bend allowance and service/fastener access remain unverified.",
+    "BMS download-index PDF label 4593HE opens a 4593ND document; do not use that PDF for HE geometry.",
+    "Thread engagement depth is unpublished; only stated drawing tolerances are retained."
+  ],
+  "notes": [
+    "Manufacturer table dimensions support a screening envelope, not a detailed CAD reconstruction.",
+    "Internal acoustic passages, phase plug and diaphragms are intentionally absent. Do not infer acoustic volume from this mesh.",
+    "Reviewed exact 4593HE title on drawing; mounting face differs from total-package datum. Phase plug protrudes forward of the mounting plane.",
+    "Fresh visual check corrects previous 127.2 mm flange transcription to drawing \u00d8124 mm."
+  ],
+  "audit": {
+    "date": "2026-09-29",
+    "scope": "Existing-catalogue geometry, units, source identities and mounting datum audit",
+    "freshlyReviewedDrawingSourceIds": [
+      "drawing"
+    ],
+    "manufacturerCADModel": false,
+    "fitCheckStatus": "requires-forward-phase-plug-compatible-throat",
+    "reason": "Manufacturing tolerances, terminal/wire/tool clearance and some external profiles are incomplete. Drawing dimensions and conservative bounds are not exact CAD."
+  }
+}

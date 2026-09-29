@@ -1,0 +1,243 @@
+{
+  "schemaVersion": 1,
+  "id": "18sound6nmb900",
+  "name": "18Sound 6NMB900",
+  "category": "cone",
+  "variant": "8 ohm",
+  "modelStatus": "unresolved",
+  "sources": [
+    {
+      "id": "product",
+      "url": "https://www.eighteensound.it/en/products/lf-driver/6-5/8/6NMB900",
+      "kind": "product-page",
+      "sha256": "825e87d5412f85b920187f74851fa5e3153e1c801d0f420237edd9fcbada9484",
+      "inspection": "text-only",
+      "accessDate": "2026-09-29",
+      "redistribution": "Reference retained locally; public redistribution rights not established.",
+      "localArchivePath": "manufacturer-sources/18sound/6NMB900/6NMB900.html",
+      "downloadStatus": "downloaded"
+    },
+    {
+      "id": "drawing",
+      "url": "https://www.eighteensound.it/system/dragonfly/production/2021/01/16/23_13_02_196_gNndls2v.jpg",
+      "kind": "drawing-image",
+      "sha256": "dbe9e24036314977aa8d2eeaffa864f339d897e44337a33603826450c41493e8",
+      "inspection": "drawing-reviewed",
+      "notes": "Visually inspected and rejected for dimensional use: same drawing as 6ND410, inconsistent 60 mm depth.",
+      "accessDate": "2026-09-29",
+      "redistribution": "Reference retained locally; public redistribution rights not established.",
+      "inspectionDate": "2026-09-29",
+      "localArchivePath": "manufacturer-sources/18sound/6NMB900/23_13_02_196_gNndls2v.jpg",
+      "downloadStatus": "downloaded",
+      "localRenderedPaths": [
+        "manufacturer-sources/18sound/6NMB900/23_13_02_196_gNndls2v.jpg"
+      ]
+    },
+    {
+      "id": "datasheet",
+      "url": "https://www.eighteensound.it/en/products/lf-driver/6-5/8/6NMB900.pdf",
+      "kind": "pdf",
+      "sha256": "7f1a47babdbbd677fcfb3534dbe4d652608b43d9fae1589be29d9359eecbe4e4",
+      "inspection": "drawing-reviewed",
+      "accessDate": "2026-09-29",
+      "redistribution": "Reference retained locally; public redistribution rights not established.",
+      "inspectionDate": "2026-09-29",
+      "localArchivePath": "manufacturer-sources/18sound/6NMB900/6NMB900_8\u00ce\u00a9.pdf",
+      "downloadStatus": "downloaded",
+      "localRenderedPaths": [
+        "manufacturer-sources/18sound/6NMB900/previews/6NMB900_8\u00ce\u00a9-1.png",
+        "manufacturer-sources/18sound/6NMB900/previews/6NMB900_8\u00ce\u00a9-2.png"
+      ]
+    }
+  ],
+  "dimensions": {
+    "overallDiameter": {
+      "value": null,
+      "unit": "mm",
+      "status": "unresolved",
+      "sourceId": null,
+      "location": "Mechanical drawing, page 1",
+      "notes": ""
+    },
+    "overallWidth": {
+      "value": 162,
+      "unit": "mm",
+      "status": "published",
+      "sourceId": "product",
+      "location": "Mounting table; labelled overall diameter",
+      "notes": "Cannot be maximum circular OD because bolt circle is 170 mm; across-flats interpretation not verified for this exact model."
+    },
+    "overallHeight": {
+      "value": null,
+      "unit": "mm",
+      "status": "unresolved",
+      "sourceId": null,
+      "location": "Mechanical drawing, page 1",
+      "notes": ""
+    },
+    "overallDiagonal": {
+      "value": null,
+      "unit": "mm",
+      "status": "unresolved",
+      "sourceId": null,
+      "location": "Mechanical drawing, page 1",
+      "notes": ""
+    },
+    "depth": {
+      "value": 73,
+      "unit": "mm",
+      "status": "published",
+      "sourceId": "product",
+      "location": "Mounting table",
+      "notes": ""
+    },
+    "rearDepth": {
+      "value": 62,
+      "unit": "mm",
+      "status": "derived",
+      "sourceId": "product",
+      "location": "Depth minus flange/gasket stack",
+      "notes": "Coordinate conversion from total front-to-rear depth to underside mounting face."
+    },
+    "cutoutDiameter": {
+      "value": 148,
+      "unit": "mm",
+      "status": "published",
+      "sourceId": "product",
+      "location": "Mounting table",
+      "notes": ""
+    },
+    "flangeThickness": {
+      "value": 11,
+      "unit": "mm",
+      "status": "published",
+      "sourceId": "product",
+      "location": "Mounting table",
+      "notes": ""
+    },
+    "boltCircleDiameter": {
+      "value": 170,
+      "unit": "mm",
+      "status": "published",
+      "sourceId": "product",
+      "location": "Mounting table",
+      "notes": ""
+    },
+    "boltCount": {
+      "value": null,
+      "unit": "count",
+      "status": "unresolved",
+      "sourceId": null,
+      "location": "Mechanical drawing, page 1",
+      "notes": ""
+    },
+    "boltHoleDiameter": {
+      "value": null,
+      "unit": "mm",
+      "status": "unresolved",
+      "sourceId": null,
+      "location": "Mechanical drawing, page 1",
+      "notes": ""
+    },
+    "boltThread": {
+      "value": null,
+      "unit": "thread",
+      "status": "unresolved",
+      "sourceId": null,
+      "location": "Mechanical drawing, page 1",
+      "notes": ""
+    },
+    "magnetDiameter": {
+      "value": null,
+      "unit": "mm",
+      "status": "unresolved",
+      "sourceId": null,
+      "location": "Mechanical drawing, page 1",
+      "notes": ""
+    },
+    "magnetDepth": {
+      "value": null,
+      "unit": "mm",
+      "status": "unresolved",
+      "sourceId": null,
+      "location": "Mechanical drawing, page 1",
+      "notes": ""
+    },
+    "terminalClearance": {
+      "value": null,
+      "unit": "mm",
+      "status": "unresolved",
+      "sourceId": null,
+      "location": "Mechanical drawing, page 1",
+      "notes": ""
+    }
+  },
+  "geometry": {
+    "units": "mm",
+    "datum": "mounting face z=0; positive z rearward. For front mounting, mounting face is rear underside of flange/gasket stack; overall front is at negative flangeThickness.",
+    "parts": [
+      {
+        "name": "Published baffle-cutout diameter guide",
+        "type": "ring",
+        "params": {
+          "outerRadius": 74,
+          "innerRadius": 73.6,
+          "z": 0,
+          "depth": 0.4
+        },
+        "status": "dimensioned",
+        "dimensionRefs": [
+          "cutoutDiameter"
+        ],
+        "sourceIds": [
+          "product"
+        ],
+        "notes": "Dimension guide only; no verified driver maximum radial envelope.",
+        "displayRole": "dimension-guide"
+      },
+      {
+        "name": "Published mounting bolt-circle guide",
+        "type": "ring",
+        "params": {
+          "outerRadius": 85.2,
+          "innerRadius": 84.8,
+          "z": 0,
+          "depth": 0.4
+        },
+        "status": "dimensioned",
+        "dimensionRefs": [
+          "boltCircleDiameter"
+        ],
+        "sourceIds": [
+          "product"
+        ],
+        "notes": "Published pitch-circle guide only; bolt count, bore size and frame envelope remain unresolved.",
+        "displayRole": "dimension-guide"
+      }
+    ]
+  },
+  "unresolved": [
+    "Maximum corner diameter and exact frame outline require an exact-model drawing. No invented 162 mm circular flange.",
+    "Bolt count/hole size and terminal envelope unresolved.",
+    "Linked drawing is visually identical to 6ND410 with 60 mm depth and \u00d8185 corners, contradicting this model 73 mm table. It is retained as a mismatched source, not used for dimensions.",
+    "Terminal, wire bend and tool-access clearances are not dimensioned; allow additional clearance.",
+    "Cone, dustcap and basket-window contours are not mechanically reconstructed. No internal acoustic volume may be inferred from these envelope meshes.",
+    "Manufacturer manufacturing tolerances are not published in the inspected sources.",
+    "No reliable maximum radial frame envelope; mesh omitted rather than substitute across-flats width for overall diameter."
+  ],
+  "notes": [
+    "Frame is noncircular. overallDiameter, where populated, denotes its maximum circular bounding envelope; width/height/diagonal are separate dimensions. The flange cylinder does not reproduce the outline.",
+    "A partial dimensional guide is now visible. It must not be treated as a physical driver model or sufficient fit envelope."
+  ],
+  "audit": {
+    "date": "2026-09-29",
+    "scope": "Existing-catalogue geometry, units, source identities and mounting datum audit",
+    "freshlyReviewedDrawingSourceIds": [
+      "drawing",
+      "datasheet"
+    ],
+    "manufacturerCADModel": false,
+    "fitCheckStatus": "unresolved",
+    "reason": "Manufacturing tolerances, terminal/wire/tool clearance and some external profiles are incomplete. Drawing dimensions and conservative bounds are not exact CAD."
+  }
+}

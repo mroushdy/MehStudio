@@ -1,0 +1,247 @@
+{
+  "schemaVersion": 1,
+  "id": "rcfnd95014",
+  "name": "RCF ND950 1.4",
+  "category": "hf-compression",
+  "variant": "8 ohm",
+  "modelStatus": "envelope-only",
+  "sources": [
+    {
+      "id": "product",
+      "url": "https://www.rcf.it/en/products/product-detail/nd950-1.4",
+      "kind": "product-page",
+      "inspection": "text-only",
+      "sha256": "1142585a85728918b1c7a56f35ebc8aa35484b9f875f3865b2d9f28ea360c289",
+      "notes": "Original manufacturer product-page response downloaded 2026-09-29; replaces the earlier text-only snapshot.",
+      "accessDate": "2026-09-29",
+      "redistribution": "Reference retained locally; public redistribution rights not established.",
+      "localArchivePath": "manufacturer-sources/rcf/ND950-1.4/nd950-1.4",
+      "downloadStatus": "downloaded"
+    },
+    {
+      "id": "drawing",
+      "url": "https://www.rcf.it/en/products/product-detail/nd950-1.4?_it_dvel_rcf_products_frontend_web_portlet_ProductInformationsPortlet_productCode=STP0057&_it_dvel_rcf_products_frontend_web_portlet_ProductInformationsPortlet_profileId=321346&p_p_cacheability=cacheLevelPage&p_p_id=it_dvel_rcf_products_frontend_web_portlet_ProductInformationsPortlet&p_p_lifecycle=2&p_p_mode=view&p_p_resource_id=downloadProductFileEntry&p_p_state=normal",
+      "kind": "pdf",
+      "inspection": "drawing-reviewed",
+      "sha256": "0dd1429e17a71148d09fce66949c44c45147552df139bbb9bff6ea14a2d8418d",
+      "revision": "A",
+      "accessDate": "2026-09-29",
+      "redistribution": "Reference retained locally; public redistribution rights not established.",
+      "inspectionDate": "2026-09-29",
+      "localArchivePath": "manufacturer-sources/rcf/ND950-1.4/15129038-LINE ART 2D-ND950 1.4.pdf",
+      "downloadStatus": "downloaded",
+      "localRenderedPaths": [
+        "manufacturer-sources/rcf/ND950-1.4/previews/15129038-LINE ART 2D-ND950 1.4-1.png"
+      ]
+    },
+    {
+      "id": "cad",
+      "url": "https://www.rcf.it/en/products/product-detail/nd950-1.4?_it_dvel_rcf_products_frontend_web_portlet_ProductInformationsPortlet_productCode=STP0057&_it_dvel_rcf_products_frontend_web_portlet_ProductInformationsPortlet_profileId=321348&p_p_cacheability=cacheLevelPage&p_p_id=it_dvel_rcf_products_frontend_web_portlet_ProductInformationsPortlet&p_p_lifecycle=2&p_p_mode=view&p_p_resource_id=downloadProductFileEntry&p_p_state=normal",
+      "kind": "cad-archive",
+      "inspection": "archive-downloaded",
+      "sha256": "7cf3ab2f00bc79fd8ed74c167dbc7992642300c289b20405c99516ebb25f1c8f",
+      "revision": "STEP FILE_NAME date 2022-04-08; linked from exact ND950 1.4 product page",
+      "notes": "Official ZIP linked from ND950 1.4 page contains nd950.stp (AP242). Native STEP representation uses INCH, converted by 25.4 mm/inch. Historical catalogue reports OpenCascade/CadQuery import to mm and two valid solids; that import was not reproduced during this audit. Viewport remains an envelope, not an imported CAD mesh.",
+      "accessDate": "2026-09-29",
+      "redistribution": "Reference retained locally; public redistribution rights not established.",
+      "localArchivePath": "manufacturer-sources/rcf/ND950-1.4/LINE ART 3D-ND950 1.4.zip",
+      "downloadStatus": "downloaded"
+    },
+    {
+      "id": "step",
+      "url": "https://www.rcf.it/en/products/product-detail/nd950-1.4?_it_dvel_rcf_products_frontend_web_portlet_ProductInformationsPortlet_productCode=STP0057&_it_dvel_rcf_products_frontend_web_portlet_ProductInformationsPortlet_profileId=321348&p_p_cacheability=cacheLevelPage&p_p_id=it_dvel_rcf_products_frontend_web_portlet_ProductInformationsPortlet&p_p_lifecycle=2&p_p_mode=view&p_p_resource_id=downloadProductFileEntry&p_p_state=normal",
+      "kind": "3d-cad",
+      "sha256": "4c137285191eeaf51f951a7b96e6c4149e5cbf1db10f1d1aee09cd1c12aa1242",
+      "inspection": "step-header-inspected",
+      "revision": "2022-04-08",
+      "notes": "Extracted unchanged from official ZIP. AP242 header/PRODUCT names ND950 without exit or impedance suffix; exact 1.4 attribution is the official product-page link/archive label. Native representation INCH, 25.4 mm/inch. Two manifold solid BREP closed shells, no assembly placement found. Historical tessellation was not reproduced.",
+      "accessDate": "2026-09-29",
+      "redistribution": "Reference retained locally; public redistribution rights not established.",
+      "localArchivePath": "manufacturer-sources/rcf/ND950-1.4/cad/nd950.stp",
+      "downloadStatus": "downloaded"
+    }
+  ],
+  "dimensions": {
+    "overallDiameter": {
+      "value": 146,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Dimensioned front/side body diameter"
+    },
+    "depth": {
+      "value": 60,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Side-view axial dimension",
+      "notes": "Dimension leader excludes central small front locating projection; its offset and diameter remain unquantified."
+    },
+    "exitDiameter": {
+      "value": 36,
+      "unit": "mm",
+      "status": "published",
+      "sourceId": "product",
+      "location": "Mounting information / dimensional specification table",
+      "notes": "Published millimetre value retained; nominal inch class is not substituted."
+    },
+    "boltCircleDiameter": {
+      "value": 101.6,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Front-view mounting PCD"
+    },
+    "boltCount": {
+      "value": 4,
+      "unit": "count",
+      "status": "published",
+      "sourceId": "product",
+      "location": "Mounting information / dimensional specification table"
+    },
+    "boltThread": {
+      "value": "M6",
+      "unit": "thread",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Front-view thread note"
+    },
+    "boltHoleDiameter": {
+      "value": null,
+      "unit": "mm",
+      "status": "unresolved",
+      "sourceId": null,
+      "location": "Not established in inspected text"
+    },
+    "flangeThickness": {
+      "value": null,
+      "unit": "mm",
+      "status": "unresolved",
+      "sourceId": null,
+      "location": "Not established in inspected text"
+    },
+    "terminalClearance": {
+      "value": null,
+      "unit": "mm",
+      "status": "unresolved",
+      "sourceId": null,
+      "location": "Not established in inspected text"
+    },
+    "boltThreadDepth": {
+      "value": 9,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Front-view M6 depth 9 note"
+    },
+    "cadOverallDiameter": {
+      "value": 146,
+      "unit": "mm",
+      "status": "cad-verified",
+      "sourceId": "step",
+      "location": "OpenCascade imported model bounding box",
+      "notes": "CAD bounding extents include features omitted by 60 mm drawing dimension. Raw CAD Y min -60.67544373; max 1.999999976. Mounting-plane registration is not yet independently confirmed."
+    },
+    "cadOverallAxialSpan": {
+      "value": 62.67544370590582,
+      "unit": "mm",
+      "status": "cad-verified",
+      "sourceId": "step",
+      "location": "OpenCascade imported model bounding box",
+      "notes": "CAD bounding extents include features omitted by 60 mm drawing dimension. Raw CAD Y min -60.67544373; max 1.999999976. Mounting-plane registration is not yet independently confirmed."
+    }
+  },
+  "geometry": {
+    "units": "mm",
+    "datum": "Provisional datum: source CAD Y=0 treated as mounting face; local x=CAD X, local y=CAD Z, local z=-CAD Y. Source mounting-plane registration must be verified before assembly.",
+    "parts": [
+      {
+        "name": "CAD overall clearance envelope \u2014 provisional mounting datum",
+        "type": "cylinder",
+        "status": "envelope",
+        "sourceIds": [
+          "step"
+        ],
+        "dimensionRefs": [
+          "cadOverallDiameter",
+          "cadOverallAxialSpan"
+        ],
+        "notes": "Conservative cylinder from all imported STEP solids in the provisional source datum. It covers the full 62.6754 mm CAD axial span; coordinate registration to the mounting plane is not independently confirmed. No detailed CAD solid is substituted by this cylinder.",
+        "params": {
+          "radius": 73.0,
+          "z": -1.999999976251128,
+          "depth": 62.67544370590582,
+          "center": [
+            0,
+            0
+          ]
+        }
+      },
+      {
+        "name": "M6 mounting thread axes",
+        "type": "bolt-pattern",
+        "status": "approximate",
+        "sourceIds": [
+          "drawing"
+        ],
+        "dimensionRefs": [
+          "boltCircleDiameter",
+          "boltCount",
+          "boltThread"
+        ],
+        "notes": "PCD and count verified. Rotation chosen for display; 6 mm glyph is nominal thread guide, not clearance hole.",
+        "params": {
+          "count": 4,
+          "circleDiameter": 101.6,
+          "startAngleDeg": 0,
+          "holeDiameter": 6,
+          "z": 0,
+          "depth": 1,
+          "thread": "M6"
+        },
+        "displayRole": "dimension-guide"
+      },
+      {
+        "name": "Exit aperture guide",
+        "type": "ring",
+        "params": {
+          "outerRadius": 18.4,
+          "innerRadius": 18.0,
+          "z": -0.4,
+          "depth": 0.4
+        },
+        "status": "dimensioned",
+        "dimensionRefs": [
+          "exitDiameter"
+        ],
+        "sourceIds": [
+          "product"
+        ],
+        "notes": "Published/drawing exit diameter only. The 0.4 mm line width/depth is a display glyph, not throat wall thickness or a front projection. Internal acoustic passage is unspecified.",
+        "displayRole": "dimension-guide"
+      }
+    ]
+  },
+  "unresolved": [
+    "Complete outer profile, front shoulder and rear cover geometry are not established by the mounting table.",
+    "Terminal projection, cable bend allowance and service/fastener access remain unverified.",
+    "Full CAD axial span is 62.6754 mm versus 60 mm nominal drawing depth. This preview now covers the full CAD span, but assembly registration to the mounting plane must still be verified.",
+    "Manufacturing tolerances remain unverified."
+  ],
+  "notes": [
+    "Manufacturer table dimensions support a screening envelope, not a detailed CAD reconstruction.",
+    "Internal acoustic passages, phase plug and diaphragms are intentionally absent. Do not infer acoustic volume from this mesh.",
+    "Official STEP solids are preserved alongside this record; preview uses their conservative bounding cylinder with an explicitly provisional datum.",
+    "2026-09-29 independent STEP header audit corrected native length unit to INCH (25.4 mm conversion) and separated ZIP/member hashes. Existing millimetre dimensions retain their prior normalized-CAD provenance; no new exact-CAD viewport claim."
+  ],
+  "audit": {
+    "date": "2026-09-29",
+    "scope": "Existing-catalogue geometry, units, source identities and mounting datum audit",
+    "freshlyReviewedDrawingSourceIds": [
+      "drawing"
+    ],
+    "manufacturerCADModel": false,
+    "fitCheckStatus": "screening-only",
+    "reason": "Manufacturing tolerances, terminal/wire/tool clearance and some external profiles are incomplete. Drawing dimensions and conservative bounds are not exact CAD."
+  }
+}

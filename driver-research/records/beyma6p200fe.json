@@ -1,0 +1,298 @@
+{
+  "schemaVersion": 1,
+  "id": "beyma6p200fe",
+  "name": "Beyma 6P200Fe",
+  "category": "cone",
+  "variant": "8 ohm",
+  "modelStatus": "dimensioned-reconstruction",
+  "sources": [
+    {
+      "id": "product",
+      "url": "https://www.beyma.com/en/products/c/low-mid-frequency/106P2FE8/altavoz-6p200fe-8-oh/",
+      "kind": "product-page",
+      "inspection": "text-only",
+      "sha256": "a3686255bd28ca0780b9fa19ba9839fd91ab7f35573d4351cf7058d568815b73",
+      "accessDate": "2026-09-29",
+      "redistribution": "Reference retained locally; public redistribution rights not established.",
+      "localArchivePath": "manufacturer-sources/beyma/6P200Fe/altavoz-6p200fe-8-oh.html",
+      "downloadStatus": "downloaded"
+    },
+    {
+      "id": "drawing",
+      "url": "https://www.beyma.com/speakers/Fichas_Tecnicas/beyma-speakers-data-sheet-low-mid-frequency-6P200Fe.pdf",
+      "kind": "pdf",
+      "sha256": "0049d43b4e54c8c04ffe5cb694847a65b10fb01b4c3ab7edc19d1c70a6c7d217",
+      "inspection": "drawing-reviewed",
+      "accessDate": "2026-09-29",
+      "redistribution": "Reference retained locally; public redistribution rights not established.",
+      "inspectionDate": "2026-09-29",
+      "localArchivePath": "manufacturer-sources/beyma/6P200Fe/beyma-speakers-data-sheet-low-mid-frequency-6P200Fe.pdf",
+      "downloadStatus": "downloaded",
+      "localRenderedPaths": [
+        "manufacturer-sources/beyma/6P200Fe/previews/beyma-speakers-data-sheet-low-mid-frequency-6P200Fe-1.png",
+        "manufacturer-sources/beyma/6P200Fe/previews/beyma-speakers-data-sheet-low-mid-frequency-6P200Fe-2.png"
+      ]
+    }
+  ],
+  "dimensions": {
+    "overallDiameter": {
+      "value": 187.5,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Mechanical drawing / mounting table, page 2",
+      "notes": ""
+    },
+    "overallWidth": {
+      "value": null,
+      "unit": "mm",
+      "status": "unresolved",
+      "sourceId": null,
+      "location": "Mechanical drawing, page 1",
+      "notes": ""
+    },
+    "overallHeight": {
+      "value": null,
+      "unit": "mm",
+      "status": "unresolved",
+      "sourceId": null,
+      "location": "Mechanical drawing, page 1",
+      "notes": ""
+    },
+    "overallDiagonal": {
+      "value": null,
+      "unit": "mm",
+      "status": "unresolved",
+      "sourceId": null,
+      "location": "Mechanical drawing, page 1",
+      "notes": ""
+    },
+    "depth": {
+      "value": 87,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Mechanical drawing / mounting table, page 2",
+      "notes": ""
+    },
+    "rearDepth": {
+      "value": 75.5,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Mechanical drawing / mounting table, page 2",
+      "notes": ""
+    },
+    "cutoutDiameter": {
+      "value": 145.3,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Mechanical drawing / mounting table, page 2",
+      "notes": ""
+    },
+    "flangeThickness": {
+      "value": 11.5,
+      "unit": "mm",
+      "status": "derived",
+      "sourceId": "drawing",
+      "location": "Side view, page 2",
+      "notes": "Total depth minus mounting-face-to-rear dimension."
+    },
+    "boltCircleDiameter": {
+      "value": 172,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Mechanical drawing / mounting table, page 2",
+      "notes": ""
+    },
+    "boltCount": {
+      "value": 4,
+      "unit": "count",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Front view, page 2",
+      "notes": ""
+    },
+    "boltHoleDiameter": {
+      "value": 5.3,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Mechanical drawing / mounting table, page 2",
+      "notes": ""
+    },
+    "boltThread": {
+      "value": null,
+      "unit": "thread",
+      "status": "unresolved",
+      "sourceId": null,
+      "location": "Mechanical drawing, page 1",
+      "notes": ""
+    },
+    "magnetDiameter": {
+      "value": null,
+      "unit": "mm",
+      "status": "unresolved",
+      "sourceId": null,
+      "location": "Mechanical drawing, page 1",
+      "notes": ""
+    },
+    "magnetDepth": {
+      "value": null,
+      "unit": "mm",
+      "status": "unresolved",
+      "sourceId": null,
+      "location": "Mechanical drawing, page 1",
+      "notes": ""
+    },
+    "terminalClearance": {
+      "value": null,
+      "unit": "mm",
+      "status": "unresolved",
+      "sourceId": null,
+      "location": "Mechanical drawing, page 1",
+      "notes": ""
+    },
+    "boltStartAngle": {
+      "value": 0,
+      "unit": "deg",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Front view, page 2",
+      "notes": ""
+    },
+    "productPageDepth": {
+      "value": 87.5,
+      "unit": "mm",
+      "status": "published",
+      "sourceId": "product",
+      "location": "Construction details / depth",
+      "notes": "Conflicts with dimensioned PDF; unresolved revision difference."
+    },
+    "packagingEnvelopeDepth": {
+      "value": 87.5,
+      "unit": "mm",
+      "status": "conservative-envelope",
+      "sourceId": "product",
+      "location": "Maximum of same-model published total depths; compare productPageDepth with dimensioned depth",
+      "notes": "Drawing total 87 mm retained separately. Use larger published 87.5 mm for packaging while revision conflict remains unresolved. Not an exact dimension or manufacturing tolerance."
+    }
+  },
+  "geometry": {
+    "units": "mm",
+    "datum": "mounting face z=0; positive z rearward. For front mounting, mounting face is rear underside of flange/gasket stack; overall front is at negative flangeThickness.",
+    "parts": [
+      {
+        "name": "Flange maximum circular envelope",
+        "type": "cylinder",
+        "params": {
+          "radius": 93.75,
+          "z": -11.5,
+          "depth": 11.5,
+          "center": [
+            0,
+            0
+          ]
+        },
+        "dimensionRefs": [
+          "overallDiameter",
+          "flangeThickness"
+        ],
+        "sourceIds": [
+          "drawing"
+        ],
+        "status": "envelope",
+        "notes": "Bounding envelope only. Noncircular frame lobes/edges are deliberately not asserted by this cylinder."
+      },
+      {
+        "name": "Rear basket clearance envelope",
+        "type": "cylinder",
+        "params": {
+          "radius": 72.65,
+          "z": 0,
+          "depth": 75.5,
+          "center": [
+            0,
+            0
+          ]
+        },
+        "dimensionRefs": [
+          "cutoutDiameter",
+          "rearDepth"
+        ],
+        "sourceIds": [
+          "drawing"
+        ],
+        "status": "envelope",
+        "notes": "Cylindrical rear envelope, not a solid basket. A cutout-derived envelope is provisional; terminals and local protrusions may extend beyond it."
+      },
+      {
+        "name": "Mounting hole guides",
+        "type": "bolt-pattern",
+        "params": {
+          "count": 4,
+          "circleDiameter": 172,
+          "startAngleDeg": 0,
+          "holeDiameter": 5.3,
+          "z": -11.5,
+          "depth": 11.5
+        },
+        "dimensionRefs": [
+          "boltCircleDiameter",
+          "boltCount",
+          "boltHoleDiameter"
+        ],
+        "sourceIds": [
+          "drawing"
+        ],
+        "status": "dimensioned",
+        "notes": "Guides only; not subtracted from clearance-envelope meshes. Guide depth is display-only when flange thickness unknown.",
+        "displayRole": "dimension-guide"
+      },
+      {
+        "name": "Revision-conflict total-depth clearance envelope",
+        "type": "cylinder",
+        "params": {
+          "radius": 93.75,
+          "z": -11.5,
+          "depth": 87.5
+        },
+        "dimensionRefs": [
+          "packagingEnvelopeDepth",
+          "flangeThickness",
+          "overallDiameter"
+        ],
+        "sourceIds": [
+          "product",
+          "drawing"
+        ],
+        "status": "envelope",
+        "displayRole": "clearance-only",
+        "notes": "Conservative full-frame packaging cylinder. Drawing-derived body remains unchanged; this bound covers the larger published total depth without asserting undocumented contours."
+      }
+    ]
+  },
+  "unresolved": [
+    "Current page depth 87.5 mm conflicts with PDF 87 mm. Model follows drawing, pending manufacturer revision confirmation.",
+    "Terminal, wire bend and tool-access clearances are not dimensioned; allow additional clearance.",
+    "Cone, dustcap and basket-window contours are not mechanically reconstructed. No internal acoustic volume may be inferred from these envelope meshes.",
+    "Manufacturer manufacturing tolerances are not published in the inspected sources."
+  ],
+  "notes": [
+    "Inspected manufacturer PDF revision 11/20. Frame has four mounting lobes; not a plain circular flange.",
+    "Frame is noncircular. overallDiameter, where populated, denotes its maximum circular bounding envelope; width/height/diagonal are separate dimensions. The flange cylinder does not reproduce the outline.",
+    "Packaging uses the larger 87.5 mm published total-depth envelope; dimensioned drawing depth 87 mm and its rear mounting datum remain unchanged."
+  ],
+  "audit": {
+    "date": "2026-09-29",
+    "scope": "Existing-catalogue geometry, units, source identities and mounting datum audit",
+    "freshlyReviewedDrawingSourceIds": [
+      "drawing"
+    ],
+    "manufacturerCADModel": false,
+    "fitCheckStatus": "screening-only",
+    "reason": "Manufacturing tolerances, terminal/wire/tool clearance and some external profiles are incomplete. Drawing dimensions and conservative bounds are not exact CAD."
+  }
+}

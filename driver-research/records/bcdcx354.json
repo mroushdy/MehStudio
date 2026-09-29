@@ -1,0 +1,221 @@
+{
+  "schemaVersion": 1,
+  "id": "bcdcx354",
+  "name": "B&C DCX354",
+  "category": "coaxial-compression",
+  "variant": "8 ohm",
+  "modelStatus": "envelope-only",
+  "sources": [
+    {
+      "id": "product",
+      "url": "https://www.bcspeakers.com/en/products/coaxial_hf/1.4/8/DCX354/",
+      "kind": "product-page",
+      "inspection": "text-only",
+      "sha256": "1e5eb89f75cbc82cf7643908d852881943c530ec3481af6312a96816cd0f65f1",
+      "notes": "Manufacturer page extracted by web reader on 2026-09-28. This local file is a text snapshot, not original HTML.",
+      "accessDate": "2026-09-29",
+      "redistribution": "Reference retained locally; public redistribution rights not established.",
+      "localArchivePath": "manufacturer-sources/b-and-c/DCX354/DCX354.html",
+      "downloadStatus": "downloaded"
+    },
+    {
+      "id": "drawing",
+      "url": "https://bcspeakers.com/uploads/products/dataSheetDrawings/2022_10_12_10_00_56_933_DCX354_drawing_complete.png",
+      "kind": "drawing-image",
+      "sha256": "fe0a6a345a9f59a4a14b38b9be7fe4ae51ad5c22ab2f30d89e8e4ff1307dea68",
+      "inspection": "drawing-reviewed",
+      "notes": "Front, side and rear views inspected. Axial total annotation 75 differs from product table depth 73. Drawing title/revision not visible.",
+      "accessDate": "2026-09-29",
+      "redistribution": "Reference retained locally; public redistribution rights not established.",
+      "inspectionDate": "2026-09-29",
+      "localArchivePath": "manufacturer-sources/b-and-c/DCX354/2022_10_12_10_00_56_933_DCX354_drawing_complete.png",
+      "downloadStatus": "downloaded",
+      "localRenderedPaths": [
+        "manufacturer-sources/b-and-c/DCX354/2022_10_12_10_00_56_933_DCX354_drawing_complete.png"
+      ]
+    }
+  ],
+  "dimensions": {
+    "overallDiameter": {
+      "value": 130,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Front/rear drawing dimension"
+    },
+    "depth": {
+      "value": 75,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Manufacturer mechanical drawing, reviewed 2026-09-29",
+      "notes": ""
+    },
+    "exitDiameter": {
+      "value": 36,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Front/rear drawing dimension",
+      "notes": "Published millimetre value retained; nominal inch class is not substituted."
+    },
+    "boltCircleDiameter": {
+      "value": 102,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Front/rear drawing dimension"
+    },
+    "boltCount": {
+      "value": 4,
+      "unit": "count",
+      "status": "published",
+      "sourceId": "product",
+      "location": "Mounting information / dimensional specification table"
+    },
+    "boltThread": {
+      "value": "M6",
+      "unit": "thread",
+      "status": "published",
+      "sourceId": "product",
+      "location": "Mounting information / dimensional specification table"
+    },
+    "boltHoleDiameter": {
+      "value": null,
+      "unit": "mm",
+      "status": "unresolved",
+      "sourceId": null,
+      "location": "Not established in inspected text"
+    },
+    "flangeThickness": {
+      "value": null,
+      "unit": "mm",
+      "status": "unresolved",
+      "sourceId": null,
+      "location": "Not established in inspected text"
+    },
+    "terminalClearance": {
+      "value": null,
+      "unit": "mm",
+      "status": "unresolved",
+      "sourceId": null,
+      "location": "Not established in inspected text"
+    },
+    "overallAxialSpan": {
+      "value": 75,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Side-view total axial dimension",
+      "notes": "Drawing shows 75, product table shows depth 73. Mounting-plane offset/revision unresolved; neither dimension silently discarded."
+    },
+    "productPageDepth": {
+      "value": 73,
+      "unit": "mm",
+      "status": "published",
+      "sourceId": "product",
+      "location": "Mounting information / dimensional specification table",
+      "notes": "Manufacturer table gives 73 mm; accompanying drawing total span is 75 mm. Axial datum needs confirmation."
+    },
+    "rearDepth": {
+      "value": 75,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Manufacturer mechanical drawing, reviewed 2026-09-29",
+      "notes": ""
+    }
+  },
+  "geometry": {
+    "units": "mm",
+    "datum": "mounting face z=0; positive z rearward; table-only axial datum requires drawing confirmation",
+    "parts": [
+      {
+        "name": "Nominal external screening envelope",
+        "type": "cylinder",
+        "status": "envelope",
+        "sourceIds": [
+          "drawing"
+        ],
+        "dimensionRefs": [
+          "overallDiameter",
+          "overallAxialSpan"
+        ],
+        "notes": "Bounding cylinder only; entire cross-section is NOT physically solid. No axial profile or acoustic internal volume is implied. Terminal clearance is unknown. Using 75 mm total span as provisional screening envelope; actual mounting-face axial offset remains unverified.",
+        "params": {
+          "radius": 65.0,
+          "z": 0,
+          "depth": 75,
+          "center": [
+            0,
+            0
+          ]
+        }
+      },
+      {
+        "name": "Mounting thread axes (display guides)",
+        "type": "bolt-pattern",
+        "status": "approximate",
+        "sourceIds": [
+          "product"
+        ],
+        "dimensionRefs": [
+          "boltCircleDiameter",
+          "boltCount",
+          "boltThread"
+        ],
+        "notes": "Four front mounting threads are at 45/135/225/315 degrees in the drawing. Guides remain approximate M6 glyphs with arbitrary display depth; they do not subtract holes.",
+        "params": {
+          "count": 4,
+          "circleDiameter": 102,
+          "startAngleDeg": 45,
+          "holeDiameter": 6,
+          "z": 0,
+          "depth": 1,
+          "thread": "M6"
+        },
+        "displayRole": "dimension-guide"
+      },
+      {
+        "name": "Exit aperture guide",
+        "type": "ring",
+        "params": {
+          "outerRadius": 18.4,
+          "innerRadius": 18.0,
+          "z": -0.4,
+          "depth": 0.4
+        },
+        "status": "dimensioned",
+        "dimensionRefs": [
+          "exitDiameter"
+        ],
+        "sourceIds": [
+          "drawing"
+        ],
+        "notes": "Published/drawing exit diameter only. The 0.4 mm line width/depth is a display glyph, not throat wall thickness or a front projection. Internal acoustic passage is unspecified.",
+        "displayRole": "dimension-guide"
+      }
+    ]
+  },
+  "unresolved": [
+    "Complete outer profile, front shoulder and rear cover geometry are not established by the mounting table.",
+    "Terminal projection, cable bend allowance and service/fastener access remain unverified.",
+    "Threaded-hole depth and manufacturing tolerances require a drawing or part measurement.",
+    "Resolve product-page depth 73 mm versus dimensioned drawing total 75 mm and mounting-plane datum before manufacturing/collision certification."
+  ],
+  "notes": [
+    "Manufacturer table dimensions support a screening envelope, not a detailed CAD reconstruction.",
+    "Internal acoustic passages, phase plug and diaphragms are intentionally absent. Do not infer acoustic volume from this mesh.",
+    "Drawing total75 mm is used consistently in dimension table and mesh; older product73 mm preserved separately."
+  ],
+  "audit": {
+    "date": "2026-09-29",
+    "scope": "Existing-catalogue geometry, units, source identities and mounting datum audit",
+    "freshlyReviewedDrawingSourceIds": [
+      "drawing"
+    ],
+    "manufacturerCADModel": false,
+    "fitCheckStatus": "screening-only",
+    "reason": "Manufacturing tolerances, terminal/wire/tool clearance and some external profiles are incomplete. Drawing dimensions and conservative bounds are not exact CAD."
+  }
+}

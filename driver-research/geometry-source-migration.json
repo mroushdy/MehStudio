@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "reviewedAt": "2026-09-29",
+  "baseCommit": "acd1173f34d0d3b2d42719db489d8975344f6b32",
+  "previousGeometryScriptSHA256": "cb1b9bebd9ff0f155f9a20dd4db4d707f4ef9666cce444b8141586ce626964ec",
+  "currentGeometryScriptSHA256": "c79b805955f8037f3a9e234e80e7b3d6c76e37387223f039f46cec09fd44867e",
+  "baselineEditorSHA256": "b9f0c4e587932765e3ecd8f25aeed5ef72dbaf5d5fffb66d645a0ba436ceb859",
+  "candidateEditorSHA256": "49249165ef50f79b0c5e4e88bd55b3b2f35b12cfa598a220708258026371906f",
+  "originalNativeSnapshot": {
+    "path": "native-front-fem/geometry/editor-418b696f.html",
+    "sha256": "418b696f270e270a909142861b95b40ee6db6017bae6e38da0ae3e55e2a005e5",
+    "modified": false
+  },
+  "qualifiedPayloads": [
+    {
+      "case": "inserted",
+      "payloadSHA256": "6374c7e4b75adc26aa2b193ebd646fa9530dac2a85d0dac38b34954de9af54da",
+      "vertices": 6786,
+      "faces": 13568,
+      "volumeM3": 0.00020039189607842849,
+      "projectedAreaM2": 0.013194699581575754
+    },
+    {
+      "case": "open",
+      "payloadSHA256": "53de2d8bc173ebe61f0d6bb65c10e9a98f56bae0e829ff771b512b12256aa732",
+      "vertices": 1794,
+      "faces": 3584,
+      "volumeM3": 0.0002970280420818731,
+      "projectedAreaM2": 0.013178805988070157
+    }
+  ],
+  "method": "Independent execution of the existing native-front-fem/geometry/extract-air.cjs on both Build12 and catalogue candidate; exact vertices/faces/tags fingerprints match the preserved qualified native surfaces. Also compare normalized states, full canonical front adapter, horn, poses, front volume and insert via verify-baseline.cjs.",
+  "scope": "Current code source guard migration only. Original solver/result source provenance and frozen snapshot are retained unchanged. Same front-air surrogate is not proof of complete loudspeaker geometry, phase-plug fit, acoustic calibration, or new-driver FEM qualification.",
+  "changedEmbeddedScripts": [
+    {
+      "scriptIndex": 1,
+      "previousSHA256": "d660719ff475f9b47a3097aa889c9961a8dc8dc92dc94e6b71047d55e586b389",
+      "currentSHA256": "8e733aa4004b0661c80224f4472d67e27dbe430e0d258d1c903fba9af820d49f"
+    },
+    {
+      "scriptIndex": 2,
+      "previousSHA256": "84a24a0dc7c3440eba800cf7f9e598a530cd1a64ffad4dd4ef7f4629053d3075",
+      "currentSHA256": "9b8788647fa77d5fdf2edd64ef892b0d0bcf8c76e45441f2ae442b291dba34f8"
+    },
+    {
+      "scriptIndex": 3,
+      "previousSHA256": "c7432f20e55b1b44501ba95a3b12ff3bf3ef411a93dd371026f09270c62bbfe2",
+      "currentSHA256": "ec9bad98bb73ff43d582886f0a77f367e850aa21c89e4cc9932043d5a145a2a0"
+    },
+    {
+      "scriptIndex": 4,
+      "previousSHA256": "cb1b9bebd9ff0f155f9a20dd4db4d707f4ef9666cce444b8141586ce626964ec",
+      "currentSHA256": "c79b805955f8037f3a9e234e80e7b3d6c76e37387223f039f46cec09fd44867e"
+    },
+    {
+      "scriptIndex": 5,
+      "previousSHA256": "e005bf1ae8bcc65d42bdc0e2c8860661550d33a63e0acddc8de7bf4b3c162e42",
+      "currentSHA256": "c0c2c2206c751c51bb47661433f817e072ecdc2e84298ffc3210c6221b24e511"
+    },
+    {
+      "scriptIndex": 8,
+      "previousSHA256": "26b805b91797c0f834d1170f9ba54d2d0d1a6e19b9f3dcdda743512da8c1a408",
+      "currentSHA256": "3a1d4e097e2c104a5c9aa225af677d39506bf6da4bfc0ea81b25ec07f1f5e126"
+    }
+  ]
+}

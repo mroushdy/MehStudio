@@ -1,0 +1,168 @@
+{
+  "schemaVersion": 1,
+  "id": "18soundnd3st",
+  "name": "18Sound ND3ST",
+  "category": "hf-compression",
+  "variant": "16 ohm",
+  "modelStatus": "envelope-only",
+  "sources": [
+    {
+      "id": "product",
+      "url": "https://www.eighteensound.it/en/products/hf-driver/1-4/16/nd3st",
+      "kind": "product-page",
+      "inspection": "text-only",
+      "sha256": "d55687bf0a4afdf7e1bde1a491ac99db33683a14feb7922d6ace1c896ef599c6",
+      "notes": "Manufacturer page extracted by web reader on 2026-09-28. This local file is a text snapshot, not original HTML.",
+      "accessDate": "2026-09-29",
+      "redistribution": "Reference retained locally; public redistribution rights not established.",
+      "localArchivePath": "manufacturer-sources/18sound/ND3ST/nd3st.html",
+      "downloadStatus": "downloaded"
+    },
+    {
+      "url": "https://www.eighteensound.it/system/dragonfly/production/2021/03/24/14_47_08_761_10_35_47_449_oqLSXI2A.jpg",
+      "kind": "product-photo",
+      "id": "drawing-20260929",
+      "accessDate": "2026-09-29",
+      "redistribution": "Reference retained locally; public redistribution rights not established.",
+      "inspection": "photo-reviewed",
+      "localArchivePath": "manufacturer-sources/18sound/ND3ST/14_47_08_761_10_35_47_449_oqLSXI2A.jpg",
+      "sha256": "ce55858dc2fd03c2cbb46783c0a1c4c5aae57334e3ee78d6eb2d89fa70519b76",
+      "downloadStatus": "downloaded",
+      "localRenderedPaths": [
+        "manufacturer-sources/18sound/ND3ST/14_47_08_761_10_35_47_449_oqLSXI2A.jpg"
+      ]
+    }
+  ],
+  "dimensions": {
+    "overallDiameter": {
+      "value": 120,
+      "unit": "mm",
+      "status": "published",
+      "sourceId": "product",
+      "location": "Mounting information / dimensional specification table"
+    },
+    "depth": {
+      "value": 53,
+      "unit": "mm",
+      "status": "published",
+      "sourceId": "product",
+      "location": "Mounting information / dimensional specification table",
+      "notes": "Axial package depth; assumed mounting-face datum for screening envelope only. Axial shoulders and terminal projection are not resolved."
+    },
+    "exitDiameter": {
+      "value": 36,
+      "unit": "mm",
+      "status": "published",
+      "sourceId": "product",
+      "location": "Mounting information / dimensional specification table",
+      "notes": "Published millimetre value retained; nominal inch class is not substituted."
+    },
+    "boltCircleDiameter": {
+      "value": null,
+      "unit": "mm",
+      "status": "unresolved",
+      "sourceId": null,
+      "location": "Not established in inspected text"
+    },
+    "boltCount": {
+      "value": null,
+      "unit": "count",
+      "status": "unresolved",
+      "sourceId": null,
+      "location": "Not established in inspected text"
+    },
+    "boltThread": {
+      "value": null,
+      "unit": "thread",
+      "status": "unresolved",
+      "sourceId": null,
+      "location": "Not established in inspected text"
+    },
+    "boltHoleDiameter": {
+      "value": null,
+      "unit": "mm",
+      "status": "unresolved",
+      "sourceId": null,
+      "location": "Not established in inspected text"
+    },
+    "flangeThickness": {
+      "value": null,
+      "unit": "mm",
+      "status": "unresolved",
+      "sourceId": null,
+      "location": "Not established in inspected text"
+    },
+    "terminalClearance": {
+      "value": null,
+      "unit": "mm",
+      "status": "unresolved",
+      "sourceId": null,
+      "location": "Not established in inspected text"
+    }
+  },
+  "geometry": {
+    "units": "mm",
+    "datum": "mounting face z=0; positive z rearward; table-only axial datum requires drawing confirmation",
+    "parts": [
+      {
+        "name": "Nominal external screening envelope",
+        "type": "cylinder",
+        "status": "envelope",
+        "sourceIds": [
+          "product"
+        ],
+        "dimensionRefs": [
+          "overallDiameter",
+          "depth"
+        ],
+        "notes": "Bounding cylinder only; entire cross-section is NOT physically solid. No axial profile or acoustic internal volume is implied. Terminal clearance is unknown.",
+        "params": {
+          "radius": 60.0,
+          "z": 0,
+          "depth": 53,
+          "center": [
+            0,
+            0
+          ]
+        }
+      },
+      {
+        "name": "Exit aperture guide",
+        "type": "ring",
+        "params": {
+          "outerRadius": 18.4,
+          "innerRadius": 18.0,
+          "z": -0.4,
+          "depth": 0.4
+        },
+        "status": "dimensioned",
+        "dimensionRefs": [
+          "exitDiameter"
+        ],
+        "sourceIds": [
+          "product"
+        ],
+        "notes": "Published/drawing exit diameter only. The 0.4 mm line width/depth is a display glyph, not throat wall thickness or a front projection. Internal acoustic passage is unspecified.",
+        "displayRole": "dimension-guide"
+      }
+    ]
+  },
+  "unresolved": [
+    "Complete outer profile, front shoulder and rear cover geometry are not established by the mounting table.",
+    "Terminal projection, cable bend allowance and service/fastener access remain unverified.",
+    "Threaded-hole depth and manufacturing tolerances require a drawing or part measurement.",
+    "Bolt-circle diameter remains unresolved; no mounting pattern is drawn."
+  ],
+  "notes": [
+    "Manufacturer table dimensions support a screening envelope, not a detailed CAD reconstruction.",
+    "Internal acoustic passages, phase plug and diaphragms are intentionally absent. Do not infer acoustic volume from this mesh."
+  ],
+  "audit": {
+    "date": "2026-09-29",
+    "scope": "Existing-catalogue geometry, units, source identities and mounting datum audit",
+    "freshlyReviewedDrawingSourceIds": [],
+    "manufacturerCADModel": false,
+    "fitCheckStatus": "screening-only",
+    "reason": "Manufacturing tolerances, terminal/wire/tool clearance and some external profiles are incomplete. Drawing dimensions and conservative bounds are not exact CAD."
+  }
+}

@@ -1,0 +1,232 @@
+{
+  "schemaVersion": 1,
+  "id": "18soundnsd4015n",
+  "name": "18Sound NSD4015N",
+  "category": "hf-compression",
+  "variant": "8 ohm",
+  "modelStatus": "envelope-only",
+  "sources": [
+    {
+      "id": "product",
+      "url": "https://www.eighteensound.it/en/products/hf-driver/1-5/8/NSD4015N",
+      "kind": "product-page",
+      "inspection": "text-only",
+      "sha256": "50981a6e2b9d873dcdbaf5f6d51634a315ee07eef10ee0c6aec443bf8b63f042",
+      "notes": "Manufacturer page extracted by web reader on 2026-09-28. This local file is a text snapshot, not original HTML.",
+      "accessDate": "2026-09-29",
+      "redistribution": "Reference retained locally; public redistribution rights not established.",
+      "localArchivePath": "manufacturer-sources/18sound/NSD4015N/NSD4015N.html",
+      "downloadStatus": "downloaded"
+    },
+    {
+      "id": "drawing",
+      "url": "https://www.eighteensound.it/system/dragonfly/production/2021/01/17/14_41_11_627_ND4015_corretto.jpg",
+      "kind": "drawing-image",
+      "inspection": "drawing-reviewed",
+      "sha256": "bd2e617584edc032681468e78691d2cb7f611fe4ad5492d2885aefac030e145e",
+      "accessDate": "2026-09-29",
+      "redistribution": "Reference retained locally; public redistribution rights not established.",
+      "inspectionDate": "2026-09-29",
+      "localArchivePath": "manufacturer-sources/18sound/NSD4015N/14_41_11_627_ND4015_corretto.jpg",
+      "downloadStatus": "downloaded",
+      "localRenderedPaths": [
+        "manufacturer-sources/18sound/NSD4015N/14_41_11_627_ND4015_corretto.jpg"
+      ]
+    }
+  ],
+  "dimensions": {
+    "overallDiameter": {
+      "value": 150,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Front and side maximum body diameter"
+    },
+    "depth": {
+      "value": 57,
+      "unit": "mm",
+      "status": "published",
+      "sourceId": "product",
+      "location": "Mounting information / dimensional specification table",
+      "notes": "Axial package depth; assumed mounting-face datum for screening envelope only. Axial shoulders and terminal projection are not resolved."
+    },
+    "exitDiameter": {
+      "value": 40,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Front view throat diameter"
+    },
+    "boltCircleDiameter": {
+      "value": 102,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Inner 4-hole M6 circle"
+    },
+    "boltCount": {
+      "value": 8,
+      "unit": "count",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Front-view 8 holes for M6 screws"
+    },
+    "boltThread": {
+      "value": "M6",
+      "unit": "thread",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Front-view note"
+    },
+    "boltHoleDiameter": {
+      "value": null,
+      "unit": "mm",
+      "status": "unresolved",
+      "sourceId": null,
+      "location": "Not established in inspected text"
+    },
+    "flangeThickness": {
+      "value": null,
+      "unit": "mm",
+      "status": "unresolved",
+      "sourceId": null,
+      "location": "Not established in inspected text"
+    },
+    "terminalClearance": {
+      "value": null,
+      "unit": "mm",
+      "status": "unresolved",
+      "sourceId": null,
+      "location": "Not established in inspected text"
+    },
+    "drawingAxialSpan": {
+      "value": 56,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Side-view depth",
+      "notes": "Product table gives 57 mm. Drawing file named ND4015_corretto is linked by exact NSD4015N page; shared-family/revision identity remains to be confirmed."
+    },
+    "alternateBoltCircleDiameter": {
+      "value": 114.7,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Outer 4-hole M6 circle"
+    }
+  },
+  "geometry": {
+    "units": "mm",
+    "datum": "mounting face z=0; positive z rearward; table-only axial datum requires drawing confirmation",
+    "parts": [
+      {
+        "name": "Nominal external screening envelope",
+        "type": "cylinder",
+        "status": "envelope",
+        "sourceIds": [
+          "product"
+        ],
+        "dimensionRefs": [
+          "overallDiameter",
+          "depth"
+        ],
+        "notes": "Bounding cylinder only; entire cross-section is NOT physically solid. No axial profile or acoustic internal volume is implied. Terminal clearance is unknown.",
+        "params": {
+          "radius": 75.0,
+          "z": 0,
+          "depth": 57,
+          "center": [
+            0,
+            0
+          ]
+        }
+      },
+      {
+        "name": "M6 mounting guides, 102 mm PCD",
+        "type": "bolt-pattern",
+        "status": "approximate",
+        "sourceIds": [
+          "drawing"
+        ],
+        "dimensionRefs": [
+          "boltCircleDiameter",
+          "boltThread"
+        ],
+        "notes": "Two four-hole patterns; approximate 6 mm glyphs and 1 mm display depth are not machined threads.",
+        "params": {
+          "count": 4,
+          "circleDiameter": 102,
+          "startAngleDeg": 45,
+          "holeDiameter": 6,
+          "z": 0,
+          "depth": 1,
+          "thread": "M6"
+        },
+        "displayRole": "dimension-guide"
+      },
+      {
+        "name": "M6 mounting guides, 114.7 mm PCD",
+        "type": "bolt-pattern",
+        "status": "approximate",
+        "sourceIds": [
+          "drawing"
+        ],
+        "dimensionRefs": [
+          "alternateBoltCircleDiameter",
+          "boltThread"
+        ],
+        "notes": "Two four-hole patterns; approximate 6 mm glyphs and 1 mm display depth are not machined threads.",
+        "params": {
+          "count": 4,
+          "circleDiameter": 114.7,
+          "startAngleDeg": 0,
+          "holeDiameter": 6,
+          "z": 0,
+          "depth": 1,
+          "thread": "M6"
+        },
+        "displayRole": "dimension-guide"
+      },
+      {
+        "name": "Exit aperture guide",
+        "type": "ring",
+        "params": {
+          "outerRadius": 20.4,
+          "innerRadius": 20.0,
+          "z": -0.4,
+          "depth": 0.4
+        },
+        "status": "dimensioned",
+        "dimensionRefs": [
+          "exitDiameter"
+        ],
+        "sourceIds": [
+          "drawing"
+        ],
+        "notes": "Published/drawing exit diameter only. The 0.4 mm line width/depth is a display glyph, not throat wall thickness or a front projection. Internal acoustic passage is unspecified.",
+        "displayRole": "dimension-guide"
+      }
+    ]
+  },
+  "unresolved": [
+    "Complete outer profile, front shoulder and rear cover geometry are not established by the mounting table.",
+    "Terminal projection, cable bend allowance and service/fastener access remain unverified.",
+    "Threaded-hole depth and manufacturing tolerances require a drawing or part measurement.",
+    "Product depth 57 mm versus linked drawing depth 56 mm. Retain 57 mm conservative envelope pending exact revision. Drawing title is absent; official image filename references ND4015."
+  ],
+  "notes": [
+    "Manufacturer table dimensions support a screening envelope, not a detailed CAD reconstruction.",
+    "Internal acoustic passages, phase plug and diaphragms are intentionally absent. Do not infer acoustic volume from this mesh.",
+    "Drawing shows two 4-hole bolt circles, one rotated 45 degrees. Terminal projection still requires separate clearance."
+  ],
+  "audit": {
+    "date": "2026-09-29",
+    "scope": "Existing-catalogue geometry, units, source identities and mounting datum audit",
+    "freshlyReviewedDrawingSourceIds": [
+      "drawing"
+    ],
+    "manufacturerCADModel": false,
+    "fitCheckStatus": "screening-only",
+    "reason": "Manufacturing tolerances, terminal/wire/tool clearance and some external profiles are incomplete. Drawing dimensions and conservative bounds are not exact CAD."
+  }
+}

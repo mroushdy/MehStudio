@@ -1,0 +1,267 @@
+{
+  "schemaVersion": 1,
+  "id": "bcde1090tn",
+  "name": "B&C DE1090TN",
+  "category": "hf-compression",
+  "variant": "8 ohm",
+  "modelStatus": "dimensioned-reconstruction",
+  "sources": [
+    {
+      "id": "product",
+      "url": "https://www.bcspeakers.com/en/products/hf-driver/1-4/8/de1090tn-8",
+      "kind": "product-page",
+      "inspection": "text-only",
+      "sha256": "0db34572a13ba2641f12c27939664f528ec6fae665183f645a79dec9c8c86fc1",
+      "notes": "Manufacturer page extracted by web reader on 2026-09-28. This local file is a text snapshot, not original HTML.",
+      "accessDate": "2026-09-29",
+      "redistribution": "Reference retained locally; public redistribution rights not established.",
+      "localArchivePath": "manufacturer-sources/b-and-c/DE1090TN/de1090tn-8.html",
+      "downloadStatus": "downloaded"
+    },
+    {
+      "url": "https://bcspeakers.com/uploads/products/dataSheetDrawings/2016_07_25_15_17_21_537_DE1090TN.png",
+      "kind": "drawing-image",
+      "id": "drawing-20260929",
+      "accessDate": "2026-09-29",
+      "redistribution": "Reference retained locally; public redistribution rights not established.",
+      "inspection": "drawing-reviewed",
+      "inspectionDate": "2026-09-29",
+      "localArchivePath": "manufacturer-sources/b-and-c/DE1090TN/2016_07_25_15_17_21_537_DE1090TN.png",
+      "sha256": "c26a9abba197904805acc9cc2ae65d8627d9a4e2f6492dd701f4b84e93594c54",
+      "downloadStatus": "downloaded",
+      "localRenderedPaths": [
+        "manufacturer-sources/b-and-c/DE1090TN/2016_07_25_15_17_21_537_DE1090TN.png"
+      ]
+    }
+  ],
+  "dimensions": {
+    "overallDiameter": {
+      "value": 127,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing-20260929",
+      "location": "Manufacturer mechanical drawing, reviewed 2026-09-29",
+      "notes": ""
+    },
+    "depth": {
+      "value": 54,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing-20260929",
+      "location": "Manufacturer mechanical drawing, reviewed 2026-09-29",
+      "notes": ""
+    },
+    "exitDiameter": {
+      "value": 36,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing-20260929",
+      "location": "Manufacturer mechanical drawing, reviewed 2026-09-29",
+      "notes": ""
+    },
+    "boltCircleDiameter": {
+      "value": 102,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing-20260929",
+      "location": "Manufacturer mechanical drawing, reviewed 2026-09-29",
+      "notes": ""
+    },
+    "boltCount": {
+      "value": 4,
+      "unit": "count",
+      "status": "drawing-verified",
+      "sourceId": "drawing-20260929",
+      "location": "Manufacturer mechanical drawing, reviewed 2026-09-29",
+      "notes": ""
+    },
+    "boltThread": {
+      "value": "M6",
+      "unit": "thread",
+      "status": "drawing-verified",
+      "sourceId": "drawing-20260929",
+      "location": "Manufacturer mechanical drawing, reviewed 2026-09-29",
+      "notes": ""
+    },
+    "boltHoleDiameter": {
+      "value": null,
+      "unit": "mm",
+      "status": "unresolved",
+      "sourceId": null,
+      "location": "Not established in inspected text"
+    },
+    "flangeThickness": {
+      "value": null,
+      "unit": "mm",
+      "status": "unresolved",
+      "sourceId": null,
+      "location": "Not established in inspected text"
+    },
+    "terminalClearance": {
+      "value": null,
+      "unit": "mm",
+      "status": "unresolved",
+      "sourceId": null,
+      "location": "Not established in inspected text"
+    },
+    "boltStartAngle": {
+      "value": 0,
+      "unit": "deg",
+      "status": "drawing-verified",
+      "sourceId": "drawing-20260929",
+      "location": "Manufacturer mechanical drawing, reviewed 2026-09-29",
+      "notes": ""
+    }
+  },
+  "geometry": {
+    "units": "mm",
+    "datum": "mounting face z=0; positive z rearward; table-only axial datum requires drawing confirmation",
+    "parts": [
+      {
+        "name": "Nominal external screening envelope",
+        "type": "cylinder",
+        "status": "envelope",
+        "sourceIds": [
+          "product",
+          "drawing-20260929"
+        ],
+        "dimensionRefs": [
+          "overallDiameter",
+          "depth"
+        ],
+        "notes": "Bounding cylinder only; entire cross-section is NOT physically solid. No axial profile or acoustic internal volume is implied. Terminal clearance is unknown.",
+        "params": {
+          "radius": 63.5,
+          "z": 0,
+          "depth": 54,
+          "center": [
+            0,
+            0
+          ]
+        },
+        "displayRole": "clearance-only"
+      },
+      {
+        "name": "Mounting thread axes (display guides)",
+        "type": "bolt-pattern",
+        "status": "dimensioned",
+        "sourceIds": [
+          "drawing-20260929"
+        ],
+        "dimensionRefs": [
+          "boltCircleDiameter",
+          "boltCount",
+          "boltThread"
+        ],
+        "notes": "Thread axes shown at drawing orientation. M6 glyph is nominal thread diameter, not drilled clearance/minor diameter; depth is display-only unless separately dimensioned.",
+        "params": {
+          "count": 4,
+          "circleDiameter": 102,
+          "startAngleDeg": 0,
+          "holeDiameter": 6,
+          "z": 0,
+          "depth": 1,
+          "thread": "M6"
+        },
+        "displayRole": "dimension-guide"
+      },
+      {
+        "name": "External body appearance from drawing",
+        "type": "lathe",
+        "params": {
+          "profile": [
+            [
+              18.0,
+              0
+            ],
+            [
+              57,
+              0
+            ],
+            [
+              62,
+              9
+            ],
+            [
+              63.5,
+              10
+            ],
+            [
+              63.5,
+              31
+            ],
+            [
+              55,
+              40
+            ],
+            [
+              28,
+              54
+            ],
+            [
+              0,
+              54
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              18.0,
+              2
+            ]
+          ],
+          "closed": true
+        },
+        "status": "approximate",
+        "dimensionRefs": [
+          "overallDiameter",
+          "depth",
+          "exitDiameter"
+        ],
+        "sourceIds": [
+          "drawing-20260929"
+        ],
+        "notes": "Overall extents follow sourced dimensions; intermediate shoulders and fin envelope are manually scaled from this model drawing. No cooling slots, true internal throat, phase plug or cavity volume is claimed."
+      },
+      {
+        "name": "Exit aperture guide",
+        "type": "ring",
+        "params": {
+          "outerRadius": 18.4,
+          "innerRadius": 18.0,
+          "z": -0.4,
+          "depth": 0.4
+        },
+        "status": "dimensioned",
+        "dimensionRefs": [
+          "exitDiameter"
+        ],
+        "sourceIds": [
+          "drawing-20260929"
+        ],
+        "notes": "Published/drawing exit diameter only. The 0.4 mm line width/depth is a display glyph, not throat wall thickness or a front projection. Internal acoustic passage is unspecified.",
+        "displayRole": "dimension-guide"
+      }
+    ]
+  },
+  "unresolved": [
+    "Complete outer profile, front shoulder and rear cover geometry are not established by the mounting table.",
+    "Terminal projection, cable bend allowance and service/fastener access remain unverified.",
+    "Threaded-hole depth and manufacturing tolerances require a drawing or part measurement."
+  ],
+  "notes": [
+    "Manufacturer table dimensions support a screening envelope, not a detailed CAD reconstruction.",
+    "Internal acoustic passages, phase plug and diaphragms are intentionally absent. Do not infer acoustic volume from this mesh."
+  ],
+  "audit": {
+    "date": "2026-09-29",
+    "scope": "Existing-catalogue geometry, units, source identities and mounting datum audit",
+    "freshlyReviewedDrawingSourceIds": [
+      "drawing-20260929"
+    ],
+    "manufacturerCADModel": false,
+    "fitCheckStatus": "screening-only",
+    "reason": "Manufacturing tolerances, terminal/wire/tool clearance and some external profiles are incomplete. Drawing dimensions and conservative bounds are not exact CAD."
+  }
+}

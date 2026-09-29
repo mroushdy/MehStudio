@@ -1,0 +1,210 @@
+{
+  "schemaVersion": 1,
+  "id": "celestiontf0615",
+  "name": "Celestion TF0615",
+  "category": "cone",
+  "variant": "8 ohm",
+  "modelStatus": "envelope-only",
+  "sources": [
+    {
+      "id": "product",
+      "url": "https://celestion.com/product/tf0615/",
+      "kind": "product-page",
+      "inspection": "text-only",
+      "notes": "Official page retrieved through web tool; direct HTTP retrieval may be unavailable.",
+      "accessDate": "2026-09-29",
+      "redistribution": "Reference retained locally; public redistribution rights not established.",
+      "downloadStatus": "failed",
+      "downloadError": "HTTP Error 403: Forbidden"
+    }
+  ],
+  "dimensions": {
+    "overallDiameter": {
+      "value": 178,
+      "unit": "mm",
+      "status": "published",
+      "sourceId": "product",
+      "location": "Mounting information table",
+      "notes": ""
+    },
+    "overallWidth": {
+      "value": null,
+      "unit": "mm",
+      "status": "unresolved",
+      "sourceId": null,
+      "location": "Mechanical drawing, page 1",
+      "notes": ""
+    },
+    "overallHeight": {
+      "value": null,
+      "unit": "mm",
+      "status": "unresolved",
+      "sourceId": null,
+      "location": "Mechanical drawing, page 1",
+      "notes": ""
+    },
+    "overallDiagonal": {
+      "value": null,
+      "unit": "mm",
+      "status": "unresolved",
+      "sourceId": null,
+      "location": "Mechanical drawing, page 1",
+      "notes": ""
+    },
+    "depth": {
+      "value": 74,
+      "unit": "mm",
+      "status": "published",
+      "sourceId": "product",
+      "location": "Mounting information table",
+      "notes": ""
+    },
+    "rearDepth": {
+      "value": null,
+      "unit": "mm",
+      "status": "unresolved",
+      "sourceId": null,
+      "location": "Mechanical drawing, page 1",
+      "notes": ""
+    },
+    "cutoutDiameter": {
+      "value": 147,
+      "unit": "mm",
+      "status": "published",
+      "sourceId": "product",
+      "location": "Mounting information table",
+      "notes": ""
+    },
+    "flangeThickness": {
+      "value": null,
+      "unit": "mm",
+      "status": "unresolved",
+      "sourceId": null,
+      "location": "Mechanical drawing, page 1",
+      "notes": ""
+    },
+    "boltCircleDiameter": {
+      "value": 168.5,
+      "unit": "mm",
+      "status": "published",
+      "sourceId": "product",
+      "location": "Mounting information table",
+      "notes": ""
+    },
+    "boltCount": {
+      "value": 4,
+      "unit": "count",
+      "status": "published",
+      "sourceId": "product",
+      "location": "Mounting information table",
+      "notes": ""
+    },
+    "boltHoleDiameter": {
+      "value": 4.3,
+      "unit": "mm",
+      "status": "published",
+      "sourceId": "product",
+      "location": "Mounting information table",
+      "notes": ""
+    },
+    "boltThread": {
+      "value": null,
+      "unit": "thread",
+      "status": "unresolved",
+      "sourceId": null,
+      "location": "Mechanical drawing, page 1",
+      "notes": ""
+    },
+    "magnetDiameter": {
+      "value": null,
+      "unit": "mm",
+      "status": "unresolved",
+      "sourceId": null,
+      "location": "Mechanical drawing, page 1",
+      "notes": ""
+    },
+    "magnetDepth": {
+      "value": null,
+      "unit": "mm",
+      "status": "unresolved",
+      "sourceId": null,
+      "location": "Mechanical drawing, page 1",
+      "notes": ""
+    },
+    "terminalClearance": {
+      "value": null,
+      "unit": "mm",
+      "status": "unresolved",
+      "sourceId": null,
+      "location": "Mechanical drawing, page 1",
+      "notes": ""
+    }
+  },
+  "geometry": {
+    "units": "mm",
+    "datum": "mounting face z=0; positive z rearward; face-to-front offset is unknown. Envelope provisionally starts at z=0; do not use it for mounting-depth fabrication.",
+    "parts": [
+      {
+        "name": "Overall maximum clearance envelope",
+        "type": "cylinder",
+        "params": {
+          "radius": 89.0,
+          "z": 0,
+          "depth": 74,
+          "center": [
+            0,
+            0
+          ]
+        },
+        "dimensionRefs": [
+          "overallDiameter",
+          "depth"
+        ],
+        "sourceIds": [
+          "product"
+        ],
+        "status": "envelope",
+        "notes": "Conservative maximum radial/full-depth box-equivalent cylinder; not the physical body. Mounting-face offset remains unresolved."
+      },
+      {
+        "name": "Mounting hole guides",
+        "type": "bolt-pattern",
+        "params": {
+          "count": 4,
+          "circleDiameter": 168.5,
+          "startAngleDeg": 0,
+          "holeDiameter": 4.3,
+          "z": 0,
+          "depth": 1
+        },
+        "dimensionRefs": [
+          "boltCircleDiameter",
+          "boltCount",
+          "boltHoleDiameter"
+        ],
+        "sourceIds": [
+          "product"
+        ],
+        "status": "envelope",
+        "notes": "Guides only; not subtracted from clearance-envelope meshes. Guide depth is display-only when flange thickness unknown. Pattern angular zero is an arbitrary display reference; terminal orientation has not been verified.",
+        "displayRole": "dimension-guide"
+      }
+    ]
+  },
+  "unresolved": [
+    "Dimensioned side drawing is not present in the inspected product table; flange, motor and precise mounting-face location remain unknown.",
+    "Terminal, wire bend and tool-access clearances are not dimensioned; allow additional clearance.",
+    "Cone, dustcap and basket-window contours are not mechanically reconstructed. No internal acoustic volume may be inferred from these envelope meshes.",
+    "Manufacturer manufacturing tolerances are not published in the inspected sources.",
+    "Flange-to-mounting-face datum offset unknown; published total depth is retained without certifying installed rear depth."
+  ],
+  "notes": [],
+  "audit": {
+    "date": "2026-09-29",
+    "scope": "Existing-catalogue geometry, units, source identities and mounting datum audit",
+    "freshlyReviewedDrawingSourceIds": [],
+    "manufacturerCADModel": false,
+    "fitCheckStatus": "screening-only",
+    "reason": "Manufacturing tolerances, terminal/wire/tool clearance and some external profiles are incomplete. Drawing dimensions and conservative bounds are not exact CAD."
+  }
+}

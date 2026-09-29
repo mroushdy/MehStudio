@@ -1,0 +1,1083 @@
+{
+  "schemaVersion": 1,
+  "id": "faitalpro5fe120",
+  "name": "FaitalPRO 5FE120",
+  "category": "cone",
+  "variant": "8 ohm",
+  "modelStatus": "dimensioned-reconstruction",
+  "sources": [
+    {
+      "id": "product",
+      "url": "https://faitalpro.com/en/products/LF_Loudspeakers/product_details/index.php?id=401010110",
+      "kind": "product-page",
+      "inspection": "text-only",
+      "sha256": "090fa5bb05e04a8b2fe2a18ed2a164886efe2d076108a485524a593f9fdada1e",
+      "accessDate": "2026-09-29",
+      "redistribution": "Reference retained locally; public redistribution rights not established.",
+      "localArchivePath": "manufacturer-sources/faitalpro/5FE120/index.php",
+      "downloadStatus": "downloaded"
+    },
+    {
+      "id": "drawing",
+      "url": "https://faitalpro.com/products/files/5FE120/8/5FE120_drawing_8.pdf",
+      "kind": "pdf",
+      "sha256": "4889da9f905f6e18ad9c9f7b4cdf92c31de8bf51c5415d47920b56b5c56a7a88",
+      "inspection": "drawing-reviewed",
+      "accessDate": "2026-09-29",
+      "redistribution": "Reference retained locally; public redistribution rights not established.",
+      "inspectionDate": "2026-09-29",
+      "localArchivePath": "manufacturer-sources/faitalpro/5FE120/5FE120_drawing_8.pdf",
+      "downloadStatus": "downloaded",
+      "localRenderedPaths": [
+        "manufacturer-sources/faitalpro/5FE120/previews/5FE120_drawing_8-1.png"
+      ]
+    }
+  ],
+  "dimensions": {
+    "overallDiameter": {
+      "value": 144.8,
+      "unit": "mm",
+      "status": "derived",
+      "sourceId": "product",
+      "location": "Manufacturer mechanical drawing, reviewed 2026-09-29",
+      "notes": "Maximum radial/corner bounding diameter from dimensioned diagonal; not across-flats width or an exact circular frame outline."
+    },
+    "overallWidth": {
+      "value": 124.5,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Mechanical drawing, page 1",
+      "notes": ""
+    },
+    "overallHeight": {
+      "value": 124.5,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Mechanical drawing, page 1",
+      "notes": ""
+    },
+    "overallDiagonal": {
+      "value": 144.8,
+      "unit": "mm",
+      "status": "published",
+      "sourceId": "product",
+      "location": "Nominal specifications; maximum span/corner diameter",
+      "notes": "Not a circular frame diameter."
+    },
+    "depth": {
+      "value": 71.5,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Mechanical drawing, page 1",
+      "notes": ""
+    },
+    "rearDepth": {
+      "value": 65.0,
+      "unit": "mm",
+      "status": "derived",
+      "sourceId": "drawing",
+      "location": "Depth minus flange/gasket stack",
+      "notes": "Coordinate conversion from total front-to-rear depth to underside mounting face."
+    },
+    "cutoutDiameter": {
+      "value": 114,
+      "unit": "mm",
+      "status": "published",
+      "sourceId": "product",
+      "location": "Nominal specifications / baffle cutout",
+      "notes": ""
+    },
+    "flangeThickness": {
+      "value": 6.5,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Mechanical drawing, page 1",
+      "notes": ""
+    },
+    "boltCircleDiameter": {
+      "value": 133,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Mechanical drawing, page 1",
+      "notes": ""
+    },
+    "boltCount": {
+      "value": 4,
+      "unit": "count",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Mechanical drawing, page 1",
+      "notes": ""
+    },
+    "boltHoleDiameter": {
+      "value": 5.3,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Mechanical drawing, page 1",
+      "notes": ""
+    },
+    "boltThread": {
+      "value": null,
+      "unit": "thread",
+      "status": "unresolved",
+      "sourceId": null,
+      "location": "Mechanical drawing, page 1",
+      "notes": ""
+    },
+    "magnetDiameter": {
+      "value": 90,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Mechanical drawing, page 1",
+      "notes": ""
+    },
+    "magnetDepth": {
+      "value": 31.5,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Mechanical drawing, page 1",
+      "notes": ""
+    },
+    "terminalClearance": {
+      "value": null,
+      "unit": "mm",
+      "status": "unresolved",
+      "sourceId": null,
+      "location": "Mechanical drawing, page 1",
+      "notes": ""
+    },
+    "basketNeckDiameter": {
+      "value": 112,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Mechanical drawing, page 1",
+      "notes": ""
+    },
+    "boltStartAngle": {
+      "value": 45,
+      "unit": "deg",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Mechanical drawing, page 1",
+      "notes": ""
+    }
+  },
+  "geometry": {
+    "units": "mm",
+    "datum": "mounting face z=0; positive z rearward. For front mounting, mounting face is rear underside of flange/gasket stack; overall front is at negative flangeThickness.",
+    "parts": [
+      {
+        "name": "Flange maximum circular envelope",
+        "type": "cylinder",
+        "params": {
+          "radius": 72.4,
+          "z": -6.5,
+          "depth": 6.5,
+          "center": [
+            0,
+            0
+          ]
+        },
+        "dimensionRefs": [
+          "overallDiagonal",
+          "flangeThickness"
+        ],
+        "sourceIds": [
+          "drawing",
+          "product"
+        ],
+        "status": "envelope",
+        "notes": "Bounding envelope only. Noncircular frame lobes/edges are deliberately not asserted by this cylinder.",
+        "displayRole": "clearance-only"
+      },
+      {
+        "name": "Rear basket clearance envelope",
+        "type": "cylinder",
+        "params": {
+          "radius": 56.0,
+          "z": 0,
+          "depth": 65.0,
+          "center": [
+            0,
+            0
+          ]
+        },
+        "dimensionRefs": [
+          "basketNeckDiameter",
+          "rearDepth"
+        ],
+        "sourceIds": [
+          "drawing"
+        ],
+        "status": "envelope",
+        "notes": "Cylindrical rear envelope, not a solid basket. A cutout-derived envelope is provisional; terminals and local protrusions may extend beyond it."
+      },
+      {
+        "name": "Motor envelope",
+        "type": "cylinder",
+        "params": {
+          "radius": 45.0,
+          "z": 33.5,
+          "depth": 31.5,
+          "center": [
+            0,
+            0
+          ]
+        },
+        "dimensionRefs": [
+          "magnetDiameter",
+          "magnetDepth",
+          "rearDepth"
+        ],
+        "sourceIds": [
+          "drawing"
+        ],
+        "status": "envelope",
+        "notes": "Dimensioned maximum motor envelope; tapers, recesses and internal magnetic parts are not represented."
+      },
+      {
+        "name": "Mounting hole guides",
+        "type": "bolt-pattern",
+        "params": {
+          "count": 4,
+          "circleDiameter": 133,
+          "startAngleDeg": 45,
+          "holeDiameter": 5.3,
+          "z": -6.5,
+          "depth": 6.5
+        },
+        "dimensionRefs": [
+          "boltCircleDiameter",
+          "boltCount",
+          "boltHoleDiameter"
+        ],
+        "sourceIds": [
+          "drawing"
+        ],
+        "status": "dimensioned",
+        "notes": "Guides only; not subtracted from clearance-envelope meshes. Guide depth is display-only when flange thickness unknown.",
+        "displayRole": "dimension-guide"
+      },
+      {
+        "name": "Noncircular frame appearance",
+        "type": "extruded-outline",
+        "params": {
+          "outline": [
+            [
+              62.25,
+              0.0
+            ],
+            [
+              62.11672,
+              4.07134
+            ],
+            [
+              61.71746,
+              8.12526
+            ],
+            [
+              61.05455,
+              12.14451
+            ],
+            [
+              60.13846,
+              16.11405
+            ],
+            [
+              59.01358,
+              20.03241
+            ],
+            [
+              57.80454,
+              23.94343
+            ],
+            [
+              56.72954,
+              27.97591
+            ],
+            [
+              55.99603,
+              32.32932
+            ],
+            [
+              55.58253,
+              37.13906
+            ],
+            [
+              55.07963,
+              42.26409
+            ],
+            [
+              53.80491,
+              47.18564
+            ],
+            [
+              51.19453,
+              51.19453
+            ],
+            [
+              47.18564,
+              53.80491
+            ],
+            [
+              42.26409,
+              55.07963
+            ],
+            [
+              37.13906,
+              55.58253
+            ],
+            [
+              32.32932,
+              55.99603
+            ],
+            [
+              27.97591,
+              56.72954
+            ],
+            [
+              23.94343,
+              57.80454
+            ],
+            [
+              20.03241,
+              59.01358
+            ],
+            [
+              16.11405,
+              60.13846
+            ],
+            [
+              12.14451,
+              61.05455
+            ],
+            [
+              8.12526,
+              61.71746
+            ],
+            [
+              4.07134,
+              62.11672
+            ],
+            [
+              0.0,
+              62.25
+            ],
+            [
+              -4.07134,
+              62.11672
+            ],
+            [
+              -8.12526,
+              61.71746
+            ],
+            [
+              -12.14451,
+              61.05455
+            ],
+            [
+              -16.11405,
+              60.13846
+            ],
+            [
+              -20.03241,
+              59.01358
+            ],
+            [
+              -23.94343,
+              57.80454
+            ],
+            [
+              -27.97591,
+              56.72954
+            ],
+            [
+              -32.32932,
+              55.99603
+            ],
+            [
+              -37.13906,
+              55.58253
+            ],
+            [
+              -42.26409,
+              55.07963
+            ],
+            [
+              -47.18564,
+              53.80491
+            ],
+            [
+              -51.19453,
+              51.19453
+            ],
+            [
+              -53.80491,
+              47.18564
+            ],
+            [
+              -55.07963,
+              42.26409
+            ],
+            [
+              -55.58253,
+              37.13906
+            ],
+            [
+              -55.99603,
+              32.32932
+            ],
+            [
+              -56.72954,
+              27.97591
+            ],
+            [
+              -57.80454,
+              23.94343
+            ],
+            [
+              -59.01358,
+              20.03241
+            ],
+            [
+              -60.13846,
+              16.11405
+            ],
+            [
+              -61.05455,
+              12.14451
+            ],
+            [
+              -61.71746,
+              8.12526
+            ],
+            [
+              -62.11672,
+              4.07134
+            ],
+            [
+              -62.25,
+              0.0
+            ],
+            [
+              -62.11672,
+              -4.07134
+            ],
+            [
+              -61.71746,
+              -8.12526
+            ],
+            [
+              -61.05455,
+              -12.14451
+            ],
+            [
+              -60.13846,
+              -16.11405
+            ],
+            [
+              -59.01358,
+              -20.03241
+            ],
+            [
+              -57.80454,
+              -23.94343
+            ],
+            [
+              -56.72954,
+              -27.97591
+            ],
+            [
+              -55.99603,
+              -32.32932
+            ],
+            [
+              -55.58253,
+              -37.13906
+            ],
+            [
+              -55.07963,
+              -42.26409
+            ],
+            [
+              -53.80491,
+              -47.18564
+            ],
+            [
+              -51.19453,
+              -51.19453
+            ],
+            [
+              -47.18564,
+              -53.80491
+            ],
+            [
+              -42.26409,
+              -55.07963
+            ],
+            [
+              -37.13906,
+              -55.58253
+            ],
+            [
+              -32.32932,
+              -55.99603
+            ],
+            [
+              -27.97591,
+              -56.72954
+            ],
+            [
+              -23.94343,
+              -57.80454
+            ],
+            [
+              -20.03241,
+              -59.01358
+            ],
+            [
+              -16.11405,
+              -60.13846
+            ],
+            [
+              -12.14451,
+              -61.05455
+            ],
+            [
+              -8.12526,
+              -61.71746
+            ],
+            [
+              -4.07134,
+              -62.11672
+            ],
+            [
+              -0.0,
+              -62.25
+            ],
+            [
+              4.07134,
+              -62.11672
+            ],
+            [
+              8.12526,
+              -61.71746
+            ],
+            [
+              12.14451,
+              -61.05455
+            ],
+            [
+              16.11405,
+              -60.13846
+            ],
+            [
+              20.03241,
+              -59.01358
+            ],
+            [
+              23.94343,
+              -57.80454
+            ],
+            [
+              27.97591,
+              -56.72954
+            ],
+            [
+              32.32932,
+              -55.99603
+            ],
+            [
+              37.13906,
+              -55.58253
+            ],
+            [
+              42.26409,
+              -55.07963
+            ],
+            [
+              47.18564,
+              -53.80491
+            ],
+            [
+              51.19453,
+              -51.19453
+            ],
+            [
+              53.80491,
+              -47.18564
+            ],
+            [
+              55.07963,
+              -42.26409
+            ],
+            [
+              55.58253,
+              -37.13906
+            ],
+            [
+              55.99603,
+              -32.32932
+            ],
+            [
+              56.72954,
+              -27.97591
+            ],
+            [
+              57.80454,
+              -23.94343
+            ],
+            [
+              59.01358,
+              -20.03241
+            ],
+            [
+              60.13846,
+              -16.11405
+            ],
+            [
+              61.05455,
+              -12.14451
+            ],
+            [
+              61.71746,
+              -8.12526
+            ],
+            [
+              62.11672,
+              -4.07134
+            ]
+          ],
+          "holes": [
+            [
+              [
+                56.0,
+                0.0
+              ],
+              [
+                55.8801,
+                3.66258
+              ],
+              [
+                55.52091,
+                7.30947
+              ],
+              [
+                54.92398,
+                10.92506
+              ],
+              [
+                54.09185,
+                14.49387
+              ],
+              [
+                53.02809,
+                18.00061
+              ],
+              [
+                51.73725,
+                21.43027
+              ],
+              [
+                50.22487,
+                24.76817
+              ],
+              [
+                48.49742,
+                28.0
+              ],
+              [
+                46.5623,
+                31.11193
+              ],
+              [
+                44.42779,
+                34.09064
+              ],
+              [
+                42.10303,
+                36.92337
+              ],
+              [
+                39.59798,
+                39.59798
+              ],
+              [
+                36.92337,
+                42.10303
+              ],
+              [
+                34.09064,
+                44.42779
+              ],
+              [
+                31.11193,
+                46.5623
+              ],
+              [
+                28.0,
+                48.49742
+              ],
+              [
+                24.76817,
+                50.22487
+              ],
+              [
+                21.43027,
+                51.73725
+              ],
+              [
+                18.00061,
+                53.02809
+              ],
+              [
+                14.49387,
+                54.09185
+              ],
+              [
+                10.92506,
+                54.92398
+              ],
+              [
+                7.30947,
+                55.52091
+              ],
+              [
+                3.66258,
+                55.8801
+              ],
+              [
+                0.0,
+                56.0
+              ],
+              [
+                -3.66258,
+                55.8801
+              ],
+              [
+                -7.30947,
+                55.52091
+              ],
+              [
+                -10.92506,
+                54.92398
+              ],
+              [
+                -14.49387,
+                54.09185
+              ],
+              [
+                -18.00061,
+                53.02809
+              ],
+              [
+                -21.43027,
+                51.73725
+              ],
+              [
+                -24.76817,
+                50.22487
+              ],
+              [
+                -28.0,
+                48.49742
+              ],
+              [
+                -31.11193,
+                46.5623
+              ],
+              [
+                -34.09064,
+                44.42779
+              ],
+              [
+                -36.92337,
+                42.10303
+              ],
+              [
+                -39.59798,
+                39.59798
+              ],
+              [
+                -42.10303,
+                36.92337
+              ],
+              [
+                -44.42779,
+                34.09064
+              ],
+              [
+                -46.5623,
+                31.11193
+              ],
+              [
+                -48.49742,
+                28.0
+              ],
+              [
+                -50.22487,
+                24.76817
+              ],
+              [
+                -51.73725,
+                21.43027
+              ],
+              [
+                -53.02809,
+                18.00061
+              ],
+              [
+                -54.09185,
+                14.49387
+              ],
+              [
+                -54.92398,
+                10.92506
+              ],
+              [
+                -55.52091,
+                7.30947
+              ],
+              [
+                -55.8801,
+                3.66258
+              ],
+              [
+                -56.0,
+                0.0
+              ],
+              [
+                -55.8801,
+                -3.66258
+              ],
+              [
+                -55.52091,
+                -7.30947
+              ],
+              [
+                -54.92398,
+                -10.92506
+              ],
+              [
+                -54.09185,
+                -14.49387
+              ],
+              [
+                -53.02809,
+                -18.00061
+              ],
+              [
+                -51.73725,
+                -21.43027
+              ],
+              [
+                -50.22487,
+                -24.76817
+              ],
+              [
+                -48.49742,
+                -28.0
+              ],
+              [
+                -46.5623,
+                -31.11193
+              ],
+              [
+                -44.42779,
+                -34.09064
+              ],
+              [
+                -42.10303,
+                -36.92337
+              ],
+              [
+                -39.59798,
+                -39.59798
+              ],
+              [
+                -36.92337,
+                -42.10303
+              ],
+              [
+                -34.09064,
+                -44.42779
+              ],
+              [
+                -31.11193,
+                -46.5623
+              ],
+              [
+                -28.0,
+                -48.49742
+              ],
+              [
+                -24.76817,
+                -50.22487
+              ],
+              [
+                -21.43027,
+                -51.73725
+              ],
+              [
+                -18.00061,
+                -53.02809
+              ],
+              [
+                -14.49387,
+                -54.09185
+              ],
+              [
+                -10.92506,
+                -54.92398
+              ],
+              [
+                -7.30947,
+                -55.52091
+              ],
+              [
+                -3.66258,
+                -55.8801
+              ],
+              [
+                -0.0,
+                -56.0
+              ],
+              [
+                3.66258,
+                -55.8801
+              ],
+              [
+                7.30947,
+                -55.52091
+              ],
+              [
+                10.92506,
+                -54.92398
+              ],
+              [
+                14.49387,
+                -54.09185
+              ],
+              [
+                18.00061,
+                -53.02809
+              ],
+              [
+                21.43027,
+                -51.73725
+              ],
+              [
+                24.76817,
+                -50.22487
+              ],
+              [
+                28.0,
+                -48.49742
+              ],
+              [
+                31.11193,
+                -46.5623
+              ],
+              [
+                34.09064,
+                -44.42779
+              ],
+              [
+                36.92337,
+                -42.10303
+              ],
+              [
+                39.59798,
+                -39.59798
+              ],
+              [
+                42.10303,
+                -36.92337
+              ],
+              [
+                44.42779,
+                -34.09064
+              ],
+              [
+                46.5623,
+                -31.11193
+              ],
+              [
+                48.49742,
+                -28.0
+              ],
+              [
+                50.22487,
+                -24.76817
+              ],
+              [
+                51.73725,
+                -21.43027
+              ],
+              [
+                53.02809,
+                -18.00061
+              ],
+              [
+                54.09185,
+                -14.49387
+              ],
+              [
+                54.92398,
+                -10.92506
+              ],
+              [
+                55.52091,
+                -7.30947
+              ],
+              [
+                55.8801,
+                -3.66258
+              ]
+            ]
+          ],
+          "z": -6.5,
+          "depth": 6.5
+        },
+        "status": "approximate",
+        "dimensionRefs": [
+          "overallWidth",
+          "overallDiagonal",
+          "flangeThickness",
+          "cutoutDiameter"
+        ],
+        "sourceIds": [
+          "drawing"
+        ],
+        "notes": "This model drawing shows a four-lobed noncircular frame. Smooth perimeter is an approximate interpolation anchored to published across-flats and maximum corner spans; central opening represents the basket/cutout screening boundary, not an exact cone seat or material section. No cone/dustcap surface is invented."
+      }
+    ]
+  },
+  "unresolved": [
+    "Terminal, wire bend and tool-access clearances are not dimensioned; allow additional clearance.",
+    "Cone, dustcap and basket-window contours are not mechanically reconstructed. No internal acoustic volume may be inferred from these envelope meshes.",
+    "Manufacturer manufacturing tolerances are not published in the inspected sources."
+  ],
+  "notes": [
+    "Frame is noncircular. overallDiameter, where populated, denotes its maximum circular bounding envelope; width/height/diagonal are separate dimensions. The flange cylinder does not reproduce the outline."
+  ],
+  "audit": {
+    "date": "2026-09-29",
+    "scope": "Existing-catalogue geometry, units, source identities and mounting datum audit",
+    "freshlyReviewedDrawingSourceIds": [
+      "drawing"
+    ],
+    "manufacturerCADModel": false,
+    "fitCheckStatus": "screening-only",
+    "reason": "Manufacturing tolerances, terminal/wire/tool clearance and some external profiles are incomplete. Drawing dimensions and conservative bounds are not exact CAD."
+  }
+}

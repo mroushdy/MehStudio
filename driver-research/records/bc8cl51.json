@@ -1,0 +1,353 @@
+{
+  "schemaVersion": 1,
+  "id": "bc8cl51",
+  "name": "B&C 8CL51",
+  "category": "cone",
+  "variant": "8 ohm",
+  "nominalDiameterInches": 8,
+  "modelStatus": "dimensioned-reconstruction",
+  "sources": [
+    {
+      "id": "datasheet",
+      "url": "https://bcspeakers.com/en/products/lf-driver/8-0/8/8cl51-8.pdf",
+      "kind": "pdf",
+      "localArchivePath": "manufacturer-sources/b-and-c/8CL51/8cl51-8.pdf",
+      "sha256": "2d43b2a3aac2b20c2e1da154e648bdd00a45ce835250144ae16b761341522aaa",
+      "accessDate": "2026-09-29",
+      "inspection": "parameters-reviewed",
+      "redistribution": "Not cleared; retain original document locally only.",
+      "notes": "Exact 8-ohm variant; page 2 parameters and mounting information."
+    },
+    {
+      "id": "drawing",
+      "url": "https://bcspeakers.com/uploads/products/drawing/2016_05_18_17_39_24_627_8CL51_drawing.PDF",
+      "kind": "pdf",
+      "localArchivePath": "manufacturer-sources/b-and-c/8CL51/2016_05_18_17_39_24_627_8CL51_drawing.PDF",
+      "sha256": "6fda8cc39a60418033863fd9716390e34759e7dbc35d87ac7accf6b4455e88df",
+      "accessDate": "2026-09-29",
+      "inspection": "drawing-reviewed",
+      "redistribution": "Not cleared; retain original document locally only.",
+      "inspectionNotes": "Rendered with Poppler and visually inspected front/rear and side mechanical views. Dimensions are millimetres. No STEP/DXF/IGES file was linked by this product page."
+    },
+    {
+      "id": "product",
+      "url": "https://bcspeakers.com/en/products/lf-driver/8-0/8/8cl51-8",
+      "kind": "product-page",
+      "localArchivePath": "manufacturer-sources/b-and-c/8CL51/product.html",
+      "sha256": "ef15e986df4c16e104b6755b5a14921cea639ed481d9d9e5a83a4e32e0dd1d2a",
+      "accessDate": "2026-09-29",
+      "inspection": "text-only",
+      "redistribution": "Not cleared; retain original document locally only."
+    }
+  ],
+  "dimensions": {
+    "nominalDiameterInches": {
+      "value": 8,
+      "unit": "in",
+      "status": "published",
+      "sourceId": "datasheet",
+      "location": "Specifications table",
+      "notes": ""
+    },
+    "overallDiameter": {
+      "value": 209,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Mechanical drawing, page 1",
+      "notes": "Circular maximum frame diameter."
+    },
+    "depth": {
+      "value": 96,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Mechanical drawing, page 1",
+      "notes": "Total frontmost rim to rear endpoint; not installed rear projection."
+    },
+    "flangeAssemblyDepth": {
+      "value": 9,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Mechanical drawing, page 1",
+      "notes": "Frontmost flange/gasket face to rear mounting datum. Does not establish individual metal or compressed gasket thickness."
+    },
+    "mountingFaceOffset": {
+      "value": 9,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Mechanical drawing, page 1",
+      "notes": "Rear underside of flange/gasket is z=0; frontmost rim has negative z."
+    },
+    "rearProjection": {
+      "value": 87,
+      "unit": "mm",
+      "status": "derived",
+      "sourceId": "drawing",
+      "location": "Mechanical drawing, page 1",
+      "notes": "96 mm total depth - 9 mm front-to-mounting offset = 87 mm."
+    },
+    "cutoutDiameter": {
+      "value": 186,
+      "unit": "mm",
+      "status": "published",
+      "sourceId": "datasheet",
+      "location": "Mounting specifications",
+      "notes": "Recommended baffle cutout; do not substitute the smaller basket neck dimension."
+    },
+    "basketNeckDiameter": {
+      "value": 185,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Mechanical drawing, page 1",
+      "notes": "Dimensioned basket neck below flange; distinct from recommended baffle cutout."
+    },
+    "boltCircleDiameter": {
+      "value": 199,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Mechanical drawing, page 1",
+      "notes": ""
+    },
+    "boltCount": {
+      "value": 8,
+      "unit": "count",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Mechanical drawing, page 1",
+      "notes": ""
+    },
+    "boltStartAngle": {
+      "value": 0,
+      "unit": "deg",
+      "status": "derived",
+      "sourceId": "drawing",
+      "location": "Mechanical drawing, page 1",
+      "notes": "Pattern phase read from the rear view; holes or slots are rotationally symmetric. Angle measured from model +x."
+    },
+    "driverDisplacement": {
+      "value": 1.1,
+      "unit": "L",
+      "status": "published",
+      "sourceId": "datasheet",
+      "location": "Mounting/technical specifications",
+      "notes": "Published occupied air volume; 1 dm3 = 1 L. Never integrated from the appearance mesh."
+    },
+    "terminalClearance": {
+      "value": null,
+      "unit": "mm",
+      "status": "unresolved",
+      "sourceId": null,
+      "location": "Mechanical drawing, page 1",
+      "notes": "No dimensioned cable bend, tool or installation clearance in these sources."
+    },
+    "boltSlotWidth": {
+      "value": 5.5,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Mechanical drawing, page 1",
+      "notes": "Tangential slot width, not a round-hole diameter."
+    },
+    "boltSlotLength": {
+      "value": null,
+      "unit": "mm",
+      "status": "unresolved",
+      "sourceId": null,
+      "location": "Mechanical drawing, page 1",
+      "notes": "Drawing dimensions width only; slot length remains unresolved."
+    },
+    "magnetDiameter": {
+      "value": 76,
+      "unit": "mm",
+      "status": "approximate",
+      "sourceId": "drawing",
+      "location": "Mechanical drawing, page 1",
+      "notes": "Appearance-only diameter scaled from dimensioned side drawing; not a published dimension or verified collision surface."
+    },
+    "magnetStartZ": {
+      "value": 52,
+      "unit": "mm",
+      "status": "approximate",
+      "sourceId": "drawing",
+      "location": "Mechanical drawing, page 1",
+      "notes": "Appearance-only basket-to-motor transition scaled along side view from mounting datum."
+    }
+  },
+  "geometry": {
+    "units": "mm",
+    "datum": "mounting face z=0; positive z rearward. Rear underside of flange/gasket is datum; frontmost rim z=-9 mm and rear endpoint z=87 mm.",
+    "parts": [
+      {
+        "name": "Maximum clearance envelope",
+        "type": "cylinder",
+        "params": {
+          "radius": 104.5,
+          "z": -9,
+          "depth": 96,
+          "center": [
+            0,
+            0
+          ]
+        },
+        "status": "envelope",
+        "sourceIds": [
+          "drawing"
+        ],
+        "dimensionRefs": [
+          "overallDiameter",
+          "depth",
+          "mountingFaceOffset"
+        ],
+        "notes": "Conservative full-depth circumscribed screening cylinder, not driver material or displaced air volume.",
+        "displayRole": "clearance-only"
+      },
+      {
+        "name": "Circular flange appearance",
+        "type": "ring",
+        "params": {
+          "outerRadius": 104.5,
+          "innerRadius": 92.5,
+          "z": -9,
+          "depth": 9
+        },
+        "status": "approximate",
+        "sourceIds": [
+          "drawing"
+        ],
+        "dimensionRefs": [
+          "overallDiameter",
+          "flangeAssemblyDepth",
+          "basketNeckDiameter"
+        ],
+        "notes": "Published outer and axial bounds; unverified inner opening represented by basket neck. Holes/slots are separate guides, not subtracted voids."
+      },
+      {
+        "name": "Baffle cutout guide",
+        "type": "ring",
+        "params": {
+          "outerRadius": 93.0,
+          "innerRadius": 92.6,
+          "z": 0,
+          "depth": 0.5
+        },
+        "status": "dimensioned",
+        "sourceIds": [
+          "datasheet"
+        ],
+        "dimensionRefs": [
+          "cutoutDiameter"
+        ],
+        "notes": "0.4 mm display stroke marking the manufacturer recommended cutout, not driver material."
+      },
+      {
+        "name": "Mounting pitch-circle guide",
+        "type": "ring",
+        "params": {
+          "outerRadius": 99.7,
+          "innerRadius": 99.3,
+          "z": -9,
+          "depth": 0.5
+        },
+        "status": "dimensioned",
+        "sourceIds": [
+          "drawing"
+        ],
+        "dimensionRefs": [
+          "boltCircleDiameter"
+        ],
+        "notes": "Known mounting pitch circle. Slot length is unavailable so no exact slot outline is rendered."
+      },
+      {
+        "name": "Basket appearance surface",
+        "type": "lathe",
+        "params": {
+          "profile": [
+            [
+              92.5,
+              0
+            ],
+            [
+              92.5,
+              4.16
+            ],
+            [
+              89.725,
+              11.44
+            ],
+            [
+              66.6,
+              43.68
+            ],
+            [
+              38.0,
+              52
+            ]
+          ],
+          "closed": false
+        },
+        "status": "approximate",
+        "sourceIds": [
+          "drawing"
+        ],
+        "dimensionRefs": [
+          "basketNeckDiameter",
+          "magnetStartZ"
+        ],
+        "notes": "Approximate side-view basket envelope without ribs/windows; not a solid or certified fit surface. Intermediate contour is visual only."
+      },
+      {
+        "name": "External motor appearance",
+        "type": "lathe",
+        "params": {
+          "profile": [
+            [
+              38.0,
+              52
+            ],
+            [
+              38.0,
+              84.2
+            ],
+            [
+              36.1,
+              87
+            ],
+            [
+              0,
+              87
+            ]
+          ],
+          "closed": false
+        },
+        "status": "approximate",
+        "sourceIds": [
+          "drawing"
+        ],
+        "dimensionRefs": [
+          "magnetDiameter",
+          "magnetStartZ",
+          "rearProjection"
+        ],
+        "notes": "External silhouette only; cover steps, pole vents and internals are not asserted. Even dimensioned overall motor bounds do not make this approximate profile exact CAD."
+      }
+    ]
+  },
+  "unresolved": [
+    "Mounting slots have 5.5 mm width but no published length; exact slot machining/export remains unavailable.",
+    "Cone, dustcap, surround and acoustic front-chamber profiles are not dimensioned; no profiles or cone-depth values are invented.",
+    "Basket windows, ribs, motor internals and local flange recesses are not reconstructed; visible exterior surfaces are explicitly approximate.",
+    "Gasket compression, manufacturing tolerances and installed terminal/cable clearance require manufacturer confirmation or real-part measurement.",
+    "Published small-signal motor data supports response screening; MEH suitability still requires the selected horn, loading, excursion, thermal and crossover checks."
+  ],
+  "notes": [
+    "Compact 209 mm frame and 1.25 kg neodymium alternative; higher Qts than 8NDL64.",
+    "All motor values are from the exact 8-ohm datasheet; no other model or impedance variant supplies parameters.",
+    "Manufacturer drawings were visually inspected; rendered reconstructions are not manufacturer CAD.",
+    "Acoustic occupied volume uses the published value, never the full clearance envelope or approximate appearance mesh."
+  ]
+}

@@ -1,0 +1,221 @@
+{
+  "schemaVersion": 1,
+  "id": "celestionaxi2050",
+  "name": "Celestion Axi2050",
+  "category": "wideband-compression",
+  "variant": "8 ohm",
+  "modelStatus": "envelope-only",
+  "sources": [
+    {
+      "id": "product",
+      "url": "https://celestion.com/product/axi2050/",
+      "kind": "product-page",
+      "inspection": "text-only",
+      "sha256": "11310503f4208b70987e7e0db10e01699789b62c9b2d1fb998a913c4a2aff0e7",
+      "notes": "Manufacturer page extracted by web reader on 2026-09-28. This local file is a text snapshot, not original HTML.",
+      "accessDate": "2026-09-29",
+      "redistribution": "Reference retained locally; public redistribution rights not established.",
+      "downloadStatus": "failed",
+      "downloadError": "HTTP Error 403: Forbidden"
+    },
+    {
+      "id": "drawing",
+      "url": "https://celestion.com/wp-content/uploads/2019/09/Axi2050-External-Dimension-Drawing.jpg",
+      "kind": "drawing-image",
+      "inspection": "drawing-reviewed",
+      "sha256": "71049f651921dbcc3e9a4025ab3584bd12567a259b183a601bb8c8817285a5cf",
+      "accessDate": "2026-09-29",
+      "redistribution": "Reference retained locally; public redistribution rights not established.",
+      "inspectionDate": "2026-09-29",
+      "localArchivePath": "manufacturer-sources/celestion/Axi2050/Axi2050-External-Dimension-Drawing.jpg",
+      "downloadStatus": "downloaded",
+      "localRenderedPaths": [
+        "manufacturer-sources/celestion/Axi2050/Axi2050-External-Dimension-Drawing.jpg"
+      ]
+    }
+  ],
+  "dimensions": {
+    "overallWidth": {
+      "value": 198,
+      "unit": "mm",
+      "status": "published",
+      "sourceId": "product",
+      "location": "Mounting information / dimensional specification table"
+    },
+    "depth": {
+      "value": 111,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Side view total axial depth"
+    },
+    "exitDiameter": {
+      "value": 50.8,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Front view throat exit diameter",
+      "notes": "Product page rounds throat exit to 50 mm."
+    },
+    "boltCircleDiameter": {
+      "value": 102,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Front view four M6 on 102 PCD"
+    },
+    "boltCount": {
+      "value": 4,
+      "unit": "count",
+      "status": "published",
+      "sourceId": "product",
+      "location": "Mounting information / dimensional specification table"
+    },
+    "boltThread": {
+      "value": "M6",
+      "unit": "thread",
+      "status": "published",
+      "sourceId": "product",
+      "location": "Mounting information / dimensional specification table"
+    },
+    "boltHoleDiameter": {
+      "value": null,
+      "unit": "mm",
+      "status": "unresolved",
+      "sourceId": null,
+      "location": "Not established in inspected text"
+    },
+    "flangeThickness": {
+      "value": null,
+      "unit": "mm",
+      "status": "unresolved",
+      "sourceId": null,
+      "location": "Not established in inspected text"
+    },
+    "terminalClearance": {
+      "value": null,
+      "unit": "mm",
+      "status": "unresolved",
+      "sourceId": null,
+      "location": "Not established in inspected text"
+    },
+    "overallHeight": {
+      "value": null,
+      "unit": "mm",
+      "status": "unresolved",
+      "sourceId": null,
+      "location": "No separate height or outline dimension in inspected product text"
+    },
+    "overallDiameter": {
+      "value": 198,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Side view diameter 198"
+    },
+    "terminalTabWidth": {
+      "value": 6.35,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Tag detail typical 6.35 x 0.8"
+    },
+    "terminalTabThickness": {
+      "value": 0.8,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Tag detail typical 6.35 x 0.8"
+    }
+  },
+  "geometry": {
+    "units": "mm",
+    "datum": "mounting face z=0; positive z rearward; table-only axial datum requires drawing confirmation",
+    "parts": [
+      {
+        "name": "Nominal external screening envelope",
+        "type": "cylinder",
+        "status": "envelope",
+        "sourceIds": [
+          "drawing"
+        ],
+        "dimensionRefs": [
+          "overallDiameter",
+          "depth"
+        ],
+        "notes": "Bounding cylinder only; entire cross-section is NOT physically solid. No axial profile or acoustic internal volume is implied. Terminal clearance is unknown. Width-to-circular-outline presentation is approximate.",
+        "params": {
+          "radius": 99.0,
+          "z": 0,
+          "depth": 111,
+          "center": [
+            0,
+            0
+          ]
+        }
+      },
+      {
+        "name": "Mounting thread axes (display guides)",
+        "type": "bolt-pattern",
+        "status": "approximate",
+        "sourceIds": [
+          "product"
+        ],
+        "dimensionRefs": [
+          "boltCircleDiameter",
+          "boltCount",
+          "boltThread"
+        ],
+        "notes": "Axis locations on published PCD; angular rotation is arbitrary until drawing review. Six-mm glyphs illustrate M6 nominal size, not clearance holes or thread geometry. One-mm display depth is arbitrary.",
+        "params": {
+          "count": 4,
+          "circleDiameter": 102,
+          "startAngleDeg": 0,
+          "holeDiameter": 6,
+          "z": 0,
+          "depth": 1,
+          "thread": "M6"
+        },
+        "displayRole": "dimension-guide"
+      },
+      {
+        "name": "Exit aperture guide",
+        "type": "ring",
+        "params": {
+          "outerRadius": 25.799999999999997,
+          "innerRadius": 25.4,
+          "z": -0.4,
+          "depth": 0.4
+        },
+        "status": "dimensioned",
+        "dimensionRefs": [
+          "exitDiameter"
+        ],
+        "sourceIds": [
+          "drawing"
+        ],
+        "notes": "Published/drawing exit diameter only. The 0.4 mm line width/depth is a display glyph, not throat wall thickness or a front projection. Internal acoustic passage is unspecified.",
+        "displayRole": "dimension-guide"
+      }
+    ]
+  },
+  "unresolved": [
+    "Complete outer profile, front shoulder and rear cover geometry are not established by the mounting table.",
+    "Terminal projection, cable bend allowance and service/fastener access remain unverified.",
+    "Threaded-hole depth and manufacturing tolerances require a drawing or part measurement."
+  ],
+  "notes": [
+    "Manufacturer table dimensions support a screening envelope, not a detailed CAD reconstruction.",
+    "Internal acoustic passages, phase plug and diaphragms are intentionally absent. Do not infer acoustic volume from this mesh."
+  ],
+  "audit": {
+    "date": "2026-09-29",
+    "scope": "Existing-catalogue geometry, units, source identities and mounting datum audit",
+    "freshlyReviewedDrawingSourceIds": [
+      "drawing"
+    ],
+    "manufacturerCADModel": false,
+    "fitCheckStatus": "screening-only",
+    "reason": "Manufacturing tolerances, terminal/wire/tool clearance and some external profiles are incomplete. Drawing dimensions and conservative bounds are not exact CAD."
+  }
+}

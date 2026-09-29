@@ -1,0 +1,1341 @@
+{
+  "bc5ndl38": {
+    "id": "bc5ndl38",
+    "name": "B&C 5NDL38 (8 ohm)",
+    "source": "https://www.bcspeakers.com/en/products/lf-driver/5/8/5NDL38",
+    "nominalDiameterIn": 5,
+    "sd": 95,
+    "fs": 80,
+    "qts": 0.36,
+    "vas": 4.3,
+    "re": 5.5,
+    "leMH": 0.64,
+    "mmsG": 11,
+    "bl": 9.2,
+    "qms": 9.2,
+    "qes": 0.37,
+    "xmaxMM": 3.5,
+    "nominalPowerW": 90,
+    "driverVol": 0.35,
+    "review": {
+      "status": "manufacturer-published-reviewed",
+      "variant": "8 ohm",
+      "reviewedAt": "2026-09-29",
+      "datasheetUrl": "https://www.bcspeakers.com/en/products/lf-driver/5/8/5ndl38.pdf",
+      "datasheetSHA256": "f467ac369a1084a51d360bbfe5c066c4dcabca3950d9f2c18c7e537a54e33689",
+      "archivePath": "manufacturer-sources/b-and-c/5NDL38/versions/f467ac369a10/5ndl38.pdf",
+      "location": "Official PDF page 2, model/impedance heading and technical/T-S parameter tables visually inspected.",
+      "inspection": "rendered-pdf-table-reviewed",
+      "units": {
+        "sd": "cm2",
+        "fs": "Hz",
+        "vas": "L",
+        "re": "ohm",
+        "leMH": "mH",
+        "mmsG": "g",
+        "bl": "T m",
+        "xmaxMM": "mm",
+        "nominalPowerW": "W",
+        "driverVol": "L"
+      },
+      "notes": [
+        "All root motor values are manufacturer-published for this exact 8 ohm variant. No values are borrowed from another model.",
+        "Nominal/AES power is kept separate from continuous program power.",
+        "Published Xmax is retained as one-way displacement; manufacturer definitions vary and are not a measured common distortion limit.",
+        "Cms and Rms used by the engine are transparently derived from this model's published Fs, Mms and Qms. Published rounded T/S values are not forced into algebraic agreement."
+      ]
+    },
+    "derivedMotor": {
+      "cmsMPerN": 0.0003598053396389836,
+      "rmsKgPerS": 0.6010003337302213,
+      "qesFromMotor": 0.3592936777735019,
+      "qtsFromMotor": 0.34578933830664743,
+      "vasLAtReferenceAir": 4.600082400542767,
+      "referenceAir": {
+        "densityKgM3": 1.2041,
+        "soundSpeedMS": 343
+      },
+      "formulas": {
+        "cmsMPerN": "1 / ((2*pi*fs)^2 * (mmsG/1000))",
+        "rmsKgPerS": "2*pi*fs*(mmsG/1000) / qms",
+        "qesFromMotor": "2*pi*fs*(mmsG/1000)*re / bl^2",
+        "qtsFromMotor": "qesFromMotor*qms / (qesFromMotor+qms)",
+        "vasLAtReferenceAir": "cmsMPerN*densityKgM3*soundSpeedMS^2*(sd*1e-4)^2*1000"
+      },
+      "relativeDifferencePercent": {
+        "qes": -2.893600601756241,
+        "qts": -3.947406025931266,
+        "vas": 6.978660477738785
+      }
+    }
+  },
+  "bc6ndl38": {
+    "id": "bc6ndl38",
+    "name": "B&C 6NDL38 (8 ohm)",
+    "source": "https://www.bcspeakers.com/en/products/lf-driver/6.5/8/6NDL38",
+    "nominalDiameterIn": 6.5,
+    "sd": 132,
+    "fs": 72,
+    "qts": 0.42,
+    "vas": 7,
+    "re": 5.2,
+    "leMH": 0.6,
+    "mmsG": 17,
+    "bl": 9.5,
+    "qms": 11.5,
+    "qes": 0.44,
+    "xmaxMM": 6,
+    "nominalPowerW": 150,
+    "driverVol": 0.63,
+    "review": {
+      "status": "manufacturer-published-reviewed",
+      "variant": "8 ohm",
+      "reviewedAt": "2026-09-29",
+      "datasheetUrl": "https://www.bcspeakers.com/en/products/lf-driver/6-5/8/6ndl38.pdf",
+      "datasheetSHA256": "3f961a361c9af5cffd92f9f22695a01786ec3876164b3e659a9194e9ee9e169d",
+      "archivePath": "manufacturer-sources/b-and-c/6NDL38/versions/3f961a361c9a/6ndl38.pdf",
+      "location": "Official PDF page 2, model/impedance heading and technical/T-S parameter tables visually inspected.",
+      "inspection": "rendered-pdf-table-reviewed",
+      "units": {
+        "sd": "cm2",
+        "fs": "Hz",
+        "vas": "L",
+        "re": "ohm",
+        "leMH": "mH",
+        "mmsG": "g",
+        "bl": "T m",
+        "xmaxMM": "mm",
+        "nominalPowerW": "W",
+        "driverVol": "L"
+      },
+      "notes": [
+        "All root motor values are manufacturer-published for this exact 8 ohm variant. No values are borrowed from another model.",
+        "Nominal/AES power is kept separate from continuous program power.",
+        "Published Xmax is retained as one-way displacement; manufacturer definitions vary and are not a measured common distortion limit.",
+        "Cms and Rms used by the engine are transparently derived from this model's published Fs, Mms and Qms. Published rounded T/S values are not forced into algebraic agreement."
+      ]
+    },
+    "derivedMotor": {
+      "cmsMPerN": 0.00028742619724247053,
+      "rmsKgPerS": 0.6687494622598099,
+      "qesFromMotor": 0.4431159871815693,
+      "qtsFromMotor": 0.4266754051503273,
+      "vasLAtReferenceAir": 7.094552517658556,
+      "referenceAir": {
+        "densityKgM3": 1.2041,
+        "soundSpeedMS": 343
+      },
+      "formulas": {
+        "cmsMPerN": "1 / ((2*pi*fs)^2 * (mmsG/1000))",
+        "rmsKgPerS": "2*pi*fs*(mmsG/1000) / qms",
+        "qesFromMotor": "2*pi*fs*(mmsG/1000)*re / bl^2",
+        "qtsFromMotor": "qesFromMotor*qms / (qesFromMotor+qms)",
+        "vasLAtReferenceAir": "cmsMPerN*densityKgM3*soundSpeedMS^2*(sd*1e-4)^2*1000"
+      },
+      "relativeDifferencePercent": {
+        "qes": 0.7081789049021125,
+        "qts": 1.5893821786493678,
+        "vas": 1.3507502522650983
+      }
+    }
+  },
+  "bc6mdn44": {
+    "id": "bc6mdn44",
+    "name": "B&C 6MDN44 (8 ohm)",
+    "source": "https://www.bcspeakers.com/en/products/lf-driver/6.5/8/6MDN44",
+    "nominalDiameterIn": 6.5,
+    "sd": 132,
+    "fs": 140,
+    "qts": 0.4,
+    "vas": 2.7,
+    "re": 5.4,
+    "leMH": 0.47,
+    "mmsG": 11,
+    "bl": 11,
+    "qms": 2.8,
+    "qes": 0.46,
+    "xmaxMM": 2.5,
+    "nominalPowerW": 200,
+    "driverVol": 0.6,
+    "review": {
+      "status": "manufacturer-published-reviewed",
+      "variant": "8 ohm",
+      "reviewedAt": "2026-09-29",
+      "datasheetUrl": "https://www.bcspeakers.com/en/products/lf-driver/6-5/8/6mdn44.pdf",
+      "datasheetSHA256": "3da987221da3e30e0786c3c3b1129e139860aeff3a67f05920cc464d6c41047c",
+      "archivePath": "manufacturer-sources/b-and-c/6MDN44/versions/3da987221da3/6mdn44.pdf",
+      "location": "Official PDF page 2, model/impedance heading and technical/T-S parameter tables visually inspected.",
+      "inspection": "rendered-pdf-table-reviewed",
+      "units": {
+        "sd": "cm2",
+        "fs": "Hz",
+        "vas": "L",
+        "re": "ohm",
+        "leMH": "mH",
+        "mmsG": "g",
+        "bl": "T m",
+        "xmaxMM": "mm",
+        "nominalPowerW": "W",
+        "driverVol": "L"
+      },
+      "notes": [
+        "All root motor values are manufacturer-published for this exact 8 ohm variant. No values are borrowed from another model.",
+        "Nominal/AES power is kept separate from continuous program power.",
+        "Published Xmax is retained as one-way displacement; manufacturer definitions vary and are not a measured common distortion limit.",
+        "Cms and Rms used by the engine are transparently derived from this model's published Fs, Mms and Qms. Published rounded T/S values are not forced into algebraic agreement."
+      ]
+    },
+    "derivedMotor": {
+      "cmsMPerN": 0.00011748745784130078,
+      "rmsKgPerS": 3.455751918948772,
+      "qesFromMotor": 0.4318261902025243,
+      "qtsFromMotor": 0.3741269676669395,
+      "vasLAtReferenceAir": 2.8999477007245518,
+      "referenceAir": {
+        "densityKgM3": 1.2041,
+        "soundSpeedMS": 343
+      },
+      "formulas": {
+        "cmsMPerN": "1 / ((2*pi*fs)^2 * (mmsG/1000))",
+        "rmsKgPerS": "2*pi*fs*(mmsG/1000) / qms",
+        "qesFromMotor": "2*pi*fs*(mmsG/1000)*re / bl^2",
+        "qtsFromMotor": "qesFromMotor*qms / (qesFromMotor+qms)",
+        "vasLAtReferenceAir": "cmsMPerN*densityKgM3*soundSpeedMS^2*(sd*1e-4)^2*1000"
+      },
+      "relativeDifferencePercent": {
+        "qes": -6.12474126032081,
+        "qts": -6.468258083265132,
+        "vas": 7.405470397205605
+      }
+    }
+  },
+  "faitalpro5fe120": {
+    "id": "faitalpro5fe120",
+    "name": "FaitalPRO 5FE120 (8 ohm)",
+    "source": "https://faitalpro.com/en/products/LF_Loudspeakers/product_details/index.php?id=401010110",
+    "nominalDiameterIn": 5,
+    "sd": 84,
+    "fs": 65,
+    "qts": 0.48,
+    "vas": 5.4,
+    "re": 5.4,
+    "leMH": 0.41,
+    "mmsG": 11,
+    "bl": 6.9,
+    "qms": 7.4,
+    "qes": 0.51,
+    "xmaxMM": 5.25,
+    "nominalPowerW": 80,
+    "driverVol": 0.3,
+    "review": {
+      "status": "manufacturer-published-reviewed",
+      "variant": "8 ohm",
+      "reviewedAt": "2026-09-29",
+      "datasheetUrl": "https://faitalpro.com/products/files/5FE120/8/5FE120_datasheet_8.pdf",
+      "datasheetSHA256": "af55dd295c0673c265e7f7a61b590297a1da261cd28329710551d691c18c79e8",
+      "archivePath": "manufacturer-sources/faitalpro/5FE120/5FE120_datasheet_8.pdf",
+      "location": "Official PDF page 1, model/impedance heading and technical/T-S parameter tables visually inspected.",
+      "inspection": "rendered-pdf-table-reviewed",
+      "units": {
+        "sd": "cm2",
+        "fs": "Hz",
+        "vas": "L",
+        "re": "ohm",
+        "leMH": "mH",
+        "mmsG": "g",
+        "bl": "T m",
+        "xmaxMM": "mm",
+        "nominalPowerW": "W",
+        "driverVol": "L"
+      },
+      "notes": [
+        "All root motor values are manufacturer-published for this exact 8 ohm variant. No values are borrowed from another model.",
+        "Nominal/AES power is kept separate from continuous program power.",
+        "Published Xmax is retained as one-way displacement; manufacturer definitions vary and are not a measured common distortion limit.",
+        "Cms and Rms used by the engine are transparently derived from this model's published Fs, Mms and Qms. Published rounded T/S values are not forced into algebraic agreement.",
+        "Xmax definition: (winding depth - magnetic gap depth)/2 + magnetic gap depth/3; PDF footnote 4.",
+        "Mms includes air loading; published Mmd is recorded separately and is not substituted."
+      ]
+    },
+    "derivedMotor": {
+      "cmsMPerN": 0.0005450305736543183,
+      "rmsKgPerS": 0.6070915533288384,
+      "qesFromMotor": 0.509543761206057,
+      "qtsFromMotor": 0.47671824655912554,
+      "vasLAtReferenceAir": 5.447913877012782,
+      "referenceAir": {
+        "densityKgM3": 1.2041,
+        "soundSpeedMS": 343
+      },
+      "formulas": {
+        "cmsMPerN": "1 / ((2*pi*fs)^2 * (mmsG/1000))",
+        "rmsKgPerS": "2*pi*fs*(mmsG/1000) / qms",
+        "qesFromMotor": "2*pi*fs*(mmsG/1000)*re / bl^2",
+        "qtsFromMotor": "qesFromMotor*qms / (qesFromMotor+qms)",
+        "vasLAtReferenceAir": "cmsMPerN*densityKgM3*soundSpeedMS^2*(sd*1e-4)^2*1000"
+      },
+      "relativeDifferencePercent": {
+        "qes": -0.08945858704764165,
+        "qts": -0.683698633515506,
+        "vas": 0.8872940187552247
+      }
+    },
+    "publishedMechanical": {
+      "cmsMMPerN": 0.55,
+      "rmsKgPerS": 0.6,
+      "mmdG": 10.1
+    }
+  },
+  "faitalpro5pr160": {
+    "id": "faitalpro5pr160",
+    "name": "FaitalPRO 5PR160 (8 ohm)",
+    "source": "https://faitalpro.com/en/products/LF_Loudspeakers/product_details/index.php?id=101010110",
+    "nominalDiameterIn": 5,
+    "sd": 85.2,
+    "fs": 90,
+    "qts": 0.31,
+    "vas": 3.7,
+    "re": 6.1,
+    "leMH": 0.3,
+    "mmsG": 8.5,
+    "bl": 9.6,
+    "qms": 4.4,
+    "qes": 0.33,
+    "xmaxMM": 5.1,
+    "nominalPowerW": 120,
+    "driverVol": 0.25,
+    "review": {
+      "status": "manufacturer-published-reviewed",
+      "variant": "8 ohm",
+      "reviewedAt": "2026-09-29",
+      "datasheetUrl": "https://faitalpro.com/products/files/5PR160/8/5PR160_datasheet_8.pdf",
+      "datasheetSHA256": "d5fa03dbd5c0c9492f1c77bb60524fc45b1a9e2cd17c02db8f6928cb24839ae1",
+      "archivePath": "manufacturer-sources/faitalpro/5PR160/5PR160_datasheet_8.pdf",
+      "location": "Official PDF page 1, model/impedance heading and technical/T-S parameter tables visually inspected.",
+      "inspection": "rendered-pdf-table-reviewed",
+      "units": {
+        "sd": "cm2",
+        "fs": "Hz",
+        "vas": "L",
+        "re": "ohm",
+        "leMH": "mH",
+        "mmsG": "g",
+        "bl": "T m",
+        "xmaxMM": "mm",
+        "nominalPowerW": "W",
+        "driverVol": "L"
+      },
+      "notes": [
+        "All root motor values are manufacturer-published for this exact 8 ohm variant. No values are borrowed from another model.",
+        "Nominal/AES power is kept separate from continuous program power.",
+        "Published Xmax is retained as one-way displacement; manufacturer definitions vary and are not a measured common distortion limit.",
+        "Cms and Rms used by the engine are transparently derived from this model's published Fs, Mms and Qms. Published rounded T/S values are not forced into algebraic agreement.",
+        "Xmax definition: (winding depth - magnetic gap depth)/2 + magnetic gap depth/3; PDF footnote 4.",
+        "Mms includes air loading; published Mmd is recorded separately and is not substituted."
+      ]
+    },
+    "derivedMotor": {
+      "cmsMPerN": 0.0003679055324703623,
+      "rmsKgPerS": 1.0924174454528144,
+      "qesFromMotor": 0.318147615407482,
+      "qtsFromMotor": 0.2966947246884778,
+      "vasLAtReferenceAir": 3.7832610106728515,
+      "referenceAir": {
+        "densityKgM3": 1.2041,
+        "soundSpeedMS": 343
+      },
+      "formulas": {
+        "cmsMPerN": "1 / ((2*pi*fs)^2 * (mmsG/1000))",
+        "rmsKgPerS": "2*pi*fs*(mmsG/1000) / qms",
+        "qesFromMotor": "2*pi*fs*(mmsG/1000)*re / bl^2",
+        "qtsFromMotor": "qesFromMotor*qms / (qesFromMotor+qms)",
+        "vasLAtReferenceAir": "cmsMPerN*densityKgM3*soundSpeedMS^2*(sd*1e-4)^2*1000"
+      },
+      "relativeDifferencePercent": {
+        "qes": -3.591631694702435,
+        "qts": -4.29202429403942,
+        "vas": 2.2502975857527474
+      }
+    },
+    "publishedMechanical": {
+      "cmsMMPerN": 0.37,
+      "rmsKgPerS": 1.1,
+      "mmdG": 7.6
+    }
+  },
+  "faitalpro6fe200": {
+    "id": "faitalpro6fe200",
+    "name": "FaitalPRO 6FE200 (8 ohm)",
+    "source": "https://faitalpro.com/en/products/LF_Loudspeakers/product_details/index.php?id=401020110",
+    "nominalDiameterIn": 6,
+    "sd": 131,
+    "fs": 120,
+    "qts": 0.67,
+    "vas": 3.6,
+    "re": 5.9,
+    "leMH": 0.4,
+    "mmsG": 11.5,
+    "bl": 8.2,
+    "qms": 6.2,
+    "qes": 0.75,
+    "xmaxMM": 4.67,
+    "nominalPowerW": 130,
+    "driverVol": 0.45,
+    "review": {
+      "status": "manufacturer-published-reviewed",
+      "variant": "8 ohm",
+      "reviewedAt": "2026-09-29",
+      "datasheetUrl": "https://faitalpro.com/products/files/6FE200/8/6FE200_datasheet_8.pdf",
+      "datasheetSHA256": "76fc6aa5fac93c9d17f55d92d713d81584f8b74b032e4d64afc045f05ece6948",
+      "archivePath": "manufacturer-sources/faitalpro/6FE200/6FE200_datasheet_8.pdf",
+      "location": "Official PDF page 1, model/impedance heading and technical/T-S parameter tables visually inspected.",
+      "inspection": "rendered-pdf-table-reviewed",
+      "units": {
+        "sd": "cm2",
+        "fs": "Hz",
+        "vas": "L",
+        "re": "ohm",
+        "leMH": "mH",
+        "mmsG": "g",
+        "bl": "T m",
+        "xmaxMM": "mm",
+        "nominalPowerW": "W",
+        "driverVol": "L"
+      },
+      "notes": [
+        "All root motor values are manufacturer-published for this exact 8 ohm variant. No values are borrowed from another model.",
+        "Nominal/AES power is kept separate from continuous program power.",
+        "Published Xmax is retained as one-way displacement; manufacturer definitions vary and are not a measured common distortion limit.",
+        "Cms and Rms used by the engine are transparently derived from this model's published Fs, Mms and Qms. Published rounded T/S values are not forced into algebraic agreement.",
+        "Xmax definition: (winding depth - magnetic gap depth)/2 + magnetic gap depth/3; PDF footnote 4.",
+        "Mms includes air loading; published Mmd is recorded separately and is not substituted."
+      ]
+    },
+    "derivedMotor": {
+      "cmsMPerN": 0.00015296072409773219,
+      "rmsKgPerS": 1.3985154393399721,
+      "qesFromMotor": 0.7608223493613353,
+      "qtsFromMotor": 0.6776639783765029,
+      "vasLAtReferenceAir": 3.7185473730581298,
+      "referenceAir": {
+        "densityKgM3": 1.2041,
+        "soundSpeedMS": 343
+      },
+      "formulas": {
+        "cmsMPerN": "1 / ((2*pi*fs)^2 * (mmsG/1000))",
+        "rmsKgPerS": "2*pi*fs*(mmsG/1000) / qms",
+        "qesFromMotor": "2*pi*fs*(mmsG/1000)*re / bl^2",
+        "qtsFromMotor": "qesFromMotor*qms / (qesFromMotor+qms)",
+        "vasLAtReferenceAir": "cmsMPerN*densityKgM3*soundSpeedMS^2*(sd*1e-4)^2*1000"
+      },
+      "relativeDifferencePercent": {
+        "qes": 1.4429799148446998,
+        "qts": 1.1438773696272886,
+        "vas": 3.2929825849480565
+      }
+    },
+    "publishedMechanical": {
+      "cmsMMPerN": 0.15,
+      "rmsKgPerS": 1.4,
+      "mmdG": 9.8
+    }
+  },
+  "faitalpro6pr150": {
+    "id": "faitalpro6pr150",
+    "name": "FaitalPRO 6PR150 (8 ohm)",
+    "source": "https://faitalpro.com/en/products/LF_Loudspeakers/product_details/index.php?id=101020110",
+    "nominalDiameterIn": 6,
+    "sd": 137,
+    "fs": 100,
+    "qts": 0.34,
+    "vas": 4.9,
+    "re": 5.5,
+    "leMH": 0.28,
+    "mmsG": 13.5,
+    "bl": 11.6,
+    "qms": 8.8,
+    "qes": 0.35,
+    "xmaxMM": 2.65,
+    "nominalPowerW": 150,
+    "driverVol": 0.6,
+    "review": {
+      "status": "manufacturer-published-reviewed",
+      "variant": "8 ohm",
+      "reviewedAt": "2026-09-29",
+      "datasheetUrl": "https://faitalpro.com/products/files/6PR150/8/6PR150_datasheet_8.pdf",
+      "datasheetSHA256": "6cd85f926430fc5a819eb0de9d96cc2a4debee265e51aeeeda7fe4507d987a89",
+      "archivePath": "manufacturer-sources/faitalpro/6PR150/6PR150_datasheet_8.pdf",
+      "location": "Official PDF page 1, model/impedance heading and technical/T-S parameter tables visually inspected.",
+      "inspection": "rendered-pdf-table-reviewed",
+      "units": {
+        "sd": "cm2",
+        "fs": "Hz",
+        "vas": "L",
+        "re": "ohm",
+        "leMH": "mH",
+        "mmsG": "g",
+        "bl": "T m",
+        "xmaxMM": "mm",
+        "nominalPowerW": "W",
+        "driverVol": "L"
+      },
+      "notes": [
+        "All root motor values are manufacturer-published for this exact 8 ohm variant. No values are borrowed from another model.",
+        "Nominal/AES power is kept separate from continuous program power.",
+        "Published Xmax is retained as one-way displacement; manufacturer definitions vary and are not a measured common distortion limit.",
+        "Cms and Rms used by the engine are transparently derived from this model's published Fs, Mms and Qms. Published rounded T/S values are not forced into algebraic agreement.",
+        "Xmax definition: (winding depth - magnetic gap depth)/2 + magnetic gap depth/3; PDF footnote 4.",
+        "Mms includes air loading; published Mmd is recorded separately and is not substituted."
+      ]
+    },
+    "derivedMotor": {
+      "cmsMPerN": 0.00018763182155988475,
+      "rmsKgPerS": 0.9638977459877773,
+      "qesFromMotor": 0.3467051940086833,
+      "qtsFromMotor": 0.3335633588884987,
+      "vasLAtReferenceAir": 4.988826788907699,
+      "referenceAir": {
+        "densityKgM3": 1.2041,
+        "soundSpeedMS": 343
+      },
+      "formulas": {
+        "cmsMPerN": "1 / ((2*pi*fs)^2 * (mmsG/1000))",
+        "rmsKgPerS": "2*pi*fs*(mmsG/1000) / qms",
+        "qesFromMotor": "2*pi*fs*(mmsG/1000)*re / bl^2",
+        "qtsFromMotor": "qesFromMotor*qms / (qesFromMotor+qms)",
+        "vasLAtReferenceAir": "cmsMPerN*densityKgM3*soundSpeedMS^2*(sd*1e-4)^2*1000"
+      },
+      "relativeDifferencePercent": {
+        "qes": -0.9413731403761894,
+        "qts": -1.8931297386768575,
+        "vas": 1.8127916103611863
+      }
+    },
+    "publishedMechanical": {
+      "cmsMMPerN": 0.19,
+      "rmsKgPerS": 1.0,
+      "mmdG": 11.7
+    }
+  },
+  "faitalpro6pr160": {
+    "id": "faitalpro6pr160",
+    "name": "FaitalPRO 6PR160 (8 ohm)",
+    "source": "https://faitalpro.com/en/products/LF_Loudspeakers/product_details/index.php?id=101020145",
+    "nominalDiameterIn": 6,
+    "sd": 130,
+    "fs": 90,
+    "qts": 0.33,
+    "vas": 5.9,
+    "re": 5.9,
+    "leMH": 0.28,
+    "mmsG": 12.5,
+    "bl": 11,
+    "qms": 6.6,
+    "qes": 0.35,
+    "xmaxMM": 5,
+    "nominalPowerW": 120,
+    "driverVol": 0.37,
+    "review": {
+      "status": "manufacturer-published-reviewed",
+      "variant": "8 ohm",
+      "reviewedAt": "2026-09-29",
+      "datasheetUrl": "https://faitalpro.com/products/files/6PR160/8/6PR160_datasheet_8.pdf",
+      "datasheetSHA256": "a3e413f0928c7c7ee0b59a2837d4b379d80e0c051207bbe84f711649e1033f41",
+      "archivePath": "manufacturer-sources/faitalpro/6PR160/6PR160_datasheet_8.pdf",
+      "location": "Official PDF page 1, model/impedance heading and technical/T-S parameter tables visually inspected.",
+      "inspection": "rendered-pdf-table-reviewed",
+      "units": {
+        "sd": "cm2",
+        "fs": "Hz",
+        "vas": "L",
+        "re": "ohm",
+        "leMH": "mH",
+        "mmsG": "g",
+        "bl": "T m",
+        "xmaxMM": "mm",
+        "nominalPowerW": "W",
+        "driverVol": "L"
+      },
+      "notes": [
+        "All root motor values are manufacturer-published for this exact 8 ohm variant. No values are borrowed from another model.",
+        "Nominal/AES power is kept separate from continuous program power.",
+        "Published Xmax is retained as one-way displacement; manufacturer definitions vary and are not a measured common distortion limit.",
+        "Cms and Rms used by the engine are transparently derived from this model's published Fs, Mms and Qms. Published rounded T/S values are not forced into algebraic agreement.",
+        "Xmax definition: (winding depth - magnetic gap depth)/2 + magnetic gap depth/3; PDF footnote 4.",
+        "Mms includes air loading; published Mmd is recorded separately and is not substituted."
+      ]
+    },
+    "derivedMotor": {
+      "cmsMPerN": 0.0002501757620798464,
+      "rmsKgPerS": 1.0709974955419752,
+      "qesFromMotor": 0.3446664667471447,
+      "qtsFromMotor": 0.327560537489234,
+      "vasLAtReferenceAir": 5.989391921611178,
+      "referenceAir": {
+        "densityKgM3": 1.2041,
+        "soundSpeedMS": 343
+      },
+      "formulas": {
+        "cmsMPerN": "1 / ((2*pi*fs)^2 * (mmsG/1000))",
+        "rmsKgPerS": "2*pi*fs*(mmsG/1000) / qms",
+        "qesFromMotor": "2*pi*fs*(mmsG/1000)*re / bl^2",
+        "qtsFromMotor": "qesFromMotor*qms / (qesFromMotor+qms)",
+        "vasLAtReferenceAir": "cmsMPerN*densityKgM3*soundSpeedMS^2*(sd*1e-4)^2*1000"
+      },
+      "relativeDifferencePercent": {
+        "qes": -1.5238666436729442,
+        "qts": -0.739231063868484,
+        "vas": 1.5151173154436925
+      }
+    },
+    "publishedMechanical": {
+      "cmsMMPerN": 0.25,
+      "rmsKgPerS": 1.1,
+      "mmdG": 10.8
+    }
+  },
+  "beyma5p200fe": {
+    "id": "beyma5p200fe",
+    "name": "Beyma 5P200Fe (8 ohm)",
+    "source": "https://www.beyma.com/en/products/c/low-mid-frequency/105P2FE8/altavoz-5p200fe-8-oh/",
+    "nominalDiameterIn": 5,
+    "sd": 95,
+    "fs": 72,
+    "qts": 0.33,
+    "vas": 5.7,
+    "re": 5.2,
+    "leMH": 0.6,
+    "mmsG": 10,
+    "bl": 8.5,
+    "qms": 7.5,
+    "qes": 0.35,
+    "xmaxMM": 5.7,
+    "nominalPowerW": 150,
+    "driverVol": 0.5,
+    "review": {
+      "status": "manufacturer-published-reviewed",
+      "variant": "8 ohm",
+      "reviewedAt": "2026-09-29",
+      "datasheetUrl": "https://www.beyma.com/speakers/Fichas_Tecnicas/beyma-speakers-data-sheet-low-mid-frequency-5P200Fe.pdf",
+      "datasheetSHA256": "14592fe97d51ac70ef46d17162c1c6f52ac3ab7d8cf4e7c16c22496a978eeb05",
+      "archivePath": "manufacturer-sources/beyma/5P200Fe/beyma-speakers-data-sheet-low-mid-frequency-5P200Fe.pdf",
+      "location": "Official PDF page 1, model/impedance heading and technical/T-S parameter tables visually inspected.",
+      "inspection": "rendered-pdf-table-reviewed",
+      "units": {
+        "sd": "cm2",
+        "fs": "Hz",
+        "vas": "L",
+        "re": "ohm",
+        "leMH": "mH",
+        "mmsG": "g",
+        "bl": "T m",
+        "xmaxMM": "mm",
+        "nominalPowerW": "W",
+        "driverVol": "L"
+      },
+      "notes": [
+        "All root motor values are manufacturer-published for this exact 8 ohm variant. No values are borrowed from another model.",
+        "Nominal/AES power is kept separate from continuous program power.",
+        "Published Xmax is retained as one-way displacement; manufacturer definitions vary and are not a measured common distortion limit.",
+        "Cms and Rms used by the engine are transparently derived from this model's published Fs, Mms and Qms. Published rounded T/S values are not forced into algebraic agreement.",
+        "PDF displacement-volume Vd=49 cm3 does not equal listed Sd=95 cm2 times Xmax=5.7 mm (54.15 cm3). Vd is not used by the engine.",
+        "Source moving mass in kg converted to g; Sd in m2 converted to cm2.",
+        "Xmax definition: (voice-coil length - gap height)/2 + gap height/3.5; retain rounded manufacturer value."
+      ]
+    },
+    "derivedMotor": {
+      "cmsMPerN": 0.0004886245353122,
+      "rmsKgPerS": 0.6031857894892403,
+      "qesFromMotor": 0.32559509744055876,
+      "qtsFromMotor": 0.3120482468614892,
+      "vasLAtReferenceAir": 6.2470254822185725,
+      "referenceAir": {
+        "densityKgM3": 1.2041,
+        "soundSpeedMS": 343
+      },
+      "formulas": {
+        "cmsMPerN": "1 / ((2*pi*fs)^2 * (mmsG/1000))",
+        "rmsKgPerS": "2*pi*fs*(mmsG/1000) / qms",
+        "qesFromMotor": "2*pi*fs*(mmsG/1000)*re / bl^2",
+        "qtsFromMotor": "qesFromMotor*qms / (qesFromMotor+qms)",
+        "vasLAtReferenceAir": "cmsMPerN*densityKgM3*soundSpeedMS^2*(sd*1e-4)^2*1000"
+      },
+      "relativeDifferencePercent": {
+        "qes": -6.972829302697492,
+        "qts": -5.4399251934881265,
+        "vas": 9.59693828453636
+      }
+    },
+    "publishedMechanical": {
+      "cmsMMPerN": 0.451,
+      "rmsKgPerS": 0.65
+    }
+  },
+  "beyma5p200ndn": {
+    "id": "beyma5p200ndn",
+    "name": "Beyma 5P200Nd/N (8 ohm)",
+    "source": "https://www.beyma.com/en/products/c/low-mid-frequency/105P2NDN8/loudspeaker-5p200nd-n-8/",
+    "nominalDiameterIn": 5,
+    "sd": 95,
+    "fs": 77,
+    "qts": 0.23,
+    "vas": 4.8,
+    "re": 5.3,
+    "leMH": 0.28,
+    "mmsG": 11,
+    "bl": 10.5,
+    "qms": 7.31,
+    "qes": 0.24,
+    "xmaxMM": 5.7,
+    "nominalPowerW": 150,
+    "driverVol": 0.5,
+    "review": {
+      "status": "manufacturer-published-reviewed",
+      "variant": "8 ohm",
+      "reviewedAt": "2026-09-29",
+      "datasheetUrl": "https://www.beyma.com/speakers/Fichas_Tecnicas/beyma-speakers-data-sheet-low-mid-frequency-5P200NdN.pdf",
+      "datasheetSHA256": "12fcb56f98055a0d30e0d96b5a815fb88ce81737f5ba1e954fd8355abb762f03",
+      "archivePath": "manufacturer-sources/beyma/5P200Nd-N/beyma-speakers-data-sheet-low-mid-frequency-5P200NdN.pdf",
+      "location": "Official PDF page 1, model/impedance heading and technical/T-S parameter tables visually inspected.",
+      "inspection": "rendered-pdf-table-reviewed",
+      "units": {
+        "sd": "cm2",
+        "fs": "Hz",
+        "vas": "L",
+        "re": "ohm",
+        "leMH": "mH",
+        "mmsG": "g",
+        "bl": "T m",
+        "xmaxMM": "mm",
+        "nominalPowerW": "W",
+        "driverVol": "L"
+      },
+      "notes": [
+        "All root motor values are manufacturer-published for this exact 8 ohm variant. No values are borrowed from another model.",
+        "Nominal/AES power is kept separate from continuous program power.",
+        "Published Xmax is retained as one-way displacement; manufacturer definitions vary and are not a measured common distortion limit.",
+        "Cms and Rms used by the engine are transparently derived from this model's published Fs, Mms and Qms. Published rounded T/S values are not forced into algebraic agreement.",
+        "Source moving mass in kg converted to g; Sd in m2 converted to cm2.",
+        "Xmax definition: (voice-coil length - gap height)/2 + gap height/3.5; retain rounded manufacturer value."
+      ]
+    },
+    "derivedMotor": {
+      "cmsMPerN": 0.00038838829038446537,
+      "rmsKgPerS": 0.7280243440740232,
+      "qesFromMotor": 0.25583534841233446,
+      "qtsFromMotor": 0.24718439019250016,
+      "vasLAtReferenceAir": 4.965513132648628,
+      "referenceAir": {
+        "densityKgM3": 1.2041,
+        "soundSpeedMS": 343
+      },
+      "formulas": {
+        "cmsMPerN": "1 / ((2*pi*fs)^2 * (mmsG/1000))",
+        "rmsKgPerS": "2*pi*fs*(mmsG/1000) / qms",
+        "qesFromMotor": "2*pi*fs*(mmsG/1000)*re / bl^2",
+        "qtsFromMotor": "qesFromMotor*qms / (qesFromMotor+qms)",
+        "vasLAtReferenceAir": "cmsMPerN*densityKgM3*soundSpeedMS^2*(sd*1e-4)^2*1000"
+      },
+      "relativeDifferencePercent": {
+        "qes": 6.598061838472691,
+        "qts": 7.471473996739197,
+        "vas": 3.4481902635130846
+      }
+    },
+    "publishedMechanical": {
+      "cmsMMPerN": 0.383,
+      "rmsKgPerS": 0.7
+    }
+  },
+  "beyma6p200fe": {
+    "id": "beyma6p200fe",
+    "name": "Beyma 6P200Fe (8 ohm)",
+    "source": "https://www.beyma.com/en/products/c/low-mid-frequency/106P2FE8/altavoz-6p200fe-8-oh/",
+    "nominalDiameterIn": 6.5,
+    "sd": 135,
+    "fs": 58,
+    "qts": 0.26,
+    "vas": 11.1,
+    "re": 4.9,
+    "leMH": 0.3,
+    "mmsG": 17,
+    "bl": 10.5,
+    "qms": 4.6,
+    "qes": 0.27,
+    "xmaxMM": 5,
+    "nominalPowerW": 200,
+    "review": {
+      "status": "manufacturer-published-reviewed",
+      "variant": "8 ohm",
+      "reviewedAt": "2026-09-29",
+      "datasheetUrl": "https://www.beyma.com/speakers/Fichas_Tecnicas/beyma-speakers-data-sheet-low-mid-frequency-6P200Fe.pdf",
+      "datasheetSHA256": "0049d43b4e54c8c04ffe5cb694847a65b10fb01b4c3ab7edc19d1c70a6c7d217",
+      "archivePath": "manufacturer-sources/beyma/6P200Fe/beyma-speakers-data-sheet-low-mid-frequency-6P200Fe.pdf",
+      "location": "Official PDF page 1, model/impedance heading and technical/T-S parameter tables visually inspected.",
+      "inspection": "rendered-pdf-table-reviewed",
+      "units": {
+        "sd": "cm2",
+        "fs": "Hz",
+        "vas": "L",
+        "re": "ohm",
+        "leMH": "mH",
+        "mmsG": "g",
+        "bl": "T m",
+        "xmaxMM": "mm",
+        "nominalPowerW": "W",
+        "driverVol": "L"
+      },
+      "notes": [
+        "All root motor values are manufacturer-published for this exact 8 ohm variant. No values are borrowed from another model.",
+        "Nominal/AES power is kept separate from continuous program power.",
+        "Published Xmax is retained as one-way displacement; manufacturer definitions vary and are not a measured common distortion limit.",
+        "Cms and Rms used by the engine are transparently derived from this model's published Fs, Mms and Qms. Published rounded T/S values are not forced into algebraic agreement.",
+        "PDF feature list sensitivity says 94 dB while technical table says 93 dB. Neither nominal sensitivity is used to predict horn SPL.",
+        "Source moving mass in kg converted to g; Sd in m2 converted to cm2.",
+        "Xmax definition: (voice-coil length - gap height)/2 + gap height/3.5; retain rounded manufacturer value."
+      ]
+    },
+    "derivedMotor": {
+      "cmsMPerN": 0.00044293026352704135,
+      "rmsKgPerS": 1.3467871114954508,
+      "qesFromMotor": 0.27534314279462546,
+      "qtsFromMotor": 0.25979267915268295,
+      "vasLAtReferenceAir": 11.435461293707261,
+      "referenceAir": {
+        "densityKgM3": 1.2041,
+        "soundSpeedMS": 343
+      },
+      "formulas": {
+        "cmsMPerN": "1 / ((2*pi*fs)^2 * (mmsG/1000))",
+        "rmsKgPerS": "2*pi*fs*(mmsG/1000) / qms",
+        "qesFromMotor": "2*pi*fs*(mmsG/1000)*re / bl^2",
+        "qtsFromMotor": "qesFromMotor*qms / (qesFromMotor+qms)",
+        "vasLAtReferenceAir": "cmsMPerN*densityKgM3*soundSpeedMS^2*(sd*1e-4)^2*1000"
+      },
+      "relativeDifferencePercent": {
+        "qes": 1.9789417757871908,
+        "qts": -0.07973878742963958,
+        "vas": 3.0221738171825274
+      }
+    },
+    "publishedMechanical": {
+      "cmsMMPerN": 0.429,
+      "rmsKgPerS": 1.4
+    }
+  },
+  "beyma6p200nd": {
+    "id": "beyma6p200nd",
+    "name": "Beyma 6P200Nd (8 ohm)",
+    "source": "https://www.beyma.com/en/products/c/low-mid-frequency/106P200ND8/altavoz-6p200nd-8-oh/",
+    "nominalDiameterIn": 6.5,
+    "sd": 135,
+    "fs": 56,
+    "qts": 0.29,
+    "vas": 11.9,
+    "re": 5.3,
+    "leMH": 0.6,
+    "mmsG": 17,
+    "bl": 10.5,
+    "qms": 3.7,
+    "qes": 0.32,
+    "xmaxMM": 5.5,
+    "nominalPowerW": 200,
+    "review": {
+      "status": "manufacturer-published-reviewed",
+      "variant": "8 ohm",
+      "reviewedAt": "2026-09-29",
+      "datasheetUrl": "https://www.beyma.com/speakers/Fichas_Tecnicas/beyma-speakers-data-sheet-low-mid-frequency-6P200Nd.pdf",
+      "datasheetSHA256": "39f0eb4c12cb71c8f8cf1695f68071855d93e419616039f7f2a64bb4327628c4",
+      "archivePath": "manufacturer-sources/beyma/6P200Nd/beyma-speakers-data-sheet-low-mid-frequency-6P200Nd.pdf",
+      "location": "Official PDF page 1, model/impedance heading and technical/T-S parameter tables visually inspected.",
+      "inspection": "rendered-pdf-table-reviewed",
+      "units": {
+        "sd": "cm2",
+        "fs": "Hz",
+        "vas": "L",
+        "re": "ohm",
+        "leMH": "mH",
+        "mmsG": "g",
+        "bl": "T m",
+        "xmaxMM": "mm",
+        "nominalPowerW": "W",
+        "driverVol": "L"
+      },
+      "notes": [
+        "All root motor values are manufacturer-published for this exact 8 ohm variant. No values are borrowed from another model.",
+        "Nominal/AES power is kept separate from continuous program power.",
+        "Published Xmax is retained as one-way displacement; manufacturer definitions vary and are not a measured common distortion limit.",
+        "Cms and Rms used by the engine are transparently derived from this model's published Fs, Mms and Qms. Published rounded T/S values are not forced into algebraic agreement.",
+        "Source moving mass in kg converted to g; Sd in m2 converted to cm2.",
+        "Xmax definition: (voice-coil length - gap height)/2 + gap height/3.5; retain rounded manufacturer value.",
+        "Published Qes=0.32 differs from the electrical motor identity Qes=0.28755 (about -10.1%). Preserve the printed values and confirm revision/sample parameters for close-margin optimization."
+      ]
+    },
+    "derivedMotor": {
+      "cmsMPerN": 0.00047513310156408394,
+      "rmsKgPerS": 1.6166465979553961,
+      "qesFromMotor": 0.28755047424857433,
+      "qtsFromMotor": 0.26681461754292063,
+      "vasLAtReferenceAir": 12.266866005111996,
+      "referenceAir": {
+        "densityKgM3": 1.2041,
+        "soundSpeedMS": 343
+      },
+      "formulas": {
+        "cmsMPerN": "1 / ((2*pi*fs)^2 * (mmsG/1000))",
+        "rmsKgPerS": "2*pi*fs*(mmsG/1000) / qms",
+        "qesFromMotor": "2*pi*fs*(mmsG/1000)*re / bl^2",
+        "qtsFromMotor": "qesFromMotor*qms / (qesFromMotor+qms)",
+        "vasLAtReferenceAir": "cmsMPerN*densityKgM3*soundSpeedMS^2*(sd*1e-4)^2*1000"
+      },
+      "relativeDifferencePercent": {
+        "qes": -10.140476797320519,
+        "qts": -7.994959467958395,
+        "vas": 3.082907605983154
+      }
+    },
+    "publishedMechanical": {
+      "cmsMMPerN": 0.468,
+      "rmsKgPerS": 1.6
+    }
+  },
+  "18sound6nd410": {
+    "id": "18sound6nd410",
+    "name": "18Sound 6ND410 (8 ohm)",
+    "source": "https://www.eighteensound.it/en/products/lf-driver/6-5/8/6ND410",
+    "nominalDiameterIn": 6.5,
+    "sd": 143,
+    "fs": 120,
+    "qts": 0.24,
+    "vas": 6.2,
+    "re": 5.9,
+    "leMH": 0.67,
+    "mmsG": 8.2,
+    "bl": 11.6,
+    "qms": 2.2,
+    "qes": 0.27,
+    "xmaxMM": 2,
+    "nominalPowerW": 180,
+    "review": {
+      "status": "manufacturer-published-reviewed",
+      "variant": "8 ohm",
+      "reviewedAt": "2026-09-29",
+      "datasheetUrl": "https://www.eighteensound.it/en/products/lf-driver/6-5/8/6ND410.pdf",
+      "datasheetSHA256": "daef018f946831cc8c2b6716b37d7826aa840f6ba80785d59598125799582c31",
+      "archivePath": "manufacturer-sources/18sound/6ND410/6ND410_8\u00ce\u00a9.pdf",
+      "location": "Official PDF page 2, model/impedance heading and technical/T-S parameter tables visually inspected.",
+      "inspection": "rendered-pdf-table-reviewed",
+      "units": {
+        "sd": "cm2",
+        "fs": "Hz",
+        "vas": "L",
+        "re": "ohm",
+        "leMH": "mH",
+        "mmsG": "g",
+        "bl": "T m",
+        "xmaxMM": "mm",
+        "nominalPowerW": "W",
+        "driverVol": "L"
+      },
+      "notes": [
+        "All root motor values are manufacturer-published for this exact 8 ohm variant. No values are borrowed from another model.",
+        "Nominal/AES power is kept separate from continuous program power.",
+        "Published Xmax is retained as one-way displacement; manufacturer definitions vary and are not a measured common distortion limit.",
+        "Cms and Rms used by the engine are transparently derived from this model's published Fs, Mms and Qms. Published rounded T/S values are not forced into algebraic agreement.",
+        "Published continuous-power figure is not 2x nominal despite a footnote defining it as +3 dB. Only nominal power is used.",
+        "No physical driver displacement volume is published in this sheet; do not substitute recommended box volume."
+      ]
+    },
+    "derivedMotor": {
+      "cmsMPerN": 0.00021451808867364882,
+      "rmsKgPerS": 2.8102974283021416,
+      "qesFromMotor": 0.2710884409881228,
+      "qtsFromMotor": 0.24134893769135507,
+      "vasLAtReferenceAir": 6.214222372936904,
+      "referenceAir": {
+        "densityKgM3": 1.2041,
+        "soundSpeedMS": 343
+      },
+      "formulas": {
+        "cmsMPerN": "1 / ((2*pi*fs)^2 * (mmsG/1000))",
+        "rmsKgPerS": "2*pi*fs*(mmsG/1000) / qms",
+        "qesFromMotor": "2*pi*fs*(mmsG/1000)*re / bl^2",
+        "qtsFromMotor": "qesFromMotor*qms / (qesFromMotor+qms)",
+        "vasLAtReferenceAir": "cmsMPerN*densityKgM3*soundSpeedMS^2*(sd*1e-4)^2*1000"
+      },
+      "relativeDifferencePercent": {
+        "qes": 0.4031262918973155,
+        "qts": 0.5620573713979393,
+        "vas": 0.22939311188554523
+      }
+    }
+  },
+  "18sound6nmb420": {
+    "id": "18sound6nmb420",
+    "name": "18Sound 6NMB420 (8 ohm)",
+    "source": "https://www.eighteensound.it/en/products/lf-driver/6-5/8/6NMB420",
+    "nominalDiameterIn": 6.5,
+    "sd": 130,
+    "fs": 110,
+    "qts": 0.33,
+    "vas": 6.1,
+    "re": 5.3,
+    "leMH": 0.1,
+    "mmsG": 8.5,
+    "bl": 9,
+    "qms": 2.7,
+    "qes": 0.38,
+    "xmaxMM": 3,
+    "nominalPowerW": 200,
+    "review": {
+      "status": "manufacturer-published-reviewed",
+      "variant": "8 ohm",
+      "reviewedAt": "2026-09-29",
+      "datasheetUrl": "https://www.eighteensound.it/en/products/lf-driver/6-5/8/6NMB420.pdf",
+      "datasheetSHA256": "4988d79b505fecc1a1095dc0a83e2c832f5ee6e55fe6a50de2ff214055757945",
+      "archivePath": "manufacturer-sources/18sound/6NMB420/6NMB420_8\u00ce\u00a9.pdf",
+      "location": "Official PDF page 3, model/impedance heading and technical/T-S parameter tables visually inspected.",
+      "inspection": "rendered-pdf-table-reviewed",
+      "units": {
+        "sd": "cm2",
+        "fs": "Hz",
+        "vas": "L",
+        "re": "ohm",
+        "leMH": "mH",
+        "mmsG": "g",
+        "bl": "T m",
+        "xmaxMM": "mm",
+        "nominalPowerW": "W",
+        "driverVol": "L"
+      },
+      "notes": [
+        "All root motor values are manufacturer-published for this exact 8 ohm variant. No values are borrowed from another model.",
+        "Nominal/AES power is kept separate from continuous program power.",
+        "Published Xmax is retained as one-way displacement; manufacturer definitions vary and are not a measured common distortion limit.",
+        "Cms and Rms used by the engine are transparently derived from this model's published Fs, Mms and Qms. Published rounded T/S values are not forced into algebraic agreement.",
+        "Published continuous-power figure is not 2x nominal despite a footnote defining it as +3 dB. Only nominal power is used.",
+        "No physical driver displacement volume is published in this sheet; do not substitute recommended box volume."
+      ]
+    },
+    "derivedMotor": {
+      "cmsMPerN": 0.0002462838688437962,
+      "rmsKgPerS": 2.1758438008195977,
+      "qesFromMotor": 0.3843990714781289,
+      "qtsFromMotor": 0.3364926097236726,
+      "vasLAtReferenceAir": 5.896217132359083,
+      "referenceAir": {
+        "densityKgM3": 1.2041,
+        "soundSpeedMS": 343
+      },
+      "formulas": {
+        "cmsMPerN": "1 / ((2*pi*fs)^2 * (mmsG/1000))",
+        "rmsKgPerS": "2*pi*fs*(mmsG/1000) / qms",
+        "qesFromMotor": "2*pi*fs*(mmsG/1000)*re / bl^2",
+        "qtsFromMotor": "qesFromMotor*qms / (qesFromMotor+qms)",
+        "vasLAtReferenceAir": "cmsMPerN*densityKgM3*soundSpeedMS^2*(sd*1e-4)^2*1000"
+      },
+      "relativeDifferencePercent": {
+        "qes": 1.1576503889812795,
+        "qts": 1.9674574920220067,
+        "vas": -3.3407027482117546
+      }
+    }
+  },
+  "18sound6nmb900": {
+    "id": "18sound6nmb900",
+    "name": "18Sound 6NMB900 (8 ohm)",
+    "source": "https://www.eighteensound.it/en/products/lf-driver/6-5/8/6NMB900",
+    "nominalDiameterIn": 6.5,
+    "sd": 130,
+    "fs": 95,
+    "qts": 0.32,
+    "vas": 10.3,
+    "re": 5.2,
+    "leMH": 0.1,
+    "mmsG": 7.4,
+    "bl": 8.5,
+    "qms": 2.87,
+    "qes": 0.36,
+    "xmaxMM": 3,
+    "nominalPowerW": 200,
+    "review": {
+      "status": "manufacturer-published-reviewed",
+      "variant": "8 ohm",
+      "reviewedAt": "2026-09-29",
+      "datasheetUrl": "https://www.eighteensound.it/en/products/lf-driver/6-5/8/6NMB900.pdf",
+      "datasheetSHA256": "7f1a47babdbbd677fcfb3534dbe4d652608b43d9fae1589be29d9359eecbe4e4",
+      "archivePath": "manufacturer-sources/18sound/6NMB900/6NMB900_8\u00ce\u00a9.pdf",
+      "location": "Official PDF page 2, model/impedance heading and technical/T-S parameter tables visually inspected.",
+      "inspection": "rendered-pdf-table-reviewed",
+      "units": {
+        "sd": "cm2",
+        "fs": "Hz",
+        "vas": "L",
+        "re": "ohm",
+        "leMH": "mH",
+        "mmsG": "g",
+        "bl": "T m",
+        "xmaxMM": "mm",
+        "nominalPowerW": "W",
+        "driverVol": "L"
+      },
+      "notes": [
+        "All root motor values are manufacturer-published for this exact 8 ohm variant. No values are borrowed from another model.",
+        "Nominal/AES power is kept separate from continuous program power.",
+        "Published Xmax is retained as one-way displacement; manufacturer definitions vary and are not a measured common distortion limit.",
+        "Cms and Rms used by the engine are transparently derived from this model's published Fs, Mms and Qms. Published rounded T/S values are not forced into algebraic agreement.",
+        "Published Qes=0.36 does not exactly close with Fs, Mms, Re and Bl (derived Qes=0.3179, about -11.7%). Retain original values; confirm the exact production revision with manufacturer or measured sample before close-margin optimization.",
+        "Published continuous-power figure is not 2x nominal despite a footnote defining it as +3 dB. Only nominal power is used.",
+        "No physical driver displacement volume is published in this sheet; do not substitute recommended box volume."
+      ]
+    },
+    "derivedMotor": {
+      "cmsMPerN": 0.00037928121450302377,
+      "rmsKgPerS": 1.5390520107830137,
+      "qesFromMotor": 0.3179074354176567,
+      "qtsFromMotor": 0.28620477794052995,
+      "vasLAtReferenceAir": 9.080271499036186,
+      "referenceAir": {
+        "densityKgM3": 1.2041,
+        "soundSpeedMS": 343
+      },
+      "formulas": {
+        "cmsMPerN": "1 / ((2*pi*fs)^2 * (mmsG/1000))",
+        "rmsKgPerS": "2*pi*fs*(mmsG/1000) / qms",
+        "qesFromMotor": "2*pi*fs*(mmsG/1000)*re / bl^2",
+        "qtsFromMotor": "qesFromMotor*qms / (qesFromMotor+qms)",
+        "vasLAtReferenceAir": "cmsMPerN*densityKgM3*soundSpeedMS^2*(sd*1e-4)^2*1000"
+      },
+      "relativeDifferencePercent": {
+        "qes": -11.692379050650914,
+        "qts": -10.561006893584391,
+        "vas": -11.842024281202079
+      }
+    }
+  },
+  "sica6n25pl": {
+    "id": "sica6n25pl",
+    "name": "Sica 6 N 2.5 PL (8 ohm)",
+    "source": "https://sica.it/prodotto/6-n-2-5-pl/",
+    "nominalDiameterIn": 6,
+    "sd": 122.7,
+    "fs": 80,
+    "qts": 0.27,
+    "vas": 4.9,
+    "re": 6.2,
+    "leMH": 0.62,
+    "mmsG": 17.1,
+    "bl": 13.5,
+    "qms": 3.05,
+    "qes": 0.29,
+    "xmaxMM": 4.5,
+    "nominalPowerW": 300,
+    "review": {
+      "status": "manufacturer-published-reviewed",
+      "variant": "8 ohm",
+      "reviewedAt": "2026-09-29",
+      "datasheetUrl": "https://sica.it/wp-content/uploads/2021/02/Z004080.pdf",
+      "datasheetSHA256": "6db3c221cf29f33f989b37da9d0ff5c9a8df7a835bc766c9725a6bd4815ff03d",
+      "archivePath": "manufacturer-sources/sica/6-N-2.5-PL/Z004080.pdf",
+      "location": "Official PDF page 1, model/impedance heading and technical/T-S parameter tables visually inspected.",
+      "inspection": "rendered-pdf-table-reviewed",
+      "units": {
+        "sd": "cm2",
+        "fs": "Hz",
+        "vas": "L",
+        "re": "ohm",
+        "leMH": "mH",
+        "mmsG": "g",
+        "bl": "T m",
+        "xmaxMM": "mm",
+        "nominalPowerW": "W",
+        "driverVol": "L"
+      },
+      "notes": [
+        "All root motor values are manufacturer-published for this exact 8 ohm variant. No values are borrowed from another model.",
+        "Nominal/AES power is kept separate from continuous program power.",
+        "Published Xmax is retained as one-way displacement; manufacturer definitions vary and are not a measured common distortion limit.",
+        "Cms and Rms used by the engine are transparently derived from this model's published Fs, Mms and Qms. Published rounded T/S values are not forced into algebraic agreement.",
+        "Code Z004080 and 8 ohm marking verified; Xmax is manufacturer 10% THD criterion, Xvar is a separate quantity.",
+        "Cms 231 micrometre/N is 0.231 mm/N; RMS mechanical loss is derived because it is not published."
+      ]
+    },
+    "derivedMotor": {
+      "cmsMPerN": 0.0002314537272531473,
+      "rmsKgPerS": 2.8181631148267785,
+      "qesFromMotor": 0.2924085843696811,
+      "qtsFromMotor": 0.2668273970148727,
+      "vasLAtReferenceAir": 4.9363290418411685,
+      "referenceAir": {
+        "densityKgM3": 1.2041,
+        "soundSpeedMS": 343
+      },
+      "formulas": {
+        "cmsMPerN": "1 / ((2*pi*fs)^2 * (mmsG/1000))",
+        "rmsKgPerS": "2*pi*fs*(mmsG/1000) / qms",
+        "qesFromMotor": "2*pi*fs*(mmsG/1000)*re / bl^2",
+        "qtsFromMotor": "qesFromMotor*qms / (qesFromMotor+qms)",
+        "vasLAtReferenceAir": "cmsMPerN*densityKgM3*soundSpeedMS^2*(sd*1e-4)^2*1000"
+      },
+      "relativeDifferencePercent": {
+        "qes": 0.8305463343728059,
+        "qts": -1.1750381426397505,
+        "vas": 0.7414090171667054
+      }
+    },
+    "publishedMechanical": {
+      "cmsMMPerN": 0.231
+    }
+  },
+  "celestiontf0615": {
+    "id": "celestiontf0615",
+    "name": "Celestion TF0615 (8 ohm)",
+    "source": "https://celestion.com/product/tf0615/",
+    "nominalDiameterIn": 6.5,
+    "sd": 153.94,
+    "fs": 104.7,
+    "qts": 0.608,
+    "vas": 6.41,
+    "re": 7.08,
+    "leMH": 0.47,
+    "mmsG": 12.09,
+    "bl": 8.85,
+    "qms": 3.949,
+    "qes": 0.719,
+    "xmaxMM": 1.75,
+    "nominalPowerW": 100,
+    "review": {
+      "status": "manufacturer-published-reviewed",
+      "variant": "8 ohm",
+      "reviewedAt": "2026-09-29",
+      "datasheetUrl": "https://www.celestion.com/product-brochure-pdf.php?id=983",
+      "datasheetSHA256": "db24d36d7734952b9acd6ae92ab7a683891e81dd376dd3237fdd701a0a0f211e",
+      "archivePath": "manufacturer-sources/celestion/TF0615/product-brochure-pdf.php.pdf",
+      "location": "Official PDF page 1, model/impedance heading and technical/T-S parameter tables visually inspected.",
+      "inspection": "rendered-pdf-table-reviewed",
+      "units": {
+        "sd": "cm2",
+        "fs": "Hz",
+        "vas": "L",
+        "re": "ohm",
+        "leMH": "mH",
+        "mmsG": "g",
+        "bl": "T m",
+        "xmaxMM": "mm",
+        "nominalPowerW": "W",
+        "driverVol": "L"
+      },
+      "notes": [
+        "All root motor values are manufacturer-published for this exact 8 ohm variant. No values are borrowed from another model.",
+        "Nominal/AES power is kept separate from continuous program power.",
+        "Published Xmax is retained as one-way displacement; manufacturer definitions vary and are not a measured common distortion limit.",
+        "Cms and Rms used by the engine are transparently derived from this model's published Fs, Mms and Qms. Published rounded T/S values are not forced into algebraic agreement.",
+        "Le is specified at 1 kHz; Xmax definition: 0.5*(Hvc-Hg)+0.25*Hg.",
+        "Official PDF endpoint has no filename extension; archived URL basename with .pdf appended."
+      ]
+    },
+    "derivedMotor": {
+      "cmsMPerN": 0.00019112636454158115,
+      "rmsKgPerS": 2.0140289883742684,
+      "qesFromMotor": 0.718951455375366,
+      "qtsFromMotor": 0.608219542216515,
+      "vasLAtReferenceAir": 6.416147805231127,
+      "referenceAir": {
+        "densityKgM3": 1.2041,
+        "soundSpeedMS": 343
+      },
+      "formulas": {
+        "cmsMPerN": "1 / ((2*pi*fs)^2 * (mmsG/1000))",
+        "rmsKgPerS": "2*pi*fs*(mmsG/1000) / qms",
+        "qesFromMotor": "2*pi*fs*(mmsG/1000)*re / bl^2",
+        "qtsFromMotor": "qesFromMotor*qms / (qesFromMotor+qms)",
+        "vasLAtReferenceAir": "cmsMPerN*densityKgM3*soundSpeedMS^2*(sd*1e-4)^2*1000"
+      },
+      "relativeDifferencePercent": {
+        "qes": -0.006751686319050876,
+        "qts": 0.03610891718996978,
+        "vas": 0.09590959798948528
+      }
+    },
+    "publishedMechanical": {
+      "cmsMMPerN": 0.19,
+      "rmsKgPerS": 2.01
+    }
+  },
+  "celestiontf0512he": {
+    "id": "celestiontf0512he",
+    "name": "Celestion TF0512HE (8 ohm)",
+    "source": "https://celestion.com/product/tf0512he/",
+    "nominalDiameterIn": 5,
+    "sd": 78.54,
+    "fs": 84.7,
+    "qts": 0.536,
+    "vas": 3.46,
+    "re": 5.42,
+    "leMH": 0.28,
+    "mmsG": 8.89,
+    "bl": 6.71,
+    "qms": 9.225,
+    "qes": 0.569,
+    "xmaxMM": 4.75,
+    "nominalPowerW": 75,
+    "review": {
+      "status": "manufacturer-published-reviewed",
+      "variant": "8 ohm",
+      "reviewedAt": "2026-09-29",
+      "datasheetUrl": "https://www.celestion.com/product-brochure-pdf.php?id=9848",
+      "datasheetSHA256": "9f46135a2ce4c9fb8b15546b0a3cec251c48bdade4e1b63d374d7fb1da2ffc55",
+      "archivePath": "manufacturer-sources/celestion/TF0512HE/product-brochure-pdf.php.pdf",
+      "location": "Official PDF page 1, model/impedance heading and technical/T-S parameter tables visually inspected.",
+      "inspection": "rendered-pdf-table-reviewed",
+      "units": {
+        "sd": "cm2",
+        "fs": "Hz",
+        "vas": "L",
+        "re": "ohm",
+        "leMH": "mH",
+        "mmsG": "g",
+        "bl": "T m",
+        "xmaxMM": "mm",
+        "nominalPowerW": "W",
+        "driverVol": "L"
+      },
+      "notes": [
+        "All root motor values are manufacturer-published for this exact 8 ohm variant. No values are borrowed from another model.",
+        "Nominal/AES power is kept separate from continuous program power.",
+        "Published Xmax is retained as one-way displacement; manufacturer definitions vary and are not a measured common distortion limit.",
+        "Cms and Rms used by the engine are transparently derived from this model's published Fs, Mms and Qms. Published rounded T/S values are not forced into algebraic agreement.",
+        "Manufacturer lists this model as OEM Only; motor data completeness does not establish retail availability.",
+        "Le is specified at 1 kHz; Xmax definition: 0.5*(Hvc-Hg)+0.25*Hg.",
+        "Official PDF endpoint has no filename extension; archived URL basename with .pdf appended."
+      ]
+    },
+    "derivedMotor": {
+      "cmsMPerN": 0.00039716565127770255,
+      "rmsKgPerS": 0.512859807279784,
+      "qesFromMotor": 0.5695335150305183,
+      "qtsFromMotor": 0.5364162232018419,
+      "vasLAtReferenceAir": 3.4705976789494435,
+      "referenceAir": {
+        "densityKgM3": 1.2041,
+        "soundSpeedMS": 343
+      },
+      "formulas": {
+        "cmsMPerN": "1 / ((2*pi*fs)^2 * (mmsG/1000))",
+        "rmsKgPerS": "2*pi*fs*(mmsG/1000) / qms",
+        "qesFromMotor": "2*pi*fs*(mmsG/1000)*re / bl^2",
+        "qtsFromMotor": "qesFromMotor*qms / (qesFromMotor+qms)",
+        "vasLAtReferenceAir": "cmsMPerN*densityKgM3*soundSpeedMS^2*(sd*1e-4)^2*1000"
+      },
+      "relativeDifferencePercent": {
+        "qes": 0.09376362575015396,
+        "qts": 0.07765358243319032,
+        "vas": 0.3062912991168565
+      }
+    },
+    "publishedMechanical": {
+      "cmsMMPerN": 0.39,
+      "rmsKgPerS": 0.51
+    }
+  }
+}

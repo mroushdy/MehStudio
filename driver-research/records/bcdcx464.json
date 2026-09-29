@@ -1,0 +1,254 @@
+{
+  "schemaVersion": 1,
+  "id": "bcdcx464",
+  "name": "B&C DCX464",
+  "category": "coaxial-compression",
+  "variant": "8 ohm",
+  "modelStatus": "dimensioned-reconstruction",
+  "sources": [
+    {
+      "id": "drawing",
+      "url": "https://bcspeakers.com/uploads/products/dataSheetDrawings/2019_07_15_16_36_27_698_DCX464_drawing.png",
+      "kind": "drawing-image",
+      "sha256": "472de2536662bc7bff010e50e695aa8f89a08b233b996f474b0183df5b7e609a",
+      "inspection": "drawing-reviewed",
+      "accessDate": "2026-09-29",
+      "redistribution": "Reference retained locally; public redistribution rights not established.",
+      "inspectionDate": "2026-09-29",
+      "localArchivePath": "manufacturer-sources/b-and-c/DCX464/2019_07_15_16_36_27_698_DCX464_drawing.png",
+      "downloadStatus": "downloaded",
+      "localRenderedPaths": [
+        "manufacturer-sources/b-and-c/DCX464/2019_07_15_16_36_27_698_DCX464_drawing.png"
+      ]
+    },
+    {
+      "id": "product",
+      "url": "https://www.bcspeakers.com/en/products/coaxial_hf/1.4/8/DCX464",
+      "kind": "product-page",
+      "sha256": "697e6e958ce69e1bc3f9a782508ff184de054dbefe3ef94b457d8f05395ac990",
+      "inspection": "text-only",
+      "accessDate": "2026-09-29",
+      "redistribution": "Reference retained locally; public redistribution rights not established.",
+      "localArchivePath": "manufacturer-sources/b-and-c/DCX464/DCX464.html",
+      "downloadStatus": "downloaded"
+    }
+  ],
+  "dimensions": {
+    "overallDiameter": {
+      "value": 152,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Manufacturer dimensioned drawing"
+    },
+    "depth": {
+      "value": 78,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Manufacturer dimensioned drawing"
+    },
+    "exitDiameter": {
+      "value": 36,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Manufacturer dimensioned drawing"
+    },
+    "boltCircleDiameter": {
+      "value": 102,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Manufacturer dimensioned drawing"
+    },
+    "boltCount": {
+      "value": 4,
+      "unit": "count",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Manufacturer dimensioned drawing"
+    },
+    "boltThread": {
+      "value": "M6",
+      "unit": "thread",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Manufacturer dimensioned drawing"
+    },
+    "boltHoleDiameter": {
+      "value": null,
+      "unit": "mm",
+      "status": "unresolved",
+      "sourceId": null,
+      "location": "Manufacturer dimensioned drawing",
+      "notes": "Thread specified; actual minor diameter and engagement depth are not given."
+    },
+    "mountingFaceDiameter": {
+      "value": 113,
+      "unit": "mm",
+      "status": "approximate",
+      "sourceId": "drawing",
+      "location": "Manufacturer dimensioned drawing",
+      "notes": "Scaled circular face; no diameter callout."
+    }
+  },
+  "geometry": {
+    "units": "mm",
+    "datum": "mounting face z=0; positive z rearward",
+    "parts": [
+      {
+        "name": "Maximum body envelope",
+        "type": "cylinder",
+        "params": {
+          "radius": 76,
+          "z": 0,
+          "depth": 78,
+          "center": [
+            0,
+            0
+          ]
+        },
+        "status": "envelope",
+        "sourceIds": [
+          "drawing"
+        ],
+        "dimensionRefs": [
+          "overallDiameter",
+          "depth"
+        ],
+        "notes": "Dimensioned body envelope; terminals and wire clearance need separate checking.",
+        "displayRole": "clearance-only"
+      },
+      {
+        "name": "Stepped body appearance",
+        "type": "lathe",
+        "params": {
+          "profile": [
+            [
+              18,
+              0
+            ],
+            [
+              56.5,
+              0
+            ],
+            [
+              61,
+              5
+            ],
+            [
+              63,
+              35
+            ],
+            [
+              76,
+              38
+            ],
+            [
+              76,
+              51
+            ],
+            [
+              73,
+              52
+            ],
+            [
+              72,
+              74
+            ],
+            [
+              70,
+              78
+            ],
+            [
+              0,
+              78
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              18,
+              2
+            ]
+          ],
+          "closed": true
+        },
+        "status": "approximate",
+        "sourceIds": [
+          "drawing"
+        ],
+        "dimensionRefs": [
+          "overallDiameter",
+          "depth",
+          "exitDiameter"
+        ],
+        "notes": "Overall size and exit dimensioned; axial step locations and external radial contours scaled from official drawing. Interior recess is only a visual opening."
+      },
+      {
+        "name": "Exit aperture guide",
+        "type": "ring",
+        "params": {
+          "outerRadius": 18.4,
+          "innerRadius": 18,
+          "z": -0.4,
+          "depth": 0.4
+        },
+        "status": "dimensioned",
+        "sourceIds": [
+          "drawing"
+        ],
+        "dimensionRefs": [
+          "exitDiameter"
+        ],
+        "notes": "Actual exit-diameter guide; internal throat geometry unspecified.",
+        "displayRole": "dimension-guide"
+      },
+      {
+        "name": "M6 mounting axes",
+        "type": "bolt-pattern",
+        "params": {
+          "count": 4,
+          "circleDiameter": 102,
+          "startAngleDeg": 45,
+          "holeDiameter": 6,
+          "z": 0,
+          "depth": 6,
+          "thread": "M6"
+        },
+        "status": "dimensioned",
+        "sourceIds": [
+          "drawing"
+        ],
+        "dimensionRefs": [
+          "boltCount",
+          "boltCircleDiameter",
+          "boltThread"
+        ],
+        "notes": "M6 nominal thread markers only; 6 mm marker depth is graphical, not a specified engagement depth.",
+        "displayRole": "dimension-guide"
+      }
+    ]
+  },
+  "unresolved": [
+    "Terminal access and connector bend clearance require real-part verification.",
+    "Internal motor, phase plug and acoustic cavities are not modelled.",
+    "Mounting-face diameter, thread engagement depth, cooling-fin profile and terminal envelope are not fully dimensioned."
+  ],
+  "notes": [
+    "Mechanical reconstruction does not establish acoustic suitability.",
+    "Drawing-derived dimensions are separated from scaled appearance surfaces."
+  ],
+  "audit": {
+    "date": "2026-09-29",
+    "scope": "Existing-catalogue geometry, units, source identities and mounting datum audit",
+    "freshlyReviewedDrawingSourceIds": [
+      "drawing"
+    ],
+    "manufacturerCADModel": false,
+    "fitCheckStatus": "screening-only",
+    "reason": "Manufacturing tolerances, terminal/wire/tool clearance and some external profiles are incomplete. Drawing dimensions and conservative bounds are not exact CAD."
+  }
+}

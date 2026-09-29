@@ -4,8 +4,10 @@
   "private": true,
   "description": "Offline MEH geometry and acoustic design study",
   "scripts": {
-    "build": "node acoustics/embed.cjs && node mesh-export/embed.cjs",
+    "build": "node driver-research/build-catalog.cjs && node acoustics/embed.cjs && node mesh-export/embed.cjs",
     "test": "node --test tests/*.cjs benchmarks/benchmark.test.cjs"
   },
-  "devDependencies": {"jsdom": "26.1.0"}
+  "devDependencies": {
+    "jsdom": "26.1.0"
+  }
 }

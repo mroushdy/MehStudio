@@ -43,8 +43,8 @@ test('Bundled native insert is qualified for its exact example and closes couple
  for(const row of data.rows){assert.equal(row.qualified,true);assert.ok(Object.values(row.qualification.checks).every(v=>v===true));assert.ok(row.qualification.convergence.mediumToFineMatrixChange<.005);}
  assert.equal(T.analyze(M.analyze({...example.state,gap:29}),data).available,false);
 });
-test('Portable editor embeds the reviewed source modules and unchanged geometry kernel',()=>{
- const {createHash}=require('node:crypto'),{scripts}=require('./load-editor.cjs')();assert.equal(createHash('sha256').update(scripts[4]).digest('hex'),'cb1b9bebd9ff0f155f9a20dd4db4d707f4ef9666cce444b8141586ce626964ec');
+test('Portable editor embeds reviewed modules and the catalogue-reviewed geometry source',()=>{
+ const {createHash}=require('node:crypto'),{scripts}=require('./load-editor.cjs')();assert.equal(createHash('sha256').update(scripts[4]).digest('hex'),'c79b805955f8037f3a9e234e80e7b3d6c76e37387223f039f46cec09fd44867e');
  const N=require('../acoustics/multiport-network.cjs')(c.MEHHornAcoustics),S=require('../acoustics/coupled-system.cjs')(M,c.MEHAcoustics,N),T0=require('../acoustics/spatial-study.cjs')(M,S),P=require('../acoustics/system-panel.cjs')(c);
  for(const [a,b]of [[N.solve,c.MEHMultiport.solve],[S.solve,c.MEHCoupledSystem.solve],[T0.validate,T.validate],[T0.analyze,T.analyze],[T0.csv,T.csv],[P.init,c.MEHSystemPanel.init],[P.plotSVG,c.MEHSystemPanel.plotSVG]])assert.equal(a.toString(),b.toString());
 });
