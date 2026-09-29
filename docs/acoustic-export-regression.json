@@ -1,0 +1,3615 @@
+{
+  "schema": "meh-native-regression/v1",
+  "scope": "Geometry and actual Gmsh file-import checks only. No AKABAK/ABEC parser or solve, acoustic field convergence, energy/passivity qualification or port-sizing validation.",
+  "fixture_definitions_sha256": "3fb58534fd464a4f4f9e8e93aa6357a78a7716daf640253538c5d8072e292c8d",
+  "python": "3.12.13",
+  "cases": [
+    {
+      "case": "individual-sealed-2",
+      "design_sha256": "a04de6e116019962b54168b2de21b02bca5cfd5d79fda1d3e0283a6eaa2a540a",
+      "job_sha256": "4121d7ace30525f584296fe84005dd043e31847fca658cd52afaa5d8b9e26971",
+      "enclosure_kind": "individual-sealed-pods",
+      "drivers": 2,
+      "vent_sources": 0,
+      "size_mm": 35,
+      "profile_tolerance_mm": 0.2,
+      "vertices": 31024,
+      "triangles": 62044,
+      "maximum_edge_mm": 34.93750686527234,
+      "minimum_triangle_quality": 0.013141609884014544,
+      "boundary_components": 1,
+      "intersection_checks_passed": true,
+      "serialized_SI_connectivity_normals_tags_passed": true,
+      "sources": [
+        {
+          "id": "mid_1",
+          "source_tag": 101,
+          "projected_area_m2": 0.013194699581575764,
+          "relative_declared_area_error": 0.00040154685032089965,
+          "all_inward_drive_projections_positive": true
+        },
+        {
+          "id": "mid_2",
+          "source_tag": 102,
+          "projected_area_m2": 0.013194699581575764,
+          "relative_declared_area_error": 0.00040154685032089965,
+          "all_inward_drive_projections_positive": true
+        }
+      ],
+      "resources": {
+        "native_elapsed_seconds_before_adapter": 10.655928875086829,
+        "native_process_peak_rss_bytes": 401375232,
+        "rss_scope": "Native Python/Gmsh process only; excludes Node adapter and solver",
+        "one_dense_complex128_face_matrix_bytes": 61591326976,
+        "matrix_estimate_scope": "Arithmetic face-count estimate only; excludes solver refinement, factorization and workspaces; not measured AKABAK RAM",
+        "proprietary_solver_run": false
+      },
+      "elapsed_seconds_with_native_audit": 11.970741499913856,
+      "bem_msh_sha256": "b1b824cfd77c39ed88084f435b4036684fdded2600e7e879763c7a20ae0e9f46",
+      "native_abec_mesh_audit": {
+        "parser": "Gmsh 4.15.2",
+        "design_sha256": "a04de6e116019962b54168b2de21b02bca5cfd5d79fda1d3e0283a6eaa2a540a",
+        "physical_groups": {
+          "10": {
+            "name": "MEH_10",
+            "elementary_entities": [
+              10
+            ],
+            "triangles": 26624
+          },
+          "11": {
+            "name": "MEH_11",
+            "elementary_entities": [
+              11
+            ],
+            "triangles": 8578
+          },
+          "12": {
+            "name": "MEH_12",
+            "elementary_entities": [
+              12
+            ],
+            "triangles": 23706
+          },
+          "13": {
+            "name": "MEH_13",
+            "elementary_entities": [
+              13
+            ],
+            "triangles": 1280
+          },
+          "101": {
+            "name": "MEH_101",
+            "elementary_entities": [
+              303
+            ],
+            "triangles": 896
+          },
+          "102": {
+            "name": "MEH_102",
+            "elementary_entities": [
+              304
+            ],
+            "triangles": 896
+          },
+          "302": {
+            "name": "MEH_302",
+            "elementary_entities": [
+              302
+            ],
+            "triangles": 64
+          }
+        },
+        "node_count": 31024,
+        "triangle_count": 62044,
+        "domains": {
+          "1": {
+            "name": "Connected front and exterior air",
+            "type": "Exterior",
+            "triangles": 62044,
+            "closed_two_manifold": true,
+            "consistent_winding": true,
+            "manifold_vertices": true,
+            "boundary_components": 1,
+            "solver_signed_volume_m3": 0.013648376178241014
+          }
+        },
+        "interfaces": [],
+        "sources": [
+          {
+            "physical_tag": 101,
+            "source_type": "driver",
+            "domain": 1,
+            "driving_group": 1101,
+            "triangles": 896,
+            "projected_area_m2": 0.013194699581575764,
+            "maximum_velocity_projection_error": 4.404254738687996e-13
+          },
+          {
+            "physical_tag": 102,
+            "source_type": "driver",
+            "domain": 1,
+            "driving_group": 1102,
+            "triangles": 896,
+            "projected_area_m2": 0.013194699581575764,
+            "maximum_velocity_projection_error": 4.404254738687996e-13
+          }
+        ],
+        "passed": true,
+        "observation_checks": {
+          "unit_velocity": true,
+          "default_source_weights_preserved": true,
+          "complete_self_mutual_pairs": 4,
+          "canonical_observer_origin_checked": true,
+          "requested_medium": {
+            "sound_speed_m_s": 343,
+            "density_kg_m3": 1.204
+          },
+          "acoustic_medium_transfer": "manual entry required; not configured by scripts"
+        },
+        "scope": "Native Gmsh import and independently reconstructed domain/source geometry; limited script field cross-check, not ABEC interpretation.",
+        "proprietary_solver_import_or_execution": "not run",
+        "geometric_self_intersections": "Not checked by this audit",
+        "physical_acoustic_accuracy": "not established"
+      },
+      "passed": true
+    },
+    {
+      "case": "individual-sealed-4-offset8-entry32",
+      "design_sha256": "3410584e2de62dbf3e01d77acaf2d35d0754b2e9fcaf13b51e05e5edd9a5d8e8",
+      "job_sha256": "38bc8f02caa93a678d69448fb60ab9a581b0095507fbba6e98803ea7c7e7b9c1",
+      "enclosure_kind": "individual-sealed-pods",
+      "drivers": 4,
+      "vent_sources": 0,
+      "size_mm": 35,
+      "profile_tolerance_mm": 0.2,
+      "vertices": 79292,
+      "triangles": 158580,
+      "maximum_edge_mm": 34.97913955359504,
+      "minimum_triangle_quality": 0.0004977343341063807,
+      "boundary_components": 1,
+      "intersection_checks_passed": true,
+      "serialized_SI_connectivity_normals_tags_passed": true,
+      "sources": [
+        {
+          "id": "mid_1",
+          "source_tag": 101,
+          "projected_area_m2": 0.013195868338647276,
+          "relative_declared_area_error": 0.0003130046479336013,
+          "all_inward_drive_projections_positive": true
+        },
+        {
+          "id": "mid_2",
+          "source_tag": 102,
+          "projected_area_m2": 0.013195868338647276,
+          "relative_declared_area_error": 0.0003130046479336013,
+          "all_inward_drive_projections_positive": true
+        },
+        {
+          "id": "mid_3",
+          "source_tag": 103,
+          "projected_area_m2": 0.013195868338647276,
+          "relative_declared_area_error": 0.0003130046479336013,
+          "all_inward_drive_projections_positive": true
+        },
+        {
+          "id": "mid_4",
+          "source_tag": 104,
+          "projected_area_m2": 0.013195868338647276,
+          "relative_declared_area_error": 0.0003130046479336013,
+          "all_inward_drive_projections_positive": true
+        }
+      ],
+      "resources": {
+        "native_elapsed_seconds_before_adapter": 29.54988987511024,
+        "native_process_peak_rss_bytes": 606109696,
+        "rss_scope": "Native Python/Gmsh process only; excludes Node adapter and solver",
+        "one_dense_complex128_face_matrix_bytes": 402361862400,
+        "matrix_estimate_scope": "Arithmetic face-count estimate only; excludes solver refinement, factorization and workspaces; not measured AKABAK RAM",
+        "proprietary_solver_run": false
+      },
+      "elapsed_seconds_with_native_audit": 31.89938958385028,
+      "bem_msh_sha256": "7cfcaf8ce899657491d801b8ae781ac0868073c81e2419aa9194b7c48be0ec04",
+      "native_abec_mesh_audit": {
+        "parser": "Gmsh 4.15.2",
+        "design_sha256": "3410584e2de62dbf3e01d77acaf2d35d0754b2e9fcaf13b51e05e5edd9a5d8e8",
+        "physical_groups": {
+          "10": {
+            "name": "MEH_10",
+            "elementary_entities": [
+              10
+            ],
+            "triangles": 79040
+          },
+          "11": {
+            "name": "MEH_11",
+            "elementary_entities": [
+              11
+            ],
+            "triangles": 12158
+          },
+          "12": {
+            "name": "MEH_12",
+            "elementary_entities": [
+              12
+            ],
+            "triangles": 58198
+          },
+          "13": {
+            "name": "MEH_13",
+            "elementary_entities": [
+              13
+            ],
+            "triangles": 3800
+          },
+          "101": {
+            "name": "MEH_101",
+            "elementary_entities": [
+              303,
+              304,
+              305,
+              306,
+              307,
+              308,
+              309,
+              310,
+              311,
+              312,
+              313,
+              314,
+              315,
+              316,
+              317,
+              318,
+              319,
+              320,
+              321,
+              322,
+              323,
+              324,
+              325,
+              326,
+              327,
+              328,
+              329,
+              330,
+              331,
+              332,
+              333,
+              334,
+              335,
+              336,
+              337,
+              338,
+              339,
+              340,
+              341,
+              342,
+              343,
+              344,
+              345,
+              346,
+              347,
+              348,
+              349,
+              350,
+              351,
+              352,
+              353,
+              354,
+              355,
+              356,
+              357,
+              358,
+              359,
+              360,
+              361,
+              362,
+              363,
+              364,
+              365,
+              366,
+              367,
+              368
+            ],
+            "triangles": 1330
+          },
+          "102": {
+            "name": "MEH_102",
+            "elementary_entities": [
+              369,
+              370,
+              371,
+              372,
+              373,
+              374,
+              375,
+              376,
+              377,
+              378,
+              379,
+              380,
+              381,
+              382,
+              383,
+              384,
+              385,
+              386,
+              387,
+              388,
+              389,
+              390,
+              391,
+              392,
+              393,
+              394,
+              395,
+              396,
+              397,
+              398,
+              399,
+              400,
+              401,
+              402,
+              403,
+              404,
+              405,
+              406,
+              407,
+              408,
+              409,
+              410,
+              411,
+              412,
+              413,
+              414,
+              415,
+              416,
+              417,
+              418,
+              419,
+              420,
+              421,
+              422,
+              423,
+              424,
+              425,
+              426,
+              427,
+              428,
+              429,
+              430,
+              431,
+              432,
+              433,
+              434
+            ],
+            "triangles": 1330
+          },
+          "103": {
+            "name": "MEH_103",
+            "elementary_entities": [
+              435,
+              436,
+              437,
+              438,
+              439,
+              440,
+              441,
+              442,
+              443,
+              444,
+              445,
+              446,
+              447,
+              448,
+              449,
+              450,
+              451,
+              452,
+              453,
+              454,
+              455,
+              456,
+              457,
+              458,
+              459,
+              460,
+              461,
+              462,
+              463,
+              464,
+              465,
+              466,
+              467,
+              468,
+              469,
+              470,
+              471,
+              472,
+              473,
+              474,
+              475,
+              476,
+              477,
+              478,
+              479,
+              480,
+              481,
+              482,
+              483,
+              484,
+              485,
+              486,
+              487,
+              488,
+              489,
+              490,
+              491,
+              492,
+              493,
+              494,
+              495,
+              496,
+              497,
+              498,
+              499,
+              500
+            ],
+            "triangles": 1330
+          },
+          "104": {
+            "name": "MEH_104",
+            "elementary_entities": [
+              501,
+              502,
+              503,
+              504,
+              505,
+              506,
+              507,
+              508,
+              509,
+              510,
+              511,
+              512,
+              513,
+              514,
+              515,
+              516,
+              517,
+              518,
+              519,
+              520,
+              521,
+              522,
+              523,
+              524,
+              525,
+              526,
+              527,
+              528,
+              529,
+              530,
+              531,
+              532,
+              533,
+              534,
+              535,
+              536,
+              537,
+              538,
+              539,
+              540,
+              541,
+              542,
+              543,
+              544,
+              545,
+              546,
+              547,
+              548,
+              549,
+              550,
+              551,
+              552,
+              553,
+              554,
+              555,
+              556,
+              557,
+              558,
+              559,
+              560,
+              561,
+              562,
+              563,
+              564,
+              565,
+              566
+            ],
+            "triangles": 1330
+          },
+          "302": {
+            "name": "MEH_302",
+            "elementary_entities": [
+              302
+            ],
+            "triangles": 64
+          }
+        },
+        "node_count": 79292,
+        "triangle_count": 158580,
+        "domains": {
+          "1": {
+            "name": "Connected front and exterior air",
+            "type": "Exterior",
+            "triangles": 158580,
+            "closed_two_manifold": true,
+            "consistent_winding": true,
+            "manifold_vertices": true,
+            "boundary_components": 1,
+            "solver_signed_volume_m3": 0.02366987172885172
+          }
+        },
+        "interfaces": [],
+        "sources": [
+          {
+            "physical_tag": 101,
+            "source_type": "driver",
+            "domain": 1,
+            "driving_group": 1101,
+            "triangles": 1330,
+            "projected_area_m2": 0.013195868338647273,
+            "maximum_velocity_projection_error": 4.96713781217295e-13
+          },
+          {
+            "physical_tag": 102,
+            "source_type": "driver",
+            "domain": 1,
+            "driving_group": 1102,
+            "triangles": 1330,
+            "projected_area_m2": 0.013195868338647278,
+            "maximum_velocity_projection_error": 4.96713781217295e-13
+          },
+          {
+            "physical_tag": 103,
+            "source_type": "driver",
+            "domain": 1,
+            "driving_group": 1103,
+            "triangles": 1330,
+            "projected_area_m2": 0.01319586833864728,
+            "maximum_velocity_projection_error": 4.966027589148325e-13
+          },
+          {
+            "physical_tag": 104,
+            "source_type": "driver",
+            "domain": 1,
+            "driving_group": 1104,
+            "triangles": 1330,
+            "projected_area_m2": 0.01319586833864728,
+            "maximum_velocity_projection_error": 4.96713781217295e-13
+          }
+        ],
+        "passed": true,
+        "observation_checks": {
+          "unit_velocity": true,
+          "default_source_weights_preserved": true,
+          "complete_self_mutual_pairs": 16,
+          "canonical_observer_origin_checked": true,
+          "requested_medium": {
+            "sound_speed_m_s": 343,
+            "density_kg_m3": 1.204
+          },
+          "acoustic_medium_transfer": "manual entry required; not configured by scripts"
+        },
+        "scope": "Native Gmsh import and independently reconstructed domain/source geometry; limited script field cross-check, not ABEC interpretation.",
+        "proprietary_solver_import_or_execution": "not run",
+        "geometric_self_intersections": "Not checked by this audit",
+        "physical_acoustic_accuracy": "not established"
+      },
+      "passed": true
+    },
+    {
+      "case": "individual-sealed-4-offset8-entry32-25mm",
+      "design_sha256": "3410584e2de62dbf3e01d77acaf2d35d0754b2e9fcaf13b51e05e5edd9a5d8e8",
+      "job_sha256": "38bc8f02caa93a678d69448fb60ab9a581b0095507fbba6e98803ea7c7e7b9c1",
+      "enclosure_kind": "individual-sealed-pods",
+      "drivers": 4,
+      "vent_sources": 0,
+      "size_mm": 25,
+      "profile_tolerance_mm": 0.2,
+      "vertices": 91104,
+      "triangles": 182204,
+      "maximum_edge_mm": 24.990555548241865,
+      "minimum_triangle_quality": 0.00019178756751797252,
+      "boundary_components": 1,
+      "intersection_checks_passed": true,
+      "serialized_SI_connectivity_normals_tags_passed": true,
+      "sources": [
+        {
+          "id": "mid_1",
+          "source_tag": 101,
+          "projected_area_m2": 0.013195868338647276,
+          "relative_declared_area_error": 0.0003130046479336013,
+          "all_inward_drive_projections_positive": true
+        },
+        {
+          "id": "mid_2",
+          "source_tag": 102,
+          "projected_area_m2": 0.013195868338647276,
+          "relative_declared_area_error": 0.0003130046479336013,
+          "all_inward_drive_projections_positive": true
+        },
+        {
+          "id": "mid_3",
+          "source_tag": 103,
+          "projected_area_m2": 0.013195868338647276,
+          "relative_declared_area_error": 0.0003130046479336013,
+          "all_inward_drive_projections_positive": true
+        },
+        {
+          "id": "mid_4",
+          "source_tag": 104,
+          "projected_area_m2": 0.013195868338647276,
+          "relative_declared_area_error": 0.0003130046479336013,
+          "all_inward_drive_projections_positive": true
+        }
+      ],
+      "resources": {
+        "native_elapsed_seconds_before_adapter": 33.12596237496473,
+        "native_process_peak_rss_bytes": 966868992,
+        "rss_scope": "Native Python/Gmsh process only; excludes Node adapter and solver",
+        "one_dense_complex128_face_matrix_bytes": 531172761856,
+        "matrix_estimate_scope": "Arithmetic face-count estimate only; excludes solver refinement, factorization and workspaces; not measured AKABAK RAM",
+        "proprietary_solver_run": false
+      },
+      "elapsed_seconds_with_native_audit": 35.52788504189812,
+      "bem_msh_sha256": "e6430dd98d996318fec6deaccb24182cf13fd07ad1ff3da5886795752ea316c4",
+      "native_abec_mesh_audit": {
+        "parser": "Gmsh 4.15.2",
+        "design_sha256": "3410584e2de62dbf3e01d77acaf2d35d0754b2e9fcaf13b51e05e5edd9a5d8e8",
+        "physical_groups": {
+          "10": {
+            "name": "MEH_10",
+            "elementary_entities": [
+              10
+            ],
+            "triangles": 79040
+          },
+          "11": {
+            "name": "MEH_11",
+            "elementary_entities": [
+              11
+            ],
+            "triangles": 14606
+          },
+          "12": {
+            "name": "MEH_12",
+            "elementary_entities": [
+              12
+            ],
+            "triangles": 67190
+          },
+          "13": {
+            "name": "MEH_13",
+            "elementary_entities": [
+              13
+            ],
+            "triangles": 6840
+          },
+          "101": {
+            "name": "MEH_101",
+            "elementary_entities": [
+              303,
+              304,
+              305,
+              306,
+              307,
+              308,
+              309,
+              310,
+              311,
+              312,
+              313,
+              314,
+              315,
+              316,
+              317,
+              318,
+              319,
+              320,
+              321,
+              322,
+              323,
+              324,
+              325,
+              326,
+              327,
+              328,
+              329,
+              330,
+              331,
+              332,
+              333,
+              334,
+              335,
+              336,
+              337,
+              338,
+              339,
+              340,
+              341,
+              342,
+              343,
+              344,
+              345,
+              346,
+              347,
+              348,
+              349,
+              350,
+              351,
+              352,
+              353,
+              354,
+              355,
+              356,
+              357,
+              358,
+              359,
+              360,
+              361,
+              362,
+              363,
+              364,
+              365,
+              366,
+              367,
+              368
+            ],
+            "triangles": 3610
+          },
+          "102": {
+            "name": "MEH_102",
+            "elementary_entities": [
+              369,
+              370,
+              371,
+              372,
+              373,
+              374,
+              375,
+              376,
+              377,
+              378,
+              379,
+              380,
+              381,
+              382,
+              383,
+              384,
+              385,
+              386,
+              387,
+              388,
+              389,
+              390,
+              391,
+              392,
+              393,
+              394,
+              395,
+              396,
+              397,
+              398,
+              399,
+              400,
+              401,
+              402,
+              403,
+              404,
+              405,
+              406,
+              407,
+              408,
+              409,
+              410,
+              411,
+              412,
+              413,
+              414,
+              415,
+              416,
+              417,
+              418,
+              419,
+              420,
+              421,
+              422,
+              423,
+              424,
+              425,
+              426,
+              427,
+              428,
+              429,
+              430,
+              431,
+              432,
+              433,
+              434
+            ],
+            "triangles": 3610
+          },
+          "103": {
+            "name": "MEH_103",
+            "elementary_entities": [
+              435,
+              436,
+              437,
+              438,
+              439,
+              440,
+              441,
+              442,
+              443,
+              444,
+              445,
+              446,
+              447,
+              448,
+              449,
+              450,
+              451,
+              452,
+              453,
+              454,
+              455,
+              456,
+              457,
+              458,
+              459,
+              460,
+              461,
+              462,
+              463,
+              464,
+              465,
+              466,
+              467,
+              468,
+              469,
+              470,
+              471,
+              472,
+              473,
+              474,
+              475,
+              476,
+              477,
+              478,
+              479,
+              480,
+              481,
+              482,
+              483,
+              484,
+              485,
+              486,
+              487,
+              488,
+              489,
+              490,
+              491,
+              492,
+              493,
+              494,
+              495,
+              496,
+              497,
+              498,
+              499,
+              500
+            ],
+            "triangles": 3610
+          },
+          "104": {
+            "name": "MEH_104",
+            "elementary_entities": [
+              501,
+              502,
+              503,
+              504,
+              505,
+              506,
+              507,
+              508,
+              509,
+              510,
+              511,
+              512,
+              513,
+              514,
+              515,
+              516,
+              517,
+              518,
+              519,
+              520,
+              521,
+              522,
+              523,
+              524,
+              525,
+              526,
+              527,
+              528,
+              529,
+              530,
+              531,
+              532,
+              533,
+              534,
+              535,
+              536,
+              537,
+              538,
+              539,
+              540,
+              541,
+              542,
+              543,
+              544,
+              545,
+              546,
+              547,
+              548,
+              549,
+              550,
+              551,
+              552,
+              553,
+              554,
+              555,
+              556,
+              557,
+              558,
+              559,
+              560,
+              561,
+              562,
+              563,
+              564,
+              565,
+              566
+            ],
+            "triangles": 3610
+          },
+          "302": {
+            "name": "MEH_302",
+            "elementary_entities": [
+              302
+            ],
+            "triangles": 88
+          }
+        },
+        "node_count": 91104,
+        "triangle_count": 182204,
+        "domains": {
+          "1": {
+            "name": "Connected front and exterior air",
+            "type": "Exterior",
+            "triangles": 182204,
+            "closed_two_manifold": true,
+            "consistent_winding": true,
+            "manifold_vertices": true,
+            "boundary_components": 1,
+            "solver_signed_volume_m3": 0.02368351861815149
+          }
+        },
+        "interfaces": [],
+        "sources": [
+          {
+            "physical_tag": 101,
+            "source_type": "driver",
+            "domain": 1,
+            "driving_group": 1101,
+            "triangles": 3610,
+            "projected_area_m2": 0.013195868338647276,
+            "maximum_velocity_projection_error": 4.970468481246826e-13
+          },
+          {
+            "physical_tag": 102,
+            "source_type": "driver",
+            "domain": 1,
+            "driving_group": 1102,
+            "triangles": 3610,
+            "projected_area_m2": 0.013195868338647276,
+            "maximum_velocity_projection_error": 4.969358258222201e-13
+          },
+          {
+            "physical_tag": 103,
+            "source_type": "driver",
+            "domain": 1,
+            "driving_group": 1103,
+            "triangles": 3610,
+            "projected_area_m2": 0.01319586833864728,
+            "maximum_velocity_projection_error": 4.969358258222201e-13
+          },
+          {
+            "physical_tag": 104,
+            "source_type": "driver",
+            "domain": 1,
+            "driving_group": 1104,
+            "triangles": 3610,
+            "projected_area_m2": 0.013195868338647276,
+            "maximum_velocity_projection_error": 4.970468481246826e-13
+          }
+        ],
+        "passed": true,
+        "observation_checks": {
+          "unit_velocity": true,
+          "default_source_weights_preserved": true,
+          "complete_self_mutual_pairs": 16,
+          "canonical_observer_origin_checked": true,
+          "requested_medium": {
+            "sound_speed_m_s": 343,
+            "density_kg_m3": 1.204
+          },
+          "acoustic_medium_transfer": "manual entry required; not configured by scripts"
+        },
+        "scope": "Native Gmsh import and independently reconstructed domain/source geometry; limited script field cross-check, not ABEC interpretation.",
+        "proprietary_solver_import_or_execution": "not run",
+        "geometric_self_intersections": "Not checked by this audit",
+        "physical_acoustic_accuracy": "not established"
+      },
+      "passed": true
+    },
+    {
+      "case": "individual-sealed-6-open-entry55",
+      "design_sha256": "313c93262dc1ae327f8c5ca0de754d0e0faca6728f4de597acee30ef2e2d49b4",
+      "job_sha256": "77e77f3768e35b8cc622e11de1acd2231bf8cd04325c16083c71029382eba2e4",
+      "enclosure_kind": "individual-sealed-pods",
+      "drivers": 6,
+      "vent_sources": 0,
+      "size_mm": 35,
+      "profile_tolerance_mm": 0.2,
+      "vertices": 49296,
+      "triangles": 98588,
+      "maximum_edge_mm": 34.91440258118359,
+      "minimum_triangle_quality": 0.013073117927439242,
+      "boundary_components": 1,
+      "intersection_checks_passed": true,
+      "serialized_SI_connectivity_normals_tags_passed": true,
+      "sources": [
+        {
+          "id": "mid_1",
+          "source_tag": 101,
+          "projected_area_m2": 0.009484746733838378,
+          "relative_declared_area_error": 0.0016056069643812787,
+          "all_inward_drive_projections_positive": true
+        },
+        {
+          "id": "mid_2",
+          "source_tag": 102,
+          "projected_area_m2": 0.009484746733838378,
+          "relative_declared_area_error": 0.0016056069643812787,
+          "all_inward_drive_projections_positive": true
+        },
+        {
+          "id": "mid_3",
+          "source_tag": 103,
+          "projected_area_m2": 0.009484746733838376,
+          "relative_declared_area_error": 0.0016056069643815007,
+          "all_inward_drive_projections_positive": true
+        },
+        {
+          "id": "mid_4",
+          "source_tag": 104,
+          "projected_area_m2": 0.009484746733838378,
+          "relative_declared_area_error": 0.0016056069643812787,
+          "all_inward_drive_projections_positive": true
+        },
+        {
+          "id": "mid_5",
+          "source_tag": 105,
+          "projected_area_m2": 0.009484746733838381,
+          "relative_declared_area_error": 0.0016056069643809456,
+          "all_inward_drive_projections_positive": true
+        },
+        {
+          "id": "mid_6",
+          "source_tag": 106,
+          "projected_area_m2": 0.009484746733838378,
+          "relative_declared_area_error": 0.0016056069643812787,
+          "all_inward_drive_projections_positive": true
+        }
+      ],
+      "resources": {
+        "native_elapsed_seconds_before_adapter": 13.517952624941245,
+        "native_process_peak_rss_bytes": 501841920,
+        "rss_scope": "Native Python/Gmsh process only; excludes Node adapter and solver",
+        "one_dense_complex128_face_matrix_bytes": 155513499904,
+        "matrix_estimate_scope": "Arithmetic face-count estimate only; excludes solver refinement, factorization and workspaces; not measured AKABAK RAM",
+        "proprietary_solver_run": false
+      },
+      "elapsed_seconds_with_native_audit": 15.063363084103912,
+      "bem_msh_sha256": "ca0456c6c55be1b87c032a61aed642d5ff72cb96c215bc029933e944f11e9453",
+      "native_abec_mesh_audit": {
+        "parser": "Gmsh 4.15.2",
+        "design_sha256": "313c93262dc1ae327f8c5ca0de754d0e0faca6728f4de597acee30ef2e2d49b4",
+        "physical_groups": {
+          "10": {
+            "name": "MEH_10",
+            "elementary_entities": [
+              10
+            ],
+            "triangles": 20736
+          },
+          "11": {
+            "name": "MEH_11",
+            "elementary_entities": [
+              11
+            ],
+            "triangles": 9040
+          },
+          "12": {
+            "name": "MEH_12",
+            "elementary_entities": [
+              12
+            ],
+            "triangles": 62218
+          },
+          "13": {
+            "name": "MEH_13",
+            "elementary_entities": [
+              13
+            ],
+            "triangles": 3840
+          },
+          "101": {
+            "name": "MEH_101",
+            "elementary_entities": [
+              303
+            ],
+            "triangles": 448
+          },
+          "102": {
+            "name": "MEH_102",
+            "elementary_entities": [
+              304
+            ],
+            "triangles": 448
+          },
+          "103": {
+            "name": "MEH_103",
+            "elementary_entities": [
+              305
+            ],
+            "triangles": 448
+          },
+          "104": {
+            "name": "MEH_104",
+            "elementary_entities": [
+              306
+            ],
+            "triangles": 448
+          },
+          "105": {
+            "name": "MEH_105",
+            "elementary_entities": [
+              307
+            ],
+            "triangles": 448
+          },
+          "106": {
+            "name": "MEH_106",
+            "elementary_entities": [
+              308
+            ],
+            "triangles": 448
+          },
+          "302": {
+            "name": "MEH_302",
+            "elementary_entities": [
+              302
+            ],
+            "triangles": 66
+          }
+        },
+        "node_count": 49296,
+        "triangle_count": 98588,
+        "domains": {
+          "1": {
+            "name": "Connected front and exterior air",
+            "type": "Exterior",
+            "triangles": 98588,
+            "closed_two_manifold": true,
+            "consistent_winding": true,
+            "manifold_vertices": true,
+            "boundary_components": 1,
+            "solver_signed_volume_m3": 0.030783156455152883
+          }
+        },
+        "interfaces": [],
+        "sources": [
+          {
+            "physical_tag": 101,
+            "source_type": "driver",
+            "domain": 1,
+            "driving_group": 1101,
+            "triangles": 448,
+            "projected_area_m2": 0.009484746733838378,
+            "maximum_velocity_projection_error": 6.106226635438361e-15
+          },
+          {
+            "physical_tag": 102,
+            "source_type": "driver",
+            "domain": 1,
+            "driving_group": 1102,
+            "triangles": 448,
+            "projected_area_m2": 0.009484746733838376,
+            "maximum_velocity_projection_error": 6.106226635438361e-15
+          },
+          {
+            "physical_tag": 103,
+            "source_type": "driver",
+            "domain": 1,
+            "driving_group": 1103,
+            "triangles": 448,
+            "projected_area_m2": 0.009484746733838376,
+            "maximum_velocity_projection_error": 6.106226635438361e-15
+          },
+          {
+            "physical_tag": 104,
+            "source_type": "driver",
+            "domain": 1,
+            "driving_group": 1104,
+            "triangles": 448,
+            "projected_area_m2": 0.009484746733838378,
+            "maximum_velocity_projection_error": 6.106226635438361e-15
+          },
+          {
+            "physical_tag": 105,
+            "source_type": "driver",
+            "domain": 1,
+            "driving_group": 1105,
+            "triangles": 448,
+            "projected_area_m2": 0.009484746733838378,
+            "maximum_velocity_projection_error": 5.995204332975845e-15
+          },
+          {
+            "physical_tag": 106,
+            "source_type": "driver",
+            "domain": 1,
+            "driving_group": 1106,
+            "triangles": 448,
+            "projected_area_m2": 0.009484746733838376,
+            "maximum_velocity_projection_error": 6.106226635438361e-15
+          }
+        ],
+        "passed": true,
+        "observation_checks": {
+          "unit_velocity": true,
+          "default_source_weights_preserved": true,
+          "complete_self_mutual_pairs": 36,
+          "canonical_observer_origin_checked": true,
+          "requested_medium": {
+            "sound_speed_m_s": 343,
+            "density_kg_m3": 1.204
+          },
+          "acoustic_medium_transfer": "manual entry required; not configured by scripts"
+        },
+        "scope": "Native Gmsh import and independently reconstructed domain/source geometry; limited script field cross-check, not ABEC interpretation.",
+        "proprietary_solver_import_or_execution": "not run",
+        "geometric_self_intersections": "Not checked by this audit",
+        "physical_acoustic_accuracy": "not established"
+      },
+      "passed": true
+    },
+    {
+      "case": "individual-vented-4-rectangle45x15-open-entry32",
+      "design_sha256": "f477eda4b4787e768f5e781baa0dad281c3ffc02834ed30c3768cf6f47e8e07b",
+      "job_sha256": "773f048bc0f390f2970babe49b4f74f7fc5832619b6666565550d5227dcb341a",
+      "enclosure_kind": "individual-vented-pods",
+      "drivers": 4,
+      "vent_sources": 4,
+      "size_mm": 35,
+      "profile_tolerance_mm": 0.2,
+      "vertices": 35064,
+      "triangles": 70124,
+      "maximum_edge_mm": 34.96044217313426,
+      "minimum_triangle_quality": 0.010170513928500763,
+      "boundary_components": 1,
+      "intersection_checks_passed": true,
+      "serialized_SI_connectivity_normals_tags_passed": true,
+      "sources": [
+        {
+          "id": "mid_1",
+          "source_tag": 101,
+          "projected_area_m2": 0.013178805988070162,
+          "relative_declared_area_error": 0.0016056069643816118,
+          "all_inward_drive_projections_positive": true
+        },
+        {
+          "id": "mid_2",
+          "source_tag": 102,
+          "projected_area_m2": 0.013178805988070162,
+          "relative_declared_area_error": 0.0016056069643816118,
+          "all_inward_drive_projections_positive": true
+        },
+        {
+          "id": "mid_3",
+          "source_tag": 103,
+          "projected_area_m2": 0.013178805988070164,
+          "relative_declared_area_error": 0.0016056069643815007,
+          "all_inward_drive_projections_positive": true
+        },
+        {
+          "id": "mid_4",
+          "source_tag": 104,
+          "projected_area_m2": 0.013178805988070162,
+          "relative_declared_area_error": 0.0016056069643816118,
+          "all_inward_drive_projections_positive": true
+        },
+        {
+          "id": "rear_vent_1",
+          "source_tag": 151,
+          "projected_area_m2": 0.0006749999999999998,
+          "relative_declared_area_error": 3.3306690738754696e-16,
+          "all_inward_drive_projections_positive": true
+        },
+        {
+          "id": "rear_vent_2",
+          "source_tag": 152,
+          "projected_area_m2": 0.0006749999999999998,
+          "relative_declared_area_error": 3.3306690738754696e-16,
+          "all_inward_drive_projections_positive": true
+        },
+        {
+          "id": "rear_vent_3",
+          "source_tag": 153,
+          "projected_area_m2": 0.0006749999999999998,
+          "relative_declared_area_error": 3.3306690738754696e-16,
+          "all_inward_drive_projections_positive": true
+        },
+        {
+          "id": "rear_vent_4",
+          "source_tag": 154,
+          "projected_area_m2": 0.0006749999999999998,
+          "relative_declared_area_error": 3.3306690738754696e-16,
+          "all_inward_drive_projections_positive": true
+        }
+      ],
+      "resources": {
+        "native_elapsed_seconds_before_adapter": 6.672466165851802,
+        "native_process_peak_rss_bytes": 425541632,
+        "rss_scope": "Native Python/Gmsh process only; excludes Node adapter and solver",
+        "one_dense_complex128_face_matrix_bytes": 78678006016,
+        "matrix_estimate_scope": "Arithmetic face-count estimate only; excludes solver refinement, factorization and workspaces; not measured AKABAK RAM",
+        "proprietary_solver_run": false
+      },
+      "elapsed_seconds_with_native_audit": 7.816730250138789,
+      "bem_msh_sha256": "728cb546fcedc096f1c5244a0229895bc50bf34ed173260c019995a809df772a",
+      "native_abec_mesh_audit": {
+        "parser": "Gmsh 4.15.2",
+        "design_sha256": "f477eda4b4787e768f5e781baa0dad281c3ffc02834ed30c3768cf6f47e8e07b",
+        "physical_groups": {
+          "10": {
+            "name": "MEH_10",
+            "elementary_entities": [
+              10
+            ],
+            "triangles": 13824
+          },
+          "11": {
+            "name": "MEH_11",
+            "elementary_entities": [
+              11
+            ],
+            "triangles": 8822
+          },
+          "12": {
+            "name": "MEH_12",
+            "elementary_entities": [
+              12
+            ],
+            "triangles": 41330
+          },
+          "13": {
+            "name": "MEH_13",
+            "elementary_entities": [
+              13
+            ],
+            "triangles": 4268
+          },
+          "101": {
+            "name": "MEH_101",
+            "elementary_entities": [
+              303
+            ],
+            "triangles": 448
+          },
+          "102": {
+            "name": "MEH_102",
+            "elementary_entities": [
+              304
+            ],
+            "triangles": 448
+          },
+          "103": {
+            "name": "MEH_103",
+            "elementary_entities": [
+              305
+            ],
+            "triangles": 448
+          },
+          "104": {
+            "name": "MEH_104",
+            "elementary_entities": [
+              306
+            ],
+            "triangles": 448
+          },
+          "151": {
+            "name": "MEH_151",
+            "elementary_entities": [
+              307
+            ],
+            "triangles": 6
+          },
+          "152": {
+            "name": "MEH_152",
+            "elementary_entities": [
+              308
+            ],
+            "triangles": 6
+          },
+          "153": {
+            "name": "MEH_153",
+            "elementary_entities": [
+              309
+            ],
+            "triangles": 6
+          },
+          "154": {
+            "name": "MEH_154",
+            "elementary_entities": [
+              310
+            ],
+            "triangles": 6
+          },
+          "302": {
+            "name": "MEH_302",
+            "elementary_entities": [
+              302
+            ],
+            "triangles": 64
+          }
+        },
+        "node_count": 35064,
+        "triangle_count": 70124,
+        "domains": {
+          "1": {
+            "name": "Connected front and exterior air",
+            "type": "Exterior",
+            "triangles": 70124,
+            "closed_two_manifold": true,
+            "consistent_winding": true,
+            "manifold_vertices": true,
+            "boundary_components": 1,
+            "solver_signed_volume_m3": 0.02293054560740661
+          }
+        },
+        "interfaces": [],
+        "sources": [
+          {
+            "physical_tag": 101,
+            "source_type": "driver",
+            "domain": 1,
+            "driving_group": 1101,
+            "triangles": 448,
+            "projected_area_m2": 0.013178805988070162,
+            "maximum_velocity_projection_error": 1.1224354778960333e-13
+          },
+          {
+            "physical_tag": 102,
+            "source_type": "driver",
+            "domain": 1,
+            "driving_group": 1102,
+            "triangles": 448,
+            "projected_area_m2": 0.013178805988070162,
+            "maximum_velocity_projection_error": 1.1224354778960333e-13
+          },
+          {
+            "physical_tag": 103,
+            "source_type": "driver",
+            "domain": 1,
+            "driving_group": 1103,
+            "triangles": 448,
+            "projected_area_m2": 0.013178805988070164,
+            "maximum_velocity_projection_error": 1.1213252548714081e-13
+          },
+          {
+            "physical_tag": 104,
+            "source_type": "driver",
+            "domain": 1,
+            "driving_group": 1104,
+            "triangles": 448,
+            "projected_area_m2": 0.013178805988070164,
+            "maximum_velocity_projection_error": 1.1213252548714081e-13
+          },
+          {
+            "physical_tag": 151,
+            "source_type": "vent",
+            "domain": 1,
+            "driving_group": 1151,
+            "triangles": 6,
+            "projected_area_m2": 0.0006749999999999998,
+            "maximum_velocity_projection_error": 1.1102230246251565e-16
+          },
+          {
+            "physical_tag": 152,
+            "source_type": "vent",
+            "domain": 1,
+            "driving_group": 1152,
+            "triangles": 6,
+            "projected_area_m2": 0.0006749999999999998,
+            "maximum_velocity_projection_error": 1.1102230246251565e-16
+          },
+          {
+            "physical_tag": 153,
+            "source_type": "vent",
+            "domain": 1,
+            "driving_group": 1153,
+            "triangles": 6,
+            "projected_area_m2": 0.0006749999999999998,
+            "maximum_velocity_projection_error": 1.1102230246251565e-16
+          },
+          {
+            "physical_tag": 154,
+            "source_type": "vent",
+            "domain": 1,
+            "driving_group": 1154,
+            "triangles": 6,
+            "projected_area_m2": 0.0006749999999999998,
+            "maximum_velocity_projection_error": 1.1102230246251565e-16
+          }
+        ],
+        "passed": true,
+        "observation_checks": {
+          "unit_velocity": true,
+          "default_source_weights_preserved": true,
+          "complete_self_mutual_pairs": 64,
+          "canonical_observer_origin_checked": true,
+          "requested_medium": {
+            "sound_speed_m_s": 343,
+            "density_kg_m3": 1.204
+          },
+          "acoustic_medium_transfer": "manual entry required; not configured by scripts"
+        },
+        "scope": "Native Gmsh import and independently reconstructed domain/source geometry; limited script field cross-check, not ABEC interpretation.",
+        "proprietary_solver_import_or_execution": "not run",
+        "geometric_self_intersections": "Not checked by this audit",
+        "physical_acoustic_accuracy": "not established"
+      },
+      "passed": true
+    },
+    {
+      "case": "individual-vented-4-round20",
+      "design_sha256": "30fb999239a89cbb51e65b5e1f02747325a78459b2f285524dde569c4a584737",
+      "job_sha256": "83ad473ff5a6e76c61829d2b38880b6955be425281bb373bdb6316af3321d231",
+      "enclosure_kind": "individual-vented-pods",
+      "drivers": 4,
+      "vent_sources": 4,
+      "size_mm": 35,
+      "profile_tolerance_mm": 0.2,
+      "vertices": 74803,
+      "triangles": 149602,
+      "maximum_edge_mm": 34.93750686527231,
+      "minimum_triangle_quality": 0.01228857011355867,
+      "boundary_components": 1,
+      "intersection_checks_passed": true,
+      "serialized_SI_connectivity_normals_tags_passed": true,
+      "sources": [
+        {
+          "id": "mid_1",
+          "source_tag": 101,
+          "projected_area_m2": 0.013194699581575764,
+          "relative_declared_area_error": 0.00040154685032089965,
+          "all_inward_drive_projections_positive": true
+        },
+        {
+          "id": "mid_2",
+          "source_tag": 102,
+          "projected_area_m2": 0.013194699581575764,
+          "relative_declared_area_error": 0.00040154685032089965,
+          "all_inward_drive_projections_positive": true
+        },
+        {
+          "id": "mid_3",
+          "source_tag": 103,
+          "projected_area_m2": 0.013194699581575764,
+          "relative_declared_area_error": 0.00040154685032089965,
+          "all_inward_drive_projections_positive": true
+        },
+        {
+          "id": "mid_4",
+          "source_tag": 104,
+          "projected_area_m2": 0.013194699581575764,
+          "relative_declared_area_error": 0.00040154685032089965,
+          "all_inward_drive_projections_positive": true
+        },
+        {
+          "id": "rear_vent_1",
+          "source_tag": 151,
+          "projected_area_m2": 0.0003140331156954754,
+          "relative_declared_area_error": 1.1102230246251565e-15,
+          "all_inward_drive_projections_positive": true
+        },
+        {
+          "id": "rear_vent_2",
+          "source_tag": 152,
+          "projected_area_m2": 0.00031403311569547536,
+          "relative_declared_area_error": 1.1102230246251565e-15,
+          "all_inward_drive_projections_positive": true
+        },
+        {
+          "id": "rear_vent_3",
+          "source_tag": 153,
+          "projected_area_m2": 0.00031403311569547536,
+          "relative_declared_area_error": 1.1102230246251565e-15,
+          "all_inward_drive_projections_positive": true
+        },
+        {
+          "id": "rear_vent_4",
+          "source_tag": 154,
+          "projected_area_m2": 0.00031403311569547536,
+          "relative_declared_area_error": 1.1102230246251565e-15,
+          "all_inward_drive_projections_positive": true
+        }
+      ],
+      "resources": {
+        "native_elapsed_seconds_before_adapter": 19.288414499955252,
+        "native_process_peak_rss_bytes": 656097280,
+        "rss_scope": "Native Python/Gmsh process only; excludes Node adapter and solver",
+        "one_dense_complex128_face_matrix_bytes": 358092134464,
+        "matrix_estimate_scope": "Arithmetic face-count estimate only; excludes solver refinement, factorization and workspaces; not measured AKABAK RAM",
+        "proprietary_solver_run": false
+      },
+      "elapsed_seconds_with_native_audit": 21.07380508305505,
+      "bem_msh_sha256": "c57ed4ad5f0907bb8006be9524bfca7cebf391b42020296e5834b302ec1c6428",
+      "native_abec_mesh_audit": {
+        "parser": "Gmsh 4.15.2",
+        "design_sha256": "30fb999239a89cbb51e65b5e1f02747325a78459b2f285524dde569c4a584737",
+        "physical_groups": {
+          "10": {
+            "name": "MEH_10",
+            "elementary_entities": [
+              10
+            ],
+            "triangles": 53248
+          },
+          "11": {
+            "name": "MEH_11",
+            "elementary_entities": [
+              11
+            ],
+            "triangles": 10120
+          },
+          "12": {
+            "name": "MEH_12",
+            "elementary_entities": [
+              12
+            ],
+            "triangles": 41962
+          },
+          "13": {
+            "name": "MEH_13",
+            "elementary_entities": [
+              13
+            ],
+            "triangles": 40112
+          },
+          "101": {
+            "name": "MEH_101",
+            "elementary_entities": [
+              303
+            ],
+            "triangles": 896
+          },
+          "102": {
+            "name": "MEH_102",
+            "elementary_entities": [
+              304
+            ],
+            "triangles": 896
+          },
+          "103": {
+            "name": "MEH_103",
+            "elementary_entities": [
+              305
+            ],
+            "triangles": 896
+          },
+          "104": {
+            "name": "MEH_104",
+            "elementary_entities": [
+              306
+            ],
+            "triangles": 896
+          },
+          "151": {
+            "name": "MEH_151",
+            "elementary_entities": [
+              307
+            ],
+            "triangles": 128
+          },
+          "152": {
+            "name": "MEH_152",
+            "elementary_entities": [
+              308
+            ],
+            "triangles": 128
+          },
+          "153": {
+            "name": "MEH_153",
+            "elementary_entities": [
+              309
+            ],
+            "triangles": 128
+          },
+          "154": {
+            "name": "MEH_154",
+            "elementary_entities": [
+              310
+            ],
+            "triangles": 128
+          },
+          "302": {
+            "name": "MEH_302",
+            "elementary_entities": [
+              302
+            ],
+            "triangles": 64
+          }
+        },
+        "node_count": 74803,
+        "triangle_count": 149602,
+        "domains": {
+          "1": {
+            "name": "Connected front and exterior air",
+            "type": "Exterior",
+            "triangles": 149602,
+            "closed_two_manifold": true,
+            "consistent_winding": true,
+            "manifold_vertices": true,
+            "boundary_components": 1,
+            "solver_signed_volume_m3": 0.023693308879011273
+          }
+        },
+        "interfaces": [],
+        "sources": [
+          {
+            "physical_tag": 101,
+            "source_type": "driver",
+            "domain": 1,
+            "driving_group": 1101,
+            "triangles": 896,
+            "projected_area_m2": 0.013194699581575764,
+            "maximum_velocity_projection_error": 4.403144515663371e-13
+          },
+          {
+            "physical_tag": 102,
+            "source_type": "driver",
+            "domain": 1,
+            "driving_group": 1102,
+            "triangles": 896,
+            "projected_area_m2": 0.013194699581575764,
+            "maximum_velocity_projection_error": 4.403144515663371e-13
+          },
+          {
+            "physical_tag": 103,
+            "source_type": "driver",
+            "domain": 1,
+            "driving_group": 1103,
+            "triangles": 896,
+            "projected_area_m2": 0.013194699581575764,
+            "maximum_velocity_projection_error": 4.403144515663371e-13
+          },
+          {
+            "physical_tag": 104,
+            "source_type": "driver",
+            "domain": 1,
+            "driving_group": 1104,
+            "triangles": 896,
+            "projected_area_m2": 0.013194699581575764,
+            "maximum_velocity_projection_error": 4.403144515663371e-13
+          },
+          {
+            "physical_tag": 151,
+            "source_type": "vent",
+            "domain": 1,
+            "driving_group": 1151,
+            "triangles": 128,
+            "projected_area_m2": 0.0003140331156954754,
+            "maximum_velocity_projection_error": 2.220446049250313e-16
+          },
+          {
+            "physical_tag": 152,
+            "source_type": "vent",
+            "domain": 1,
+            "driving_group": 1152,
+            "triangles": 128,
+            "projected_area_m2": 0.00031403311569547536,
+            "maximum_velocity_projection_error": 2.220446049250313e-16
+          },
+          {
+            "physical_tag": 153,
+            "source_type": "vent",
+            "domain": 1,
+            "driving_group": 1153,
+            "triangles": 128,
+            "projected_area_m2": 0.00031403311569547536,
+            "maximum_velocity_projection_error": 2.220446049250313e-16
+          },
+          {
+            "physical_tag": 154,
+            "source_type": "vent",
+            "domain": 1,
+            "driving_group": 1154,
+            "triangles": 128,
+            "projected_area_m2": 0.00031403311569547536,
+            "maximum_velocity_projection_error": 2.220446049250313e-16
+          }
+        ],
+        "passed": true,
+        "observation_checks": {
+          "unit_velocity": true,
+          "default_source_weights_preserved": true,
+          "complete_self_mutual_pairs": 64,
+          "canonical_observer_origin_checked": true,
+          "requested_medium": {
+            "sound_speed_m_s": 343,
+            "density_kg_m3": 1.204
+          },
+          "acoustic_medium_transfer": "manual entry required; not configured by scripts"
+        },
+        "scope": "Native Gmsh import and independently reconstructed domain/source geometry; limited script field cross-check, not ABEC interpretation.",
+        "proprietary_solver_import_or_execution": "not run",
+        "geometric_self_intersections": "Not checked by this audit",
+        "physical_acoustic_accuracy": "not established"
+      },
+      "passed": true
+    },
+    {
+      "case": "individual-vented-4-round40-offset8-entry55",
+      "design_sha256": "308707edfa9f860357e33101eaeaef9a793d99debb67460e1d23bce48c5bc4f9",
+      "job_sha256": "fdf2092d440cbb249a721e4640a8842d7a21f437e498b72467c3ff907ed4abec",
+      "enclosure_kind": "individual-vented-pods",
+      "drivers": 4,
+      "vent_sources": 4,
+      "size_mm": 35,
+      "profile_tolerance_mm": 0.2,
+      "vertices": 123675,
+      "triangles": 247346,
+      "maximum_edge_mm": 34.93750686527231,
+      "minimum_triangle_quality": 0.0004977343341063807,
+      "boundary_components": 1,
+      "intersection_checks_passed": true,
+      "serialized_SI_connectivity_normals_tags_passed": true,
+      "sources": [
+        {
+          "id": "mid_1",
+          "source_tag": 101,
+          "projected_area_m2": 0.013195868338647276,
+          "relative_declared_area_error": 0.0003130046479336013,
+          "all_inward_drive_projections_positive": true
+        },
+        {
+          "id": "mid_2",
+          "source_tag": 102,
+          "projected_area_m2": 0.013195868338647276,
+          "relative_declared_area_error": 0.0003130046479336013,
+          "all_inward_drive_projections_positive": true
+        },
+        {
+          "id": "mid_3",
+          "source_tag": 103,
+          "projected_area_m2": 0.013195868338647276,
+          "relative_declared_area_error": 0.0003130046479336013,
+          "all_inward_drive_projections_positive": true
+        },
+        {
+          "id": "mid_4",
+          "source_tag": 104,
+          "projected_area_m2": 0.013195868338647276,
+          "relative_declared_area_error": 0.0003130046479336013,
+          "all_inward_drive_projections_positive": true
+        },
+        {
+          "id": "rear_vent_1",
+          "source_tag": 151,
+          "projected_area_m2": 0.0012561324627819012,
+          "relative_declared_area_error": 8.881784197001252e-16,
+          "all_inward_drive_projections_positive": true
+        },
+        {
+          "id": "rear_vent_2",
+          "source_tag": 152,
+          "projected_area_m2": 0.0012561324627819014,
+          "relative_declared_area_error": 1.1102230246251565e-15,
+          "all_inward_drive_projections_positive": true
+        },
+        {
+          "id": "rear_vent_3",
+          "source_tag": 153,
+          "projected_area_m2": 0.0012561324627819014,
+          "relative_declared_area_error": 1.1102230246251565e-15,
+          "all_inward_drive_projections_positive": true
+        },
+        {
+          "id": "rear_vent_4",
+          "source_tag": 154,
+          "projected_area_m2": 0.0012561324627819012,
+          "relative_declared_area_error": 8.881784197001252e-16,
+          "all_inward_drive_projections_positive": true
+        }
+      ],
+      "resources": {
+        "native_elapsed_seconds_before_adapter": 29.73664675001055,
+        "native_process_peak_rss_bytes": 973635584,
+        "rss_scope": "Native Python/Gmsh process only; excludes Node adapter and solver",
+        "one_dense_complex128_face_matrix_bytes": 978880699456,
+        "matrix_estimate_scope": "Arithmetic face-count estimate only; excludes solver refinement, factorization and workspaces; not measured AKABAK RAM",
+        "proprietary_solver_run": false
+      },
+      "elapsed_seconds_with_native_audit": 32.619834874989465,
+      "bem_msh_sha256": "e543ae967afc2d3e65d6b40310baf32c281132a029605a9526e9a72a5a528deb",
+      "native_abec_mesh_audit": {
+        "parser": "Gmsh 4.15.2",
+        "design_sha256": "308707edfa9f860357e33101eaeaef9a793d99debb67460e1d23bce48c5bc4f9",
+        "physical_groups": {
+          "10": {
+            "name": "MEH_10",
+            "elementary_entities": [
+              10
+            ],
+            "triangles": 79040
+          },
+          "11": {
+            "name": "MEH_11",
+            "elementary_entities": [
+              11
+            ],
+            "triangles": 11384
+          },
+          "12": {
+            "name": "MEH_12",
+            "elementary_entities": [
+              12
+            ],
+            "triangles": 59610
+          },
+          "13": {
+            "name": "MEH_13",
+            "elementary_entities": [
+              13
+            ],
+            "triangles": 91416
+          },
+          "101": {
+            "name": "MEH_101",
+            "elementary_entities": [
+              303,
+              304,
+              305,
+              306,
+              307,
+              308,
+              309,
+              310,
+              311,
+              312,
+              313,
+              314,
+              315,
+              316,
+              317,
+              318,
+              319,
+              320,
+              321,
+              322,
+              323,
+              324,
+              325,
+              326,
+              327,
+              328,
+              329,
+              330,
+              331,
+              332,
+              333,
+              334,
+              335,
+              336,
+              337,
+              338,
+              339,
+              340,
+              341,
+              342,
+              343,
+              344,
+              345,
+              346,
+              347,
+              348,
+              349,
+              350,
+              351,
+              352,
+              353,
+              354,
+              355,
+              356,
+              357,
+              358,
+              359,
+              360,
+              361,
+              362,
+              363,
+              364,
+              365,
+              366,
+              367,
+              368
+            ],
+            "triangles": 1330
+          },
+          "102": {
+            "name": "MEH_102",
+            "elementary_entities": [
+              369,
+              370,
+              371,
+              372,
+              373,
+              374,
+              375,
+              376,
+              377,
+              378,
+              379,
+              380,
+              381,
+              382,
+              383,
+              384,
+              385,
+              386,
+              387,
+              388,
+              389,
+              390,
+              391,
+              392,
+              393,
+              394,
+              395,
+              396,
+              397,
+              398,
+              399,
+              400,
+              401,
+              402,
+              403,
+              404,
+              405,
+              406,
+              407,
+              408,
+              409,
+              410,
+              411,
+              412,
+              413,
+              414,
+              415,
+              416,
+              417,
+              418,
+              419,
+              420,
+              421,
+              422,
+              423,
+              424,
+              425,
+              426,
+              427,
+              428,
+              429,
+              430,
+              431,
+              432,
+              433,
+              434
+            ],
+            "triangles": 1330
+          },
+          "103": {
+            "name": "MEH_103",
+            "elementary_entities": [
+              435,
+              436,
+              437,
+              438,
+              439,
+              440,
+              441,
+              442,
+              443,
+              444,
+              445,
+              446,
+              447,
+              448,
+              449,
+              450,
+              451,
+              452,
+              453,
+              454,
+              455,
+              456,
+              457,
+              458,
+              459,
+              460,
+              461,
+              462,
+              463,
+              464,
+              465,
+              466,
+              467,
+              468,
+              469,
+              470,
+              471,
+              472,
+              473,
+              474,
+              475,
+              476,
+              477,
+              478,
+              479,
+              480,
+              481,
+              482,
+              483,
+              484,
+              485,
+              486,
+              487,
+              488,
+              489,
+              490,
+              491,
+              492,
+              493,
+              494,
+              495,
+              496,
+              497,
+              498,
+              499,
+              500
+            ],
+            "triangles": 1330
+          },
+          "104": {
+            "name": "MEH_104",
+            "elementary_entities": [
+              501,
+              502,
+              503,
+              504,
+              505,
+              506,
+              507,
+              508,
+              509,
+              510,
+              511,
+              512,
+              513,
+              514,
+              515,
+              516,
+              517,
+              518,
+              519,
+              520,
+              521,
+              522,
+              523,
+              524,
+              525,
+              526,
+              527,
+              528,
+              529,
+              530,
+              531,
+              532,
+              533,
+              534,
+              535,
+              536,
+              537,
+              538,
+              539,
+              540,
+              541,
+              542,
+              543,
+              544,
+              545,
+              546,
+              547,
+              548,
+              549,
+              550,
+              551,
+              552,
+              553,
+              554,
+              555,
+              556,
+              557,
+              558,
+              559,
+              560,
+              561,
+              562,
+              563,
+              564,
+              565,
+              566
+            ],
+            "triangles": 1330
+          },
+          "151": {
+            "name": "MEH_151",
+            "elementary_entities": [
+              567
+            ],
+            "triangles": 128
+          },
+          "152": {
+            "name": "MEH_152",
+            "elementary_entities": [
+              568
+            ],
+            "triangles": 128
+          },
+          "153": {
+            "name": "MEH_153",
+            "elementary_entities": [
+              569
+            ],
+            "triangles": 128
+          },
+          "154": {
+            "name": "MEH_154",
+            "elementary_entities": [
+              570
+            ],
+            "triangles": 128
+          },
+          "302": {
+            "name": "MEH_302",
+            "elementary_entities": [
+              302
+            ],
+            "triangles": 64
+          }
+        },
+        "node_count": 123675,
+        "triangle_count": 247346,
+        "domains": {
+          "1": {
+            "name": "Connected front and exterior air",
+            "type": "Exterior",
+            "triangles": 247346,
+            "closed_two_manifold": true,
+            "consistent_winding": true,
+            "manifold_vertices": true,
+            "boundary_components": 1,
+            "solver_signed_volume_m3": 0.02372838348258946
+          }
+        },
+        "interfaces": [],
+        "sources": [
+          {
+            "physical_tag": 101,
+            "source_type": "driver",
+            "domain": 1,
+            "driving_group": 1101,
+            "triangles": 1330,
+            "projected_area_m2": 0.013195868338647278,
+            "maximum_velocity_projection_error": 4.96713781217295e-13
+          },
+          {
+            "physical_tag": 102,
+            "source_type": "driver",
+            "domain": 1,
+            "driving_group": 1102,
+            "triangles": 1330,
+            "projected_area_m2": 0.01319586833864728,
+            "maximum_velocity_projection_error": 4.96713781217295e-13
+          },
+          {
+            "physical_tag": 103,
+            "source_type": "driver",
+            "domain": 1,
+            "driving_group": 1103,
+            "triangles": 1330,
+            "projected_area_m2": 0.013195868338647275,
+            "maximum_velocity_projection_error": 4.968248035197576e-13
+          },
+          {
+            "physical_tag": 104,
+            "source_type": "driver",
+            "domain": 1,
+            "driving_group": 1104,
+            "triangles": 1330,
+            "projected_area_m2": 0.013195868338647283,
+            "maximum_velocity_projection_error": 4.968248035197576e-13
+          },
+          {
+            "physical_tag": 151,
+            "source_type": "vent",
+            "domain": 1,
+            "driving_group": 1151,
+            "triangles": 128,
+            "projected_area_m2": 0.0012561324627819012,
+            "maximum_velocity_projection_error": 2.220446049250313e-16
+          },
+          {
+            "physical_tag": 152,
+            "source_type": "vent",
+            "domain": 1,
+            "driving_group": 1152,
+            "triangles": 128,
+            "projected_area_m2": 0.0012561324627819012,
+            "maximum_velocity_projection_error": 2.220446049250313e-16
+          },
+          {
+            "physical_tag": 153,
+            "source_type": "vent",
+            "domain": 1,
+            "driving_group": 1153,
+            "triangles": 128,
+            "projected_area_m2": 0.0012561324627819014,
+            "maximum_velocity_projection_error": 2.220446049250313e-16
+          },
+          {
+            "physical_tag": 154,
+            "source_type": "vent",
+            "domain": 1,
+            "driving_group": 1154,
+            "triangles": 128,
+            "projected_area_m2": 0.0012561324627819012,
+            "maximum_velocity_projection_error": 2.220446049250313e-16
+          }
+        ],
+        "passed": true,
+        "observation_checks": {
+          "unit_velocity": true,
+          "default_source_weights_preserved": true,
+          "complete_self_mutual_pairs": 64,
+          "canonical_observer_origin_checked": true,
+          "requested_medium": {
+            "sound_speed_m_s": 343,
+            "density_kg_m3": 1.204
+          },
+          "acoustic_medium_transfer": "manual entry required; not configured by scripts"
+        },
+        "scope": "Native Gmsh import and independently reconstructed domain/source geometry; limited script field cross-check, not ABEC interpretation.",
+        "proprietary_solver_import_or_execution": "not run",
+        "geometric_self_intersections": "Not checked by this audit",
+        "physical_acoustic_accuracy": "not established"
+      },
+      "passed": true
+    },
+    {
+      "case": "shared-sealed-2-offset8-entry55",
+      "design_sha256": "ce945f670a03e17d7f14f5e9429efafbeaf3d103c3916dabf0d8d5a822a66602",
+      "job_sha256": "c1da3f457d31a161e141f9f7f112727705553b28f2ec6e2604d520a907ad06f2",
+      "enclosure_kind": "shared-sealed-smooth-shell",
+      "drivers": 2,
+      "vent_sources": 0,
+      "size_mm": 35,
+      "profile_tolerance_mm": 0.2,
+      "vertices": 28757,
+      "triangles": 57510,
+      "maximum_edge_mm": 34.99327914814808,
+      "minimum_triangle_quality": 0.0004977343341061905,
+      "boundary_components": 1,
+      "intersection_checks_passed": true,
+      "serialized_SI_connectivity_normals_tags_passed": true,
+      "sources": [
+        {
+          "id": "mid_1",
+          "source_tag": 101,
+          "projected_area_m2": 0.013195868338647276,
+          "relative_declared_area_error": 0.0003130046479336013,
+          "all_inward_drive_projections_positive": true
+        },
+        {
+          "id": "mid_2",
+          "source_tag": 102,
+          "projected_area_m2": 0.013195868338647276,
+          "relative_declared_area_error": 0.0003130046479336013,
+          "all_inward_drive_projections_positive": true
+        }
+      ],
+      "resources": {
+        "native_elapsed_seconds_before_adapter": 11.281257583061233,
+        "native_process_peak_rss_bytes": 521994240,
+        "rss_scope": "Native Python/Gmsh process only; excludes Node adapter and solver",
+        "one_dense_complex128_face_matrix_bytes": 52918401600,
+        "matrix_estimate_scope": "Arithmetic face-count estimate only; excludes solver refinement, factorization and workspaces; not measured AKABAK RAM",
+        "proprietary_solver_run": false
+      },
+      "elapsed_seconds_with_native_audit": 12.27598458295688,
+      "bem_msh_sha256": "84ccb9aa54f3fa2a7e8085e0d74b345e5628915a7b04bf69cbedf8b6e385694b",
+      "native_abec_mesh_audit": {
+        "parser": "Gmsh 4.15.2",
+        "design_sha256": "ce945f670a03e17d7f14f5e9429efafbeaf3d103c3916dabf0d8d5a822a66602",
+        "physical_groups": {
+          "10": {
+            "name": "MEH_10",
+            "elementary_entities": [
+              10
+            ],
+            "triangles": 39520
+          },
+          "11": {
+            "name": "MEH_11",
+            "elementary_entities": [
+              11
+            ],
+            "triangles": 9186
+          },
+          "12": {
+            "name": "MEH_12",
+            "elementary_entities": [
+              12
+            ],
+            "triangles": 5760
+          },
+          "13": {
+            "name": "MEH_13",
+            "elementary_entities": [
+              13
+            ],
+            "triangles": 320
+          },
+          "101": {
+            "name": "MEH_101",
+            "elementary_entities": [
+              303,
+              304,
+              305,
+              306,
+              307,
+              308,
+              309,
+              310,
+              311,
+              312,
+              313,
+              314,
+              315,
+              316,
+              317,
+              318,
+              319,
+              320,
+              321,
+              322,
+              323,
+              324,
+              325,
+              326,
+              327,
+              328,
+              329,
+              330,
+              331,
+              332,
+              333,
+              334,
+              335,
+              336,
+              337,
+              338,
+              339,
+              340,
+              341,
+              342,
+              343,
+              344,
+              345,
+              346,
+              347,
+              348,
+              349,
+              350,
+              351,
+              352,
+              353,
+              354,
+              355,
+              356,
+              357,
+              358,
+              359,
+              360,
+              361,
+              362,
+              363,
+              364,
+              365,
+              366,
+              367,
+              368
+            ],
+            "triangles": 1330
+          },
+          "102": {
+            "name": "MEH_102",
+            "elementary_entities": [
+              369,
+              370,
+              371,
+              372,
+              373,
+              374,
+              375,
+              376,
+              377,
+              378,
+              379,
+              380,
+              381,
+              382,
+              383,
+              384,
+              385,
+              386,
+              387,
+              388,
+              389,
+              390,
+              391,
+              392,
+              393,
+              394,
+              395,
+              396,
+              397,
+              398,
+              399,
+              400,
+              401,
+              402,
+              403,
+              404,
+              405,
+              406,
+              407,
+              408,
+              409,
+              410,
+              411,
+              412,
+              413,
+              414,
+              415,
+              416,
+              417,
+              418,
+              419,
+              420,
+              421,
+              422,
+              423,
+              424,
+              425,
+              426,
+              427,
+              428,
+              429,
+              430,
+              431,
+              432,
+              433,
+              434
+            ],
+            "triangles": 1330
+          },
+          "302": {
+            "name": "MEH_302",
+            "elementary_entities": [
+              302
+            ],
+            "triangles": 64
+          }
+        },
+        "node_count": 28757,
+        "triangle_count": 57510,
+        "domains": {
+          "1": {
+            "name": "Connected front and exterior air",
+            "type": "Exterior",
+            "triangles": 57510,
+            "closed_two_manifold": true,
+            "consistent_winding": true,
+            "manifold_vertices": true,
+            "boundary_components": 1,
+            "solver_signed_volume_m3": 0.12293023825853827
+          }
+        },
+        "interfaces": [],
+        "sources": [
+          {
+            "physical_tag": 101,
+            "source_type": "driver",
+            "domain": 1,
+            "driving_group": 1101,
+            "triangles": 1330,
+            "projected_area_m2": 0.013195868338647273,
+            "maximum_velocity_projection_error": 4.969358258222201e-13
+          },
+          {
+            "physical_tag": 102,
+            "source_type": "driver",
+            "domain": 1,
+            "driving_group": 1102,
+            "triangles": 1330,
+            "projected_area_m2": 0.01319586833864727,
+            "maximum_velocity_projection_error": 4.968248035197576e-13
+          }
+        ],
+        "passed": true,
+        "observation_checks": {
+          "unit_velocity": true,
+          "default_source_weights_preserved": true,
+          "complete_self_mutual_pairs": 4,
+          "canonical_observer_origin_checked": true,
+          "requested_medium": {
+            "sound_speed_m_s": 343,
+            "density_kg_m3": 1.204
+          },
+          "acoustic_medium_transfer": "manual entry required; not configured by scripts"
+        },
+        "scope": "Native Gmsh import and independently reconstructed domain/source geometry; limited script field cross-check, not ABEC interpretation.",
+        "proprietary_solver_import_or_execution": "not run",
+        "geometric_self_intersections": "Not checked by this audit",
+        "physical_acoustic_accuracy": "not established"
+      },
+      "passed": true
+    },
+    {
+      "case": "shared-sealed-4-saved-parity",
+      "design_sha256": "efdb8eac77c7fc7b7c7c1c31363f4cae6527b12398c729aa065b576958b75758",
+      "job_sha256": "771481bac6c8382f4d595a6f30b7dc8d5eefcf68c2673febdbf9551824f4f029",
+      "enclosure_kind": "shared-sealed-smooth-shell",
+      "drivers": 4,
+      "vent_sources": 0,
+      "size_mm": 35,
+      "profile_tolerance_mm": 0.2,
+      "vertices": 36614,
+      "triangles": 73224,
+      "maximum_edge_mm": 34.998702624666485,
+      "minimum_triangle_quality": 0.01228857011355867,
+      "boundary_components": 1,
+      "intersection_checks_passed": true,
+      "serialized_SI_connectivity_normals_tags_passed": true,
+      "sources": [
+        {
+          "id": "mid_1",
+          "source_tag": 101,
+          "projected_area_m2": 0.013194699581575764,
+          "relative_declared_area_error": 0.00040154685032089965,
+          "all_inward_drive_projections_positive": true
+        },
+        {
+          "id": "mid_2",
+          "source_tag": 102,
+          "projected_area_m2": 0.013194699581575764,
+          "relative_declared_area_error": 0.00040154685032089965,
+          "all_inward_drive_projections_positive": true
+        },
+        {
+          "id": "mid_3",
+          "source_tag": 103,
+          "projected_area_m2": 0.013194699581575764,
+          "relative_declared_area_error": 0.00040154685032089965,
+          "all_inward_drive_projections_positive": true
+        },
+        {
+          "id": "mid_4",
+          "source_tag": 104,
+          "projected_area_m2": 0.013194699581575764,
+          "relative_declared_area_error": 0.00040154685032089965,
+          "all_inward_drive_projections_positive": true
+        }
+      ],
+      "resources": {
+        "native_elapsed_seconds_before_adapter": 14.574297707993537,
+        "native_process_peak_rss_bytes": 594886656,
+        "rss_scope": "Native Python/Gmsh process only; excludes Node adapter and solver",
+        "one_dense_complex128_face_matrix_bytes": 85788066816,
+        "matrix_estimate_scope": "Arithmetic face-count estimate only; excludes solver refinement, factorization and workspaces; not measured AKABAK RAM",
+        "proprietary_solver_run": false
+      },
+      "elapsed_seconds_with_native_audit": 16.29097537486814,
+      "bem_msh_sha256": "c2399c0eadc97c1965e2e88d1a2920d78618e7abab2c862ff7233efbf56e8174",
+      "native_abec_mesh_audit": {
+        "parser": "Gmsh 4.15.2",
+        "design_sha256": "efdb8eac77c7fc7b7c7c1c31363f4cae6527b12398c729aa065b576958b75758",
+        "physical_groups": {
+          "10": {
+            "name": "MEH_10",
+            "elementary_entities": [
+              10
+            ],
+            "triangles": 53248
+          },
+          "11": {
+            "name": "MEH_11",
+            "elementary_entities": [
+              11
+            ],
+            "triangles": 10120
+          },
+          "12": {
+            "name": "MEH_12",
+            "elementary_entities": [
+              12
+            ],
+            "triangles": 5888
+          },
+          "13": {
+            "name": "MEH_13",
+            "elementary_entities": [
+              13
+            ],
+            "triangles": 320
+          },
+          "101": {
+            "name": "MEH_101",
+            "elementary_entities": [
+              303
+            ],
+            "triangles": 896
+          },
+          "102": {
+            "name": "MEH_102",
+            "elementary_entities": [
+              304
+            ],
+            "triangles": 896
+          },
+          "103": {
+            "name": "MEH_103",
+            "elementary_entities": [
+              305
+            ],
+            "triangles": 896
+          },
+          "104": {
+            "name": "MEH_104",
+            "elementary_entities": [
+              306
+            ],
+            "triangles": 896
+          },
+          "302": {
+            "name": "MEH_302",
+            "elementary_entities": [
+              302
+            ],
+            "triangles": 64
+          }
+        },
+        "node_count": 36614,
+        "triangle_count": 73224,
+        "domains": {
+          "1": {
+            "name": "Connected front and exterior air",
+            "type": "Exterior",
+            "triangles": 73224,
+            "closed_two_manifold": true,
+            "consistent_winding": true,
+            "manifold_vertices": true,
+            "boundary_components": 1,
+            "solver_signed_volume_m3": 0.12446058624687849
+          }
+        },
+        "interfaces": [],
+        "sources": [
+          {
+            "physical_tag": 101,
+            "source_type": "driver",
+            "domain": 1,
+            "driving_group": 1101,
+            "triangles": 896,
+            "projected_area_m2": 0.013194699581575764,
+            "maximum_velocity_projection_error": 4.404254738687996e-13
+          },
+          {
+            "physical_tag": 102,
+            "source_type": "driver",
+            "domain": 1,
+            "driving_group": 1102,
+            "triangles": 896,
+            "projected_area_m2": 0.013194699581575764,
+            "maximum_velocity_projection_error": 4.404254738687996e-13
+          },
+          {
+            "physical_tag": 103,
+            "source_type": "driver",
+            "domain": 1,
+            "driving_group": 1103,
+            "triangles": 896,
+            "projected_area_m2": 0.013194699581575764,
+            "maximum_velocity_projection_error": 4.404254738687996e-13
+          },
+          {
+            "physical_tag": 104,
+            "source_type": "driver",
+            "domain": 1,
+            "driving_group": 1104,
+            "triangles": 896,
+            "projected_area_m2": 0.013194699581575764,
+            "maximum_velocity_projection_error": 4.403144515663371e-13
+          }
+        ],
+        "passed": true,
+        "observation_checks": {
+          "unit_velocity": true,
+          "default_source_weights_preserved": true,
+          "complete_self_mutual_pairs": 16,
+          "canonical_observer_origin_checked": true,
+          "requested_medium": {
+            "sound_speed_m_s": 343,
+            "density_kg_m3": 1.204
+          },
+          "acoustic_medium_transfer": "manual entry required; not configured by scripts"
+        },
+        "scope": "Native Gmsh import and independently reconstructed domain/source geometry; limited script field cross-check, not ABEC interpretation.",
+        "proprietary_solver_import_or_execution": "not run",
+        "geometric_self_intersections": "Not checked by this audit",
+        "physical_acoustic_accuracy": "not established"
+      },
+      "passed": true
+    },
+    {
+      "case": "shared-sealed-6-entry32",
+      "design_sha256": "9fc871957d63deb8da0b0117da9f5a5cb87d816fe437b8b3fa32dd1f66c9ccf7",
+      "job_sha256": "7b6bbe2f76a5fc49eb135f90cdb812e50d4ae2198caab46e09bb4b129d3e1d0f",
+      "enclosure_kind": "shared-sealed-smooth-shell",
+      "drivers": 6,
+      "vent_sources": 0,
+      "size_mm": 35,
+      "profile_tolerance_mm": 0.2,
+      "vertices": 51095,
+      "triangles": 102186,
+      "maximum_edge_mm": 34.91440258118359,
+      "minimum_triangle_quality": 0.033629043896252944,
+      "boundary_components": 1,
+      "intersection_checks_passed": true,
+      "serialized_SI_connectivity_normals_tags_passed": true,
+      "sources": [
+        {
+          "id": "mid_1",
+          "source_tag": 101,
+          "projected_area_m2": 0.009496185304921953,
+          "relative_declared_area_error": 0.0004015468503206776,
+          "all_inward_drive_projections_positive": true
+        },
+        {
+          "id": "mid_2",
+          "source_tag": 102,
+          "projected_area_m2": 0.009496185304921953,
+          "relative_declared_area_error": 0.0004015468503206776,
+          "all_inward_drive_projections_positive": true
+        },
+        {
+          "id": "mid_3",
+          "source_tag": 103,
+          "projected_area_m2": 0.009496185304921951,
+          "relative_declared_area_error": 0.00040154685032089965,
+          "all_inward_drive_projections_positive": true
+        },
+        {
+          "id": "mid_4",
+          "source_tag": 104,
+          "projected_area_m2": 0.009496185304921953,
+          "relative_declared_area_error": 0.0004015468503206776,
+          "all_inward_drive_projections_positive": true
+        },
+        {
+          "id": "mid_5",
+          "source_tag": 105,
+          "projected_area_m2": 0.009496185304921955,
+          "relative_declared_area_error": 0.0004015468503205666,
+          "all_inward_drive_projections_positive": true
+        },
+        {
+          "id": "mid_6",
+          "source_tag": 106,
+          "projected_area_m2": 0.009496185304921955,
+          "relative_declared_area_error": 0.0004015468503205666,
+          "all_inward_drive_projections_positive": true
+        }
+      ],
+      "resources": {
+        "native_elapsed_seconds_before_adapter": 19.657079958822578,
+        "native_process_peak_rss_bytes": 654295040,
+        "rss_scope": "Native Python/Gmsh process only; excludes Node adapter and solver",
+        "one_dense_complex128_face_matrix_bytes": 167071657536,
+        "matrix_estimate_scope": "Arithmetic face-count estimate only; excludes solver refinement, factorization and workspaces; not measured AKABAK RAM",
+        "proprietary_solver_run": false
+      },
+      "elapsed_seconds_with_native_audit": 21.092488915892318,
+      "bem_msh_sha256": "77714dbc0c51a0b5e44384d668a6841d89887abc9935e782a3d4888ae6193979",
+      "native_abec_mesh_audit": {
+        "parser": "Gmsh 4.15.2",
+        "design_sha256": "9fc871957d63deb8da0b0117da9f5a5cb87d816fe437b8b3fa32dd1f66c9ccf7",
+        "physical_groups": {
+          "10": {
+            "name": "MEH_10",
+            "elementary_entities": [
+              10
+            ],
+            "triangles": 79872
+          },
+          "11": {
+            "name": "MEH_11",
+            "elementary_entities": [
+              11
+            ],
+            "triangles": 10602
+          },
+          "12": {
+            "name": "MEH_12",
+            "elementary_entities": [
+              12
+            ],
+            "triangles": 5940
+          },
+          "13": {
+            "name": "MEH_13",
+            "elementary_entities": [
+              13
+            ],
+            "triangles": 330
+          },
+          "101": {
+            "name": "MEH_101",
+            "elementary_entities": [
+              303
+            ],
+            "triangles": 896
+          },
+          "102": {
+            "name": "MEH_102",
+            "elementary_entities": [
+              304
+            ],
+            "triangles": 896
+          },
+          "103": {
+            "name": "MEH_103",
+            "elementary_entities": [
+              305
+            ],
+            "triangles": 896
+          },
+          "104": {
+            "name": "MEH_104",
+            "elementary_entities": [
+              306
+            ],
+            "triangles": 896
+          },
+          "105": {
+            "name": "MEH_105",
+            "elementary_entities": [
+              307
+            ],
+            "triangles": 896
+          },
+          "106": {
+            "name": "MEH_106",
+            "elementary_entities": [
+              308
+            ],
+            "triangles": 896
+          },
+          "302": {
+            "name": "MEH_302",
+            "elementary_entities": [
+              302
+            ],
+            "triangles": 66
+          }
+        },
+        "node_count": 51095,
+        "triangle_count": 102186,
+        "domains": {
+          "1": {
+            "name": "Connected front and exterior air",
+            "type": "Exterior",
+            "triangles": 102186,
+            "closed_two_manifold": true,
+            "consistent_winding": true,
+            "manifold_vertices": true,
+            "boundary_components": 1,
+            "solver_signed_volume_m3": 0.12517831006701088
+          }
+        },
+        "interfaces": [],
+        "sources": [
+          {
+            "physical_tag": 101,
+            "source_type": "driver",
+            "domain": 1,
+            "driving_group": 1101,
+            "triangles": 896,
+            "projected_area_m2": 0.009496185304921953,
+            "maximum_velocity_projection_error": 3.4205971388701073e-13
+          },
+          {
+            "physical_tag": 102,
+            "source_type": "driver",
+            "domain": 1,
+            "driving_group": 1102,
+            "triangles": 896,
+            "projected_area_m2": 0.009496185304921951,
+            "maximum_velocity_projection_error": 3.4205971388701073e-13
+          },
+          {
+            "physical_tag": 103,
+            "source_type": "driver",
+            "domain": 1,
+            "driving_group": 1103,
+            "triangles": 896,
+            "projected_area_m2": 0.009496185304921951,
+            "maximum_velocity_projection_error": 3.419486915845482e-13
+          },
+          {
+            "physical_tag": 104,
+            "source_type": "driver",
+            "domain": 1,
+            "driving_group": 1104,
+            "triangles": 896,
+            "projected_area_m2": 0.009496185304921953,
+            "maximum_velocity_projection_error": 3.4205971388701073e-13
+          },
+          {
+            "physical_tag": 105,
+            "source_type": "driver",
+            "domain": 1,
+            "driving_group": 1105,
+            "triangles": 896,
+            "projected_area_m2": 0.009496185304921953,
+            "maximum_velocity_projection_error": 3.4205971388701073e-13
+          },
+          {
+            "physical_tag": 106,
+            "source_type": "driver",
+            "domain": 1,
+            "driving_group": 1106,
+            "triangles": 896,
+            "projected_area_m2": 0.009496185304921951,
+            "maximum_velocity_projection_error": 3.419486915845482e-13
+          }
+        ],
+        "passed": true,
+        "observation_checks": {
+          "unit_velocity": true,
+          "default_source_weights_preserved": true,
+          "complete_self_mutual_pairs": 36,
+          "canonical_observer_origin_checked": true,
+          "requested_medium": {
+            "sound_speed_m_s": 343,
+            "density_kg_m3": 1.204
+          },
+          "acoustic_medium_transfer": "manual entry required; not configured by scripts"
+        },
+        "scope": "Native Gmsh import and independently reconstructed domain/source geometry; limited script field cross-check, not ABEC interpretation.",
+        "proprietary_solver_import_or_execution": "not run",
+        "geometric_self_intersections": "Not checked by this audit",
+        "physical_acoustic_accuracy": "not established"
+      },
+      "passed": true
+    },
+    {
+      "case": "shared-vented-4-rectangle80x40",
+      "design_sha256": "e1c889a225bd2b76fb6009b8b3c68ef8814020496c85524c9d543cb015649f27",
+      "job_sha256": "721ada42fc5e840e7b1e98fa1681fc7797042d2bb9514bb7bd657321174cf246",
+      "enclosure_kind": "shared-vented-smooth-shell",
+      "drivers": 4,
+      "vent_sources": 1,
+      "size_mm": 35,
+      "profile_tolerance_mm": 0.2,
+      "vertices": 36738,
+      "triangles": 73472,
+      "maximum_edge_mm": 34.888226857474336,
+      "minimum_triangle_quality": 0.01228857011355867,
+      "boundary_components": 1,
+      "intersection_checks_passed": true,
+      "serialized_SI_connectivity_normals_tags_passed": true,
+      "sources": [
+        {
+          "id": "mid_1",
+          "source_tag": 101,
+          "projected_area_m2": 0.013194699581575764,
+          "relative_declared_area_error": 0.00040154685032089965,
+          "all_inward_drive_projections_positive": true
+        },
+        {
+          "id": "mid_2",
+          "source_tag": 102,
+          "projected_area_m2": 0.013194699581575764,
+          "relative_declared_area_error": 0.00040154685032089965,
+          "all_inward_drive_projections_positive": true
+        },
+        {
+          "id": "mid_3",
+          "source_tag": 103,
+          "projected_area_m2": 0.013194699581575764,
+          "relative_declared_area_error": 0.00040154685032089965,
+          "all_inward_drive_projections_positive": true
+        },
+        {
+          "id": "mid_4",
+          "source_tag": 104,
+          "projected_area_m2": 0.013194699581575764,
+          "relative_declared_area_error": 0.00040154685032089965,
+          "all_inward_drive_projections_positive": true
+        },
+        {
+          "id": "shared_rear_vent",
+          "source_tag": 151,
+          "projected_area_m2": 0.0031999999999999997,
+          "relative_declared_area_error": 2.220446049250313e-16,
+          "all_inward_drive_projections_positive": true
+        }
+      ],
+      "resources": {
+        "native_elapsed_seconds_before_adapter": 13.803143332945183,
+        "native_process_peak_rss_bytes": 578830336,
+        "rss_scope": "Native Python/Gmsh process only; excludes Node adapter and solver",
+        "one_dense_complex128_face_matrix_bytes": 86370156544,
+        "matrix_estimate_scope": "Arithmetic face-count estimate only; excludes solver refinement, factorization and workspaces; not measured AKABAK RAM",
+        "proprietary_solver_run": false
+      },
+      "elapsed_seconds_with_native_audit": 15.043806333094835,
+      "bem_msh_sha256": "97b449af152b287ba1f052a07fb160217c7f9c25060d1a07dc0e1747372baff1",
+      "native_abec_mesh_audit": {
+        "parser": "Gmsh 4.15.2",
+        "design_sha256": "e1c889a225bd2b76fb6009b8b3c68ef8814020496c85524c9d543cb015649f27",
+        "physical_groups": {
+          "10": {
+            "name": "MEH_10",
+            "elementary_entities": [
+              10
+            ],
+            "triangles": 53248
+          },
+          "11": {
+            "name": "MEH_11",
+            "elementary_entities": [
+              11
+            ],
+            "triangles": 10120
+          },
+          "12": {
+            "name": "MEH_12",
+            "elementary_entities": [
+              12
+            ],
+            "triangles": 6096
+          },
+          "13": {
+            "name": "MEH_13",
+            "elementary_entities": [
+              13
+            ],
+            "triangles": 308
+          },
+          "101": {
+            "name": "MEH_101",
+            "elementary_entities": [
+              303
+            ],
+            "triangles": 896
+          },
+          "102": {
+            "name": "MEH_102",
+            "elementary_entities": [
+              304
+            ],
+            "triangles": 896
+          },
+          "103": {
+            "name": "MEH_103",
+            "elementary_entities": [
+              305
+            ],
+            "triangles": 896
+          },
+          "104": {
+            "name": "MEH_104",
+            "elementary_entities": [
+              306
+            ],
+            "triangles": 896
+          },
+          "151": {
+            "name": "MEH_151",
+            "elementary_entities": [
+              307
+            ],
+            "triangles": 52
+          },
+          "302": {
+            "name": "MEH_302",
+            "elementary_entities": [
+              302
+            ],
+            "triangles": 64
+          }
+        },
+        "node_count": 36738,
+        "triangle_count": 73472,
+        "domains": {
+          "1": {
+            "name": "Connected front and exterior air",
+            "type": "Exterior",
+            "triangles": 73472,
+            "closed_two_manifold": true,
+            "consistent_winding": true,
+            "manifold_vertices": true,
+            "boundary_components": 1,
+            "solver_signed_volume_m3": 0.1244467510173163
+          }
+        },
+        "interfaces": [],
+        "sources": [
+          {
+            "physical_tag": 101,
+            "source_type": "driver",
+            "domain": 1,
+            "driving_group": 1101,
+            "triangles": 896,
+            "projected_area_m2": 0.013194699581575764,
+            "maximum_velocity_projection_error": 4.404254738687996e-13
+          },
+          {
+            "physical_tag": 102,
+            "source_type": "driver",
+            "domain": 1,
+            "driving_group": 1102,
+            "triangles": 896,
+            "projected_area_m2": 0.013194699581575764,
+            "maximum_velocity_projection_error": 4.404254738687996e-13
+          },
+          {
+            "physical_tag": 103,
+            "source_type": "driver",
+            "domain": 1,
+            "driving_group": 1103,
+            "triangles": 896,
+            "projected_area_m2": 0.013194699581575764,
+            "maximum_velocity_projection_error": 4.404254738687996e-13
+          },
+          {
+            "physical_tag": 104,
+            "source_type": "driver",
+            "domain": 1,
+            "driving_group": 1104,
+            "triangles": 896,
+            "projected_area_m2": 0.013194699581575764,
+            "maximum_velocity_projection_error": 4.403144515663371e-13
+          },
+          {
+            "physical_tag": 151,
+            "source_type": "vent",
+            "domain": 1,
+            "driving_group": 1151,
+            "triangles": 52,
+            "projected_area_m2": 0.0031999999999999997,
+            "maximum_velocity_projection_error": 0.0
+          }
+        ],
+        "passed": true,
+        "observation_checks": {
+          "unit_velocity": true,
+          "default_source_weights_preserved": true,
+          "complete_self_mutual_pairs": 25,
+          "canonical_observer_origin_checked": true,
+          "requested_medium": {
+            "sound_speed_m_s": 343,
+            "density_kg_m3": 1.204
+          },
+          "acoustic_medium_transfer": "manual entry required; not configured by scripts"
+        },
+        "scope": "Native Gmsh import and independently reconstructed domain/source geometry; limited script field cross-check, not ABEC interpretation.",
+        "proprietary_solver_import_or_execution": "not run",
+        "geometric_self_intersections": "Not checked by this audit",
+        "physical_acoustic_accuracy": "not established"
+      },
+      "passed": true
+    },
+    {
+      "case": "shared-vented-4-round80",
+      "design_sha256": "d74801544051e1ad7bdbf62c6dbe79c69654e396b6c0b8e737af5c5bdb9a4c99",
+      "job_sha256": "4af1017dfa69e7e46d3ecaf0b7c551ec9cd380f4a84b3af2066cb06a62bd8adc",
+      "enclosure_kind": "shared-vented-smooth-shell",
+      "drivers": 4,
+      "vent_sources": 1,
+      "size_mm": 35,
+      "profile_tolerance_mm": 0.2,
+      "vertices": 38142,
+      "triangles": 76280,
+      "maximum_edge_mm": 34.888226857474336,
+      "minimum_triangle_quality": 0.01228857011355867,
+      "boundary_components": 1,
+      "intersection_checks_passed": true,
+      "serialized_SI_connectivity_normals_tags_passed": true,
+      "sources": [
+        {
+          "id": "mid_1",
+          "source_tag": 101,
+          "projected_area_m2": 0.013194699581575764,
+          "relative_declared_area_error": 0.00040154685032089965,
+          "all_inward_drive_projections_positive": true
+        },
+        {
+          "id": "mid_2",
+          "source_tag": 102,
+          "projected_area_m2": 0.013194699581575764,
+          "relative_declared_area_error": 0.00040154685032089965,
+          "all_inward_drive_projections_positive": true
+        },
+        {
+          "id": "mid_3",
+          "source_tag": 103,
+          "projected_area_m2": 0.013194699581575764,
+          "relative_declared_area_error": 0.00040154685032089965,
+          "all_inward_drive_projections_positive": true
+        },
+        {
+          "id": "mid_4",
+          "source_tag": 104,
+          "projected_area_m2": 0.013194699581575764,
+          "relative_declared_area_error": 0.00040154685032089965,
+          "all_inward_drive_projections_positive": true
+        },
+        {
+          "id": "shared_rear_vent",
+          "source_tag": 151,
+          "projected_area_m2": 0.005024529851127605,
+          "relative_declared_area_error": 8.881784197001252e-16,
+          "all_inward_drive_projections_positive": true
+        }
+      ],
+      "resources": {
+        "native_elapsed_seconds_before_adapter": 13.494361958000809,
+        "native_process_peak_rss_bytes": 584777728,
+        "rss_scope": "Native Python/Gmsh process only; excludes Node adapter and solver",
+        "one_dense_complex128_face_matrix_bytes": 93098214400,
+        "matrix_estimate_scope": "Arithmetic face-count estimate only; excludes solver refinement, factorization and workspaces; not measured AKABAK RAM",
+        "proprietary_solver_run": false
+      },
+      "elapsed_seconds_with_native_audit": 14.752719749929383,
+      "bem_msh_sha256": "40dc18dd6cc7b8821cd8861f230bf4caa2881df957e5f03672b22e219bd06504",
+      "native_abec_mesh_audit": {
+        "parser": "Gmsh 4.15.2",
+        "design_sha256": "d74801544051e1ad7bdbf62c6dbe79c69654e396b6c0b8e737af5c5bdb9a4c99",
+        "physical_groups": {
+          "10": {
+            "name": "MEH_10",
+            "elementary_entities": [
+              10
+            ],
+            "triangles": 53248
+          },
+          "11": {
+            "name": "MEH_11",
+            "elementary_entities": [
+              11
+            ],
+            "triangles": 10120
+          },
+          "12": {
+            "name": "MEH_12",
+            "elementary_entities": [
+              12
+            ],
+            "triangles": 6528
+          },
+          "13": {
+            "name": "MEH_13",
+            "elementary_entities": [
+              13
+            ],
+            "triangles": 2352
+          },
+          "101": {
+            "name": "MEH_101",
+            "elementary_entities": [
+              303
+            ],
+            "triangles": 896
+          },
+          "102": {
+            "name": "MEH_102",
+            "elementary_entities": [
+              304
+            ],
+            "triangles": 896
+          },
+          "103": {
+            "name": "MEH_103",
+            "elementary_entities": [
+              305
+            ],
+            "triangles": 896
+          },
+          "104": {
+            "name": "MEH_104",
+            "elementary_entities": [
+              306
+            ],
+            "triangles": 896
+          },
+          "151": {
+            "name": "MEH_151",
+            "elementary_entities": [
+              307
+            ],
+            "triangles": 384
+          },
+          "302": {
+            "name": "MEH_302",
+            "elementary_entities": [
+              302
+            ],
+            "triangles": 64
+          }
+        },
+        "node_count": 38142,
+        "triangle_count": 76280,
+        "domains": {
+          "1": {
+            "name": "Connected front and exterior air",
+            "type": "Exterior",
+            "triangles": 76280,
+            "closed_two_manifold": true,
+            "consistent_winding": true,
+            "manifold_vertices": true,
+            "boundary_components": 1,
+            "solver_signed_volume_m3": 0.12443626386355953
+          }
+        },
+        "interfaces": [],
+        "sources": [
+          {
+            "physical_tag": 101,
+            "source_type": "driver",
+            "domain": 1,
+            "driving_group": 1101,
+            "triangles": 896,
+            "projected_area_m2": 0.013194699581575764,
+            "maximum_velocity_projection_error": 4.404254738687996e-13
+          },
+          {
+            "physical_tag": 102,
+            "source_type": "driver",
+            "domain": 1,
+            "driving_group": 1102,
+            "triangles": 896,
+            "projected_area_m2": 0.013194699581575764,
+            "maximum_velocity_projection_error": 4.404254738687996e-13
+          },
+          {
+            "physical_tag": 103,
+            "source_type": "driver",
+            "domain": 1,
+            "driving_group": 1103,
+            "triangles": 896,
+            "projected_area_m2": 0.013194699581575764,
+            "maximum_velocity_projection_error": 4.404254738687996e-13
+          },
+          {
+            "physical_tag": 104,
+            "source_type": "driver",
+            "domain": 1,
+            "driving_group": 1104,
+            "triangles": 896,
+            "projected_area_m2": 0.013194699581575764,
+            "maximum_velocity_projection_error": 4.403144515663371e-13
+          },
+          {
+            "physical_tag": 151,
+            "source_type": "vent",
+            "domain": 1,
+            "driving_group": 1151,
+            "triangles": 384,
+            "projected_area_m2": 0.005024529851127605,
+            "maximum_velocity_projection_error": 0.0
+          }
+        ],
+        "passed": true,
+        "observation_checks": {
+          "unit_velocity": true,
+          "default_source_weights_preserved": true,
+          "complete_self_mutual_pairs": 25,
+          "canonical_observer_origin_checked": true,
+          "requested_medium": {
+            "sound_speed_m_s": 343,
+            "density_kg_m3": 1.204
+          },
+          "acoustic_medium_transfer": "manual entry required; not configured by scripts"
+        },
+        "scope": "Native Gmsh import and independently reconstructed domain/source geometry; limited script field cross-check, not ABEC interpretation.",
+        "proprietary_solver_import_or_execution": "not run",
+        "geometric_self_intersections": "Not checked by this audit",
+        "physical_acoustic_accuracy": "not established"
+      },
+      "passed": true
+    }
+  ],
+  "failures": [],
+  "source_commit": "3166fe1fea9bee13cca2a5058d55d5f6b7666522",
+  "base_commit": "84f63ac530ebc0616f5775754e60b2f2dd31809f",
+  "source_files_sha256": {
+    "index.html": "3adbf8045c77bbc16a60847b61ad43c3b56343a42b0555533b7b51b3e256967c",
+    "mesh-export/geometry.cjs": "cb8a226235277d0de81d3c6573e8799bdc2d386bb49f479ca103ffb40226a964",
+    "mesh-export/build_mesh.py": "0873c617c8825428818e8c9ff3e604482973a32417ce987e4471c195c025b337",
+    "mesh-export/validate_mesh.py": "dffbebbb494fb702ed23f040305e2fb3e01785bd4d672493b7da9008c6cd9934",
+    "mesh-export/abec-project.cjs": "34d4511308fd41ff2e79e52dc5d64138a8cde83fa2af55943473374be4fe9d89",
+    "mesh-export/abec-subdomains.cjs": "a0cecca58071ce33b2bb414c669c0ae2a815537d42e394ce783c6aafd120ef71",
+    "mesh-export/write_bundle.cjs": "7b6bfe3dac03b77271005ce77bb8c82e35b73fd0547c8e05a9c5e90ab32dd6e5",
+    "mesh-export/run.py": "b445d7afdc1c63302d5a92200b8c85faaa49a2f649be7880102859d4330d379a",
+    "mesh-export/requirements.txt": "3b2e23b692e55fa8bf7023c19b6ac61272ba6bb18fde9c0f4c24b324054b2193",
+    "examples/mesh-export-regressions.json": "3fb58534fd464a4f4f9e8e93aa6357a78a7716daf640253538c5d8072e292c8d"
+  },
+  "automated_tests": {
+    "node_tests": 195,
+    "python_exporter_tests": 40,
+    "python_simplification_tests": 8,
+    "all_passed": true
+  },
+  "browser_rendered_QA": "Not performed: browser URL policy blocked local-file preview; no alternate route attempted. DOM/source parity tests passed.",
+  "proprietary_akabak_import_solve": "not run; no authorized runtime available"
+}

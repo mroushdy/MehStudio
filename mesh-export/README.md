@@ -102,6 +102,8 @@ python mesh-export/native_regression.py work/regression-jobs --out work/native-r
 
 The matrix includes both layouts and all offered counts, offset/insert-off cases, varied front entry sizes, round/rectangular vent ducts, and a 35 → 25 mm density pair. It records actual native process peak memory separately from arithmetic BEM matrix estimates. The 0.2 mm profile setting is a meridian approximation request; the constrained-root chart and angular approximation have separate deviations, not a global 3D error bound. These are geometry/refinement checks, not acoustic convergence.
 
+The checked 12-run results and remaining limitations are in the [validation report](../docs/acoustic-export-validation.md), with [machine-readable records](../docs/acoustic-export-regression.json).
+
 Use a **new output directory** for each build. Direct diagnostic `--skip-intersections` runs retain `INCOMPLETE.txt`; the packaged runner never bypasses that gate. Individual and vented surfaces are not accepted by the older structured shared-exterior reducer. The experimental hybrid CLI remains explicitly gated to four shared-sealed branches.
 
 ## Four-branch hybrid FEM/BEM export
