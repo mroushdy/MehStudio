@@ -1,3 +1,5 @@
+The broadband sizing extension and authentic Hornresp comparisons are documented in [ACOUSTIC_REVIEW.md](../ACOUSTIC_REVIEW.md). The qualified local-FEM path described below remains separately identified.
+
 # Experimental coupled system analysis
 
 The **System acoustics** panel connects individually represented mid motors, their front passages, the axial horn network and the rear enclosure. It reports complex entry pressure/flow, per-driver electrical impedance, peak cone travel, area-averaged entry speed, total horn-mouth flow and power into the assumed mouth termination. These are small-signal model results, not radiated SPL or validated loudspeaker performance.
@@ -24,9 +26,9 @@ Imported data must match the normalized front geometry, air density, sound speed
 
 ## Included reference case
 
-Import `examples/offset-insert-study.json` to reproduce the supplied offset-insert study. The embedded native dataset has five independently qualified frequencies: 100, 300, 500, 700 and 1,000 Hz. The final matrix change between the two finest meshes ranges from 0.00101% to 0.13725%; the meshes have 22,695, 47,628 and 98,721 pressure unknowns. These are numerical refinement results, not a physical error bound.
+Import `examples/offset-insert-study.json` to reproduce the supplied offset-insert study. The expanded embedded native insert dataset has 19 independently qualified frequencies, every 50 Hz from 100 to 1,000 Hz. The open-collector reference retains its original five frequencies. The final matrix change between the two finest meshes ranges from 0.00101% to 0.13725%; the meshes have 22,695, 47,628 and 98,721 pressure unknowns. These are numerical refinement results, not a physical error bound.
 
-The saved drive is 1 V RMS per mid. The wizard brief's 2.83 V is not silently substituted. Curves connect the five samples; resonances between them remain unresolved. Each CSV records the current normalized design, drive, boundary assumptions and spatial provenance.
+The saved drive is 1 V RMS per mid. The wizard brief's 2.83 V is not silently substituted. The original detail panel connects sampled points; the new Acoustic sizing panel shows native samples as unconnected dots. resonances between them remain unresolved. Each CSV records the current normalized design, drive, boundary assumptions and spatial provenance.
 
 A qualified open-collector reference, when present for the same dimensions, is overlaid using its own spatial matrix and the same motor/rear/horn assumptions. A missing or failed reference is not replaced by an unqualified curve.
 

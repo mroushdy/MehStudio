@@ -1,0 +1,90 @@
+{
+  "schema": "meh-hornresp-case/v1",
+  "medium": {
+    "densityKgM3": 1.205,
+    "soundSpeedMS": 344
+  },
+  "driveConvention": "RMS",
+  "phasorConvention": "exp(+jwt)",
+  "distanceM": 1,
+  "solidAngleSr": 6.283185307179586,
+  "mouthTermination": "baffled",
+  "massConvention": "Mmd-explicit",
+  "frontModel": "lumped-compliance",
+  "rearModel": "lumped-compliance",
+  "radiationModel": "uniform-circular-piston-in-infinite-baffle",
+  "phaseConvention": "arg(j*mouthVolumeVelocity); propagation-to-observer excluded",
+  "frequencyRangeHz": [
+    20,
+    3000
+  ],
+  "comparisonBandHz": [
+    20,
+    1000
+  ],
+  "id": "two-entry-conical",
+  "title": "Two independent motors into one conical horn",
+  "segments": [
+    {
+      "type": "conical",
+      "area1M2": 0.01,
+      "area2M2": 0.0225,
+      "lengthM": 0.5
+    },
+    {
+      "type": "conical",
+      "area1M2": 0.0225,
+      "area2M2": 0.04,
+      "lengthM": 0.5
+    }
+  ],
+  "branches": [
+    {
+      "id": "Nd",
+      "zM": 0,
+      "driver": {
+        "SdM2": 0.035,
+        "Bl": 18,
+        "CmsMPerN": 0.0004,
+        "RmsNsPerM": 4,
+        "MmdKg": 0.02,
+        "LeH": 0.001,
+        "ReOhm": 6
+      },
+      "voltageRms": 2.83,
+      "polarity": 1,
+      "frontVolumeM3": 0.0009,
+      "rearVolumeM3": 0.014,
+      "portAreaM2": 0,
+      "portLengthM": 0
+    },
+    {
+      "id": "ME1",
+      "zM": 0.5,
+      "driver": {
+        "SdM2": 0.0132,
+        "Bl": 9.5,
+        "CmsMPerN": 0.000287,
+        "RmsNsPerM": 0.67,
+        "MmdKg": 0.017,
+        "LeH": 0.0006,
+        "ReOhm": 5.2
+      },
+      "voltageRms": 1,
+      "polarity": 1,
+      "frontVolumeM3": 0.00015,
+      "rearVolumeM3": 0.01,
+      "portAreaM2": 0.0015,
+      "portLengthM": 0.02
+    }
+  ],
+  "reference": {
+    "status": "native-capture-pending"
+  },
+  "limitations": [
+    "One azimuthally averaged side entry; not four discrete MEH ports.",
+    "Independent rear chambers for the two entry records; no shared rear cavity between ways.",
+    "Explicit Mmd test motor; not catalog Mms for B&C 6NDL38.",
+    "Entry port length is effective inertive length; native end correction must be disabled."
+  ]
+}

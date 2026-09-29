@@ -1,0 +1,17 @@
+{
+  "schema": "meh-reference-provenance/v1",
+  "author": "Bjørn Kolbrek",
+  "upstream": "https://github.com/bkolbrek/HornSimulation",
+  "license": "MIT",
+  "retrievedFrom": "Existing user download /Users/marwan/Downloads/HornSimulation-main",
+  "acquiredAt": "2026-09-29",
+  "upstreamCommit": null,
+  "note": "The user download is not a Git checkout. Preserve these initial byte hashes; the benchmark runner refuses changes. Upstream authorship and purpose were verified against the author’s blog and repository. No claim is made that a fresh Hornresp run occurred here.",
+  "files": {
+    "HR_blog2.txt": "b8e8dc7eaf462e33cb4d4c0144e7098318cf2814b959efbdcf167507423a341f",
+    "blog2.txt": "44be9c1a7cb6520179d8f2c8412b69393407f28999f2a68b9daa129dc1537f23",
+    "conExpSp.txt": "2b7526f7ec4398536eb5fc8c9255aaec5a2211d35b4f663777c6c8133b4534ba",
+    "conexp.txt": "f5aa6b053a3ef043a684b5c53bd3def302a965e223ef00bf5d7f6b8bdb74f9bc",
+    "LICENSE": "891deedaa9e6dd6e2eba14272741f1e4241a76f21dc3681c0a17c7adeb10f11b"
+  }
+}

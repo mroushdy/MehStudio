@@ -53,7 +53,10 @@ function solve(analysis,frequencyHz,ports,options={}){
   const x=linearSolve(A,rhs),pressures=x.slice(0,N),mouthFlow=mul(mouthY,pressures.at(-1)),throatFlow=mul(throatY,pressures[0]);
   const sourceResults=ports.map((p,j)=>{const pressure=pressures[portNodes[j]],passiveFlow=mul(p.admittance||z(),pressure),flow=sub(p.flow,passiveFlow);return {id:p.id,zMM:p.zMM,pressure,flow,passiveFlow,driveFlow:{...p.flow},drivePowerW:power(pressure,p.flow),passivePowerW:power(pressure,passiveFlow)};});
   const sourcePowerW=sourceResults.reduce((s,p)=>s+p.drivePowerW,0),sourceLoadPowerW=sourceResults.reduce((s,p)=>s+p.passivePowerW,0),mouthPowerW=power(pressures.at(-1),mouthFlow),throatPowerW=power(pressures[0],throatFlow),residualPowerW=sourcePowerW-sourceLoadPowerW-mouthPowerW-throatPowerW;
-  const scalePower=Math.max(1e-30,Math.abs(sourcePowerW),Math.abs(sourceLoadPowerW)+Math.abs(mouthPowerW)+Math.abs(throatPowerW));if(mouthPowerW<-1e-8*scalePower||sourceLoadPowerW<-1e-8*scalePower||Math.abs(residualPowerW)>1e-6*scalePower)throw Error('Passive power balance failed; solution withheld.');
+  // Opposing sources can make net real power arbitrarily small. Normalize
+  // roundoff by the sum of individual apparent source powers as well; this
+  // preserves the residual gate without rejecting coherent cancellation.
+  const scalePower=Math.max(1e-30,sourceResults.reduce((s,p)=>s+abs(p.pressure)*abs(p.driveFlow),0),Math.abs(sourcePowerW),Math.abs(sourceLoadPowerW)+Math.abs(mouthPowerW)+Math.abs(throatPowerW));if(mouthPowerW<-1e-8*scalePower||sourceLoadPowerW<-1e-8*scalePower||Math.abs(residualPowerW)>1e-6*scalePower)throw Error('Passive power balance failed; solution withheld.');
   return {available:true,frequencyHz,model:'Coupled axial multiport Webster network',stationsMM:stations.map(s=>s*1000),pressures,ports:sourceResults,mouthFlow,throatFlow,mouthPowerW,throatPowerW,sourcePowerW,sourceLoadPowerW,residualPowerW,relativePowerResidual:residualPowerW/scalePower,transverseReferenceHz:1.8411837813406593*c/(2*Math.PI*Math.max(...profile.map(p=>p.r))),assumptions};
  }catch(e){return fail(e.message);}
 }

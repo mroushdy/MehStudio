@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "available": true,
-  "qualification": "Row-specific numerical qualification; unqualified frequencies are unavailable",
+  "available": false,
+  "qualification": "Pending independent mesh comparison",
   "geometrySourceSha256": "418b696f270e270a909142861b95b40ee6db6017bae6e38da0ae3e55e2a005e5",
   "userDesignSha256": "ea88abc6bc4745a33083afc940ef647374959a9b29154120520c3ebf68ce938d",
   "airSurfaceSha256": "ef4fba54a3d4f554816139ee3c404ba0e9d7f7303facf898674ed180815a2059",
@@ -86,11 +86,11 @@
     "soundSpeedMS": 343
   },
   "conventions": {
-    "phasor": "exp(+j omega t)",
+    "time": "exp(+j omega t)",
     "amplitude": "RMS",
-    "flows": "into-domain",
-    "impedanceUnits": "Pa s/m3",
-    "domain": "cone-to-horn-entry"
+    "flow": "m3/s INTO local air domain",
+    "pressure": "Pa, weighted port pressure power-conjugate to the normalized motion shape",
+    "impedance": "Pa s/m3"
   },
   "ports": {
     "coneProjectedAreaM2": 0.01319469958157574,
@@ -132,7 +132,7 @@
           0
         ]
       ],
-      "projected_star_cross_min_m2": 0.000025739855445448797,
+      "projected_star_cross_min_m2": 2.5739855445448797e-05,
       "minimum_local_z_m": -0.030426160219777374,
       "maximum_local_z_m": -0.0278540306274779,
       "actual_area_m2": 0.0016556757479480192,
@@ -158,7 +158,7 @@
       "oriented_edge_incidence_two": true,
       "connected_surface": true,
       "positive_signed_volume": true,
-      "minimum_triangle_area_m2": 2.590147055139604e-7,
+      "minimum_triangle_area_m2": 2.590147055139604e-07,
       "surface_self_intersection_test": "Not yet performed; canonical walls plus star-shaped cap are constructed without a global intersection certification."
     }
   },
@@ -201,31 +201,31 @@
   },
   "rows": [
     {
-      "frequencyHz": 100,
+      "frequencyHz": 100.0,
       "impedance": [
         [
           {
-            "r": 0,
+            "r": 0.0,
             "i": -1123277.9228327598
           },
           {
-            "r": 0,
+            "r": 0.0,
             "i": -1126887.6602180747
           }
         ],
         [
           {
-            "r": 0,
+            "r": 0.0,
             "i": -1126887.6602180754
           },
           {
-            "r": 0,
+            "r": 0.0,
             "i": -1115692.342107221
           }
         ]
       ],
       "diagnostics": {
-        "frequency_hz": 100,
+        "frequency_hz": 100.0,
         "solve_s": 48.85782241681591,
         "relative_residual": 1.3289537741192888e-10,
         "reciprocity_error": 4.397349299604145e-16,
@@ -248,64 +248,34 @@
           "r": 0.961955281362712,
           "i": -0.21505807336661306
         }
-      },
-      "available": true,
-      "qualification": {
-        "qualified": true,
-        "checks": {
-          "threeMeshFrequencyMatch": true,
-          "matrixChange": true,
-          "decreasingMatrixChange": true,
-          "loadedTransferChange": true,
-          "loadedInputImpedanceChange": true,
-          "loadedPhaseChange": true,
-          "reciprocity": true,
-          "passivity": true,
-          "linearResidual": true,
-          "powerBalance": true,
-          "meshVolume": true,
-          "awayFromClosedMode": true,
-          "closedModeRangeCovered": true
-        },
-        "convergence": {
-          "coarseToMediumMatrixChange": 0.000025076993074973178,
-          "mediumToFineMatrixChange": 0.000010112536562855848,
-          "mediumToFineLoadedTransferChange": 0.00002118741711662138,
-          "loadedPhaseChangeDegrees": 0.0002023343637086831,
-          "mediumToFineLoadedInputImpedanceChange": 0.00015896822790897045,
-          "nearestClosedModeRelativeDistance": 0.9512057503875552
-        },
-        "scope": "Numerical qualification of stated lossless surrogate and port basis; not physical measurement validation"
-      },
-      "qualified": true,
-      "reason": ""
+      }
     },
     {
-      "frequencyHz": 150,
+      "frequencyHz": 150.0,
       "impedance": [
         [
           {
-            "r": 0,
+            "r": 0.0,
             "i": -747408.1972992694
           },
           {
-            "r": 0,
+            "r": 0.0,
             "i": -752831.8510569115
           }
         ],
         [
           {
-            "r": 0,
+            "r": 0.0,
             "i": -752831.8510569114
           },
           {
-            "r": 0,
+            "r": 0.0,
             "i": -736022.0432351578
           }
         ]
       ],
       "diagnostics": {
-        "frequency_hz": 150,
+        "frequency_hz": 150.0,
         "solve_s": 56.650304208975285,
         "relative_residual": 5.913112442922648e-11,
         "reciprocity_error": 1.1015323525598068e-16,
@@ -328,64 +298,34 @@
           "r": 0.9174723659210899,
           "i": -0.3109191634829205
         }
-      },
-      "available": true,
-      "qualification": {
-        "qualified": true,
-        "checks": {
-          "threeMeshFrequencyMatch": true,
-          "matrixChange": true,
-          "decreasingMatrixChange": true,
-          "loadedTransferChange": true,
-          "loadedInputImpedanceChange": true,
-          "loadedPhaseChange": true,
-          "reciprocity": true,
-          "passivity": true,
-          "linearResidual": true,
-          "powerBalance": true,
-          "meshVolume": true,
-          "awayFromClosedMode": true,
-          "closedModeRangeCovered": true
-        },
-        "convergence": {
-          "coarseToMediumMatrixChange": 0.00005670248619043071,
-          "mediumToFineMatrixChange": 0.000022862176350632084,
-          "mediumToFineLoadedTransferChange": 0.00004683035468033295,
-          "loadedPhaseChangeDegrees": 0.000658325080503509,
-          "mediumToFineLoadedInputImpedanceChange": 0.00023409458191148684,
-          "nearestClosedModeRelativeDistance": 0.9268086255813327
-        },
-        "scope": "Numerical qualification of stated lossless surrogate and port basis; not physical measurement validation"
-      },
-      "qualified": true,
-      "reason": ""
+      }
     },
     {
-      "frequencyHz": 200,
+      "frequencyHz": 200.0,
       "impedance": [
         [
           {
-            "r": 0,
+            "r": 0.0,
             "i": -559034.6067768693
           },
           {
-            "r": 0,
+            "r": 0.0,
             "i": -566283.1102962606
           }
         ],
         [
           {
-            "r": 0,
+            "r": 0.0,
             "i": -566283.1102962604
           },
           {
-            "r": 0,
+            "r": 0.0,
             "i": -543838.5044233947
           }
         ]
       ],
       "diagnostics": {
-        "frequency_hz": 200,
+        "frequency_hz": 200.0,
         "solve_s": 42.58495133300312,
         "relative_residual": 3.338621914528624e-11,
         "reciprocity_error": 1.4727664259843763e-16,
@@ -408,73 +348,43 @@
           "r": 0.8603026352962808,
           "i": -0.394572324117613
         }
-      },
-      "available": true,
-      "qualification": {
-        "qualified": true,
-        "checks": {
-          "threeMeshFrequencyMatch": true,
-          "matrixChange": true,
-          "decreasingMatrixChange": true,
-          "loadedTransferChange": true,
-          "loadedInputImpedanceChange": true,
-          "loadedPhaseChange": true,
-          "reciprocity": true,
-          "passivity": true,
-          "linearResidual": true,
-          "powerBalance": true,
-          "meshVolume": true,
-          "awayFromClosedMode": true,
-          "closedModeRangeCovered": true
-        },
-        "convergence": {
-          "coarseToMediumMatrixChange": 0.00010150154983338679,
-          "mediumToFineMatrixChange": 0.00004091573111676929,
-          "mediumToFineLoadedTransferChange": 0.00008129305063934812,
-          "loadedPhaseChangeDegrees": 0.00148571248358452,
-          "mediumToFineLoadedInputImpedanceChange": 0.00030453827605183203,
-          "nearestClosedModeRelativeDistance": 0.9024115007751103
-        },
-        "scope": "Numerical qualification of stated lossless surrogate and port basis; not physical measurement validation"
-      },
-      "qualified": true,
-      "reason": ""
+      }
     },
     {
-      "frequencyHz": 250,
+      "frequencyHz": 250.0,
       "impedance": [
         [
           {
-            "r": 0,
+            "r": 0.0,
             "i": -445654.9263932567
           },
           {
-            "r": 0,
+            "r": 0.0,
             "i": -454742.9858122995
           }
         ],
         [
           {
-            "r": 0,
+            "r": 0.0,
             "i": -454742.9858122995
           },
           {
-            "r": 0,
+            "r": 0.0,
             "i": -426636.31644881284
           }
         ]
       ],
       "diagnostics": {
-        "frequency_hz": 250,
+        "frequency_hz": 250.0,
         "solve_s": 51.54942070902325,
         "relative_residual": 2.1134314474766576e-11,
-        "reciprocity_error": 0,
+        "reciprocity_error": 0.0,
         "factorization": "real SuperLU; imaginary source",
         "hermitian_real_eigenvalues": [
-          0,
-          0
+          0.0,
+          0.0
         ],
-        "passivity_min_normalized": 0,
+        "passivity_min_normalized": 0.0,
         "nearest_closed_mode_relative_distance": 0.8780143759688879,
         "reference_load_power_residual_normalized": 1.2796325266241585e-16
       },
@@ -488,64 +398,34 @@
           "r": 0.7943641789221852,
           "i": -0.46441597523904005
         }
-      },
-      "available": true,
-      "qualification": {
-        "qualified": true,
-        "checks": {
-          "threeMeshFrequencyMatch": true,
-          "matrixChange": true,
-          "decreasingMatrixChange": true,
-          "loadedTransferChange": true,
-          "loadedInputImpedanceChange": true,
-          "loadedPhaseChange": true,
-          "reciprocity": true,
-          "passivity": true,
-          "linearResidual": true,
-          "powerBalance": true,
-          "meshVolume": true,
-          "awayFromClosedMode": true,
-          "closedModeRangeCovered": true
-        },
-        "convergence": {
-          "coarseToMediumMatrixChange": 0.00016000199014327702,
-          "mediumToFineMatrixChange": 0.00006447867690166536,
-          "mediumToFineLoadedTransferChange": 0.00012339665992463505,
-          "loadedPhaseChangeDegrees": 0.002733491178990948,
-          "mediumToFineLoadedInputImpedanceChange": 0.00036952127699985484,
-          "nearestClosedModeRelativeDistance": 0.8780143759688879
-        },
-        "scope": "Numerical qualification of stated lossless surrogate and port basis; not physical measurement validation"
-      },
-      "qualified": true,
-      "reason": ""
+      }
     },
     {
-      "frequencyHz": 300,
+      "frequencyHz": 300.0,
       "impedance": [
         [
           {
-            "r": 0,
+            "r": 0.0,
             "i": -369767.2576223631
           },
           {
-            "r": 0,
+            "r": 0.0,
             "i": -380713.46448357357
           }
         ],
         [
           {
-            "r": 0,
+            "r": 0.0,
             "i": -380713.4644835732
           },
           {
-            "r": 0,
+            "r": 0.0,
             "i": -346910.34473719297
           }
         ]
       ],
       "diagnostics": {
-        "frequency_hz": 300,
+        "frequency_hz": 300.0,
         "solve_s": 56.47603812487796,
         "relative_residual": 1.4825564894258973e-11,
         "reciprocity_error": 6.678340744700283e-16,
@@ -568,64 +448,34 @@
           "r": 0.7234476833501176,
           "i": -0.5201579006334531
         }
-      },
-      "available": true,
-      "qualification": {
-        "qualified": true,
-        "checks": {
-          "threeMeshFrequencyMatch": true,
-          "matrixChange": true,
-          "decreasingMatrixChange": true,
-          "loadedTransferChange": true,
-          "loadedInputImpedanceChange": true,
-          "loadedPhaseChange": true,
-          "reciprocity": true,
-          "passivity": true,
-          "linearResidual": true,
-          "powerBalance": true,
-          "meshVolume": true,
-          "awayFromClosedMode": true,
-          "closedModeRangeCovered": true
-        },
-        "convergence": {
-          "coarseToMediumMatrixChange": 0.00023288796642880022,
-          "mediumToFineMatrixChange": 0.00009381688244633908,
-          "mediumToFineLoadedTransferChange": 0.00017191205295078368,
-          "loadedPhaseChangeDegrees": 0.004411017572667008,
-          "mediumToFineLoadedInputImpedanceChange": 0.0004287320805371897,
-          "nearestClosedModeRelativeDistance": 0.8536172511626655
-        },
-        "scope": "Numerical qualification of stated lossless surrogate and port basis; not physical measurement validation"
-      },
-      "qualified": true,
-      "reason": ""
+      }
     },
     {
-      "frequencyHz": 350,
+      "frequencyHz": 350.0,
       "impedance": [
         [
           {
-            "r": 0,
+            "r": 0.0,
             "i": -315298.316414208
           },
           {
-            "r": 0,
+            "r": 0.0,
             "i": -328125.291946965
           }
         ],
         [
           {
-            "r": 0,
+            "r": 0.0,
             "i": -328125.29194696463
           },
           {
-            "r": 0,
+            "r": 0.0,
             "i": -288584.0035335947
           }
         ]
       ],
       "diagnostics": {
-        "frequency_hz": 350,
+        "frequency_hz": 350.0,
         "solve_s": 51.179618375143036,
         "relative_residual": 1.0829139677239418e-11,
         "reciprocity_error": 7.828716780918108e-16,
@@ -648,64 +498,34 @@
           "r": 0.6508241080726412,
           "i": -0.5625183541002626
         }
-      },
-      "available": true,
-      "qualification": {
-        "qualified": true,
-        "checks": {
-          "threeMeshFrequencyMatch": true,
-          "matrixChange": true,
-          "decreasingMatrixChange": true,
-          "loadedTransferChange": true,
-          "loadedInputImpedanceChange": true,
-          "loadedPhaseChange": true,
-          "reciprocity": true,
-          "passivity": true,
-          "linearResidual": true,
-          "powerBalance": true,
-          "meshVolume": true,
-          "awayFromClosedMode": true,
-          "closedModeRangeCovered": true
-        },
-        "convergence": {
-          "coarseToMediumMatrixChange": 0.0003210026859844472,
-          "mediumToFineMatrixChange": 0.00012925725645323403,
-          "mediumToFineLoadedTransferChange": 0.0002256699446780614,
-          "loadedPhaseChangeDegrees": 0.00649705853515753,
-          "mediumToFineLoadedInputImpedanceChange": 0.00048227343682099894,
-          "nearestClosedModeRelativeDistance": 0.829220126356443
-        },
-        "scope": "Numerical qualification of stated lossless surrogate and port basis; not physical measurement validation"
-      },
-      "qualified": true,
-      "reason": ""
+      }
     },
     {
-      "frequencyHz": 400,
+      "frequencyHz": 400.0,
       "impedance": [
         [
           {
-            "r": 0,
+            "r": 0.0,
             "i": -274210.4934802124
           },
           {
-            "r": 0,
+            "r": 0.0,
             "i": -288945.06696251954
           }
         ],
         [
           {
-            "r": 0,
+            "r": 0.0,
             "i": -288945.0669625195
           },
           {
-            "r": 0,
+            "r": 0.0,
             "i": -243616.3015044158
           }
         ]
       ],
       "diagnostics": {
-        "frequency_hz": 400,
+        "frequency_hz": 400.0,
         "solve_s": 61.68821862502955,
         "relative_residual": 8.354749501657488e-12,
         "reciprocity_error": 1.4991253457805476e-16,
@@ -716,7 +536,7 @@
         ],
         "passivity_min_normalized": -5.3002084892502644e-17,
         "nearest_closed_mode_relative_distance": 0.8048230015502207,
-        "reference_load_power_residual_normalized": 0
+        "reference_load_power_residual_normalized": 0.0
       },
       "referenceLoad": {
         "resistancePaSM3": 249428.06616079333,
@@ -728,73 +548,43 @@
           "r": 0.5790542889049688,
           "i": -0.5928683367728644
         }
-      },
-      "available": true,
-      "qualification": {
-        "qualified": true,
-        "checks": {
-          "threeMeshFrequencyMatch": true,
-          "matrixChange": true,
-          "decreasingMatrixChange": true,
-          "loadedTransferChange": true,
-          "loadedInputImpedanceChange": true,
-          "loadedPhaseChange": true,
-          "reciprocity": true,
-          "passivity": true,
-          "linearResidual": true,
-          "powerBalance": true,
-          "meshVolume": true,
-          "awayFromClosedMode": true,
-          "closedModeRangeCovered": true
-        },
-        "convergence": {
-          "coarseToMediumMatrixChange": 0.0004253498805783448,
-          "mediumToFineMatrixChange": 0.00017118778895766886,
-          "mediumToFineLoadedTransferChange": 0.0002836329255119548,
-          "loadedPhaseChangeDegrees": 0.008950806138980805,
-          "mediumToFineLoadedInputImpedanceChange": 0.0005305816864938352,
-          "nearestClosedModeRelativeDistance": 0.8048230015502207
-        },
-        "scope": "Numerical qualification of stated lossless surrogate and port basis; not physical measurement validation"
-      },
-      "qualified": true,
-      "reason": ""
+      }
     },
     {
-      "frequencyHz": 450,
+      "frequencyHz": 450.0,
       "impedance": [
         [
           {
-            "r": 0,
+            "r": 0.0,
             "i": -242037.52946023986
           },
           {
-            "r": 0,
+            "r": 0.0,
             "i": -258710.95375771174
           }
         ],
         [
           {
-            "r": 0,
+            "r": 0.0,
             "i": -258710.95375771174
           },
           {
-            "r": 0,
+            "r": 0.0,
             "i": -207537.5013170981
           }
         ]
       ],
       "diagnostics": {
-        "frequency_hz": 450,
+        "frequency_hz": 450.0,
         "solve_s": 59.304748540977016,
         "relative_residual": 6.556120210624175e-12,
-        "reciprocity_error": 0,
+        "reciprocity_error": 0.0,
         "factorization": "real SuperLU; imaginary source",
         "hermitian_real_eigenvalues": [
-          0,
-          0
+          0.0,
+          0.0
         ],
-        "passivity_min_normalized": 0,
+        "passivity_min_normalized": 0.0,
         "nearest_closed_mode_relative_distance": 0.7804258767439982,
         "reference_load_power_residual_normalized": 1.5076398593005368e-16
       },
@@ -808,64 +598,34 @@
           "r": 0.5099646282048024,
           "i": -0.6128988265556053
         }
-      },
-      "available": true,
-      "qualification": {
-        "qualified": true,
-        "checks": {
-          "threeMeshFrequencyMatch": true,
-          "matrixChange": true,
-          "decreasingMatrixChange": true,
-          "loadedTransferChange": true,
-          "loadedInputImpedanceChange": true,
-          "loadedPhaseChange": true,
-          "reciprocity": true,
-          "passivity": true,
-          "linearResidual": true,
-          "powerBalance": true,
-          "meshVolume": true,
-          "awayFromClosedMode": true,
-          "closedModeRangeCovered": true
-        },
-        "convergence": {
-          "coarseToMediumMatrixChange": 0.0005470927099580924,
-          "mediumToFineMatrixChange": 0.00022005642106278723,
-          "mediumToFineLoadedTransferChange": 0.00034493109093022655,
-          "loadedPhaseChangeDegrees": 0.011721950449597719,
-          "mediumToFineLoadedInputImpedanceChange": 0.000574343252422969,
-          "nearestClosedModeRelativeDistance": 0.7804258767439982
-        },
-        "scope": "Numerical qualification of stated lossless surrogate and port basis; not physical measurement validation"
-      },
-      "qualified": true,
-      "reason": ""
+      }
     },
     {
-      "frequencyHz": 500,
+      "frequencyHz": 500.0,
       "impedance": [
         [
           {
-            "r": 0,
+            "r": 0.0,
             "i": -216098.77323406996
           },
           {
-            "r": 0,
+            "r": 0.0,
             "i": -234746.9813532038
           }
         ],
         [
           {
-            "r": 0,
+            "r": 0.0,
             "i": -234746.98135320388
           },
           {
-            "r": 0,
+            "r": 0.0,
             "i": -177663.3612581633
           }
         ]
       ],
       "diagnostics": {
-        "frequency_hz": 500,
+        "frequency_hz": 500.0,
         "solve_s": 39.94040233385749,
         "relative_residual": 5.338743466921833e-12,
         "reciprocity_error": 2.8441942332825065e-16,
@@ -888,64 +648,34 @@
           "r": 0.44472752159041384,
           "i": -0.6243691715231604
         }
-      },
-      "available": true,
-      "qualification": {
-        "qualified": true,
-        "checks": {
-          "threeMeshFrequencyMatch": true,
-          "matrixChange": true,
-          "decreasingMatrixChange": true,
-          "loadedTransferChange": true,
-          "loadedInputImpedanceChange": true,
-          "loadedPhaseChange": true,
-          "reciprocity": true,
-          "passivity": true,
-          "linearResidual": true,
-          "powerBalance": true,
-          "meshVolume": true,
-          "awayFromClosedMode": true,
-          "closedModeRangeCovered": true
-        },
-        "convergence": {
-          "coarseToMediumMatrixChange": 0.0006875482764712781,
-          "mediumToFineMatrixChange": 0.0002763680043103288,
-          "mediumToFineLoadedTransferChange": 0.00040886991166480936,
-          "loadedPhaseChangeDegrees": 0.014758349132772967,
-          "mediumToFineLoadedInputImpedanceChange": 0.0006144243559995147,
-          "nearestClosedModeRelativeDistance": 0.7560287519377757
-        },
-        "scope": "Numerical qualification of stated lossless surrogate and port basis; not physical measurement validation"
-      },
-      "qualified": true,
-      "reason": ""
+      }
     },
     {
-      "frequencyHz": 550,
+      "frequencyHz": 550.0,
       "impedance": [
         [
           {
-            "r": 0,
+            "r": 0.0,
             "i": -194687.46896731778
           },
           {
-            "r": 0,
+            "r": 0.0,
             "i": -215351.3763209874
           }
         ],
         [
           {
-            "r": 0,
+            "r": 0.0,
             "i": -215351.3763209876
           },
           {
-            "r": 0,
+            "r": 0.0,
             "i": -152283.40425045282
           }
         ]
       ],
       "diagnostics": {
-        "frequency_hz": 550,
+        "frequency_hz": 550.0,
         "solve_s": 36.15994279203005,
         "relative_residual": 4.3694872660451655e-12,
         "reciprocity_error": 7.34548133631592e-16,
@@ -968,64 +698,34 @@
           "r": 0.38398918164810464,
           "i": -0.628943642786128
         }
-      },
-      "available": true,
-      "qualification": {
-        "qualified": true,
-        "checks": {
-          "threeMeshFrequencyMatch": true,
-          "matrixChange": true,
-          "decreasingMatrixChange": true,
-          "loadedTransferChange": true,
-          "loadedInputImpedanceChange": true,
-          "loadedPhaseChange": true,
-          "reciprocity": true,
-          "passivity": true,
-          "linearResidual": true,
-          "powerBalance": true,
-          "meshVolume": true,
-          "awayFromClosedMode": true,
-          "closedModeRangeCovered": true
-        },
-        "convergence": {
-          "coarseToMediumMatrixChange": 0.0008481753972512715,
-          "mediumToFineMatrixChange": 0.0003406783981340151,
-          "mediumToFineLoadedTransferChange": 0.000474920635950781,
-          "loadedPhaseChangeDegrees": 0.01801102370359019,
-          "mediumToFineLoadedInputImpedanceChange": 0.0006518205845134168,
-          "nearestClosedModeRelativeDistance": 0.7316316271315534
-        },
-        "scope": "Numerical qualification of stated lossless surrogate and port basis; not physical measurement validation"
-      },
-      "qualified": true,
-      "reason": ""
+      }
     },
     {
-      "frequencyHz": 600,
+      "frequencyHz": 600.0,
       "impedance": [
         [
           {
-            "r": 0,
+            "r": 0.0,
             "i": -176664.88676003608
           },
           {
-            "r": 0,
+            "r": 0.0,
             "i": -199390.744857483
           }
         ],
         [
           {
-            "r": 0,
+            "r": 0.0,
             "i": -199390.7448574822
           },
           {
-            "r": 0,
+            "r": 0.0,
             "i": -130255.02887402763
           }
         ]
       ],
       "diagnostics": {
-        "frequency_hz": 600,
+        "frequency_hz": 600.0,
         "solve_s": 38.423031042097136,
         "relative_residual": 3.67768391479713e-12,
         "reciprocity_error": 3.1099266215310436e-15,
@@ -1048,64 +748,34 @@
           "r": 0.3280046335933914,
           "i": -0.628102900565189
         }
-      },
-      "available": true,
-      "qualification": {
-        "qualified": true,
-        "checks": {
-          "threeMeshFrequencyMatch": true,
-          "matrixChange": true,
-          "decreasingMatrixChange": true,
-          "loadedTransferChange": true,
-          "loadedInputImpedanceChange": true,
-          "loadedPhaseChange": true,
-          "reciprocity": true,
-          "passivity": true,
-          "linearResidual": true,
-          "powerBalance": true,
-          "meshVolume": true,
-          "awayFromClosedMode": true,
-          "closedModeRangeCovered": true
-        },
-        "convergence": {
-          "coarseToMediumMatrixChange": 0.0010305527193698013,
-          "mediumToFineMatrixChange": 0.00041358453473075484,
-          "mediumToFineLoadedTransferChange": 0.0005427020171337291,
-          "loadedPhaseChangeDegrees": 0.02143688689231894,
-          "mediumToFineLoadedInputImpedanceChange": 0.0006876262466811684,
-          "nearestClosedModeRelativeDistance": 0.7072345023253309
-        },
-        "scope": "Numerical qualification of stated lossless surrogate and port basis; not physical measurement validation"
-      },
-      "qualified": true,
-      "reason": ""
+      }
     },
     {
-      "frequencyHz": 650,
+      "frequencyHz": 650.0,
       "impedance": [
         [
           {
-            "r": 0,
+            "r": 0.0,
             "i": -161241.76378097667
           },
           {
-            "r": 0,
+            "r": 0.0,
             "i": -186081.5722629162
           }
         ],
         [
           {
-            "r": 0,
+            "r": 0.0,
             "i": -186081.57226291692
           },
           {
-            "r": 0,
+            "r": 0.0,
             "i": -110784.9289672364
           }
         ]
       ],
       "diagnostics": {
-        "frequency_hz": 650,
+        "frequency_hz": 650.0,
         "solve_s": 47.504140875069425,
         "relative_residual": 3.1704578137941553e-12,
         "reciprocity_error": 3.137983202658452e-15,
@@ -1128,64 +798,34 @@
           "r": 0.2767577015904459,
           "i": -0.623109469368583
         }
-      },
-      "available": true,
-      "qualification": {
-        "qualified": true,
-        "checks": {
-          "threeMeshFrequencyMatch": true,
-          "matrixChange": true,
-          "decreasingMatrixChange": true,
-          "loadedTransferChange": true,
-          "loadedInputImpedanceChange": true,
-          "loadedPhaseChange": true,
-          "reciprocity": true,
-          "passivity": true,
-          "linearResidual": true,
-          "powerBalance": true,
-          "meshVolume": true,
-          "awayFromClosedMode": true,
-          "closedModeRangeCovered": true
-        },
-        "convergence": {
-          "coarseToMediumMatrixChange": 0.0012363437816755652,
-          "mediumToFineMatrixChange": 0.0004957091059055389,
-          "mediumToFineLoadedTransferChange": 0.0006119595565306652,
-          "loadedPhaseChangeDegrees": 0.024999837747272952,
-          "mediumToFineLoadedInputImpedanceChange": 0.000723019838633606,
-          "nearestClosedModeRelativeDistance": 0.6828373775191086
-        },
-        "scope": "Numerical qualification of stated lossless surrogate and port basis; not physical measurement validation"
-      },
-      "qualified": true,
-      "reason": ""
+      }
     },
     {
-      "frequencyHz": 700,
+      "frequencyHz": 700.0,
       "impedance": [
         [
           {
-            "r": 0,
+            "r": 0.0,
             "i": -147853.39841251375
           },
           {
-            "r": 0,
+            "r": 0.0,
             "i": -174865.38380490112
           }
         ],
         [
           {
-            "r": 0,
+            "r": 0.0,
             "i": -174865.38380490115
           },
           {
-            "r": 0,
+            "r": 0.0,
             "i": -93304.16397308947
           }
         ]
       ],
       "diagnostics": {
-        "frequency_hz": 700,
+        "frequency_hz": 700.0,
         "solve_s": 55.42200404196046,
         "relative_residual": 2.7139107855146184e-12,
         "reciprocity_error": 1.359027223455542e-16,
@@ -1208,71 +848,41 @@
           "r": 0.23005727841797224,
           "i": -0.6150073010520754
         }
-      },
-      "available": true,
-      "qualification": {
-        "qualified": true,
-        "checks": {
-          "threeMeshFrequencyMatch": true,
-          "matrixChange": true,
-          "decreasingMatrixChange": true,
-          "loadedTransferChange": true,
-          "loadedInputImpedanceChange": true,
-          "loadedPhaseChange": true,
-          "reciprocity": true,
-          "passivity": true,
-          "linearResidual": true,
-          "powerBalance": true,
-          "meshVolume": true,
-          "awayFromClosedMode": true,
-          "closedModeRangeCovered": true
-        },
-        "convergence": {
-          "coarseToMediumMatrixChange": 0.0014672454144481514,
-          "mediumToFineMatrixChange": 0.0005876784635366039,
-          "mediumToFineLoadedTransferChange": 0.0006825459859119345,
-          "loadedPhaseChangeDegrees": 0.028670830744444917,
-          "mediumToFineLoadedInputImpedanceChange": 0.0007592606539012414,
-          "nearestClosedModeRelativeDistance": 0.6584402527128861
-        },
-        "scope": "Numerical qualification of stated lossless surrogate and port basis; not physical measurement validation"
-      },
-      "qualified": true,
-      "reason": ""
+      }
     },
     {
-      "frequencyHz": 750,
+      "frequencyHz": 750.0,
       "impedance": [
         [
           {
-            "r": 0,
+            "r": 0.0,
             "i": -136084.69009094025
           },
           {
-            "r": 0,
+            "r": 0.0,
             "i": -165333.8614126148
           }
         ],
         [
           {
-            "r": 0,
+            "r": 0.0,
             "i": -165333.86141261226
           },
           {
-            "r": 0,
+            "r": 0.0,
             "i": -77393.17228867889
           }
         ]
       ],
       "diagnostics": {
-        "frequency_hz": 750,
+        "frequency_hz": 750.0,
         "solve_s": 45.73147941706702,
         "relative_residual": 2.3878562128292115e-12,
         "reciprocity_error": 1.2725607539247143e-14,
         "factorization": "real SuperLU; imaginary source",
         "hermitian_real_eigenvalues": [
-          -1.2660166248679161e-9,
-          1.2660166248679161e-9
+          -1.2660166248679161e-09,
+          1.2660166248679161e-09
         ],
         "passivity_min_normalized": -4.4991816928601544e-15,
         "nearest_closed_mode_relative_distance": 0.6340431279066637,
@@ -1288,71 +898,41 @@
           "r": 0.18760923325230724,
           "i": -0.6046400071247292
         }
-      },
-      "available": true,
-      "qualification": {
-        "qualified": true,
-        "checks": {
-          "threeMeshFrequencyMatch": true,
-          "matrixChange": true,
-          "decreasingMatrixChange": true,
-          "loadedTransferChange": true,
-          "loadedInputImpedanceChange": true,
-          "loadedPhaseChange": true,
-          "reciprocity": true,
-          "passivity": true,
-          "linearResidual": true,
-          "powerBalance": true,
-          "meshVolume": true,
-          "awayFromClosedMode": true,
-          "closedModeRangeCovered": true
-        },
-        "convergence": {
-          "coarseToMediumMatrixChange": 0.001724916213538712,
-          "mediumToFineMatrixChange": 0.0006900925042495032,
-          "mediumToFineLoadedTransferChange": 0.0007544048760617521,
-          "loadedPhaseChangeDegrees": 0.032427388641025894,
-          "mediumToFineLoadedInputImpedanceChange": 0.0007976916976905807,
-          "nearestClosedModeRelativeDistance": 0.6340431279066637
-        },
-        "scope": "Numerical qualification of stated lossless surrogate and port basis; not physical measurement validation"
-      },
-      "qualified": true,
-      "reason": ""
+      }
     },
     {
-      "frequencyHz": 800,
+      "frequencyHz": 800.0,
       "impedance": [
         [
           {
-            "r": 0,
+            "r": 0.0,
             "i": -125623.27060408682
           },
           {
-            "r": 0,
+            "r": 0.0,
             "i": -157182.06411705533
           }
         ],
         [
           {
-            "r": 0,
+            "r": 0.0,
             "i": -157182.06411705902
           },
           {
-            "r": 0,
+            "r": 0.0,
             "i": -62734.872869408966
           }
         ]
       ],
       "diagnostics": {
-        "frequency_hz": 800,
+        "frequency_hz": 800.0,
         "solve_s": 42.76132541685365,
         "relative_residual": 2.1121422961810328e-12,
         "reciprocity_error": 1.9880984004021524e-14,
         "factorization": "real SuperLU; imaginary source",
         "hermitian_real_eigenvalues": [
-          -1.8480932340025902e-9,
-          1.8480932340025902e-9
+          -1.8480932340025902e-09,
+          1.8480932340025902e-09
         ],
         "passivity_min_normalized": -7.028989302952449e-15,
         "nearest_closed_mode_relative_distance": 0.6096460031004413,
@@ -1368,64 +948,34 @@
           "r": 0.14906716799934142,
           "i": -0.5926773059625093
         }
-      },
-      "available": true,
-      "qualification": {
-        "qualified": true,
-        "checks": {
-          "threeMeshFrequencyMatch": true,
-          "matrixChange": true,
-          "decreasingMatrixChange": true,
-          "loadedTransferChange": true,
-          "loadedInputImpedanceChange": true,
-          "loadedPhaseChange": true,
-          "reciprocity": true,
-          "passivity": true,
-          "linearResidual": true,
-          "powerBalance": true,
-          "meshVolume": true,
-          "awayFromClosedMode": true,
-          "closedModeRangeCovered": true
-        },
-        "convergence": {
-          "coarseToMediumMatrixChange": 0.002010883160322938,
-          "mediumToFineMatrixChange": 0.0008034858905023887,
-          "mediumToFineLoadedTransferChange": 0.0008275580879498945,
-          "loadedPhaseChangeDegrees": 0.03625287828878098,
-          "mediumToFineLoadedInputImpedanceChange": 0.0008397450095359406,
-          "nearestClosedModeRelativeDistance": 0.6096460031004413
-        },
-        "scope": "Numerical qualification of stated lossless surrogate and port basis; not physical measurement validation"
-      },
-      "qualified": true,
-      "reason": ""
+      }
     },
     {
-      "frequencyHz": 850,
+      "frequencyHz": 850.0,
       "impedance": [
         [
           {
-            "r": 0,
+            "r": 0.0,
             "i": -116229.1562672234
           },
           {
-            "r": 0,
+            "r": 0.0,
             "i": -150178.18431005997
           }
         ],
         [
           {
-            "r": 0,
+            "r": 0.0,
             "i": -150178.18431005854
           },
           {
-            "r": 0,
+            "r": 0.0,
             "i": -49084.28389317989
           }
         ]
       ],
       "diagnostics": {
-        "frequency_hz": 850,
+        "frequency_hz": 850.0,
         "solve_s": 37.0734542501159,
         "relative_residual": 1.8561324781487982e-12,
         "reciprocity_error": 8.164050955126322e-15,
@@ -1448,73 +998,43 @@
           "r": 0.11406646396110545,
           "i": -0.5796433249700845
         }
-      },
-      "available": true,
-      "qualification": {
-        "qualified": true,
-        "checks": {
-          "threeMeshFrequencyMatch": true,
-          "matrixChange": true,
-          "decreasingMatrixChange": true,
-          "loadedTransferChange": true,
-          "loadedInputImpedanceChange": true,
-          "loadedPhaseChange": true,
-          "reciprocity": true,
-          "passivity": true,
-          "linearResidual": true,
-          "powerBalance": true,
-          "meshVolume": true,
-          "awayFromClosedMode": true,
-          "closedModeRangeCovered": true
-        },
-        "convergence": {
-          "coarseToMediumMatrixChange": 0.002326427257548854,
-          "mediumToFineMatrixChange": 0.0009282811405757363,
-          "mediumToFineLoadedTransferChange": 0.000902097143488921,
-          "loadedPhaseChangeDegrees": 0.0401357448283221,
-          "mediumToFineLoadedInputImpedanceChange": 0.0008869469478727219,
-          "nearestClosedModeRelativeDistance": 0.5852488782942188
-        },
-        "scope": "Numerical qualification of stated lossless surrogate and port basis; not physical measurement validation"
-      },
-      "qualified": true,
-      "reason": ""
+      }
     },
     {
-      "frequencyHz": 900,
+      "frequencyHz": 900.0,
       "impedance": [
         [
           {
-            "r": 0,
+            "r": 0.0,
             "i": -107714.49204893227
           },
           {
-            "r": 0,
+            "r": 0.0,
             "i": -144143.41418308316
           }
         ],
         [
           {
-            "r": 0,
+            "r": 0.0,
             "i": -144143.41418308316
           },
           {
-            "r": 0,
+            "r": 0.0,
             "i": -36248.2288071539
           }
         ]
       ],
       "diagnostics": {
-        "frequency_hz": 900,
+        "frequency_hz": 900.0,
         "solve_s": 40.910996166057885,
         "relative_residual": 1.6979333797396023e-12,
-        "reciprocity_error": 0,
+        "reciprocity_error": 0.0,
         "factorization": "real SuperLU; imaginary source",
         "hermitian_real_eigenvalues": [
-          0,
-          0
+          0.0,
+          0.0
         ],
-        "passivity_min_normalized": 0,
+        "passivity_min_normalized": 0.0,
         "nearest_closed_mode_relative_distance": 0.5608517534879964,
         "reference_load_power_residual_normalized": 2.3121731266251785e-16
       },
@@ -1528,64 +1048,34 @@
           "r": 0.08224592707138575,
           "i": -0.5659433085174271
         }
-      },
-      "available": true,
-      "qualification": {
-        "qualified": true,
-        "checks": {
-          "threeMeshFrequencyMatch": true,
-          "matrixChange": true,
-          "decreasingMatrixChange": true,
-          "loadedTransferChange": true,
-          "loadedInputImpedanceChange": true,
-          "loadedPhaseChange": true,
-          "reciprocity": true,
-          "passivity": true,
-          "linearResidual": true,
-          "powerBalance": true,
-          "meshVolume": true,
-          "awayFromClosedMode": true,
-          "closedModeRangeCovered": true
-        },
-        "convergence": {
-          "coarseToMediumMatrixChange": 0.0026724537551168245,
-          "mediumToFineMatrixChange": 0.0010647360618918293,
-          "mediumToFineLoadedTransferChange": 0.0009781783081482588,
-          "loadedPhaseChangeDegrees": 0.04406881214506363,
-          "mediumToFineLoadedInputImpedanceChange": 0.0009409227817061744,
-          "nearestClosedModeRelativeDistance": 0.5608517534879964
-        },
-        "scope": "Numerical qualification of stated lossless surrogate and port basis; not physical measurement validation"
-      },
-      "qualified": true,
-      "reason": ""
+      }
     },
     {
-      "frequencyHz": 950,
+      "frequencyHz": 950.0,
       "impedance": [
         [
           {
-            "r": 0,
+            "r": 0.0,
             "i": -99929.66462989339
           },
           {
-            "r": 0,
+            "r": 0.0,
             "i": -138938.20343911843
           }
         ],
         [
           {
-            "r": 0,
+            "r": 0.0,
             "i": -138938.20343911927
           },
           {
-            "r": 0,
+            "r": 0.0,
             "i": -24071.405821731958
           }
         ]
       ],
       "diagnostics": {
-        "frequency_hz": 950,
+        "frequency_hz": 950.0,
         "solve_s": 40.61385141592473,
         "relative_residual": 1.5326147327259499e-12,
         "reciprocity_error": 5.382694233288334e-15,
@@ -1608,71 +1098,41 @@
           "r": 0.05326064459170217,
           "i": -0.5518871511439518
         }
-      },
-      "available": true,
-      "qualification": {
-        "qualified": true,
-        "checks": {
-          "threeMeshFrequencyMatch": true,
-          "matrixChange": true,
-          "decreasingMatrixChange": true,
-          "loadedTransferChange": true,
-          "loadedInputImpedanceChange": true,
-          "loadedPhaseChange": true,
-          "reciprocity": true,
-          "passivity": true,
-          "linearResidual": true,
-          "powerBalance": true,
-          "meshVolume": true,
-          "awayFromClosedMode": true,
-          "closedModeRangeCovered": true
-        },
-        "convergence": {
-          "coarseToMediumMatrixChange": 0.0030493592412069036,
-          "mediumToFineMatrixChange": 0.0012128907191028394,
-          "mediumToFineLoadedTransferChange": 0.0010560211073074334,
-          "loadedPhaseChangeDegrees": 0.048048701575416596,
-          "mediumToFineLoadedInputImpedanceChange": 0.001003401875224988,
-          "nearestClosedModeRelativeDistance": 0.536454628681774
-        },
-        "scope": "Numerical qualification of stated lossless surrogate and port basis; not physical measurement validation"
-      },
-      "qualified": true,
-      "reason": ""
+      }
     },
     {
-      "frequencyHz": 1000,
+      "frequencyHz": 1000.0,
       "impedance": [
         [
           {
-            "r": 0,
+            "r": 0.0,
             "i": -92753.54934890245
           },
           {
-            "r": 0,
+            "r": 0.0,
             "i": -134452.67840537336
           }
         ],
         [
           {
-            "r": 0,
+            "r": 0.0,
             "i": -134452.67840537766
           },
           {
-            "r": 0,
+            "r": 0.0,
             "i": -12426.58466965455
           }
         ]
       ],
       "diagnostics": {
-        "frequency_hz": 1000,
+        "frequency_hz": 1000.0,
         "solve_s": 42.3744052501861,
         "relative_residual": 1.3622023576086497e-12,
         "reciprocity_error": 2.874367864063726e-14,
         "factorization": "real SuperLU; imaginary source",
         "hermitian_real_eigenvalues": [
-          -2.153683453798294e-9,
-          2.153683453798294e-9
+          -2.153683453798294e-09,
+          2.153683453798294e-09
         ],
         "passivity_min_normalized": -1.0162425041520764e-14,
         "nearest_closed_mode_relative_distance": 0.5120575038755516,
@@ -1688,37 +1148,7 @@
           "r": 0.026788845108647798,
           "i": -0.537709274733232
         }
-      },
-      "available": true,
-      "qualification": {
-        "qualified": true,
-        "checks": {
-          "threeMeshFrequencyMatch": true,
-          "matrixChange": true,
-          "decreasingMatrixChange": true,
-          "loadedTransferChange": true,
-          "loadedInputImpedanceChange": true,
-          "loadedPhaseChange": true,
-          "reciprocity": true,
-          "passivity": true,
-          "linearResidual": true,
-          "powerBalance": true,
-          "meshVolume": true,
-          "awayFromClosedMode": true,
-          "closedModeRangeCovered": true
-        },
-        "convergence": {
-          "coarseToMediumMatrixChange": 0.0034569159356343426,
-          "mediumToFineMatrixChange": 0.0013725223371857053,
-          "mediumToFineLoadedTransferChange": 0.0011359100465899619,
-          "loadedPhaseChangeDegrees": 0.052075388759202014,
-          "mediumToFineLoadedInputImpedanceChange": 0.0010762264941232085,
-          "nearestClosedModeRelativeDistance": 0.5120575038755516
-        },
-        "scope": "Numerical qualification of stated lossless surrogate and port basis; not physical measurement validation"
-      },
-      "qualified": true,
-      "reason": ""
+      }
     }
   ],
   "closedDomainModeFrequencyHz": [
@@ -1728,62 +1158,5 @@
     2832.373520565193,
     2832.4861450426665
   ],
-  "totalRuntimeS": 944.6623687921092,
-  "convergence": {
-    "method": "Three independent tetrahedral meshes; pointwise complex matrix and reference-loaded response comparison",
-    "thresholds": {
-      "matrixRelativeChange": 0.005,
-      "loadedTransferRelativeChange": 0.005,
-      "loadedInputImpedanceRelativeChange": 0.005,
-      "loadedPhaseChangeDegrees": 0.5,
-      "reciprocityRelativeError": 1e-7,
-      "minimumNormalizedHermitianEigenvalue": -1e-8,
-      "linearRelativeResidual": 1e-7,
-      "powerResidualNormalized": 1e-7,
-      "minimumClosedModeRelativeDistance": 0.05,
-      "meshVolumeRelativeError": 1e-8
-    },
-    "meshDofs": [
-      22695,
-      47628,
-      98721
-    ],
-    "meshSha256": [
-      "860d0cb75f4042f5de1947e813bbc352b19418d4e57fb9c5f43d5792d628d20b",
-      "3773a31276c6efea576b2a5747d4c97c5a00ac86af539e197f7fee9032b036eb",
-      "86ae60251703d608a47b88c41f7451adf9402d4b4aa4d38f2eca7fd984b1b21d"
-    ],
-    "boundary": "Same frozen piecewise-planar air boundary on all meshes; geometric and material-model uncertainty excluded",
-    "passed": true
-  },
-  "qualifiedFrequencyHz": [
-    100,
-    150,
-    200,
-    250,
-    300,
-    350,
-    400,
-    450,
-    500,
-    550,
-    600,
-    650,
-    700,
-    750,
-    800,
-    850,
-    900,
-    950,
-    1000
-  ],
-  "format": "MEH-spatial-front-v1",
-  "nativeConventions": {
-    "time": "exp(+j omega t)",
-    "amplitude": "RMS",
-    "flow": "m3/s INTO local air domain",
-    "pressure": "Pa, weighted port pressure power-conjugate to the normalized motion shape",
-    "impedance": "Pa s/m3"
-  },
-  "coneProjectedAreaM2": 0.01319469958157574
+  "totalRuntimeS": 944.6623687921092
 }

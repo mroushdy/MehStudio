@@ -1,0 +1,39 @@
+{
+  "schema": "meh-hornresp-reference/v1",
+  "caseId": "kolbrek-conical-exponential",
+  "caseSha256": "1499bafb1eaf12e86dc010ab2b5e37e8a049d6b1cea03a19a5e2dda95f394769",
+  "provenance": {
+    "kind": "native-hornresp-export",
+    "version": "55.30",
+    "source": "https://github.com/bkolbrek/HornSimulation/tree/main/HornSim_blog3",
+    "author": "Bjørn Kolbrek",
+    "license": "MIT; see references/kolbrek/LICENSE",
+    "acquisition": "Unmodified files from the user’s existing Downloads/HornSimulation-main; public author repository linked above.",
+    "rawSha256": "f5aa6b053a3ef043a684b5c53bd3def302a965e223ef00bf5d7f6b8bdb74f9bc",
+    "inputSha256": "2b7526f7ec4398536eb5fc8c9255aaec5a2211d35b4f663777c6c8133b4534ba",
+    "acquiredAt": "2026-09-29"
+  },
+  "conventions": {
+    "driveConvention": "RMS",
+    "massConvention": "Mmd-explicit",
+    "distanceM": 1,
+    "solidAngleSr": 6.283185307179586,
+    "radiationModel": "uniform-circular-piston-in-infinite-baffle",
+    "densityKgM3": 1.205,
+    "soundSpeedMS": 344,
+    "excursion": "one-way peak mm",
+    "acousticImpedance": "horn throat pressure / volume velocity, normalized by rho*c/S1",
+    "phaseVerified": false,
+    "phaseNote": "Raw WPhase tested diagnostically against arg(j*mouthFlow), with zero propagation delay and no fitted phase offset. Reference file does not record the Delay tool state, so phase is not an acceptance gate.",
+    "chamberResonanceMasking": "Source author uses lumped compliances; native data agree in the reported band. Exact application option state was not captured."
+  },
+  "sampling": {
+    "nativeSampleCount": 533,
+    "nativeBandHz": [
+      10,
+      20000
+    ],
+    "candidateSolvedAtNativeFrequencies": true,
+    "interpolation": false
+  }
+}

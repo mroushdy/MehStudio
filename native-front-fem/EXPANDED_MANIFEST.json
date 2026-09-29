@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "scope": "Expanded local front-passage FEM; original MANIFEST.json remains unchanged",
+  "qualifiedFrequencyHz": [
+    100,
+    150,
+    200,
+    250,
+    300,
+    350,
+    400,
+    450,
+    500,
+    550,
+    600,
+    650,
+    700,
+    750,
+    800,
+    850,
+    900,
+    950,
+    1000
+  ],
+  "files": {
+    "results/expanded/inserted-dense-qualified.json": {
+      "sha256": "b467c13904fcaca59e11c9e3669edd233715555c429355ff3be7fde0059622ab",
+      "bytes": 55039
+    },
+    "results/expanded/run.log": {
+      "sha256": "9551ab22f5b9fe8856e19da1aea7b2c1849d43999c7de45d9982fc51aea443b7",
+      "bytes": 10316
+    },
+    "results/expanded/inserted-2mm-dense.json": {
+      "sha256": "8ff3d2bbf33b3008d24b3e6882b64ed53ab0e9b5b7c562bfdf527d6c8d9cdb7c",
+      "bytes": 30633
+    },
+    "results/expanded/inserted-3mm-dense.json": {
+      "sha256": "11c6e89d2c685dd4288b2ba94aeb11cbf67679c628e6b8a8a5b29c405fa07073",
+      "bytes": 30658
+    },
+    "results/expanded/rerun-native-benchmarks.json": {
+      "sha256": "84706c40cd59b664f75a7a7f3393424f4785f0fa74158e51c007c53ef8dfe750",
+      "bytes": 28506
+    },
+    "results/expanded/input-provenance.json": {
+      "sha256": "05792a90b4844bd829e848ab0689069fa31d0afa6f06187ed03b342f8c68c9c1",
+      "bytes": 605
+    },
+    "results/expanded/inserted-1_4mm-dense.json": {
+      "sha256": "d6be22270fc2b26e7739b72064eb5125293ef7a8f31d5cd08e93f9ab5d90f13f",
+      "bytes": 31938
+    },
+    "EXPANDED_REFERENCE.md": {
+      "sha256": "4d3c18ac27de75827923b059b16ba9ce4ab1c368eb8418edb03e29191327dcde",
+      "bytes": 1422
+    }
+  }
+}

@@ -1,0 +1,107 @@
+Info    : Reading '/Users/marwan/Documents/Codex/2026-09-28/meh-front-chamber-research/work/fem/geometry/inserted-3mm.msh'...
+Info    : 40707 entities
+Info    : 22695 nodes
+Info    : 119665 elements
+Info    : Done reading '/Users/marwan/Documents/Codex/2026-09-28/meh-front-chamber-research/work/fem/geometry/inserted-3mm.msh'
+ld: warning: duplicate -rpath '/Users/marwan/Documents/Codex/2026-09-28/meh-front-chamber-research/work/fem/runtime/env/lib' ignored
+ld: warning: duplicate -rpath '/Users/marwan/Documents/Codex/2026-09-28/meh-front-chamber-research/work/fem/runtime/env/lib' ignored
+ld: warning: duplicate -rpath '/Users/marwan/Documents/Codex/2026-09-28/meh-front-chamber-research/work/fem/runtime/env/lib' ignored
+ld: warning: duplicate -rpath '/Users/marwan/Documents/Codex/2026-09-28/meh-front-chamber-research/work/fem/runtime/env/lib' ignored
+ld: warning: duplicate -rpath '/Users/marwan/Documents/Codex/2026-09-28/meh-front-chamber-research/work/fem/runtime/env/lib' ignored
+ld: warning: duplicate -rpath '/Users/marwan/Documents/Codex/2026-09-28/meh-front-chamber-research/work/fem/runtime/env/lib' ignored
+ld: warning: duplicate -rpath '/Users/marwan/Documents/Codex/2026-09-28/meh-front-chamber-research/work/fem/runtime/env/lib' ignored
+ld: warning: duplicate -rpath '/Users/marwan/Documents/Codex/2026-09-28/meh-front-chamber-research/work/fem/runtime/env/lib' ignored
+{"stage": "assembled", "dofs": 22695, "cells": 83269, "degree": 1, "volume_m3": 0.00020039189607843683, "ports": [{"name": "cone", "tag": 2, "surface_area_m2": 0.01380885135607302, "signed_projected_area_m2": 0.01319469958157571, "shape_integral": 1.000000000000004}, {"name": "horn_entry_interface", "tag": 3, "surface_area_m2": 0.0016556757479480226, "signed_projected_area_m2": 0.0016556757479480226, "shape_integral": 0.9999999999999979}], "assembly_s": 2.592750750016421}
+{"stage": "checkpoint", "frequencyHz": 100.0, "solve_s": 0.925165249966085}
+{"stage": "frequency", "hz": 100.0, "solve_s": 0.925165249966085}
+{"stage": "checkpoint", "frequencyHz": 150.0, "solve_s": 0.9126976248808205}
+{"stage": "checkpoint", "frequencyHz": 200.0, "solve_s": 0.9077669580001384}
+{"stage": "checkpoint", "frequencyHz": 250.0, "solve_s": 0.9133897079154849}
+{"stage": "checkpoint", "frequencyHz": 300.0, "solve_s": 1.0378225829917938}
+{"stage": "checkpoint", "frequencyHz": 350.0, "solve_s": 0.9272233750671148}
+{"stage": "frequency", "hz": 350.0, "solve_s": 0.9272233750671148}
+{"stage": "checkpoint", "frequencyHz": 400.0, "solve_s": 0.9441214581020176}
+{"stage": "checkpoint", "frequencyHz": 450.0, "solve_s": 0.9896674170158803}
+{"stage": "checkpoint", "frequencyHz": 500.0, "solve_s": 0.9090553750284016}
+{"stage": "checkpoint", "frequencyHz": 550.0, "solve_s": 0.9288909579627216}
+{"stage": "checkpoint", "frequencyHz": 600.0, "solve_s": 0.9042527920100838}
+{"stage": "frequency", "hz": 600.0, "solve_s": 0.9042527920100838}
+{"stage": "checkpoint", "frequencyHz": 650.0, "solve_s": 1.0267655421048403}
+{"stage": "checkpoint", "frequencyHz": 700.0, "solve_s": 1.0211114999838173}
+{"stage": "checkpoint", "frequencyHz": 750.0, "solve_s": 0.965716167120263}
+{"stage": "checkpoint", "frequencyHz": 800.0, "solve_s": 0.9733472499065101}
+{"stage": "checkpoint", "frequencyHz": 850.0, "solve_s": 1.0080564159434289}
+{"stage": "frequency", "hz": 850.0, "solve_s": 1.0080564159434289}
+{"stage": "checkpoint", "frequencyHz": 900.0, "solve_s": 1.0132111669518054}
+{"stage": "checkpoint", "frequencyHz": 950.0, "solve_s": 0.9159889579750597}
+{"stage": "checkpoint", "frequencyHz": 1000.0, "solve_s": 0.8979757081251591}
+{"stage": "frequency", "hz": 1000.0, "solve_s": 0.8979757081251591}
+{"case": "inserted", "rows": 19, "dofs": 22695, "runtime_s": 21.717987958109006, "max_reciprocity": 9.995389122191727e-16, "max_residual": 5.373084825542598e-11}
+Info    : Reading '/Users/marwan/Documents/Codex/2026-09-28/meh-front-chamber-research/work/fem/geometry/inserted-2mm.msh'...
+Info    : 40707 entities
+Info    : 47628 nodes
+Info    : 257839 elements
+Info    : Done reading '/Users/marwan/Documents/Codex/2026-09-28/meh-front-chamber-research/work/fem/geometry/inserted-2mm.msh'
+ld: warning: duplicate -rpath '/Users/marwan/Documents/Codex/2026-09-28/meh-front-chamber-research/work/fem/runtime/env/lib' ignored
+ld: warning: duplicate -rpath '/Users/marwan/Documents/Codex/2026-09-28/meh-front-chamber-research/work/fem/runtime/env/lib' ignored
+{"stage": "assembled", "dofs": 47628, "cells": 195141, "degree": 1, "volume_m3": 0.00020039189607843003, "ports": [{"name": "cone", "tag": 2, "surface_area_m2": 0.013808851356072948, "signed_projected_area_m2": 0.013194699581575972, "shape_integral": 0.9999999999999841}, {"name": "horn_entry_interface", "tag": 3, "surface_area_m2": 0.0016556757479480218, "signed_projected_area_m2": 0.0016556757479480218, "shape_integral": 0.9999999999999984}], "assembly_s": 1.2094318331219256}
+{"stage": "checkpoint", "frequencyHz": 100.0, "solve_s": 7.10287162498571}
+{"stage": "frequency", "hz": 100.0, "solve_s": 7.10287162498571}
+{"stage": "checkpoint", "frequencyHz": 150.0, "solve_s": 7.073243875056505}
+{"stage": "checkpoint", "frequencyHz": 200.0, "solve_s": 6.398410958936438}
+{"stage": "checkpoint", "frequencyHz": 250.0, "solve_s": 6.391154834069312}
+{"stage": "checkpoint", "frequencyHz": 300.0, "solve_s": 6.527023667003959}
+{"stage": "checkpoint", "frequencyHz": 350.0, "solve_s": 6.487245084019378}
+{"stage": "frequency", "hz": 350.0, "solve_s": 6.487245084019378}
+{"stage": "checkpoint", "frequencyHz": 400.0, "solve_s": 7.020023208111525}
+{"stage": "checkpoint", "frequencyHz": 450.0, "solve_s": 6.567112000193447}
+{"stage": "checkpoint", "frequencyHz": 500.0, "solve_s": 7.034197167027742}
+{"stage": "checkpoint", "frequencyHz": 550.0, "solve_s": 6.5858631250448525}
+{"stage": "checkpoint", "frequencyHz": 600.0, "solve_s": 6.592663291841745}
+{"stage": "frequency", "hz": 600.0, "solve_s": 6.592663291841745}
+{"stage": "checkpoint", "frequencyHz": 650.0, "solve_s": 6.508995084092021}
+{"stage": "checkpoint", "frequencyHz": 700.0, "solve_s": 6.6361489170230925}
+{"stage": "checkpoint", "frequencyHz": 750.0, "solve_s": 6.438220416894183}
+{"stage": "checkpoint", "frequencyHz": 800.0, "solve_s": 6.538678165990859}
+{"stage": "checkpoint", "frequencyHz": 850.0, "solve_s": 7.5669548329897225}
+{"stage": "frequency", "hz": 850.0, "solve_s": 7.5669548329897225}
+{"stage": "checkpoint", "frequencyHz": 900.0, "solve_s": 7.0676035839132965}
+{"stage": "checkpoint", "frequencyHz": 950.0, "solve_s": 7.149227834073827}
+{"stage": "checkpoint", "frequencyHz": 1000.0, "solve_s": 7.289248374989256}
+{"stage": "frequency", "hz": 1000.0, "solve_s": 7.289248374989256}
+{"case": "inserted", "rows": 19, "dofs": 47628, "runtime_s": 131.8519506668672, "max_reciprocity": 9.745335589981052e-14, "max_residual": 8.005921841344386e-11}
+Info    : Reading '/Users/marwan/Documents/Codex/2026-09-28/meh-front-chamber-research/work/fem/geometry/inserted-1_4mm.msh'...
+Info    : 40707 entities
+Info    : 98721 nodes
+Info    : 547906 elements
+Info    : Done reading '/Users/marwan/Documents/Codex/2026-09-28/meh-front-chamber-research/work/fem/geometry/inserted-1_4mm.msh'
+ld: warning: duplicate -rpath '/Users/marwan/Documents/Codex/2026-09-28/meh-front-chamber-research/work/fem/runtime/env/lib' ignored
+ld: warning: duplicate -rpath '/Users/marwan/Documents/Codex/2026-09-28/meh-front-chamber-research/work/fem/runtime/env/lib' ignored
+{"stage": "assembled", "dofs": 98721, "cells": 442332, "degree": 1, "volume_m3": 0.00020039189607843355, "ports": [{"name": "cone", "tag": 2, "surface_area_m2": 0.0138088513560737, "signed_projected_area_m2": 0.01319469958157574, "shape_integral": 1.0000000000000018}, {"name": "horn_entry_interface", "tag": 3, "surface_area_m2": 0.0016556757479480211, "signed_projected_area_m2": 0.0016556757479480211, "shape_integral": 0.9999999999999989}], "assembly_s": 1.6236662499140948}
+{"stage": "closed_domain_modes", "frequency_hz": [2049.4218231505556, 2050.4133079605876, 2529.229036662221, 2832.373520565193, 2832.4861450426665]}
+{"stage": "checkpoint", "frequencyHz": 100.0, "solve_s": 48.85782241681591}
+{"stage": "frequency", "hz": 100.0, "solve_s": 48.85782241681591}
+{"stage": "checkpoint", "frequencyHz": 150.0, "solve_s": 56.650304208975285}
+{"stage": "checkpoint", "frequencyHz": 200.0, "solve_s": 42.58495133300312}
+{"stage": "checkpoint", "frequencyHz": 250.0, "solve_s": 51.54942070902325}
+{"stage": "checkpoint", "frequencyHz": 300.0, "solve_s": 56.47603812487796}
+{"stage": "checkpoint", "frequencyHz": 350.0, "solve_s": 51.179618375143036}
+{"stage": "frequency", "hz": 350.0, "solve_s": 51.179618375143036}
+{"stage": "checkpoint", "frequencyHz": 400.0, "solve_s": 61.68821862502955}
+{"stage": "checkpoint", "frequencyHz": 450.0, "solve_s": 59.304748540977016}
+{"stage": "checkpoint", "frequencyHz": 500.0, "solve_s": 39.94040233385749}
+{"stage": "checkpoint", "frequencyHz": 550.0, "solve_s": 36.15994279203005}
+{"stage": "checkpoint", "frequencyHz": 600.0, "solve_s": 38.423031042097136}
+{"stage": "frequency", "hz": 600.0, "solve_s": 38.423031042097136}
+{"stage": "checkpoint", "frequencyHz": 650.0, "solve_s": 47.504140875069425}
+{"stage": "checkpoint", "frequencyHz": 700.0, "solve_s": 55.42200404196046}
+{"stage": "checkpoint", "frequencyHz": 750.0, "solve_s": 45.73147941706702}
+{"stage": "checkpoint", "frequencyHz": 800.0, "solve_s": 42.76132541685365}
+{"stage": "checkpoint", "frequencyHz": 850.0, "solve_s": 37.0734542501159}
+{"stage": "frequency", "hz": 850.0, "solve_s": 37.0734542501159}
+{"stage": "checkpoint", "frequencyHz": 900.0, "solve_s": 40.910996166057885}
+{"stage": "checkpoint", "frequencyHz": 950.0, "solve_s": 40.61385141592473}
+{"stage": "checkpoint", "frequencyHz": 1000.0, "solve_s": 42.3744052501861}
+{"stage": "frequency", "hz": 1000.0, "solve_s": 42.3744052501861}
+{"case": "inserted", "rows": 19, "dofs": 98721, "runtime_s": 944.6634548329748, "max_reciprocity": 2.874367864063726e-14, "max_residual": 1.3289537741192888e-10}
+{"output": "/Users/marwan/Documents/Codex/2026-09-29/meh-hornresp-acoustic-simulation/work/native-expanded/inserted-dense-qualified.json", "qualified": [100.0, 150.0, 200.0, 250.0, 300.0, 350.0, 400.0, 450.0, 500.0, 550.0, 600.0, 650.0, 700.0, 750.0, 800.0, 850.0, 900.0, 950.0, 1000.0], "unqualified": []}

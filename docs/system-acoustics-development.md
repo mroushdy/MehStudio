@@ -1,3 +1,5 @@
+Current review: the insert reference now has 19 qualified 100–1000 Hz samples at 50 Hz steps; the open reference still has five. Read [ACOUSTIC_REVIEW.md](../ACOUSTIC_REVIEW.md) for the new broadband sizing engine, scope and benchmarks. Earlier development notes follow.
+
 # Whole-system acoustics development
 
 This branch extends the earlier front-cavity comparison toward a coupled system analysis. It does not yet claim a complete spatial loudspeaker prediction.

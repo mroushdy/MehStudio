@@ -1,0 +1,206 @@
+{
+  "sourceAndNumericalTests": {
+    "passed": 124,
+    "failed": 0,
+    "command": "node --test --test-concurrency=1 tests/*.cjs benchmarks/benchmark.test.cjs"
+  },
+  "nativeAnalyticCheckGroups": 44,
+  "nativeFEMChecksPassed": 10,
+  "localFEMQualifiedFrequenciesHz": [
+    100,
+    150,
+    200,
+    250,
+    300,
+    350,
+    400,
+    450,
+    500,
+    550,
+    600,
+    650,
+    700,
+    750,
+    800,
+    850,
+    900,
+    950,
+    1000
+  ],
+  "nativeProvenance": {
+    "originalNativeFilesVerified": 55,
+    "inputMeshes": [
+      {
+        "mesh": "inserted-3mm.msh",
+        "sha256": "860d0cb75f4042f5de1947e813bbc352b19418d4e57fb9c5f43d5792d628d20b",
+        "bytes": 10804763
+      },
+      {
+        "mesh": "inserted-2mm.msh",
+        "sha256": "3773a31276c6efea576b2a5747d4c97c5a00ac86af539e197f7fee9032b036eb",
+        "bytes": 16841954
+      },
+      {
+        "mesh": "inserted-1_4mm.msh",
+        "sha256": "86ae60251703d608a47b88c41f7451adf9402d4b4aa4d38f2eca7fd984b1b21d",
+        "bytes": 29383549
+      }
+    ],
+    "originalNativeFilesUnchanged": true,
+    "runtimeAndMeshesReadOnly": true
+  },
+  "geometryHandshake": {
+    "available": true,
+    "schema": "meh-acoustic-geometry/v1",
+    "designSha256": "d41b131d158d497456e91aa497440a8942c5d737b4851684b15e98af3b08cbc1",
+    "sourceRecords": [
+      {
+        "id": "mid_1",
+        "sourceTag": 101,
+        "positionM": [
+          0.09338003312474918,
+          0,
+          0.147
+        ],
+        "motionIntoFrontAir": [
+          -0.8367969426539839,
+          0,
+          0.5475133576132598
+        ],
+        "nominalSdM2": 0.0132,
+        "projectedMeshAreaM2": 0.013194699581575757,
+        "meshFlowPerCatalogFlow": 0.9995984531496785,
+        "pressureCatalogPerMeshPressure": 0.9995984531496785
+      },
+      {
+        "id": "mid_2",
+        "sourceTag": 102,
+        "positionM": [
+          5.717877933524895e-18,
+          0.09338003312474918,
+          0.147
+        ],
+        "motionIntoFrontAir": [
+          -5.123903486787463e-17,
+          -0.8367969426539839,
+          0.5475133576132598
+        ],
+        "nominalSdM2": 0.0132,
+        "projectedMeshAreaM2": 0.013194699581575762,
+        "meshFlowPerCatalogFlow": 0.999598453149679,
+        "pressureCatalogPerMeshPressure": 0.999598453149679
+      },
+      {
+        "id": "mid_3",
+        "sourceTag": 103,
+        "positionM": [
+          -0.09338003312474918,
+          1.143575586704979e-17,
+          0.147
+        ],
+        "motionIntoFrontAir": [
+          0.8367969426539839,
+          -1.0247806973574927e-16,
+          0.5475133576132598
+        ],
+        "nominalSdM2": 0.0132,
+        "projectedMeshAreaM2": 0.013194699581575762,
+        "meshFlowPerCatalogFlow": 0.999598453149679,
+        "pressureCatalogPerMeshPressure": 0.999598453149679
+      },
+      {
+        "id": "mid_4",
+        "sourceTag": 104,
+        "positionM": [
+          -1.7153633800574684e-17,
+          -0.09338003312474918,
+          0.147
+        ],
+        "motionIntoFrontAir": [
+          1.5371710460362389e-16,
+          0.8367969426539839,
+          0.5475133576132598
+        ],
+        "nominalSdM2": 0.0132,
+        "projectedMeshAreaM2": 0.013194699581575759,
+        "meshFlowPerCatalogFlow": 0.9995984531496787,
+        "pressureCatalogPerMeshPressure": 0.9995984531496787
+      }
+    ],
+    "mouthCouplingPlane": {
+      "stationIndex": 239,
+      "zM": 0.35675185721859337,
+      "radiusM": 0.2910617992440067
+    },
+    "rearComplianceM5N": 7.624458914035891e-07,
+    "acousticOperatorAvailable": false,
+    "scope": "Geometry handshake only. Full coupled front/horn/exterior operator must be separately solved and qualified. Preserve four discrete source records; cap301 requires the omitted downstream horn and exterior operator, never a pressure-release condition.",
+    "manifestSha256": "292df8d68083be864ef4c01a04d653cb2089600ff7ce40b575ca0d645942cd99"
+  },
+  "hornrespBenchmark": {
+    "schema": "meh-hornresp-benchmark-summary/v1",
+    "generatedBy": "node benchmarks/run.cjs",
+    "benchmarks": [
+      {
+        "caseId": "kolbrek-exponential",
+        "status": "published-native-reference-compared",
+        "bandHz": [
+          20,
+          1000
+        ],
+        "nativeSamples": 533,
+        "comparedSamples": 274,
+        "meetsProposedMagnitudeThresholds": true,
+        "maxSplErrorDb": 0.0003932919978666405,
+        "maxElectricalImpedanceErrorOhm": 0.009804744052630099,
+        "maxExcursionErrorMM": 9.593776965813317e-06,
+        "diagnosticMaxRawPhaseErrorDeg": 0.0020818864928742187,
+        "fullExportMaxSplErrorDb": 0.030794729251116593,
+        "segmentation64To128MaxSplDb": 0.0011761588166336878,
+        "segmentation128To256MaxSplDb": 0.00029402964844393864,
+        "powerResidual": 8.198825223901333e-15
+      },
+      {
+        "caseId": "kolbrek-conical-exponential",
+        "status": "published-native-reference-compared",
+        "bandHz": [
+          20,
+          1000
+        ],
+        "nativeSamples": 533,
+        "comparedSamples": 274,
+        "meetsProposedMagnitudeThresholds": true,
+        "maxSplErrorDb": 0.00010307334788706157,
+        "maxElectricalImpedanceErrorOhm": 0.0012446232549194747,
+        "maxExcursionErrorMM": 3.577261051296299e-06,
+        "diagnosticMaxRawPhaseErrorDeg": 0.0007669883842709169,
+        "fullExportMaxSplErrorDb": 0.00017872272185925908,
+        "segmentation64To128MaxSplDb": 0.0003075886119745519,
+        "segmentation128To256MaxSplDb": 7.674975043414634e-05,
+        "powerResidual": 1.0681381944702265e-14
+      },
+      {
+        "caseId": "simple-conical",
+        "status": "native-capture-pending",
+        "candidateSampleCount": 241,
+        "reason": "A matching native Hornresp run has not been captured for this new input. Candidate curves are not a reference."
+      },
+      {
+        "caseId": "two-entry-conical",
+        "status": "native-capture-pending",
+        "candidateSampleCount": 241,
+        "reason": "A matching native Hornresp run has not been captured for this new input. Candidate curves are not a reference."
+      }
+    ],
+    "limitations": [
+      "Agreement with published idealized models is not measured loudspeaker validation.",
+      "New single-conical and multiple-entry native captures remain pending.",
+      "The actual four-side-entry MEH geometry has not been validated against Hornresp or measurements.",
+      "Local spatial-front samples do not establish full-system broadband FEM agreement."
+    ]
+  },
+  "browserRenderedQA": "Unavailable under administrator policy; no alternative browser backend used.",
+  "physicalMeasurementValidation": false,
+  "fullFourSidePortSpatialValidation": false,
+  "deployment": "No public-main merge or Site deployment"
+}

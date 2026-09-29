@@ -1,0 +1,902 @@
+{
+  "status": "PASS",
+  "checks": {
+    "duct_final_complex_error_below_1pct": true,
+    "duct_p1_error_reduces": true,
+    "duct_final_phase_error_below_half_degree": true,
+    "all_matrix_reciprocity_below_1e7": true,
+    "all_matrix_psd_above_minus1e8": true,
+    "all_load_power_residual_below1e6": true,
+    "cavity_final_frequency_error_below_halfpct": true,
+    "cavity_error_reduces": true,
+    "resonator_final_frequency_error_below_halfpct": true,
+    "resonator_error_reduces": true
+  },
+  "frequency_hz": [
+    80.0,
+    150.0,
+    250.0,
+    400.0,
+    700.0,
+    1000.0
+  ],
+  "runtime_s": 6.910945791052654,
+  "results": [
+    {
+      "type": "uniform_duct",
+      "subdivisions": [
+        12,
+        2,
+        2
+      ],
+      "dofs": 117,
+      "cells": 288,
+      "degree": 1,
+      "volume_m3": 0.00018000000000000042,
+      "ports": [
+        {
+          "name": "left",
+          "tag": 2,
+          "surface_area_m2": 0.0006,
+          "signed_projected_area_m2": 0.0006,
+          "shape_integral": 1.0
+        },
+        {
+          "name": "right",
+          "tag": 3,
+          "surface_area_m2": 0.0006,
+          "signed_projected_area_m2": 0.0006,
+          "shape_integral": 1.0
+        }
+      ],
+      "assembly_s": 2.039076874963939,
+      "matrix_complex_errors": [
+        0.0001122673315669421,
+        0.00040564049162663336,
+        0.0010845879142425499,
+        0.002584211114363682,
+        0.029293136627007627,
+        0.05381655590855489
+      ],
+      "change_from_previous": null,
+      "matched_phase_error_degrees": [
+        0.002612614832949409,
+        0.014735587372674455,
+        0.04841001122398889,
+        0.13461083756374795,
+        1.0319809446350765,
+        2.3800392681315996
+      ],
+      "loads": [
+        {
+          "load_over_zc": "1.0",
+          "max_input_impedance_complex_error": 0.01343748163107418,
+          "max_transfer_complex_error": 0.04193132945095654,
+          "max_power_residual_over_zc": 6.765513700314876e-16,
+          "minimum_input_resistance_over_zc": 1.0000200366140604
+        },
+        {
+          "load_over_zc": "(0.5+0.3j)",
+          "max_input_impedance_complex_error": 0.0526792120895355,
+          "max_transfer_complex_error": 0.029770861769962697,
+          "max_power_residual_over_zc": 1.1839648975551034e-15,
+          "minimum_input_resistance_over_zc": 0.5372097078235083
+        },
+        {
+          "load_over_zc": "(2-0.4j)",
+          "max_input_impedance_complex_error": 0.05409935965104502,
+          "max_transfer_complex_error": 0.0437369687467781,
+          "max_power_residual_over_zc": 6.765513700314876e-16,
+          "minimum_input_resistance_over_zc": 0.47758351342095334
+        },
+        {
+          "load_over_zc": "0.0",
+          "max_input_impedance_complex_error": 0.10704234380974517,
+          "max_transfer_complex_error": 0.04963665643742507,
+          "max_power_residual_over_zc": 0.0,
+          "minimum_input_resistance_over_zc": 0.0
+        }
+      ],
+      "diagnostics": [
+        {
+          "frequency_hz": 80.0,
+          "solve_s": 0.0006625410169363022,
+          "relative_residual": 8.080390824412138e-13,
+          "reciprocity_error": 2.1348565701578836e-16,
+          "factorization": "real SuperLU; imaginary source",
+          "hermitian_real_eigenvalues": [
+            -2.3283064365386963e-10,
+            2.3283064365386963e-10
+          ],
+          "passivity_min_normalized": -7.547857788096469e-17
+        },
+        {
+          "frequency_hz": 150.0,
+          "solve_s": 0.0002301668282598257,
+          "relative_residual": 2.0669139543335351e-13,
+          "reciprocity_error": 6.160648404397217e-16,
+          "factorization": "real SuperLU; imaginary source",
+          "hermitian_real_eigenvalues": [
+            -3.4924596548080444e-10,
+            3.4924596548080444e-10
+          ],
+          "passivity_min_normalized": -2.1781181316276785e-16
+        },
+        {
+          "frequency_hz": 250.0,
+          "solve_s": 0.00018366612493991852,
+          "relative_residual": 8.17381121548174e-14,
+          "reciprocity_error": 0.0,
+          "factorization": "real SuperLU; imaginary source",
+          "hermitian_real_eigenvalues": [
+            0.0,
+            0.0
+          ],
+          "passivity_min_normalized": 0.0
+        },
+        {
+          "frequency_hz": 400.0,
+          "solve_s": 0.0001640829723328352,
+          "relative_residual": 5.2153182964952316e-14,
+          "reciprocity_error": 3.5489926949846284e-16,
+          "factorization": "real SuperLU; imaginary source",
+          "hermitian_real_eigenvalues": [
+            -1.7462298274040222e-10,
+            1.7462298274040222e-10
+          ],
+          "passivity_min_normalized": -1.2547584005025757e-16
+        },
+        {
+          "frequency_hz": 700.0,
+          "solve_s": 0.00015554088167846203,
+          "relative_residual": 4.0791741287358145e-14,
+          "reciprocity_error": 1.6961895702373408e-16,
+          "factorization": "real SuperLU; imaginary source",
+          "hermitian_real_eigenvalues": [
+            -1.1641532182693481e-10,
+            1.1641532182693481e-10
+          ],
+          "passivity_min_normalized": -5.996935736463596e-17
+        },
+        {
+          "frequency_hz": 1000.0,
+          "solve_s": 0.0001627090387046337,
+          "relative_residual": 2.2558118435563817e-14,
+          "reciprocity_error": 1.0300601804925853e-16,
+          "factorization": "real SuperLU; imaginary source",
+          "hermitian_real_eigenvalues": [
+            -5.820766091346741e-11,
+            5.820766091346741e-11
+          ],
+          "passivity_min_normalized": -3.641812693282731e-17
+        }
+      ]
+    },
+    {
+      "type": "uniform_duct",
+      "subdivisions": [
+        24,
+        3,
+        3
+      ],
+      "dofs": 400,
+      "cells": 1296,
+      "degree": 1,
+      "volume_m3": 0.0001799999999999962,
+      "ports": [
+        {
+          "name": "left",
+          "tag": 2,
+          "surface_area_m2": 0.0006000000000000002,
+          "signed_projected_area_m2": 0.0006000000000000002,
+          "shape_integral": 0.9999999999999994
+        },
+        {
+          "name": "right",
+          "tag": 3,
+          "surface_area_m2": 0.0006000000000000002,
+          "signed_projected_area_m2": 0.0006000000000000002,
+          "shape_integral": 0.9999999999999998
+        }
+      ],
+      "assembly_s": 0.47975420905277133,
+      "matrix_complex_errors": [
+        2.8176870198833184e-05,
+        0.00010178744192656345,
+        0.0002720779605140212,
+        0.0006547373625905574,
+        0.007313168498331239,
+        0.014366404760781378
+      ],
+      "change_from_previous": [
+        8.408809507167735e-05,
+        0.000303822740206877,
+        0.0008123414948044163,
+        0.0019303920677218851,
+        0.021824580717196593,
+        0.039980851592664145
+      ],
+      "matched_phase_error_degrees": [
+        0.0006557674508323768,
+        0.003698681565022475,
+        0.012157664098428425,
+        0.03400668314807688,
+        0.2621070657188206,
+        0.6118184313320452
+      ],
+      "loads": [
+        {
+          "load_over_zc": "1.0",
+          "max_input_impedance_complex_error": 0.003226788932451054,
+          "max_transfer_complex_error": 0.010746593462650094,
+          "max_power_residual_over_zc": 1.6913784250787192e-15,
+          "minimum_input_resistance_over_zc": 1.0000050286845785
+        },
+        {
+          "load_over_zc": "(0.5+0.3j)",
+          "max_input_impedance_complex_error": 0.013161068537744904,
+          "max_transfer_complex_error": 0.007380003496920615,
+          "max_power_residual_over_zc": 9.302581337932954e-16,
+          "minimum_input_resistance_over_zc": 0.5213087316575257
+        },
+        {
+          "load_over_zc": "(2-0.4j)",
+          "max_input_impedance_complex_error": 0.014314420470750103,
+          "max_transfer_complex_error": 0.011645643948904561,
+          "max_power_residual_over_zc": 1.860516267586591e-15,
+          "minimum_input_resistance_over_zc": 0.47717501124989997
+        },
+        {
+          "load_over_zc": "0.0",
+          "max_input_impedance_complex_error": 0.026311941373105295,
+          "max_transfer_complex_error": 0.012069095725852283,
+          "max_power_residual_over_zc": 0.0,
+          "minimum_input_resistance_over_zc": 0.0
+        }
+      ],
+      "diagnostics": [
+        {
+          "frequency_hz": 80.0,
+          "solve_s": 0.000920125050470233,
+          "relative_residual": 1.9438757955128416e-12,
+          "reciprocity_error": 6.405107567559748e-16,
+          "factorization": "real SuperLU; imaginary source",
+          "hermitian_real_eigenvalues": [
+            -6.984919309616089e-10,
+            6.984919309616089e-10
+          ],
+          "passivity_min_normalized": -2.2645474976253856e-16
+        },
+        {
+          "frequency_hz": 150.0,
+          "solve_s": 0.000618667108938098,
+          "relative_residual": 5.287422975897178e-13,
+          "reciprocity_error": 0.0,
+          "factorization": "real SuperLU; imaginary source",
+          "hermitian_real_eigenvalues": [
+            0.0,
+            0.0
+          ],
+          "passivity_min_normalized": 0.0
+        },
+        {
+          "frequency_hz": 250.0,
+          "solve_s": 0.0005442500114440918,
+          "relative_residual": 2.0410454979287083e-13,
+          "reciprocity_error": 1.6274881601068277e-16,
+          "factorization": "real SuperLU; imaginary source",
+          "hermitian_real_eigenvalues": [
+            -5.820766091346741e-11,
+            5.820766091346741e-11
+          ],
+          "passivity_min_normalized": -5.754039571561777e-17
+        },
+        {
+          "frequency_hz": 400.0,
+          "solve_s": 0.0005062499549239874,
+          "relative_residual": 1.2371501414048745e-13,
+          "reciprocity_error": 4.725527409551711e-16,
+          "factorization": "real SuperLU; imaginary source",
+          "hermitian_real_eigenvalues": [
+            -2.3283064365386963e-10,
+            2.3283064365386963e-10
+          ],
+          "passivity_min_normalized": -1.6707262379884572e-16
+        },
+        {
+          "frequency_hz": 700.0,
+          "solve_s": 0.0004734171088784933,
+          "relative_residual": 1.1260040264125219e-13,
+          "reciprocity_error": 1.7322735206481452e-16,
+          "factorization": "real SuperLU; imaginary source",
+          "hermitian_real_eigenvalues": [
+            -1.1641532182693481e-10,
+            1.1641532182693481e-10
+          ],
+          "passivity_min_normalized": -6.124511766600991e-17
+        },
+        {
+          "frequency_hz": 1000.0,
+          "solve_s": 0.0007924591191112995,
+          "relative_residual": 6.529126810287172e-14,
+          "reciprocity_error": 1.4889461799617031e-15,
+          "factorization": "real SuperLU; imaginary source",
+          "hermitian_real_eigenvalues": [
+            -8.731149137020111e-10,
+            8.731149137020111e-10
+          ],
+          "passivity_min_normalized": -5.264219703363629e-16
+        }
+      ]
+    },
+    {
+      "type": "uniform_duct",
+      "subdivisions": [
+        48,
+        4,
+        4
+      ],
+      "dofs": 1225,
+      "cells": 4608,
+      "degree": 1,
+      "volume_m3": 0.0001800000000000138,
+      "ports": [
+        {
+          "name": "left",
+          "tag": 2,
+          "surface_area_m2": 0.0006,
+          "signed_projected_area_m2": 0.0006,
+          "shape_integral": 1.0
+        },
+        {
+          "name": "right",
+          "tag": 3,
+          "surface_area_m2": 0.0006,
+          "signed_projected_area_m2": 0.0006,
+          "shape_integral": 1.0
+        }
+      ],
+      "assembly_s": 0.007018750067800283,
+      "matrix_complex_errors": [
+        7.059138027113393e-06,
+        2.5497498467999875e-05,
+        6.813910265035758e-05,
+        0.00016461948529842134,
+        0.001831439258606749,
+        0.0036632025302924635
+      ],
+      "change_from_previous": [
+        2.1117583291256507e-05,
+        7.628803705499914e-05,
+        0.00020392826957223173,
+        0.0004901763651232398,
+        0.005471973941232896,
+        0.010739553975815134
+      ],
+      "matched_phase_error_degrees": [
+        0.00016429273686875784,
+        0.000926600318976512,
+        0.003046235979444332,
+        0.008541498910667793,
+        0.06591549028168861,
+        0.15441545996075678
+      ],
+      "loads": [
+        {
+          "load_over_zc": "1.0",
+          "max_input_impedance_complex_error": 0.000794290989684356,
+          "max_transfer_complex_error": 0.002710167865415572,
+          "max_power_residual_over_zc": 1.1839648975551034e-15,
+          "minimum_input_resistance_over_zc": 1.0000012597821664
+        },
+        {
+          "load_over_zc": "(0.5+0.3j)",
+          "max_input_impedance_complex_error": 0.0032920743318732865,
+          "max_transfer_complex_error": 0.0018442666570459333,
+          "max_power_residual_over_zc": 2.367929795110207e-15,
+          "minimum_input_resistance_over_zc": 0.5175180853243396
+        },
+        {
+          "load_over_zc": "(2-0.4j)",
+          "max_input_impedance_complex_error": 0.0036423672260000746,
+          "max_transfer_complex_error": 0.002967332101220118,
+          "max_power_residual_over_zc": 1.6913784250787192e-15,
+          "minimum_input_resistance_over_zc": 0.4770727319356382
+        },
+        {
+          "load_over_zc": "0.0",
+          "max_input_impedance_complex_error": 0.0065585664954347,
+          "max_transfer_complex_error": 0.00300137489737411,
+          "max_power_residual_over_zc": 0.0,
+          "minimum_input_resistance_over_zc": 0.0
+        }
+      ],
+      "diagnostics": [
+        {
+          "frequency_hz": 80.0,
+          "solve_s": 0.002683833008632064,
+          "relative_residual": 3.1652990927561824e-12,
+          "reciprocity_error": 8.540323539096492e-16,
+          "factorization": "real SuperLU; imaginary source",
+          "hermitian_real_eigenvalues": [
+            -9.313225746154785e-10,
+            9.313225746154785e-10
+          ],
+          "passivity_min_normalized": -3.0194603440111123e-16
+        },
+        {
+          "frequency_hz": 150.0,
+          "solve_s": 0.0026947499718517065,
+          "relative_residual": 9.986831965751388e-13,
+          "reciprocity_error": 8.217258373858693e-16,
+          "factorization": "real SuperLU; imaginary source",
+          "hermitian_real_eigenvalues": [
+            -4.656612873077393e-10,
+            4.656612873077393e-10
+          ],
+          "passivity_min_normalized": -2.905239559458712e-16
+        },
+        {
+          "frequency_hz": 250.0,
+          "solve_s": 0.002528541022911668,
+          "relative_residual": 3.6494010045599343e-13,
+          "reciprocity_error": 1.139419110804369e-15,
+          "factorization": "real SuperLU; imaginary source",
+          "hermitian_real_eigenvalues": [
+            -4.0745362639427185e-10,
+            4.0745362639427185e-10
+          ],
+          "passivity_min_normalized": -4.028454899316578e-16
+        },
+        {
+          "frequency_hz": 400.0,
+          "solve_s": 0.0023166248574852943,
+          "relative_residual": 2.284126435886373e-13,
+          "reciprocity_error": 1.180968841354593e-16,
+          "factorization": "real SuperLU; imaginary source",
+          "hermitian_real_eigenvalues": [
+            -5.820766091346741e-11,
+            5.820766091346741e-11
+          ],
+          "passivity_min_normalized": -4.1753553804592634e-17
+        },
+        {
+          "frequency_hz": 700.0,
+          "solve_s": 0.002292416989803314,
+          "relative_residual": 1.909869792680915e-13,
+          "reciprocity_error": 1.7415029820596664e-16,
+          "factorization": "real SuperLU; imaginary source",
+          "hermitian_real_eigenvalues": [
+            -1.1641532182693481e-10,
+            1.1641532182693481e-10
+          ],
+          "passivity_min_normalized": -6.157142840354922e-17
+        },
+        {
+          "frequency_hz": 1000.0,
+          "solve_s": 0.002655582968145609,
+          "relative_residual": 1.1524112489681456e-13,
+          "reciprocity_error": 3.931290519946216e-16,
+          "factorization": "real SuperLU; imaginary source",
+          "hermitian_real_eigenvalues": [
+            -2.3283064365386963e-10,
+            2.3283064365386963e-10
+          ],
+          "passivity_min_normalized": -1.3899210927341787e-16
+        }
+      ]
+    },
+    {
+      "type": "uniform_duct",
+      "subdivisions": [
+        24,
+        3,
+        3
+      ],
+      "dofs": 2401,
+      "cells": 1296,
+      "degree": 2,
+      "volume_m3": 0.0001799999999999962,
+      "ports": [
+        {
+          "name": "left",
+          "tag": 2,
+          "surface_area_m2": 0.0006000000000000002,
+          "signed_projected_area_m2": 0.0006000000000000002,
+          "shape_integral": 1.0
+        },
+        {
+          "name": "right",
+          "tag": 3,
+          "surface_area_m2": 0.0006000000000000002,
+          "signed_projected_area_m2": 0.0006000000000000002,
+          "shape_integral": 1.0
+        }
+      ],
+      "assembly_s": 1.054951500147581,
+      "matrix_complex_errors": [
+        1.0371231482967743e-11,
+        3.558697145143059e-10,
+        9.076110960802259e-09,
+        1.560860013932615e-07,
+        2.00885291040187e-06,
+        1.4628006079576036e-05
+      ],
+      "change_from_previous": [
+        7.059145692841349e-06,
+        2.5497388292682597e-05,
+        6.81359655750732e-05,
+        0.00016447571381014305,
+        0.0018294353057767764,
+        0.003648686243985114
+      ],
+      "matched_phase_error_degrees": [
+        -1.091679456914358e-11,
+        1.604072490412001e-08,
+        4.44901077477736e-07,
+        6.599766465186797e-06,
+        7.753412039670897e-05,
+        0.0005772002461931141
+      ],
+      "loads": [
+        {
+          "load_over_zc": "1.0",
+          "max_input_impedance_complex_error": 2.4124926054339582e-06,
+          "max_transfer_complex_error": 1.0110249884836108e-05,
+          "max_power_residual_over_zc": 4.228446062696798e-15,
+          "minimum_input_resistance_over_zc": 0.9999982901913054
+        },
+        {
+          "load_over_zc": "(0.5+0.3j)",
+          "max_input_impedance_complex_error": 6.827742465372916e-06,
+          "max_transfer_complex_error": 5.8110581248166154e-06,
+          "max_power_residual_over_zc": 8.118616440377853e-15,
+          "minimum_input_resistance_over_zc": 0.516272614929862
+        },
+        {
+          "load_over_zc": "(2-0.4j)",
+          "max_input_impedance_complex_error": 1.62260338421505e-05,
+          "max_transfer_complex_error": 1.2293035296586369e-05,
+          "max_power_residual_over_zc": 3.1290500863956304e-15,
+          "minimum_input_resistance_over_zc": 0.477038596798882
+        },
+        {
+          "load_over_zc": "0.0",
+          "max_input_impedance_complex_error": 1.6821334772914827e-05,
+          "max_transfer_complex_error": 9.265525409990238e-06,
+          "max_power_residual_over_zc": 0.0,
+          "minimum_input_resistance_over_zc": 0.0
+        }
+      ],
+      "diagnostics": [
+        {
+          "frequency_hz": 80.0,
+          "solve_s": 0.006335915997624397,
+          "relative_residual": 5.170407258944589e-12,
+          "reciprocity_error": 1.494567156089121e-15,
+          "factorization": "real SuperLU; imaginary source",
+          "hermitian_real_eigenvalues": [
+            -1.6298145055770874e-09,
+            1.6298145055770874e-09
+          ],
+          "passivity_min_normalized": -5.284092855046553e-16
+        },
+        {
+          "frequency_hz": 150.0,
+          "solve_s": 0.006449083099141717,
+          "relative_residual": 1.4812124794190443e-12,
+          "reciprocity_error": 3.595140379390124e-15,
+          "factorization": "real SuperLU; imaginary source",
+          "hermitian_real_eigenvalues": [
+            -2.0372681319713593e-09,
+            2.0372681319713593e-09
+          ],
+          "passivity_min_normalized": -1.2710740707921668e-15
+        },
+        {
+          "frequency_hz": 250.0,
+          "solve_s": 0.006060499930754304,
+          "relative_residual": 5.677054720367273e-13,
+          "reciprocity_error": 4.069565557333367e-15,
+          "factorization": "real SuperLU; imaginary source",
+          "hermitian_real_eigenvalues": [
+            -1.4551915228366852e-09,
+            1.4551915228366852e-09
+          ],
+          "passivity_min_normalized": -1.4388087010368177e-15
+        },
+        {
+          "frequency_hz": 400.0,
+          "solve_s": 0.006772375199943781,
+          "relative_residual": 3.5587487723146547e-13,
+          "reciprocity_error": 3.896738530383184e-15,
+          "factorization": "real SuperLU; imaginary source",
+          "hermitian_real_eigenvalues": [
+            -1.9208528101444244e-09,
+            1.9208528101444244e-09
+          ],
+          "passivity_min_normalized": -1.3777051196724257e-15
+        },
+        {
+          "frequency_hz": 700.0,
+          "solve_s": 0.0056804579216986895,
+          "relative_residual": 3.119312637583482e-13,
+          "reciprocity_error": 2.9658274452189673e-15,
+          "factorization": "real SuperLU; imaginary source",
+          "hermitian_real_eigenvalues": [
+            -1.979060471057892e-09,
+            1.979060471057892e-09
+          ],
+          "passivity_min_normalized": -1.0485783491717527e-15
+        },
+        {
+          "frequency_hz": 1000.0,
+          "solve_s": 0.005757958861067891,
+          "relative_residual": 1.8184404890727664e-13,
+          "reciprocity_error": 2.0569769280429287e-15,
+          "factorization": "real SuperLU; imaginary source",
+          "hermitian_real_eigenvalues": [
+            -1.2223608791828156e-09,
+            1.2223608791828156e-09
+          ],
+          "passivity_min_normalized": -7.27251167281714e-16
+        }
+      ]
+    },
+    {
+      "type": "closed_cavity",
+      "subdivisions": [
+        4,
+        4,
+        4
+      ],
+      "dofs": 729,
+      "cells": 384,
+      "degree": 2,
+      "volume_m3": 0.01212100000000007,
+      "ports": [
+        {
+          "name": "left",
+          "tag": 2,
+          "surface_area_m2": 0.039099999999999996,
+          "signed_projected_area_m2": 0.039099999999999996,
+          "shape_integral": 1.0000000000000004
+        },
+        {
+          "name": "right",
+          "tag": 3,
+          "surface_area_m2": 0.039099999999999996,
+          "signed_projected_area_m2": 0.039099999999999996,
+          "shape_integral": 1.0000000000000004
+        }
+      ],
+      "assembly_s": 0.6386430419515818,
+      "analytic_hz": [
+        553.2258064516129,
+        745.6521739130434,
+        928.4696857653915,
+        1008.8235294117646,
+        1106.4516129032259,
+        1150.5579978509763
+      ],
+      "fem_hz": [
+        553.3548276162896,
+        745.8211357814639,
+        929.8618514778927,
+        1009.0455231131535,
+        1110.2203482977202,
+        1152.2342842590604
+      ],
+      "frequency_errors": [
+        0.000233216099415636,
+        0.00022659609175930374,
+        0.0014994196728712289,
+        0.00022005206551669056,
+        0.003406145691817044,
+        0.001456933428140962
+      ]
+    },
+    {
+      "type": "closed_cavity",
+      "subdivisions": [
+        7,
+        7,
+        7
+      ],
+      "dofs": 3375,
+      "cells": 2058,
+      "degree": 2,
+      "volume_m3": 0.012121000000000395,
+      "ports": [
+        {
+          "name": "left",
+          "tag": 2,
+          "surface_area_m2": 0.03909999999999995,
+          "signed_projected_area_m2": 0.03909999999999995,
+          "shape_integral": 1.0000000000000016
+        },
+        {
+          "name": "right",
+          "tag": 3,
+          "surface_area_m2": 0.039099999999999954,
+          "signed_projected_area_m2": 0.039099999999999954,
+          "shape_integral": 1.0000000000000016
+        }
+      ],
+      "assembly_s": 0.703366583911702,
+      "analytic_hz": [
+        553.2258064516129,
+        745.6521739130434,
+        928.4696857653915,
+        1008.8235294117646,
+        1106.4516129032259,
+        1150.5579978509763
+      ],
+      "fem_hz": [
+        553.2404340269436,
+        745.671593960206,
+        928.635829519064,
+        1008.8494239079191,
+        1106.9048404486905,
+        1150.7603099290147
+      ],
+      "frequency_errors": [
+        2.644051517498675e-05,
+        2.6044378118954614e-05,
+        0.0001789436491246606,
+        2.5668013680824145e-05,
+        0.0004096225629563823,
+        0.00017583822668329962
+      ]
+    },
+    {
+      "type": "closed_cavity",
+      "subdivisions": [
+        10,
+        10,
+        10
+      ],
+      "dofs": 9261,
+      "cells": 6000,
+      "degree": 2,
+      "volume_m3": 0.012121000000000314,
+      "ports": [
+        {
+          "name": "left",
+          "tag": 2,
+          "surface_area_m2": 0.039100000000000135,
+          "signed_projected_area_m2": 0.039100000000000135,
+          "shape_integral": 0.9999999999999969
+        },
+        {
+          "name": "right",
+          "tag": 3,
+          "surface_area_m2": 0.039100000000000135,
+          "signed_projected_area_m2": 0.039100000000000135,
+          "shape_integral": 0.9999999999999968
+        }
+      ],
+      "assembly_s": 0.6097497909795493,
+      "analytic_hz": [
+        553.2258064516129,
+        745.6521739130434,
+        928.4696857653915,
+        1008.8235294117646,
+        1106.4516129032259,
+        1150.5579978509763
+      ],
+      "fem_hz": [
+        553.2293942666787,
+        745.6569606826869,
+        928.5110562567512,
+        1008.8299440804053,
+        1106.5645659122872,
+        1150.6086591678468
+      ],
+      "frequency_errors": [
+        6.485263384192266e-06,
+        6.4195744489923685e-06,
+        4.455771900140545e-05,
+        6.358563667139389e-06,
+        0.00010208580993883584,
+        4.403195403019394e-05
+      ]
+    },
+    {
+      "type": "neck_compliance_resonator",
+      "subdivisions": [
+        6,
+        2,
+        2
+      ],
+      "dofs": 63,
+      "cells": 144,
+      "degree": 1,
+      "volume_m3": 3.1415926535897887e-06,
+      "ports": [
+        {
+          "name": "input",
+          "tag": 2,
+          "surface_area_m2": 7.853981633974484e-05,
+          "signed_projected_area_m2": 7.853981633974484e-05,
+          "shape_integral": 1.0000000000000004
+        },
+        {
+          "name": "compliance",
+          "tag": 3,
+          "surface_area_m2": 7.853981633974484e-05,
+          "signed_projected_area_m2": 7.853981633974484e-05,
+          "shape_integral": 1.0000000000000004
+        }
+      ],
+      "assembly_s": 0.4948641669470817,
+      "exact_distributed_resonance_hz": 76.45429220746712,
+      "fem_resonance_hz": 76.45429248416407,
+      "frequency_error": 3.6191159918456607e-09
+    },
+    {
+      "type": "neck_compliance_resonator",
+      "subdivisions": [
+        12,
+        2,
+        2
+      ],
+      "dofs": 117,
+      "cells": 288,
+      "degree": 1,
+      "volume_m3": 3.141592653589805e-06,
+      "ports": [
+        {
+          "name": "input",
+          "tag": 2,
+          "surface_area_m2": 7.853981633974484e-05,
+          "signed_projected_area_m2": 7.853981633974484e-05,
+          "shape_integral": 1.0000000000000004
+        },
+        {
+          "name": "compliance",
+          "tag": 3,
+          "surface_area_m2": 7.853981633974484e-05,
+          "signed_projected_area_m2": 7.853981633974484e-05,
+          "shape_integral": 1.0000000000000004
+        }
+      ],
+      "assembly_s": 0.003728959010913968,
+      "exact_distributed_resonance_hz": 76.45429220746712,
+      "fem_resonance_hz": 76.45429227700521,
+      "frequency_error": 9.095380659078818e-10
+    },
+    {
+      "type": "neck_compliance_resonator",
+      "subdivisions": [
+        24,
+        2,
+        2
+      ],
+      "dofs": 225,
+      "cells": 576,
+      "degree": 1,
+      "volume_m3": 3.141592653589771e-06,
+      "ports": [
+        {
+          "name": "input",
+          "tag": 2,
+          "surface_area_m2": 7.853981633974484e-05,
+          "signed_projected_area_m2": 7.853981633974484e-05,
+          "shape_integral": 1.0000000000000004
+        },
+        {
+          "name": "compliance",
+          "tag": 3,
+          "surface_area_m2": 7.853981633974484e-05,
+          "signed_projected_area_m2": 7.853981633974484e-05,
+          "shape_integral": 1.0000000000000004
+        }
+      ],
+      "assembly_s": 0.003860041033476591,
+      "exact_distributed_resonance_hz": 76.45429220746712,
+      "fem_resonance_hz": 76.45429222578454,
+      "frequency_error": 2.39586578029739e-10
+    }
+  ]
+}

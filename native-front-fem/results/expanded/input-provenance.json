@@ -1,0 +1,22 @@
+{
+  "originalNativeFilesVerified": 55,
+  "inputMeshes": [
+    {
+      "mesh": "inserted-3mm.msh",
+      "sha256": "860d0cb75f4042f5de1947e813bbc352b19418d4e57fb9c5f43d5792d628d20b",
+      "bytes": 10804763
+    },
+    {
+      "mesh": "inserted-2mm.msh",
+      "sha256": "3773a31276c6efea576b2a5747d4c97c5a00ac86af539e197f7fee9032b036eb",
+      "bytes": 16841954
+    },
+    {
+      "mesh": "inserted-1_4mm.msh",
+      "sha256": "86ae60251703d608a47b88c41f7451adf9402d4b4aa4d38f2eca7fd984b1b21d",
+      "bytes": 29383549
+    }
+  ],
+  "originalNativeFilesUnchanged": true,
+  "runtimeAndMeshesReadOnly": true
+}

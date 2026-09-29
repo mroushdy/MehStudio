@@ -1,0 +1,167 @@
+ID = 55.30
+
+Comment = 2-segment front loaded horn from Blog Post #3. By Bjørn Kolbrek.
+
+|RADIATION, SOURCE AND MOUTH PARAMETER VALUES:
+
+Ang = 2.0 x Pi
+Eg = 2.83
+Rg = 0.00
+Cir = 1.00
+
+|HORN PARAMETER VALUES:
+
+S1 = 80.00
+S2 = 350.00
+Con = 60.00
+F12 = 0.00
+S2 = 350.00
+S3 = 5000.00
+Exp = 75.00
+F23 = 97.06
+S3 = 0.00
+S4 = 0.00
+L34 = 0.00
+F34 = 0.00
+S4 = 0.00
+S5 = 0.00
+L45 = 0.00
+F45 = 0.00
+
+|TRADITIONAL DRIVER PARAMETER VALUES:
+
+Sd = 350.00
+Bl = 18.00
+Cms = 4.00E-04
+Rms = 4.00
+Mmd = 20.00
+Le = 1.00
+Re = 6.00
+Nd = 1
+
+|ADVANCED DRIVER PARAMETER VALUES FOR SEMI-INDUCTANCE MODEL:
+
+Re' = 0.00
+Leb = 0.00
+Le = 0.00
+Ke = 0.00
+Rss = 0.00
+
+|ADVANCED DRIVER PARAMETER VALUES FOR FREQUENCY-DEPENDENT DAMPING MODEL:
+
+Rms = 0.00
+Ams = 0.00
+
+|PASSIVE RADIATOR PARAMETER VALUE:
+
+Added Mass = 0.00
+
+|CHAMBER PARAMETER VALUES:
+
+Vrc = 14.00
+Lrc = 16.00
+Fr = 0.00
+Tal = 0.00
+Vtc = 900.00
+Atc = 350.00
+
+Acoustic Path Length = 0.0
+
+|MAXIMUM SPL PARAMETER VALUES:
+
+Pamp = 100
+Vamp = 25
+Iamp = 4
+Pmax = 100
+Xmax = 5.0
+
+Maximum SPL Setting = 3
+
+|ABSORBENT FILLING MATERIAL PARAMETER VALUES:
+
+Fr1 = 0.00
+Fr2 = 0.00
+Fr3 = 0.00
+Fr4 = 0.00
+
+Tal1 = 100
+Tal2 = 100
+Tal3 = 100
+Tal4 = 100
+
+|ACTIVE BAND PASS FILTER PARAMETER VALUES:
+
+High Pass Frequency = 0
+High Pass Slope = 1
+Low Pass Frequency = 0
+Low Pass Slope = 1
+
+Butterworth High Pass Order = 1
+Butterworth Low Pass Order = 1
+Linkwitz-Riley High Pass Order = 2
+Linkwitz-Riley Low Pass Order = 2
+Bessel High Pass Order = 1
+Bessel Low Pass Order = 1
+
+2nd Order High Pass Q = 0.5
+2nd Order Low Pass Q = 0.5
+4th Order High Pass Q = 0.5
+4th Order Low Pass Q = 0.5
+
+Active Filter Alignment = 1
+Active Filter On / Off Switch = 1
+
+|PASSIVE FILTER PARAMETER VALUES:
+
+Series / Parallel 1 = S
+Series / Parallel 2 = S
+Series / Parallel 3 = S
+Series / Parallel 4 = S
+
+|EQUALISER FILTER PARAMETER VALUES:
+
+Band 1 Frequency = 0
+Band 1 Q Factor = 0.01
+Band 1 Gain = 0.0
+Band 1 Type = -1
+Band 2 Frequency = 0
+Band 2 Q Factor = 0.01
+Band 2 Gain = 0.0
+Band 2 Type = -1
+Band 3 Frequency = 0
+Band 3 Q Factor = 0.01
+Band 3 Gain = 0.0
+Band 3 Type = -1
+Band 4 Frequency = 0
+Band 4 Q Factor = 0.01
+Band 4 Gain = 0.0
+Band 4 Type = -1
+Band 5 Frequency = 0
+Band 5 Q Factor = 0.01
+Band 5 Gain = 0.0
+Band 5 Type = -1
+Band 6 Frequency = 0
+Band 6 Q Factor = 0.01
+Band 6 Gain = 0.0
+Band 6 Type = -1
+
+|STATUS FLAGS:
+
+Auto Path Flag = 0
+Lossy Inductance Model Flag = 0
+Semi-Inductance Model Flag = 0
+Damping Model Flag = 0
+Closed Mouth Flag = 0
+Continuous Flag = 1
+End Correction Flag = 1
+
+|OTHER SETTINGS:
+
+Filter Type Index = 0
+Filter Input Index = 0
+Filter Output Index = 0
+
+Filter Type = 1
+
+MEH Configuration = 0
+ME Amplifier Polarity Value = 1

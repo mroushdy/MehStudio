@@ -1,0 +1,62 @@
+{
+  "schema": "meh-hornresp-benchmark-summary/v1",
+  "generatedBy": "node benchmarks/run.cjs",
+  "benchmarks": [
+    {
+      "caseId": "kolbrek-exponential",
+      "status": "published-native-reference-compared",
+      "bandHz": [
+        20,
+        1000
+      ],
+      "nativeSamples": 533,
+      "comparedSamples": 274,
+      "meetsProposedMagnitudeThresholds": true,
+      "maxSplErrorDb": 0.0003932919978666405,
+      "maxElectricalImpedanceErrorOhm": 0.009804744052630099,
+      "maxExcursionErrorMM": 0.000009593776965813317,
+      "diagnosticMaxRawPhaseErrorDeg": 0.0020818864928742187,
+      "fullExportMaxSplErrorDb": 0.030794729251116593,
+      "segmentation64To128MaxSplDb": 0.0011761588166336878,
+      "segmentation128To256MaxSplDb": 0.00029402964844393864,
+      "powerResidual": 8.198825223901333e-15
+    },
+    {
+      "caseId": "kolbrek-conical-exponential",
+      "status": "published-native-reference-compared",
+      "bandHz": [
+        20,
+        1000
+      ],
+      "nativeSamples": 533,
+      "comparedSamples": 274,
+      "meetsProposedMagnitudeThresholds": true,
+      "maxSplErrorDb": 0.00010307334788706157,
+      "maxElectricalImpedanceErrorOhm": 0.0012446232549194747,
+      "maxExcursionErrorMM": 0.000003577261051296299,
+      "diagnosticMaxRawPhaseErrorDeg": 0.0007669883842709169,
+      "fullExportMaxSplErrorDb": 0.00017872272185925908,
+      "segmentation64To128MaxSplDb": 0.0003075886119745519,
+      "segmentation128To256MaxSplDb": 0.00007674975043414634,
+      "powerResidual": 1.0681381944702265e-14
+    },
+    {
+      "caseId": "simple-conical",
+      "status": "native-capture-pending",
+      "candidateSampleCount": 241,
+      "reason": "A matching native Hornresp run has not been captured for this new input. Candidate curves are not a reference."
+    },
+    {
+      "caseId": "two-entry-conical",
+      "status": "native-capture-pending",
+      "candidateSampleCount": 241,
+      "reason": "A matching native Hornresp run has not been captured for this new input. Candidate curves are not a reference."
+    }
+  ],
+  "limitations": [
+    "Agreement with published idealized models is not measured loudspeaker validation.",
+    "New single-conical and multiple-entry native captures remain pending.",
+    "The actual four-side-entry MEH geometry has not been validated against Hornresp or measurements.",
+    "Local spatial-front samples do not establish full-system broadband FEM agreement."
+  ]
+}

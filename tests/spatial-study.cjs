@@ -38,7 +38,7 @@ test('System panel invalidates plotted/exportable results immediately when dimen
 });
 test('Bundled native insert is qualified for its exact example and closes coupled power balance',()=>{
  const data=require('../acoustics/data/current-insert.json'),example=require('../examples/offset-insert-study.json'),a=M.analyze(example.state),result=T.analyze(a,data,example.systemAcoustics.options);
- assert.equal(result.available,true,result.reason);assert.deepEqual(Array.from(result.rows,r=>r.frequencyHz),[100,300,500,700,1000]);
+ assert.equal(result.available,true,result.reason);assert.deepEqual(Array.from(result.rows,r=>r.frequencyHz),Array.from({length:19},(_,i)=>100+i*50));
  for(const row of result.rows){assert.equal(row.available,true,row.reason);assert.ok(Math.abs(row.relativePowerResidual)<1e-9);assert.equal(row.branches.length,4);}
  for(const row of data.rows){assert.equal(row.qualified,true);assert.ok(Object.values(row.qualification.checks).every(v=>v===true));assert.ok(row.qualification.convergence.mediumToFineMatrixChange<.005);}
  assert.equal(T.analyze(M.analyze({...example.state,gap:29}),data).available,false);
