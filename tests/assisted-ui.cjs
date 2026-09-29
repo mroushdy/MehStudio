@@ -1,9 +1,12 @@
 /* DOM interaction checks; canvas calls are stubbed, not browser/rendering QA. */
 const {test}=require('node:test'),assert=require('node:assert/strict'),{JSDOM}=require('jsdom');
 const {html,scripts}=require('./load-editor.cjs')();
-function app(){
+function app({storage={},blockedStorage=false}={}){
  const dom=new JSDOM(html,{url:'https://example.test/',runScripts:'outside-only',pretendToBeVisual:true}),w=dom.window;
  w.HTMLCanvasElement.prototype.getContext=()=>new Proxy({measureText:s=>({width:String(s).length*6})},{get:(o,k)=>o[k]||(()=>{})});w.HTMLElement.prototype.scrollIntoView=function(){};w.scrollTo=()=>{};
+ for(const [key,value]of Object.entries(storage))w.localStorage.setItem(key,value);
+ if(blockedStorage)Object.defineProperty(w,'localStorage',{get(){throw new Error('Storage unavailable');}});
+ w.HTMLDialogElement.prototype.close=function(){};
  for(let i=1;i<=10;i++)w.eval(scripts[i]);
  w.MEHScene=class{constructor(){this.gl=true;this.options={};}setModel(a){this.model=a;}fit(){}draw(){}project(p){return [p[0],p[1]];}};
  w.eval(scripts[11]);const $=s=>w.document.querySelector(s),edit=(s,value)=>{$(s).value=value;$(s).dispatchEvent(new w.Event('input',{bubbles:true}));};
@@ -40,3 +43,28 @@ test('export menus produce downloads from applied state and force honest horn sc
  h.$('[data-ex-format]').value='nurbs';api.sync();await api.run();assert.equal(saved.length,1);assert.equal(saved[0][0],'MEH_horn_uncut_NURBS_surfaces.step');assert.match(saved[0][1],/RATIONAL_B_SPLINE_SURFACE/);
  h.$('[data-ex-format]').value='quarter';api.sync();assert.equal(h.$('[data-ex-scope]').disabled,true);assert.match(h.$('[data-ex-scope-note]').textContent,/no solver boundaries/);
  }finally{h.close();}});
+
+
+test('mode preference survives reload, keyboard order matches tabs, and unavailable storage is harmless',()=>{
+ let h=app();try{
+  assert.equal(h.$('.design-tabs button').id,'wizardToggle');
+  h.$('#manualTab').click();const mode=h.w.localStorage.getItem('meh-editor-mode');assert.equal(mode,'manual');h.close();
+  h=app({storage:{'meh-editor-mode':mode}});assert.equal(h.$('#wizard').hidden,true);
+  h.$('#manualTab').dispatchEvent(new h.w.KeyboardEvent('keydown',{key:'Home',bubbles:true}));assert.equal(h.$('#wizard').hidden,false);
+  h.$('#wizardToggle').dispatchEvent(new h.w.KeyboardEvent('keydown',{key:'End',bubbles:true}));assert.equal(h.$('#wizard').hidden,true);
+  h.$('#newDesign').click();assert.equal(h.$('#wizard').hidden,false);h.close();
+  h=app({blockedStorage:true});assert.equal(h.$('#wizard').hidden,false);h.$('#manualTab').click();assert.equal(h.$('#wizard').hidden,true);
+ }finally{h.close();}
+});
+test('saved studies retain mode and goals across reload and JSON imports; old files open in Manual',async()=>{
+ let h=app();try{
+  h.edit('#brief-coverage','80');h.edit('#guided-maxWidthMM','850');h.$('#variantName').value='My assisted study';h.$('#confirmSave').click();
+  const saved=h.w.localStorage.getItem('meh-lab-variants-v2'),design=JSON.parse(JSON.stringify(h.e.designJSON()));assert.equal(design.editorMode,'assisted');const state=JSON.stringify(design.state);h.close();
+  h=app({storage:{'meh-editor-mode':'manual','meh-lab-variants-v2':saved}});h.$('[data-load="0"]').click();
+  assert.equal(h.$('#wizard').hidden,false);assert.equal(h.$('#brief-coverage').value,'80');assert.equal(h.$('#guided-maxWidthMM').value,'850');assert.equal(JSON.stringify(h.e.state),state);
+  async function importDesign(d){await h.$('#importFile').onchange({target:{files:[{text:async()=>JSON.stringify(d)}],value:'study.json'}});}
+  h.$('#manualTab').click();await importDesign(design);assert.equal(h.$('#wizard').hidden,false);assert.equal(h.$('#guided-maxWidthMM').value,'850');assert.equal(JSON.stringify(h.e.state),state);
+  design.editorMode='manual';await importDesign(design);assert.equal(h.$('#wizard').hidden,true);assert.equal(h.e.designJSON().editorMode,'manual');
+  delete design.editorMode;await importDesign(design);assert.equal(h.$('#wizard').hidden,true);assert.equal(h.$('#brief-coverage').value,'80');
+ }finally{h.close();}
+});
