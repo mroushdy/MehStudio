@@ -5,3 +5,10 @@ qa/playwright-report/
 qa/test-results/
 qa/artifacts/*
 !qa/artifacts/.gitkeep
+
+# Native FEM environments and generated meshes stay local.
+native-front-fem/runtime/
+native-front-fem/cache/
+native-front-fem/**/__pycache__/
+native-front-fem/**/*.msh
+native-front-fem/**/*.checkpoint.json

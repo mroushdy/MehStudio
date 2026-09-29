@@ -1,9 +1,9 @@
 /* Keep the portable single-file editor synchronized with reviewed modules. */
 const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),root=path.join(__dirname,'..'),file=path.join(root,'index.html');
-const modules=[['multiport-network','MEHMultiport','root.MEHHornAcoustics'],['coupled-system','MEHCoupledSystem','root.MEH,root.MEHAcoustics,root.MEHMultiport'],['spatial-study','MEHSpatialStudy','root.MEH,root.MEHCoupledSystem'],['system-panel','MEHSystemPanel','root']];
+const modules=[['multiport-network','MEHMultiport','root.MEHHornAcoustics'],['coupled-system','MEHCoupledSystem','root.MEH,root.MEHAcoustics,root.MEHMultiport'],['spatial-study','MEHSpatialStudy','root.MEH,root.MEHCoupledSystem'],['pressure-field','MEHPressureField','root.MEHSpatialStudy'],['system-panel','MEHSystemPanel','root']];
 let code='/* BEGIN COUPLED SYSTEM */\n(function(root){\n';
 for(const [name,global,args]of modules)code+='root.'+global+'=('+fs.readFileSync(path.join(__dirname,name+'.cjs'),'utf8').replace('module.exports=','').trim().replace(/;$/,'')+')('+args+');\n';
-for(const [name,key]of [['current-insert','MEHSpatialResults'],['open-baseline','MEHSpatialBaseline']]){
+for(const [name,key]of [['current-insert','MEHSpatialResults'],['open-baseline','MEHSpatialBaseline'],['insert-pressure-basis-700','MEHPressureBasis']]){
  const dataPath=path.join(root,'acoustics/data/'+name+'.json');
  if(fs.existsSync(dataPath))code+='root.'+key+'='+JSON.stringify(JSON.parse(fs.readFileSync(dataPath,'utf8'))).replace(/</g,'\\u003c')+';\n';
 }

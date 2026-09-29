@@ -22,6 +22,18 @@ Imported data must match the normalized front geometry, air density, sound speed
 - No calibrated compression-driver acoustic source is present. Normalized throat sources can test coupling but cannot establish real HF SPL or crossover summation. The separate measured-response workbench requires calibrated traces with common timing and microphone position.
 - Mesh convergence and power balance verify numerical consistency. They do not validate the modeled loudspeaker. A coarse frequency sweep can miss resonant peaks.
 
+## Included reference case
+
+Import `examples/offset-insert-study.json` to reproduce the supplied offset-insert study. The embedded native dataset has five independently qualified frequencies: 100, 300, 500, 700 and 1,000 Hz. The final matrix change between the two finest meshes ranges from 0.00101% to 0.13725%; the meshes have 22,695, 47,628 and 98,721 pressure unknowns. These are numerical refinement results, not a physical error bound.
+
+The saved drive is 1 V RMS per mid. The wizard brief's 2.83 V is not silently substituted. Curves connect the five samples; resonances between them remain unresolved. Each CSV records the current normalized design, drive, boundary assumptions and spatial provenance.
+
+A qualified open-collector reference, when present for the same dimensions, is overlaid using its own spatial matrix and the same motor/rear/horn assumptions. A missing or failed reference is not replaced by an unqualified curve.
+
+## Local pressure map
+
+The 700 Hz map combines both complex unit-flow pressure fields using the actual coupled cone and entry flows. It is not a recolored or rescaled reference-load image. It rechecks the mesh, geometry, matrix, phasor convention and source-area normalization before display. Drive and rear-loading edits recompute the pressure; passage edits invalidate it. Port-matrix convergence does not establish pointwise field convergence, which remains unassessed.
+
 ## Portable editor and native calculations
 
 The browser evaluates the coupled network and can use an embedded or imported qualified spatial dataset. It does **not** run the native spatial solver. A changed passage needs a new native mesh/solve/convergence cycle; the browser explicitly withholds the stale curves until a matching result is loaded.
@@ -31,7 +43,9 @@ The reusable JavaScript sources are in `acoustics/`. Run `node acoustics/embed.c
 Run the source and numerical regression suite with:
 
 ```sh
-node --test tests/editor-regression.cjs tests/front-study-regression.cjs tests/front-study-ui.cjs tests/multiport-network.cjs tests/coupled-system.cjs tests/spatial-study.cjs
+node --test tests/editor-regression.cjs tests/front-study-regression.cjs tests/front-study-ui.cjs tests/multiport-network.cjs tests/coupled-system.cjs tests/spatial-study.cjs tests/pressure-field.cjs
 ```
 
 The suite includes equivalence to the existing equal-drive circuit, mutual loading, muted-driver coupling, source superposition, reciprocal impedance, power balance, data invalidation, projected-area normalization, voltage scaling and plot gaps. Source-level UI harnesses do not replace rendered browser checks.
+
+The full native reproduction package, frozen air boundaries, numerical records and inspected figures are in [native-front-fem](../native-front-fem/README.md). Its manifest retains source and artifact hashes. Read [the native report](../native-front-fem/release/MEH_Insert_FEM_Prototype_Report.md) for benchmark and mesh-refinement results. Convert a qualified native result with `node acoustics/import-native.cjs native-result.json acoustics/data/current-insert.json`, then run the embedding step.

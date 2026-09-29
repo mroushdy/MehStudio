@@ -50,7 +50,8 @@ function analyze(a,data,options={}){
    return {...result,branches,mouthFlowRmsLS:abs(result.horn.mouthFlow)*1000,mouthPowerW:result.horn.mouthPowerW};
   });
   if(!rows.some(r=>r.available))throw Error(rows[0]?.reason||'No qualified frequencies.');
-  return {available:true,rows,spatial,voltageRms:drive,inputState:{...a.p},options:{density:1.204,endCorrection:1.4,rearLossQ:7,rearEndCorrectionScale:1,hornLoad:'webster',mouthTermination:'baffled',throatTermination:'closed',...options},source:spatial?{geometrySourceSha256:data.geometrySourceSha256,airSurfaceSha256:data.airSurfaceSha256,meshSha256:data.meshSha256,convergence:data.convergence}:null,assumptions:rows.find(r=>r.available).assumptions};
+  const clearanceExceeded=a.p.frontFiller==='none'?[]:rows.filter(r=>r.available&&r.branches.some(b=>b.excursionPeakMM+1>a.p.fillerClearance)).map(r=>r.frequencyHz),warnings=clearanceExceeded.length?['Linear cone travel exceeds the insert clearance minus the 1 mm allowance at '+clearanceExceeded.join(', ')+' Hz. Reduce the drive; contact is not simulated.']:[];
+  return {available:true,rows,spatial,warnings,voltageRms:drive,inputState:{...a.p},options:{density:1.204,endCorrection:1.4,rearLossQ:7,rearEndCorrectionScale:1,hornLoad:'webster',mouthTermination:'baffled',throatTermination:'closed',...options},source:spatial?{geometrySourceSha256:data.geometrySourceSha256,airSurfaceSha256:data.airSurfaceSha256,meshSha256:data.meshSha256,convergence:data.convergence}:null,assumptions:rows.find(r=>r.available).assumptions};
  }catch(e){return {available:false,reason:e.message,rows:[]};}
 }
 function csvBaseline(baseline){return csv({...baseline,baseline:null});}
@@ -59,6 +60,7 @@ function csv(result){
  const escape=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
  const lines=[['Model','Experimental coupled mids; '+(result.spatial?'spatial front passage':'lumped front passage')+' / 1D horn'],['Drive V RMS per mid',result.voltageRms],['Current normalized design',JSON.stringify(result.inputState)],['Calculation options',JSON.stringify(result.options)],['Limit','Not SPL or directivity; catalog Mms free-air loading convention unresolved'],['Mesh SHA256',result.source?.meshSha256||'not applicable'],['Geometry source SHA256',result.source?.geometrySourceSha256||'not applicable'],['Convergence',JSON.stringify(result.source?.convergence||null)],['Hz','available','mid','axial position mm','impedance ohm','excursion mm peak','entry velocity m/s peak','entry pressure Pa RMS','entry phase deg','mouth flow L/s RMS total','mouth load power W total','relative power residual','reason']];
  for(const row of result.rows)if(!row.available)lines.push([row.frequencyHz,false,'','','','','','','','','','',row.reason]);else for(const b of row.branches)lines.push([row.frequencyHz,true,b.id,b.zMM,b.impedanceOhm,b.excursionPeakMM,b.entryVelocityPeakMS,b.entryPressureRmsPa,b.entryPhaseDeg,row.mouthFlowRmsLS,row.mouthPowerW,row.relativePowerResidual,'']);
+ for(const warning of result.warnings||[])lines.push(['Model limit',warning]);
  const csv=lines.map(row=>row.map(escape).join(',')).join('\n');
  return result.baseline?.available?csv+'\n\n'+escape('Open-collector reference: same drive and external network')+'\n'+csvBaseline(result.baseline):csv;
 }

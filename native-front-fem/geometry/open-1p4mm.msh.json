@@ -1,0 +1,14 @@
+{
+  "source": "work/fem/geometry/open-air.json",
+  "sourceSha256": "8f2cccef290808bbaaa6b5621eccc4feab8419f4aa2d2195ee3f5b190342e457",
+  "meshSha256": "79fc6653e9f6506b9ac918535057f416f458a82405326eb677a1353a29f9ad5e",
+  "maxSizeM": 0.0014,
+  "method": "triangles",
+  "meshRuntimeS": 7.013819333864376,
+  "tetrahedra": 537648,
+  "nodes": 104976,
+  "minSICN": 0.011954722293011255,
+  "meanSICN": 0.7942604928490876,
+  "inputVertices": 1794,
+  "inputFaces": 3584
+}

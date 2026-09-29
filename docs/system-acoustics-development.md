@@ -18,7 +18,7 @@ This does not silently change a large insert opening to equal the smaller horn e
 
 ## Required before full-system claims
 
-The local insert-aware finite-element prototype is being developed separately. Its matrix needs tagged air-domain boundaries, mesh convergence, source normalization, geometry hashes, passivity and reciprocity checks before integration. Lossless pressure acoustics does not calculate thermoviscous loss in the gap.
+The local insert-aware finite-element prototype has passed its benchmark and three-mesh checks for the supplied reference case at five frequencies. Qualified insert/open-collector matrices and a coupled 700 Hz pressure map are integrated in System acoustics. Native sources and numerical records are preserved under `native-front-fem/`. The extractor is currently restricted to the supplied centered round-entry geometry. The browser recalculates coupled loads but requires a new native result after a front-passage change. Lossless pressure acoustics does not calculate thermoviscous loss in the gap.
 
 The axial horn network still omits circumferential coupling, transverse fields, lip diffraction and observer-dependent directivity. Those require a spatial horn/exterior solve. Catalog moving mass includes free-air loading; coupling an explicit air field requires an audited Mms/Mmd convention. All catalog compression drivers lack calibrated complex acoustic source data. Measured handoff requires common-position, common-timing, level-calibrated complex responses tied to the same geometry.
 

@@ -1,0 +1,234 @@
+{
+  "schemaVersion": 1,
+  "name": "MEH native front-passage FEM prototype",
+  "contents": "Source, frozen fixtures, numerical records and reviewed releases. No native runtime, cache or generated volume meshes.",
+  "qualifiedFrequencyHz": [
+    100,
+    300,
+    500,
+    700,
+    1000
+  ],
+  "files": {
+    "README.md": {
+      "sha256": "e2c30876015521dad177b388a5a6ed69e8009adbed1f8fe6a76239b15982f6e9",
+      "bytes": 11425
+    },
+    "benchmarks_reference.py": {
+      "sha256": "94e4c97556cbe2b1d9c116ad9efc1b4eba7a53f3a289a10bb9c33e16fe2909c8",
+      "bytes": 24142
+    },
+    "environment-osx-arm64.explicit.txt": {
+      "sha256": "4d71a48e29efe73ace7816d9ed78412c5b4f3dd053b57a60a243d7d61274b672",
+      "bytes": 25257
+    },
+    "fem_core.py": {
+      "sha256": "9bbaba737bddf2b53e5c7dedebd4f6585fda6f5470f24a1d5a3741d0247ea0ba",
+      "bytes": 6806
+    },
+    "geometry/README.md": {
+      "sha256": "afe60c2880fc9b09d5d7354d4951eb529356f64673b717ba47a3697ea834e1da",
+      "bytes": 3828
+    },
+    "geometry/editor-418b696f.html": {
+      "sha256": "418b696f270e270a909142861b95b40ee6db6017bae6e38da0ae3e55e2a005e5",
+      "bytes": 658086
+    },
+    "geometry/extract-air.cjs": {
+      "sha256": "8e2b4a58449a23e1f2eef503eaf14fcde60abd43d0d427c3bf5c4d6ef71d07da",
+      "bytes": 10686
+    },
+    "geometry/extraction-report.json": {
+      "sha256": "fb5c3170d6b0064c57be198c87f8767e6cd46c44a8d5633cba54deb0b26828d5",
+      "bytes": 11588
+    },
+    "geometry/inserted-1_4mm.msh.json": {
+      "sha256": "43413a8e500c905a8a8ac9be689a6e57d51f69b416b6e320a2ab27a61e539172",
+      "bytes": 468
+    },
+    "geometry/inserted-2mm.msh.json": {
+      "sha256": "1953cd2a25a397d4a9319f899895f8315d4c8d6c510fc89928be86b5533e478d",
+      "bytes": 465
+    },
+    "geometry/inserted-3mm.msh.json": {
+      "sha256": "14a7b51645444d5111bcb3685ddcf98a35f1f8499903bc4bd6bf960c826f3299",
+      "bytes": 465
+    },
+    "geometry/inserted-air.json": {
+      "sha256": "ef4fba54a3d4f554816139ee3c404ba0e9d7f7303facf898674ed180815a2059",
+      "bytes": 697537
+    },
+    "geometry/inserted-rings.json": {
+      "sha256": "73c0db44f0c4d4621c2316fe00e7814d854bb57c0c4a5e5fc827d052524a1c16",
+      "bytes": 437228
+    },
+    "geometry/load-editor.cjs": {
+      "sha256": "8fe91c6ed7c71d9dc25523eb8dc22add06b3a54f7861eeb8b783a6b1d7d2af12",
+      "bytes": 647
+    },
+    "geometry/open-1p4mm.msh.json": {
+      "sha256": "06cef0e030ecab29f4df8ed3c0435c3ab6bf41d9f0f67b0f911d0cf19b5d3ba7",
+      "bytes": 462
+    },
+    "geometry/open-2mm.msh.json": {
+      "sha256": "7854ff63999a5704796a0688d5c7ce629268601e1e7ccf06f4ce15568515eefc",
+      "bytes": 460
+    },
+    "geometry/open-3mm.msh.json": {
+      "sha256": "b7854bc444c7999eb70ebb7c55801c481386686f2160ebf49b38ca6435685023",
+      "bytes": 460
+    },
+    "geometry/open-4mm.msh.json": {
+      "sha256": "d6704ecdf1b8707db892404bc4296da48d1132a4a15222d15a9fe7c118a0518b",
+      "bytes": 459
+    },
+    "geometry/open-air.json": {
+      "sha256": "8f2cccef290808bbaaa6b5621eccc4feab8419f4aa2d2195ee3f5b190342e457",
+      "bytes": 181266
+    },
+    "geometry/open-rings.json": {
+      "sha256": "f79fa1b0fcfd89abf6dc3e145acfb15775df1647dcf21ce6ca9dc1c4d10d5ee1",
+      "bytes": 113902
+    },
+    "geometry/user-study.json": {
+      "sha256": "ea88abc6bc4745a33083afc940ef647374959a9b29154120520c3ebf68ce938d",
+      "bytes": 3481
+    },
+    "mesh_air.py": {
+      "sha256": "fcc292279ffd498bdf582a5b7b5a90793e94df4c0ac4fe9a33002f9c1259b56d",
+      "bytes": 3471
+    },
+    "plot_results.py": {
+      "sha256": "f6d0423f1ed0585c1eaaa45501cb353f46bb69ec17d27dbf5ca0ecdba9c5b78b",
+      "bytes": 19936
+    },
+    "qualify_results.py": {
+      "sha256": "b0773cb795638d1d1901b15de1dcb3deb56c47930a784cb943f8728300b4e57f",
+      "bytes": 5927
+    },
+    "release/MEH_Insert_FEM_Benchmarks.png": {
+      "sha256": "1701feccd60721ea7b79bd0e12ea866332d2e8a02e2b50f2d120a99f21a6aeb7",
+      "bytes": 203510
+    },
+    "release/MEH_Insert_FEM_Comparison.png": {
+      "sha256": "f06436228796a2b42b3677f1ff0a768b63a4e34a8759c80d0945a867e2394810",
+      "bytes": 219179
+    },
+    "release/MEH_Insert_FEM_Diagnostics.png": {
+      "sha256": "12177979a985c6d3f0c2430522178d3cdcbf9d48c2a3cf515eb42fd53d878103",
+      "bytes": 204209
+    },
+    "release/MEH_Insert_FEM_PressureBasisSlice_700Hz.json": {
+      "sha256": "042e63cb436efa7ccc174904003bacd7d862a3f8a521c8d7f28a3df07670c81a",
+      "bytes": 739396
+    },
+    "release/MEH_Insert_FEM_PressureSlice_700Hz.json": {
+      "sha256": "73bb0c4e55d0c986080c97c63e80a1505d893cefd323b23bbcdcd10230ddda40",
+      "bytes": 600042
+    },
+    "release/MEH_Insert_FEM_Pressure_700Hz.png": {
+      "sha256": "ac8692c1c1e938425162713ba7d9b98221030b11541573e6ab7a0ec24221c69b",
+      "bytes": 229170
+    },
+    "release/MEH_Insert_FEM_Prototype_Report.md": {
+      "sha256": "719a9081c1d783794a1585c81c380c0b30c8cf4c2e227f90f52cc3db44babf2a",
+      "bytes": 8343
+    },
+    "release/MEH_Insert_FEM_TwoPort.json": {
+      "sha256": "3799a469b5e51251a84bcfc01e46192ed14dcbb1a858201aa0251c8b4f5e1d9e",
+      "bytes": 21876
+    },
+    "release/MEH_Open_FEM_PressureSlice_700Hz.json": {
+      "sha256": "298f7ce81d089418cacee4dc22c30e271685703be981ffd7fd8ca8e20b8a9230",
+      "bytes": 715887
+    },
+    "release/MEH_Open_FEM_TwoPort.json": {
+      "sha256": "ac3b265de71e9736946517a73107e8ccff6934353d079e8db498228786cd4a76",
+      "bytes": 21889
+    },
+    "results/benchmarks.json": {
+      "sha256": "54a07c1082f6fd5e868f4f6ce76c3575b014d37cd4babfe33f7345f995e84d92",
+      "bytes": 28518
+    },
+    "results/inserted-1_4mm-basis700.json": {
+      "sha256": "386c1024b6bce7406cbb7e888ca58271c90c201b356ed1f63e8215af7d87238c",
+      "bytes": 8166
+    },
+    "results/inserted-1_4mm-basis700.json.basis-slice.json": {
+      "sha256": "d21023f4dec77feb67bab36bffef560d3616c5c465b7c6cb51a04041724e83eb",
+      "bytes": 738063
+    },
+    "results/inserted-1_4mm-basis700.json.slice.json": {
+      "sha256": "523544f9a5fecf44b13b19f1625c41ebb2d5d047c1d4351b7fa299462487c72a",
+      "bytes": 600051
+    },
+    "results/inserted-1_4mm-sample.json": {
+      "sha256": "42bac43e401216b04b6ea082ec883cb2e199117abbe0644fbd834f9fef7384ac",
+      "bytes": 13233
+    },
+    "results/inserted-1_4mm-sample.json.slice.json": {
+      "sha256": "73bb0c4e55d0c986080c97c63e80a1505d893cefd323b23bbcdcd10230ddda40",
+      "bytes": 600042
+    },
+    "results/inserted-2mm-sample.json": {
+      "sha256": "65d442ecbe5aa09b02f3adb0e93c0363887defc6c401f56cf1455baebabb80a2",
+      "bytes": 14796
+    },
+    "results/inserted-3mm-sample.json": {
+      "sha256": "b4dfd2a1d88632e2f678c935ab27155a00b7980a942380ab1fb2e8f1388ef2f3",
+      "bytes": 14766
+    },
+    "results/inserted-3mm-sample.json.slice.json": {
+      "sha256": "0a511636f4d70960cbb999462ec2170ccfe9faa76ffe773a1694b9d65cd9ac02",
+      "bytes": 600189
+    },
+    "results/inserted-qualified.json": {
+      "sha256": "97f463e15185246eb4e9f69a6ae89e680eb6d558737b8579f1c7529435b13a77",
+      "bytes": 21875
+    },
+    "results/open-1p4mm-sparse.json": {
+      "sha256": "ef3a0861c67627c32da76b3dc732aa5c7ed125c1d13f8a732714b510ba535e3d",
+      "bytes": 13212
+    },
+    "results/open-1p4mm-sparse.json.slice.json": {
+      "sha256": "298f7ce81d089418cacee4dc22c30e271685703be981ffd7fd8ca8e20b8a9230",
+      "bytes": 715887
+    },
+    "results/open-2mm-sparse.json": {
+      "sha256": "916776860f48b9885f5ebebc9c7624c562d975eacbdd514096ed1b87f607948d",
+      "bytes": 13173
+    },
+    "results/open-2mm-sparse.json.slice.json": {
+      "sha256": "c17c8d4ae03644d12cdb299b995fbcc6478ef09bfc35c39ceee6aa6feb3fc568",
+      "bytes": 715768
+    },
+    "results/open-3mm-sparse.json": {
+      "sha256": "31ad38b026fa6fc9198f976df3b7a634e54e8a7f2e4ec6f0fc9b9799affe1a7d",
+      "bytes": 12655
+    },
+    "results/open-4mm-sparse.json": {
+      "sha256": "34d2090ad4d647ec2ec13914d3a16a852b9f21e6486e5147ca926fb1f231ecdd",
+      "bytes": 12691
+    },
+    "results/open-qualification-4-3-2mm-failed.json": {
+      "sha256": "af795beff556793167ef1991f82ff8dcf899dca9e5c0cb8e92dcfe03196236e7",
+      "bytes": 19164
+    },
+    "results/open-qualified.json": {
+      "sha256": "4ffc1fd9784739f3119447907ac02c3d0a553b0f49dbae07bea796bb1d6763c9",
+      "bytes": 21885
+    },
+    "run_benchmarks.py": {
+      "sha256": "bf2630012b9f193a112f5c8b58d265d14994bb92f0c8e3fcd02952f54cbfe9ed",
+      "bytes": 6078
+    },
+    "solve_front.py": {
+      "sha256": "fb0537407ce5d861732e6fe91a051872428437f0e72f76cf963323dcb1000fdb",
+      "bytes": 9795
+    },
+    "test_qualification.py": {
+      "sha256": "eec76f62a783765484726d6cd8fbf913b1c1d5a24dccc260371e3e3e2288d19c",
+      "bytes": 1951
+    }
+  }
+}

@@ -4,11 +4,11 @@
   "qualification": "Row-specific numerical qualification; unqualified frequencies are unavailable",
   "geometrySourceSha256": "418b696f270e270a909142861b95b40ee6db6017bae6e38da0ae3e55e2a005e5",
   "userDesignSha256": "ea88abc6bc4745a33083afc940ef647374959a9b29154120520c3ebf68ce938d",
-  "airSurfaceSha256": "ef4fba54a3d4f554816139ee3c404ba0e9d7f7303facf898674ed180815a2059",
-  "geometryPayloadSha256": "6374c7e4b75adc26aa2b193ebd646fa9530dac2a85d0dac38b34954de9af54da",
-  "meshSha256": "86ae60251703d608a47b88c41f7451adf9402d4b4aa4d38f2eca7fd984b1b21d",
+  "airSurfaceSha256": "8f2cccef290808bbaaa6b5621eccc4feab8419f4aa2d2195ee3f5b190342e457",
+  "geometryPayloadSha256": "53de2d8bc173ebe61f0d6bb65c10e9a98f56bae0e829ff771b512b12256aa732",
+  "meshSha256": "79fc6653e9f6506b9ac918535057f416f458a82405326eb677a1353a29f9ad5e",
   "inputState": {
-    "frontFiller": "offset",
+    "frontFiller": "none",
     "fillerClearance": 2.75,
     "fillerOpening": 87,
     "fillerRelief": 8,
@@ -66,7 +66,7 @@
     "soundSpeed": 343,
     "excursion": 0.25
   },
-  "case": "inserted",
+  "case": "open",
   "model": "3D lossless pressure FEM, rigid assumed cone, real weighted two-port",
   "medium": {
     "densityKgM3": 1.204,
@@ -80,7 +80,7 @@
     "domain": "cone-to-horn-entry"
   },
   "ports": {
-    "coneProjectedAreaM2": 0.01319469958157574,
+    "coneProjectedAreaM2": 0.013178805988070079,
     "nominalSdM2": 0.0132,
     "sourceBasis": "beta=n_air dot (+z) / coneProjectedAreaM2; inward rigid cone motion is along -z",
     "outletBasis": "uniform inward normal velocity over nonplanar horn-entry star-fan interface",
@@ -88,16 +88,16 @@
       {
         "name": "cone",
         "tag": 2,
-        "surface_area_m2": 0.0138088513560737,
-        "signed_projected_area_m2": 0.01319469958157574,
-        "shape_integral": 1.0000000000000018
+        "surface_area_m2": 0.013793303366208683,
+        "signed_projected_area_m2": 0.013178805988070079,
+        "shape_integral": 1.0000000000000062
       },
       {
         "name": "horn_entry_interface",
         "tag": 3,
-        "surface_area_m2": 0.0016556757479480211,
-        "signed_projected_area_m2": 0.0016556757479480211,
-        "shape_integral": 0.9999999999999989
+        "surface_area_m2": 0.0016556708930046849,
+        "signed_projected_area_m2": 0.0016556708930046849,
+        "shape_integral": 1.0000000000000016
       }
     ],
     "interface": {
@@ -119,11 +119,11 @@
           0
         ]
       ],
-      "projected_star_cross_min_m2": 0.000025739855445448797,
-      "minimum_local_z_m": -0.030426160219777374,
+      "projected_star_cross_min_m2": 0.00005147971089089796,
+      "minimum_local_z_m": -0.03042616021977737,
       "maximum_local_z_m": -0.0278540306274779,
-      "actual_area_m2": 0.0016556757479480192,
-      "projected_area_m2": 0.0016473507485087703,
+      "actual_area_m2": 0.0016556708930046877,
+      "projected_area_m2": 0.001647350748508771,
       "notes": "Artificial port surface joins canonical horn-cut perimeter to P. Boundary is exact; fan interior is an interface approximation, not the exact curved horn patch. Whole physical tube retained."
     }
   },
@@ -136,55 +136,55 @@
     "No motor, horn exterior, crossover or far-field SPL is predicted by this dataset."
   ],
   "airGeometry": {
-    "volumeM3": 0.00020039189607843355,
-    "surfaceVolumeM3": 0.00020039189607842849,
-    "editorFrontVolumeM3": 0.00019923189762848726,
+    "volumeM3": 0.0002970280420818694,
+    "surfaceVolumeM3": 0.0002970280420818731,
+    "editorFrontVolumeM3": 0.0002959725324280099,
     "volumeExplanation": "Canonical tube starts at curved horn-cut perimeter; editor neck air uses a flat nominal length. Cone closure is polygonal whereas editor cone volume is analytical. Interface star fan is declared rather than hidden.",
     "checks": {
       "watertight_edges": true,
       "oriented_edge_incidence_two": true,
       "connected_surface": true,
       "positive_signed_volume": true,
-      "minimum_triangle_area_m2": 2.590147055139604e-7,
+      "minimum_triangle_area_m2": 5.191208259926226e-7,
       "surface_self_intersection_test": "Not yet performed; canonical walls plus star-shaped cap are constructed without a global intersection certification."
     }
   },
   "mesh": {
-    "source": "work/fem/geometry/inserted-air.json",
-    "sourceSha256": "ef4fba54a3d4f554816139ee3c404ba0e9d7f7303facf898674ed180815a2059",
-    "meshSha256": "86ae60251703d608a47b88c41f7451adf9402d4b4aa4d38f2eca7fd984b1b21d",
+    "source": "work/fem/geometry/open-air.json",
+    "sourceSha256": "8f2cccef290808bbaaa6b5621eccc4feab8419f4aa2d2195ee3f5b190342e457",
+    "meshSha256": "79fc6653e9f6506b9ac918535057f416f458a82405326eb677a1353a29f9ad5e",
     "maxSizeM": 0.0014,
     "method": "triangles",
-    "meshRuntimeS": 7.323530500056222,
-    "tetrahedra": 442332,
-    "nodes": 98721,
-    "minSICN": 0.00027909239339049747,
-    "meanSICN": 0.7495711309704326,
-    "inputVertices": 6786,
-    "inputFaces": 13568
+    "meshRuntimeS": 7.013819333864376,
+    "tetrahedra": 537648,
+    "nodes": 104976,
+    "minSICN": 0.011954722293011255,
+    "meanSICN": 0.7942604928490876,
+    "inputVertices": 1794,
+    "inputFaces": 3584
   },
   "fem": {
-    "dofs": 98721,
-    "cells": 442332,
+    "dofs": 104976,
+    "cells": 537648,
     "degree": 1,
-    "volume_m3": 0.00020039189607843355,
+    "volume_m3": 0.0002970280420818694,
     "ports": [
       {
         "name": "cone",
         "tag": 2,
-        "surface_area_m2": 0.0138088513560737,
-        "signed_projected_area_m2": 0.01319469958157574,
-        "shape_integral": 1.0000000000000018
+        "surface_area_m2": 0.013793303366208683,
+        "signed_projected_area_m2": 0.013178805988070079,
+        "shape_integral": 1.0000000000000062
       },
       {
         "name": "horn_entry_interface",
         "tag": 3,
-        "surface_area_m2": 0.0016556757479480211,
-        "signed_projected_area_m2": 0.0016556757479480211,
-        "shape_integral": 0.9999999999999989
+        "surface_area_m2": 0.0016556708930046849,
+        "signed_projected_area_m2": 0.0016556708930046849,
+        "shape_integral": 1.0000000000000016
       }
     ],
-    "assembly_s": 0.59390425006859
+    "assembly_s": 1.7107857910450548
   },
   "rows": [
     {
@@ -193,47 +193,47 @@
         [
           {
             "r": 0,
-            "i": -1123277.9228327598
+            "i": -758517.4856547507
           },
           {
             "r": 0,
-            "i": -1126887.6602180747
+            "i": -759972.1492134328
           }
         ],
         [
           {
             "r": 0,
-            "i": -1126887.6602180754
+            "i": -759972.1492134331
           },
           {
             "r": 0,
-            "i": -1115692.342107221
+            "i": -748793.3407036138
           }
         ]
       ],
       "diagnostics": {
         "frequency_hz": 100,
-        "solve_s": 32.94188216608018,
-        "relative_residual": 1.3289537741192888e-10,
-        "reciprocity_error": 4.397349299604145e-16,
+        "solve_s": 53.3975455830805,
+        "relative_residual": 8.117610023011439e-11,
+        "reciprocity_error": 3.263015264301933e-16,
         "factorization": "real SuperLU; imaginary source",
         "hermitian_real_eigenvalues": [
-          -3.4924596548080444e-10,
-          3.4924596548080444e-10
+          -1.7462298274040222e-10,
+          1.7462298274040222e-10
         ],
-        "passivity_min_normalized": -1.5546977544980033e-16,
-        "nearest_closed_mode_relative_distance": 0.9512057503875552,
-        "reference_load_power_residual_normalized": 4.741849941393344e-16
+        "passivity_min_normalized": -1.1536501102515559e-16,
+        "nearest_closed_mode_relative_distance": 0.9415324340684545,
+        "reference_load_power_residual_normalized": 3.6375916364410388e-16
       },
       "referenceLoad": {
-        "resistancePaSM3": 249428.06616079333,
+        "resistancePaSM3": 249428.79756166096,
         "inputImpedance": {
-          "r": 242346.28910710962,
-          "i": -39262.38658351358
+          "r": 231269.99918434815,
+          "i": -64237.446675049025
         },
         "outflowOverConeFlow": {
-          "r": 0.961955281362712,
-          "i": -0.21505807336661306
+          "r": 0.9135598451841662,
+          "i": -0.3043137823191434
         }
       },
       "available": true,
@@ -255,12 +255,12 @@
           "closedModeRangeCovered": true
         },
         "convergence": {
-          "coarseToMediumMatrixChange": 0.000025076993087047853,
-          "mediumToFineMatrixChange": 0.000010112536573847261,
-          "mediumToFineLoadedTransferChange": 0.00002118741711613112,
-          "loadedPhaseChangeDegrees": 0.00020233436405703658,
-          "mediumToFineLoadedInputImpedanceChange": 0.00015896822790469173,
-          "nearestClosedModeRelativeDistance": 0.9512057503875552
+          "coarseToMediumMatrixChange": 0.00004088968583837444,
+          "mediumToFineMatrixChange": 0.000013091469078898187,
+          "mediumToFineLoadedTransferChange": 0.000026054483601327618,
+          "loadedPhaseChangeDegrees": 0.00045216684080422165,
+          "mediumToFineLoadedInputImpedanceChange": 0.00008846054104895523,
+          "nearestClosedModeRelativeDistance": 0.9415324340684545
         },
         "scope": "Numerical qualification of stated lossless surrogate and port basis; not physical measurement validation"
       },
@@ -273,47 +273,47 @@
         [
           {
             "r": 0,
-            "i": -369767.2576223631
+            "i": -251568.4227170745
           },
           {
             "r": 0,
-            "i": -380713.46448357357
+            "i": -255962.8718893668
           }
         ],
         [
           {
             "r": 0,
-            "i": -380713.4644835732
+            "i": -255962.87188936668
           },
           {
             "r": 0,
-            "i": -346910.34473719297
+            "i": -222207.1938103258
           }
         ]
       ],
       "diagnostics": {
         "frequency_hz": 300,
-        "solve_s": 33.48353104107082,
-        "relative_residual": 1.4825564894258973e-11,
-        "reciprocity_error": 6.678340744700283e-16,
+        "solve_s": 53.27521587489173,
+        "relative_residual": 8.978734855577492e-12,
+        "reciprocity_error": 3.3350344471073557e-16,
         "factorization": "real SuperLU; imaginary source",
         "hermitian_real_eigenvalues": [
-          -1.7462298274040222e-10,
-          1.7462298274040222e-10
+          -5.820766091346741e-11,
+          5.820766091346741e-11
         ],
-        "passivity_min_normalized": -2.3611500138259937e-16,
-        "nearest_closed_mode_relative_distance": 0.8536172511626655,
-        "reference_load_power_residual_normalized": 9.287545990508196e-16
+        "passivity_min_normalized": -1.1791127365201696e-16,
+        "nearest_closed_mode_relative_distance": 0.8245973022053636,
+        "reference_load_power_residual_normalized": 3.0630224951251394e-16
       },
       "referenceLoad": {
-        "resistancePaSM3": 249428.06616079333,
+        "resistancePaSM3": 249428.79756166096,
         "inputImpedance": {
-          "r": 198031.11642866433,
-          "i": -94340.98372152454
+          "r": 146444.2412894924,
+          "i": -121106.48638602218
         },
         "outflowOverConeFlow": {
-          "r": 0.7234476833501176,
-          "i": -0.5201579006334531
+          "r": 0.5096908601159978,
+          "i": -0.5721307946286408
         }
       },
       "available": true,
@@ -335,12 +335,12 @@
           "closedModeRangeCovered": true
         },
         "convergence": {
-          "coarseToMediumMatrixChange": 0.00023288796643170269,
-          "mediumToFineMatrixChange": 0.00009381688243741432,
-          "mediumToFineLoadedTransferChange": 0.00017191205295115516,
-          "loadedPhaseChangeDegrees": 0.004411017571991806,
-          "mediumToFineLoadedInputImpedanceChange": 0.00042873208054928873,
-          "nearestClosedModeRelativeDistance": 0.8536172511626655
+          "coarseToMediumMatrixChange": 0.00038146877041458395,
+          "mediumToFineMatrixChange": 0.00012215785188318692,
+          "mediumToFineLoadedTransferChange": 0.00018664119940596245,
+          "loadedPhaseChangeDegrees": 0.007680617270987001,
+          "mediumToFineLoadedInputImpedanceChange": 0.00020107265348519207,
+          "nearestClosedModeRelativeDistance": 0.8245973022053636
         },
         "scope": "Numerical qualification of stated lossless surrogate and port basis; not physical measurement validation"
       },
@@ -353,47 +353,47 @@
         [
           {
             "r": 0,
-            "i": -216098.77323406996
+            "i": -149401.72253388734
           },
           {
             "r": 0,
-            "i": -234746.9813532038
+            "i": -156830.2834549201
           }
         ],
         [
           {
             "r": 0,
-            "i": -234746.98135320388
+            "i": -156830.2834549115
           },
           {
             "r": 0,
-            "i": -177663.3612581633
+            "i": -99818.67060376087
           }
         ]
       ],
       "diagnostics": {
         "frequency_hz": 500,
-        "solve_s": 34.18246570811607,
-        "relative_residual": 5.338743466921833e-12,
-        "reciprocity_error": 2.8441942332825065e-16,
+        "solve_s": 53.051103207981214,
+        "relative_residual": 3.2964171319644397e-12,
+        "reciprocity_error": 4.268169894974756e-14,
         "factorization": "real SuperLU; imaginary source",
         "hermitian_real_eigenvalues": [
-          -4.3655745685100555e-11,
-          4.3655745685100555e-11
+          -4.307366907596588e-9,
+          4.307366907596588e-9
         ],
-        "passivity_min_normalized": -1.0055745146828669e-16,
-        "nearest_closed_mode_relative_distance": 0.7560287519377759,
-        "reference_load_power_residual_normalized": 4.737962193590848e-16
+        "passivity_min_normalized": -1.509025937996462e-14,
+        "nearest_closed_mode_relative_distance": 0.7076621703422727,
+        "reference_load_power_residual_normalized": 3.2391125923903385e-14
       },
       "referenceLoad": {
-        "resistancePaSM3": 249428.06616079333,
+        "resistancePaSM3": 249428.79756166096,
         "inputImpedance": {
-          "r": 146568.77826506263,
-          "i": -111700.33001602854
+          "r": 84996.0304258655,
+          "i": -115387.24286415579
         },
         "outflowOverConeFlow": {
-          "r": 0.44472752159041384,
-          "i": -0.6243691715231604
+          "r": 0.21688719117509472,
+          "i": -0.541961849162232
         }
       },
       "available": true,
@@ -415,12 +415,12 @@
           "closedModeRangeCovered": true
         },
         "convergence": {
-          "coarseToMediumMatrixChange": 0.0006875482764708483,
-          "mediumToFineMatrixChange": 0.0002763680043100118,
-          "mediumToFineLoadedTransferChange": 0.0004088699116646197,
-          "loadedPhaseChangeDegrees": 0.014758349132734999,
-          "mediumToFineLoadedInputImpedanceChange": 0.0006144243560004939,
-          "nearestClosedModeRelativeDistance": 0.7560287519377759
+          "coarseToMediumMatrixChange": 0.0011316465480001728,
+          "mediumToFineMatrixChange": 0.00036254278923094843,
+          "mediumToFineLoadedTransferChange": 0.00039525940306592544,
+          "loadedPhaseChangeDegrees": 0.020377916745948476,
+          "mediumToFineLoadedInputImpedanceChange": 0.00022990275683294363,
+          "nearestClosedModeRelativeDistance": 0.7076621703422727
         },
         "scope": "Numerical qualification of stated lossless surrogate and port basis; not physical measurement validation"
       },
@@ -433,47 +433,47 @@
         [
           {
             "r": 0,
-            "i": -147853.39841251375
+            "i": -105039.09632833242
           },
           {
             "r": 0,
-            "i": -174865.38380490112
+            "i": -115669.51094105466
           }
         ],
         [
           {
             "r": 0,
-            "i": -174865.38380490115
+            "i": -115669.5109410592
           },
           {
             "r": 0,
-            "i": -93304.16397308947
+            "i": -34194.09159367874
           }
         ]
       ],
       "diagnostics": {
         "frequency_hz": 700,
-        "solve_s": 42.38750295806676,
-        "relative_residual": 2.7139107855146184e-12,
-        "reciprocity_error": 1.359027223455542e-16,
+        "solve_s": 52.74506704090163,
+        "relative_residual": 1.6714133859425247e-12,
+        "reciprocity_error": 3.252916544880539e-14,
         "factorization": "real SuperLU; imaginary source",
         "hermitian_real_eigenvalues": [
-          -1.4551915228366852e-11,
-          1.4551915228366852e-11
+          -2.270098775625229e-9,
+          2.270098775625229e-9
         ],
-        "passivity_min_normalized": -4.804886827612696e-17,
-        "nearest_closed_mode_relative_distance": 0.6584402527128863,
-        "reference_load_power_residual_normalized": 1.9128802147542887e-16
+        "passivity_min_normalized": -1.1500796737594719e-14,
+        "nearest_closed_mode_relative_distance": 0.5907270384791818,
+        "reference_load_power_residual_normalized": 1.8535303106480608e-14
       },
       "referenceLoad": {
-        "resistancePaSM3": 249428.06616079333,
+        "resistancePaSM3": 249428.79756166096,
         "inputImpedance": {
-          "r": 107543.48774128752,
-          "i": -107624.34412484404
+          "r": 52650.805090602575,
+          "i": -97821.21904492078
         },
         "outflowOverConeFlow": {
-          "r": 0.23005727841797224,
-          "i": -0.6150073010520754
+          "r": 0.06240086280895466,
+          "i": -0.45518308724788764
         }
       },
       "available": true,
@@ -495,12 +495,12 @@
           "closedModeRangeCovered": true
         },
         "convergence": {
-          "coarseToMediumMatrixChange": 0.0014672454144488243,
-          "mediumToFineMatrixChange": 0.0005876784635366609,
-          "mediumToFineLoadedTransferChange": 0.0006825459859135591,
-          "loadedPhaseChangeDegrees": 0.028670830744461653,
-          "mediumToFineLoadedInputImpedanceChange": 0.0007592606539013736,
-          "nearestClosedModeRelativeDistance": 0.6584402527128863
+          "coarseToMediumMatrixChange": 0.002395797622629736,
+          "mediumToFineMatrixChange": 0.0007680507750446616,
+          "mediumToFineLoadedTransferChange": 0.0006105702774701385,
+          "loadedPhaseChangeDegrees": 0.03399980336746082,
+          "mediumToFineLoadedInputImpedanceChange": 0.0002122794544921191,
+          "nearestClosedModeRelativeDistance": 0.5907270384791818
         },
         "scope": "Numerical qualification of stated lossless surrogate and port basis; not physical measurement validation"
       },
@@ -513,47 +513,47 @@
         [
           {
             "r": 0,
-            "i": -92753.54934890245
+            "i": -70949.85975077443
           },
           {
             "r": 0,
-            "i": -134452.67840537336
+            "i": -86907.13720171747
           }
         ],
         [
           {
             "r": 0,
-            "i": -134452.67840537766
+            "i": -86907.1372017139
           },
           {
             "r": 0,
-            "i": -12426.58466965455
+            "i": 35039.876930527826
           }
         ]
       ],
       "diagnostics": {
         "frequency_hz": 1000,
-        "solve_s": 34.49662862508558,
-        "relative_residual": 1.3622023576086497e-12,
-        "reciprocity_error": 2.874367864063726e-14,
+        "solve_s": 52.847280541900545,
+        "relative_residual": 8.779807590602851e-13,
+        "reciprocity_error": 3.463336254190263e-14,
         "factorization": "real SuperLU; imaginary source",
         "hermitian_real_eigenvalues": [
-          -2.153683453798294e-9,
-          2.153683453798294e-9
+          -1.7898855730891228e-9,
+          1.7898855730891228e-9
         ],
-        "passivity_min_normalized": -1.0162425041520764e-14,
-        "nearest_closed_mode_relative_distance": 0.5120575038755518,
-        "reference_load_power_residual_normalized": 2.028467384278969e-14
+        "passivity_min_normalized": -1.2244742754335756e-14,
+        "nearest_closed_mode_relative_distance": 0.41532434068454555,
+        "reference_load_power_residual_normalized": 1.4997351069868407e-14
       },
       "referenceLoad": {
-        "resistancePaSM3": 249428.06616079333,
+        "resistancePaSM3": 249428.79756166096,
         "inputImpedance": {
-          "r": 72296.45219129379,
-          "i": -89151.71737265807
+          "r": 29694.571969655695,
+          "i": -75121.36744151819
         },
         "outflowOverConeFlow": {
-          "r": 0.026788845108647798,
-          "i": -0.537709274733232
+          "r": -0.047999598480173176,
+          "i": -0.34168162622515735
         }
       },
       "available": true,
@@ -575,12 +575,12 @@
           "closedModeRangeCovered": true
         },
         "convergence": {
-          "coarseToMediumMatrixChange": 0.003456915935636035,
-          "mediumToFineMatrixChange": 0.0013725223371850118,
-          "mediumToFineLoadedTransferChange": 0.0011359100465918523,
-          "loadedPhaseChangeDegrees": 0.05207538875918575,
-          "mediumToFineLoadedInputImpedanceChange": 0.0010762264941225825,
-          "nearestClosedModeRelativeDistance": 0.5120575038755518
+          "coarseToMediumMatrixChange": 0.005117288986714851,
+          "mediumToFineMatrixChange": 0.0016428779737359856,
+          "mediumToFineLoadedTransferChange": 0.0009394673040742222,
+          "loadedPhaseChangeDegrees": 0.05382346279726597,
+          "mediumToFineLoadedInputImpedanceChange": 0.00014464364994246315,
+          "nearestClosedModeRelativeDistance": 0.41532434068454555
         },
         "scope": "Numerical qualification of stated lossless surrogate and port basis; not physical measurement validation"
       },
@@ -589,14 +589,14 @@
     }
   ],
   "closedDomainModeFrequencyHz": [
-    2049.4218231505565,
-    2050.41330796059,
-    2529.229036662223,
-    2832.3735205651965,
-    2832.4861450426697
+    1710.349976208711,
+    1711.0390208169504,
+    2613.691141011455,
+    2613.6945225002405,
+    2646.7600312824698
   ],
-  "totalRuntimeS": 217.51918791700155,
-  "pressureSliceFile": "MEH_Insert_FEM_PressureSlice_700Hz.json",
+  "totalRuntimeS": 325.435676791938,
+  "pressureSliceFile": "MEH_Open_FEM_PressureSlice_700Hz.json",
   "convergence": {
     "method": "Three independent tetrahedral meshes; pointwise complex matrix and reference-loaded response comparison",
     "thresholds": {
@@ -612,14 +612,14 @@
       "meshVolumeRelativeError": 1e-8
     },
     "meshDofs": [
-      22695,
-      47628,
-      98721
+      19309,
+      44293,
+      104976
     ],
     "meshSha256": [
-      "860d0cb75f4042f5de1947e813bbc352b19418d4e57fb9c5f43d5792d628d20b",
-      "3773a31276c6efea576b2a5747d4c97c5a00ac86af539e197f7fee9032b036eb",
-      "86ae60251703d608a47b88c41f7451adf9402d4b4aa4d38f2eca7fd984b1b21d"
+      "d2bb12d23f8b1461041245db6bec0d963a019a51ef324cded68983e3bfb154b5",
+      "806e89d21043737fb316f14edc61dffb8292a07fe865b8196d41b77595967e72",
+      "79fc6653e9f6506b9ac918535057f416f458a82405326eb677a1353a29f9ad5e"
     ],
     "boundary": "Same frozen piecewise-planar air boundary on all meshes; geometric and material-model uncertainty excluded",
     "passed": true
@@ -631,28 +631,6 @@
     700,
     1000
   ],
-  "software": {
-    "python": "3.12.13",
-    "platform": "Darwin",
-    "machine": "arm64",
-    "dolfinx": "0.11.0",
-    "petsc": "3.25.5",
-    "petscScalarType": "complex128",
-    "gmsh": "4.15.2",
-    "numpy": "2.5.3",
-    "scipy": "1.18.1",
-    "linearSolver": "SciPy SuperLU, COLAMD, serial",
-    "assembly": "DOLFINx/UFL with complex PETSc matrices"
-  },
-  "nativeSourceSha256": {
-    "fem_core.py": "9bbaba737bddf2b53e5c7dedebd4f6585fda6f5470f24a1d5a3741d0247ea0ba",
-    "mesh_air.py": "fcc292279ffd498bdf582a5b7b5a90793e94df4c0ac4fe9a33002f9c1259b56d",
-    "solve_front.py": "fb0537407ce5d861732e6fe91a051872428437f0e72f76cf963323dcb1000fdb",
-    "qualify_results.py": "b0773cb795638d1d1901b15de1dcb3deb56c47930a784cb943f8728300b4e57f",
-    "geometry/extract-air.cjs": "8e2b4a58449a23e1f2eef503eaf14fcde60abd43d0d427c3bf5c4d6ef71d07da",
-    "geometry/load-editor.cjs": "8fe91c6ed7c71d9dc25523eb8dc22add06b3a54f7861eeb8b783a6b1d7d2af12"
-  },
-  "sourceHashNote": "Hashes of delivered source; post-solve changes add metadata, checkpoints, qualification gates and basis-slice output without changing assembled equations.",
   "frequencySampling": {
     "kind": "sparse exact samples",
     "frequenciesHz": [
@@ -665,9 +643,16 @@
     "interpolation": "not provided or qualified",
     "limitation": "Features between computed frequencies may be missed."
   },
-  "totalRuntimeIncludingSliceS": 218.3393416670151,
-  "runtimeNotes": "Final five-frequency fine-mesh run including modal check and pressure slice: 218.34 s; original totalRuntimeS was recorded before slice output. No real-time performance claim.",
-  "pressureBasisSliceFile": "MEH_Insert_FEM_PressureBasisSlice_700Hz.json",
+  "nativeSourceSha256": {
+    "fem_core.py": "9bbaba737bddf2b53e5c7dedebd4f6585fda6f5470f24a1d5a3741d0247ea0ba",
+    "mesh_air.py": "fcc292279ffd498bdf582a5b7b5a90793e94df4c0ac4fe9a33002f9c1259b56d",
+    "solve_front.py": "fb0537407ce5d861732e6fe91a051872428437f0e72f76cf963323dcb1000fdb",
+    "qualify_results.py": "b0773cb795638d1d1901b15de1dcb3deb56c47930a784cb943f8728300b4e57f",
+    "geometry/extract-air.cjs": "8e2b4a58449a23e1f2eef503eaf14fcde60abd43d0d427c3bf5c4d6ef71d07da",
+    "geometry/load-editor.cjs": "8fe91c6ed7c71d9dc25523eb8dc22add06b3a54f7861eeb8b783a6b1d7d2af12"
+  },
+  "sourceHashNote": "Hashes of delivered source; post-solve changes add metadata, checkpoints, qualification gates and basis-slice output without changing assembled equations.",
+  "runtimeNotes": "Final five-frequency fine-mesh run including modal check and pressure slice: 325.44 s. Earlier 4/3/2mm refinement failed and is preserved separately. Final release uses3/2/1.4mm without relaxing gates.",
   "format": "MEH-spatial-front-v1",
   "nativeConventions": {
     "time": "exp(+j omega t)",
@@ -676,5 +661,5 @@
     "pressure": "Pa, weighted port pressure power-conjugate to the normalized motion shape",
     "impedance": "Pa s/m3"
   },
-  "coneProjectedAreaM2": 0.01319469958157574
+  "coneProjectedAreaM2": 0.013178805988070079
 }

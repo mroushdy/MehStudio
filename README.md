@@ -48,7 +48,7 @@ Read the concise [engineering reference](docs/front-chamber-reference.md) for pr
 
 ## Experimental system acoustics
 
-Open **System acoustics**, or **Manual → Front chamber → Analyze sound path**. View mouth flow, mouth-load power, per-mid impedance, excursion, entry speed, pressure and phase. Read [the model scope and workflow](docs/system-acoustics.md) before using these exploratory results. Changing the front passage invalidates its native result; a fresh mesh/solve is required. The browser does not run the native solver. Full spatial horn junctions, directivity and calibrated compression-driver handoff remain unresolved.
+Open **System acoustics**, or **Manual → Front chamber → Analyze sound path**. View mouth flow, mouth-load power, per-mid impedance, excursion, entry speed, pressure and phase. Read [the model scope and workflow](docs/system-acoustics.md) before using these exploratory results. Changing the front passage invalidates its native result; a fresh mesh/solve is required. The browser does not run the native solver. The supplied case includes qualified insert/open-collector comparisons and a coupled 700 Hz pressure map. Import [`examples/offset-insert-study.json`](examples/offset-insert-study.json) to reproduce it. Native source, frozen inputs and verification records are in [`native-front-fem/`](native-front-fem/README.md). Full spatial horn junctions, directivity and calibrated compression-driver handoff remain unresolved.
 
 ## Engineering limits
 
@@ -61,7 +61,7 @@ Candidate rankings apply only within the reduced model. Verify physical fit, con
 The catalogue, geometry and renderer live in `index.html`. Reusable coupled-system sources live in `acoustics/`; run `node acoustics/embed.cjs` after editing those modules. The single-file editor embeds the complete interface and browser calculations. Node.js 22 or newer runs the source-level regression checks without installing packages:
 
 ```sh
-node --test tests/editor-regression.cjs tests/front-study-regression.cjs tests/front-study-ui.cjs tests/multiport-network.cjs tests/coupled-system.cjs tests/spatial-study.cjs
+node --test tests/editor-regression.cjs tests/front-study-regression.cjs tests/front-study-ui.cjs tests/multiport-network.cjs tests/coupled-system.cjs tests/spatial-study.cjs tests/pressure-field.cjs
 ```
 
 The tests cover large-driver placement, individual/shared sealed and ported chambers, collector coupling, finite mesh coordinates, driver grouping, live Manual edits, export setting preservation, and insert mesh closure, volume, clearance and acoustic-model boundaries. Additional comparison tests cover actual volume targets, fixed conditions, matched-LC non-equivalence, shared normalization, voltage scaling, insert gating, inertance quadrature and interface state invalidation. They do not replace visual browser testing or acoustic measurements.

@@ -1,0 +1,14 @@
+{
+  "source": "work/fem/geometry/inserted-air.json",
+  "sourceSha256": "ef4fba54a3d4f554816139ee3c404ba0e9d7f7303facf898674ed180815a2059",
+  "meshSha256": "860d0cb75f4042f5de1947e813bbc352b19418d4e57fb9c5f43d5792d628d20b",
+  "maxSizeM": 0.003,
+  "method": "triangles",
+  "meshRuntimeS": 2.0528442920185626,
+  "tetrahedra": 83269,
+  "nodes": 22695,
+  "minSICN": 0.012325047568859803,
+  "meanSICN": 0.6067762291589397,
+  "inputVertices": 6786,
+  "inputFaces": 13568
+}

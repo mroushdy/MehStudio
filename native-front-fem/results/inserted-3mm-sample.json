@@ -1,0 +1,529 @@
+{
+  "schemaVersion": 1,
+  "available": false,
+  "qualification": "Pending independent mesh comparison",
+  "geometrySourceSha256": "418b696f270e270a909142861b95b40ee6db6017bae6e38da0ae3e55e2a005e5",
+  "userDesignSha256": "ea88abc6bc4745a33083afc940ef647374959a9b29154120520c3ebf68ce938d",
+  "airSurfaceSha256": "ef4fba54a3d4f554816139ee3c404ba0e9d7f7303facf898674ed180815a2059",
+  "geometryPayloadSha256": "6374c7e4b75adc26aa2b193ebd646fa9530dac2a85d0dac38b34954de9af54da",
+  "meshSha256": "860d0cb75f4042f5de1947e813bbc352b19418d4e57fb9c5f43d5792d628d20b",
+  "inputState": {
+    "frontFiller": "offset",
+    "fillerClearance": 2.75,
+    "fillerOpening": 87,
+    "fillerRelief": 8,
+    "midDriver": "bc6ndl38",
+    "compressionDriver": "bms4594he",
+    "briefUse": "undecided",
+    "rearConcept": "individual",
+    "rearLayout": "shared",
+    "sharedRearShape": "teardrop",
+    "sharedBack": 108,
+    "rearPortShape": "round",
+    "rearTuning": 120,
+    "rearPortDiameter": 30,
+    "rearPortWidth": 45,
+    "rearPortHeight": 15,
+    "lowTarget": 200,
+    "listeningDistance": 3,
+    "continuousSPL": 0,
+    "peakSPL": 0,
+    "targetCoverage": 70,
+    "mouth": 700,
+    "throat": 36,
+    "coverage": 60,
+    "throatAngle": 7.5,
+    "k": 1.4,
+    "r": 0.2,
+    "m": 0.8,
+    "b": 0.1,
+    "q": 3.5,
+    "wall": 8,
+    "tap": 147,
+    "count": 4,
+    "shape": "round",
+    "areaLocked": false,
+    "areaTarget": 1650,
+    "port": 45.83497844237541,
+    "slotL": 50,
+    "slotW": 20,
+    "slotAngle": 0,
+    "neck": 8,
+    "collector": 50.4,
+    "offset": 0,
+    "gap": 28.05,
+    "frame": 187,
+    "cutout": 145,
+    "sd": 132,
+    "driverDepth": 85,
+    "driverVol": 0.63,
+    "coneDepth": 20,
+    "back": 3,
+    "fs": 72,
+    "qts": 0.42,
+    "vas": 7,
+    "frequency": 700,
+    "soundSpeed": 343,
+    "excursion": 0.25
+  },
+  "case": "inserted",
+  "model": "3D lossless pressure FEM, rigid assumed cone, real weighted two-port",
+  "medium": {
+    "densityKgM3": 1.204,
+    "soundSpeedMS": 343
+  },
+  "conventions": {
+    "time": "exp(+j omega t)",
+    "amplitude": "RMS",
+    "flow": "m3/s INTO local air domain",
+    "pressure": "Pa, weighted port pressure power-conjugate to the normalized motion shape",
+    "impedance": "Pa s/m3"
+  },
+  "ports": {
+    "coneProjectedAreaM2": 0.01319469958157571,
+    "nominalSdM2": 0.0132,
+    "sourceBasis": "beta=n_air dot (+z) / coneProjectedAreaM2; inward rigid cone motion is along -z",
+    "outletBasis": "uniform inward normal velocity over nonplanar horn-entry star-fan interface",
+    "metadata": [
+      {
+        "name": "cone",
+        "tag": 2,
+        "surface_area_m2": 0.01380885135607302,
+        "signed_projected_area_m2": 0.01319469958157571,
+        "shape_integral": 1.000000000000004
+      },
+      {
+        "name": "horn_entry_interface",
+        "tag": 3,
+        "surface_area_m2": 0.0016556757479480226,
+        "signed_projected_area_m2": 0.0016556757479480226,
+        "shape_integral": 0.9999999999999979
+      }
+    ],
+    "interface": {
+      "kind": "nonplanar-canonical-perimeter-star-fan",
+      "center_m": [
+        -5.3290705182007515e-18,
+        0,
+        -0.02805
+      ],
+      "plane_basis_local": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ]
+      ],
+      "projected_star_cross_min_m2": 2.5739855445448797e-05,
+      "minimum_local_z_m": -0.030426160219777374,
+      "maximum_local_z_m": -0.0278540306274779,
+      "actual_area_m2": 0.0016556757479480192,
+      "projected_area_m2": 0.0016473507485087703,
+      "notes": "Artificial port surface joins canonical horn-cut perimeter to P. Boundary is exact; fan interior is an interface approximation, not the exact curved horn patch. Whole physical tube retained."
+    }
+  },
+  "assumptions": [
+    "Unmeasured conical diaphragm surrogate; no physical dust-cap/surround or breakup.",
+    "Rigid walls and lossless air; no viscothermal gap losses, turbulence, or thermal compression.",
+    "Uniform outlet port mode; actual horn junction scattering and nonuniform modal coupling omitted.",
+    "Curved perimeter comes from canonical geometry; artificial star-fan interior defines the outlet interface.",
+    "Whole front passage included; do not add neck mass or end correction again.",
+    "No motor, horn exterior, crossover or far-field SPL is predicted by this dataset."
+  ],
+  "airGeometry": {
+    "volumeM3": 0.00020039189607843683,
+    "surfaceVolumeM3": 0.00020039189607842849,
+    "editorFrontVolumeM3": 0.00019923189762848726,
+    "volumeExplanation": "Canonical tube starts at curved horn-cut perimeter; editor neck air uses a flat nominal length. Cone closure is polygonal whereas editor cone volume is analytical. Interface star fan is declared rather than hidden.",
+    "checks": {
+      "watertight_edges": true,
+      "oriented_edge_incidence_two": true,
+      "connected_surface": true,
+      "positive_signed_volume": true,
+      "minimum_triangle_area_m2": 2.590147055139604e-07,
+      "surface_self_intersection_test": "Not yet performed; canonical walls plus star-shaped cap are constructed without a global intersection certification."
+    }
+  },
+  "mesh": {
+    "source": "work/fem/geometry/inserted-air.json",
+    "sourceSha256": "ef4fba54a3d4f554816139ee3c404ba0e9d7f7303facf898674ed180815a2059",
+    "meshSha256": "860d0cb75f4042f5de1947e813bbc352b19418d4e57fb9c5f43d5792d628d20b",
+    "maxSizeM": 0.003,
+    "method": "triangles",
+    "meshRuntimeS": 2.0528442920185626,
+    "tetrahedra": 83269,
+    "nodes": 22695,
+    "minSICN": 0.012325047568859803,
+    "meanSICN": 0.6067762291589397,
+    "inputVertices": 6786,
+    "inputFaces": 13568
+  },
+  "fem": {
+    "dofs": 22695,
+    "cells": 83269,
+    "degree": 1,
+    "volume_m3": 0.00020039189607843683,
+    "ports": [
+      {
+        "name": "cone",
+        "tag": 2,
+        "surface_area_m2": 0.01380885135607302,
+        "signed_projected_area_m2": 0.01319469958157571,
+        "shape_integral": 1.000000000000004
+      },
+      {
+        "name": "horn_entry_interface",
+        "tag": 3,
+        "surface_area_m2": 0.0016556757479480226,
+        "signed_projected_area_m2": 0.0016556757479480226,
+        "shape_integral": 0.9999999999999979
+      }
+    ],
+    "assembly_s": 2.9718997080344707
+  },
+  "rows": [
+    {
+      "frequencyHz": 100.0,
+      "impedance": [
+        [
+          {
+            "r": 0.0,
+            "i": -1123325.9928342283
+          },
+          {
+            "r": 0.0,
+            "i": -1126865.812971313
+          }
+        ],
+        [
+          {
+            "r": 0.0,
+            "i": -1126865.8129713126
+          },
+          {
+            "r": 0.0,
+            "i": -1115745.973778583
+          }
+        ]
+      ],
+      "diagnostics": {
+        "frequency_hz": 100.0,
+        "solve_s": 1.8468080000020564,
+        "relative_residual": 5.395805814468564e-11,
+        "reciprocity_error": 2.9315286738585253e-16,
+        "hermitian_real_eigenvalues": [
+          -2.3283064365386963e-10,
+          2.3283064365386963e-10
+        ],
+        "passivity_min_normalized": -1.036451902264085e-16,
+        "reference_load_power_residual_normalized": 4.742027428539254e-16
+      },
+      "referenceLoad": {
+        "resistancePaSM3": 249428.0661607931,
+        "inputImpedance": {
+          "r": 242314.70446530142,
+          "i": -39399.632597688586
+        },
+        "outflowOverConeFlow": {
+          "r": 0.9618947950674351,
+          "i": -0.215034214079463
+        }
+      }
+    },
+    {
+      "frequencyHz": 300.0,
+      "impedance": [
+        [
+          {
+            "r": 0.0,
+            "i": -369913.99057396816
+          },
+          {
+            "r": 0.0,
+            "i": -380645.8996488511
+          }
+        ],
+        [
+          {
+            "r": 0.0,
+            "i": -380645.8996488511
+          },
+          {
+            "r": 0.0,
+            "i": -347073.85929774493
+          }
+        ]
+      ],
+      "diagnostics": {
+        "frequency_hz": 300.0,
+        "solve_s": 1.9115660418756306,
+        "relative_residual": 6.207272789528461e-12,
+        "reciprocity_error": 0.0,
+        "hermitian_real_eigenvalues": [
+          0.0,
+          0.0
+        ],
+        "passivity_min_normalized": 0.0,
+        "reference_load_power_residual_normalized": 1.3271025023479582e-16
+      },
+      "referenceLoad": {
+        "resistancePaSM3": 249428.0661607931,
+        "inputImpedance": {
+          "r": 197837.86166463932,
+          "i": -94626.80569520046
+        },
+        "outflowOverConeFlow": {
+          "r": 0.7232106930160613,
+          "i": -0.5197425267082776
+        }
+      }
+    },
+    {
+      "frequencyHz": 500.0,
+      "impedance": [
+        [
+          {
+            "r": 0.0,
+            "i": -216352.19335093885
+          },
+          {
+            "r": 0.0,
+            "i": -234627.21111546544
+          }
+        ],
+        [
+          {
+            "r": 0.0,
+            "i": -234627.21111546553
+          },
+          {
+            "r": 0.0,
+            "i": -177945.08150499547
+          }
+        ]
+      ],
+      "diagnostics": {
+        "frequency_hz": 500.0,
+        "solve_s": 2.007510625058785,
+        "relative_residual": 2.1622651906753273e-12,
+        "reciprocity_error": 2.8434600626306887e-16,
+        "hermitian_real_eigenvalues": [
+          -4.3655745685100555e-11,
+          4.3655745685100555e-11
+        ],
+        "passivity_min_normalized": -1.0053149461596426e-16,
+        "reference_load_power_residual_normalized": 3.1596223563792603e-16
+      },
+      "referenceLoad": {
+        "resistancePaSM3": 249428.0661607931,
+        "inputImpedance": {
+          "r": 146263.00447771393,
+          "i": -112006.3486608941
+        },
+        "outflowOverConeFlow": {
+          "r": 0.4447303626632367,
+          "i": -0.62338466106446
+        }
+      }
+    },
+    {
+      "frequencyHz": 700.0,
+      "impedance": [
+        [
+          {
+            "r": 0.0,
+            "i": -148228.56512040534
+          },
+          {
+            "r": 0.0,
+            "i": -174681.0373884091
+          }
+        ],
+        [
+          {
+            "r": 0.0,
+            "i": -174681.03738840905
+          },
+          {
+            "r": 0.0,
+            "i": -93719.67883097164
+          }
+        ]
+      ],
+      "diagnostics": {
+        "frequency_hz": 700.0,
+        "solve_s": 1.9584739999845624,
+        "relative_residual": 1.1302860424807775e-12,
+        "reciprocity_error": 2.7171671184252615e-16,
+        "hermitian_real_eigenvalues": [
+          -2.9103830456733704e-11,
+          2.9103830456733704e-11
+        ],
+        "passivity_min_normalized": -9.606636475278067e-17,
+        "reference_load_power_residual_normalized": 9.565178961285788e-17
+      },
+      "referenceLoad": {
+        "resistancePaSM3": 249428.0661607931,
+        "inputImpedance": {
+          "r": 107199.39388772887,
+          "i": -107949.64655012623
+        },
+        "outflowOverConeFlow": {
+          "r": 0.23058552417866393,
+          "i": -0.6136864967739312
+        }
+      }
+    },
+    {
+      "frequencyHz": 1000.0,
+      "impedance": [
+        [
+          {
+            "r": 0.0,
+            "i": -93363.60458082269
+          },
+          {
+            "r": 0.0,
+            "i": -134127.28114560232
+          }
+        ],
+        [
+          {
+            "r": 0.0,
+            "i": -134127.28114560238
+          },
+          {
+            "r": 0.0,
+            "i": -13096.727762984747
+          }
+        ]
+      ],
+      "diagnostics": {
+        "frequency_hz": 1000.0,
+        "solve_s": 1.9831152081023902,
+        "relative_residual": 5.640939616061487e-13,
+        "reciprocity_error": 3.8861912213619175e-16,
+        "hermitian_real_eigenvalues": [
+          -2.9103830456733704e-11,
+          2.9103830456733704e-11
+        ],
+        "passivity_min_normalized": -1.3739760828063216e-16,
+        "reference_load_power_residual_normalized": 3.7998399297802514e-16
+      },
+      "referenceLoad": {
+        "resistancePaSM3": 249428.0661607931,
+        "inputImpedance": {
+          "r": 71927.21178055921,
+          "i": -89586.92008039735
+        },
+        "outflowOverConeFlow": {
+          "r": 0.028157467057917523,
+          "i": -0.5362608648010869
+        }
+      }
+    },
+    {
+      "frequencyHz": 1500.0,
+      "impedance": [
+        [
+          {
+            "r": 0.0,
+            "i": -39604.11036604662
+          },
+          {
+            "r": 0.0,
+            "i": -115978.303414698
+          }
+        ],
+        [
+          {
+            "r": 0.0,
+            "i": -115978.30341469862
+          },
+          {
+            "r": 0.0,
+            "i": 91322.62783404463
+          }
+        ]
+      ],
+      "diagnostics": {
+        "frequency_hz": 1500.0,
+        "solve_s": 1.9717253751587123,
+        "relative_residual": 2.938023262868686e-13,
+        "reciprocity_error": 4.505055131899187e-15,
+        "hermitian_real_eigenvalues": [
+          -3.055902197957039e-10,
+          3.055902197957039e-10
+        ],
+        "passivity_min_normalized": -1.592777516692586e-15,
+        "reference_load_power_residual_normalized": 3.332095530928404e-15
+      },
+      "referenceLoad": {
+        "resistancePaSM3": 249428.0661607931,
+        "inputImpedance": {
+          "r": 47552.79604527133,
+          "i": -57014.52597224816
+        },
+        "outflowOverConeFlow": {
+          "r": -0.15011786768381982,
+          "i": -0.41001458587680056
+        }
+      }
+    },
+    {
+      "frequencyHz": 2000.0,
+      "impedance": [
+        [
+          {
+            "r": 0.0,
+            "i": 17943.046154812673
+          },
+          {
+            "r": 0.0,
+            "i": -144620.39915082714
+          }
+        ],
+        [
+          {
+            "r": 0.0,
+            "i": -144620.39915082726
+          },
+          {
+            "r": 0.0,
+            "i": 222266.11156837936
+          }
+        ]
+      ],
+      "diagnostics": {
+        "frequency_hz": 2000.0,
+        "solve_s": 1.9519552090205252,
+        "relative_residual": 2.976490615760253e-13,
+        "reciprocity_error": 5.441088313034906e-16,
+        "hermitian_real_eigenvalues": [
+          -5.820766091346741e-11,
+          5.820766091346741e-11
+        ],
+        "passivity_min_normalized": -1.9237152215909268e-16,
+        "reference_load_power_residual_normalized": 6.941816876439279e-16
+      },
+      "referenceLoad": {
+        "resistancePaSM3": 249428.0661607931,
+        "inputImpedance": {
+          "r": 46738.600304226835,
+          "i": -23705.863327059003
+        },
+        "outflowOverConeFlow": {
+          "r": -0.2879877923614033,
+          "i": -0.32318124260936615
+        }
+      }
+    }
+  ],
+  "totalRuntimeS": 17.646045292029157,
+  "pressureSliceFile": "inserted-3mm-sample.json.slice.json"
+}
