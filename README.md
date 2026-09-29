@@ -14,9 +14,9 @@ python3 -m http.server 8520 --bind 127.0.0.1
 
 Open **http://127.0.0.1:8520/**.
 
-## Build 12: Assisted design
+## Build 12.1: Assisted design
 
-Assisted now follows **Goals → Drivers → Designs → Refine**. Set the operating band, nominal coverage, drive, assembly limits, optional mid-band loudness target and driver budget. Choose a catalogue suggestion or select drivers you own, then generate layouts. Suggestions require complete motor data and a documented compression-driver handoff recommendation. They are a shortlist for further checks, not a universal best-buy ranking. Enter your own driver quotes to check cost; missing prices are never treated as zero.
+Assisted follows **Goals → Drivers → Designs → Refine**, with grouped essentials, optional output/budget controls, a selected-driver summary, size filters, and one consistent next action. Preview Apply/Cancel controls appear beside the horn; current-design measurements are hidden during preview. Set the operating band, nominal coverage, drive, assembly limits, optional mid-band loudness target and driver budget. Choose a catalogue suggestion or select drivers you own, then generate layouts. Suggestions require complete motor data and a documented compression-driver handoff recommendation. They are a shortlist for further checks, not a universal best-buy ranking. Enter your own driver quotes to check cost; missing prices are never treated as zero.
 
 The starter uses the DCX464. The BMS 4594HE is excluded from Assisted generation pending accommodation of the 26.6 mm forward nose shown in its manufacturer drawing; older studies retain their original geometry for reproducibility and display a drawing-correction notice.
 
@@ -32,7 +32,7 @@ Research analysis defaults to **Simple**, with practical response, excursion and
 - Round, capsule and teardrop entries; two, four or six cone mids.
 - Continuous front adapters with closed wall meshes and smooth neck-to-chamber transitions, shared by the 3D and section views. Entry tube length is adjustable separately from driver standoff; the acoustic model adds a fixed 3 mm passage allowance.
 - Individual pods or a shared rear enclosure, with sealed or ported loading and a cylindrical or curved shared shell.
-- Driver selection grouped by nominal size in inches. Manufacturer-referenced dimensions distinguish sourced geometry from representative appearance and clearance envelopes.
+- Driver selection grouped by nominal size in inches. Manufacturer-referenced dimensions distinguish sourced geometry from representative appearance and clearance envelopes. The reviewed catalogue contains 54 mechanical records and 28 complete exact-variant cone motor datasets (27 mechanically selectable), including eight new 8-inch/10-inch models. Source records, known exclusions and reproducible generation live in [driver-research](driver-research/README.md). Original manufacturer documents remain in the local research archive and are not deployed.
 - 3D assembly, section and entry-footprint views, point measurements, and saved comparisons.
 - Optional annular or offset-outlet cone inserts with opening, clearance and center-relief controls, section inspection and mesh-based displaced-air-volume accounting.
 - Reduced linear acoustic screening using supported driver motor data and a one-dimensional Webster horn network.

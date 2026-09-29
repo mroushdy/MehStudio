@@ -21,3 +21,5 @@ test('generation preserves locks and refuses impossible constraints or stale mot
  const first=r.candidates[0],changed=await F.generate({...brief,coverage:80},{},{currentState:first.state,lockProfile:true});assert.equal(changed.ok,false);assert.match(changed.errors[0],/Unlock/);
  const locked=await F.generate(brief,{maxWidthMM:800,maxDepthMM:550},{currentState:first.state,lockProfile:true,lockEntry:true});assert.equal(locked.ok,true,JSON.stringify(locked.errors));for(const v of locked.candidates)for(const k of [...F.profileKeys,...F.entryKeys])assert.equal(v.state[k],first.state[k],k);
 });
+
+test('8 and 10 inch filters shortlist exact nominal sizes in the expanded catalogue',()=>{for(const size of ['8','10']){const r=F.driverChoices(O.goalDefaults,{midSize:size,maxWidthMM:1500});assert.ok(r.choices.length);for(const p of r.choices)assert.equal(M.drivers.mid[p.midDriver].nominalDiameterInches,Number(size));}});
