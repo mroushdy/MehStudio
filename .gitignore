@@ -16,3 +16,6 @@ node_modules/
 mesh-export/**/__pycache__/
 mesh-export/runtime/
 mesh-export/cache/
+
+mesh-export/.venv/
+tests/__pycache__/

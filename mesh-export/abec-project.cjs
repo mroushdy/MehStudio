@@ -87,17 +87,23 @@ function buildAbecProject(input,options={}){
  const present=new Set(mesh.face_tags),allTags=new Set();
  const groups=rawGroups.map(g=>{
   ensure(Number.isSafeInteger(g.tag)&&g.tag>0&&!allTags.has(g.tag),'boundary group tags must be unique positive integers');allTags.add(g.tag);
-  const kind=g.role||g.kind,role=kind==='independent-driver-source'?'source':kind==='independent-throat-port'&&g.default_condition==='rigid-closed for mid-only study'?'rigid-wall':kind;
-  return {...g,role,name:g.name||g.id||'boundary_'+g.tag,meshName:'MEH_'+g.tag};
+  const kind=g.role||g.kind,role=['independent-driver-source','independent-vent-source'].includes(kind)?'source':kind==='independent-throat-port'&&g.default_condition==='rigid-closed for mid-only study'?'rigid-wall':kind;
+  return {...g,role,source_type:kind==='independent-vent-source'?'vent':'driver',name:g.name||g.id||'boundary_'+g.tag,meshName:'MEH_'+g.tag};
  }).filter(g=>present.has(g.tag)).sort((a,b)=>a.tag-b.tag);
  ensure([...present].every(t=>groups.some(g=>g.tag===t)),'a face tag has no boundary-group definition');
  ensure(groups.every(g=>['source','rigid-wall'].includes(g.role)),'interface/diagnostic/open-port faces cannot be included in a single-exterior BEM boundary');
  ensure(!present.has(301),'mouth-interface tag 301 is FEM-only; the BEM mouth must remain open');
- const checked=validateSurfaceMesh(mesh),drivers=options.drivers||manifest.drivers||[],sources=[];
+ const checked=validateSurfaceMesh(mesh),drivers=options.drivers||manifest.drivers||[],vents=options.ventSources||manifest.vent_sources||[],sources=[];
+ ensure(Array.isArray(drivers)&&Array.isArray(vents)&&drivers.length+vents.length>0,'independent source metadata is required');
+ const definitions=[...drivers.map(d=>({...d,source_type:'driver'})),...vents.map(d=>({...d,source_type:'vent'}))];
+ const sourceDefinitionTags=definitions.map(d=>d.source_tag??d.tag),sourceTags=groups.filter(g=>g.role==='source').map(g=>g.tag);
+ ensure(sourceDefinitionTags.every(t=>Number.isSafeInteger(t)&&t>0)&&new Set(sourceDefinitionTags).size===sourceDefinitionTags.length,'source metadata tags must be unique positive integers');
+ ensure(sourceDefinitionTags.every(t=>sourceTags.includes(t)),'a declared source is missing from the boundary mesh or has no source role');
  for(const g of groups.filter(g=>g.role==='source')){
-  const driver=drivers.find(d=>(d.source_tag??d.tag)===g.tag);ensure(driver,'missing independent driver definition for source tag '+g.tag);
-  ensure(typeof driver.id==='string'&&driver.id.length>0,'each driver needs a stable id');
-  const axis=unit(driver.motion_into_front_air||driver.direction,'motion_into_front_air for '+driver.id);
+  const driver=definitions.find(d=>(d.source_tag??d.tag)===g.tag);ensure(driver,'missing independent source definition for source tag '+g.tag);
+  ensure(driver.source_type===g.source_type,'source metadata and boundary role disagree for tag '+g.tag);
+  ensure(typeof driver.id==='string'&&driver.id.length>0,'each source needs a stable id');
+  const axis=unit(driver.motion_into_air||driver.motion_into_front_air||driver.direction,'motion_into_air for '+driver.id);
   const faceIndices=[];for(let i=0;i<mesh.faces.length;i++)if(mesh.face_tags[i]===g.tag)faceIndices.push(i);
   const multipliers=faceIndices.map(i=>dot(checked.normals[i],axis));
   ensure(multipliers.every(w=>w>0&&w<=1+1e-12),'source '+driver.id+' contains a facet facing away from its motion into air');
@@ -105,17 +111,20 @@ function buildAbecProject(input,options={}){
   if(driver.projected_mesh_area_m2!==undefined)ensure(Number.isFinite(driver.projected_mesh_area_m2)&&driver.projected_mesh_area_m2>0&&Math.abs(projected/driver.projected_mesh_area_m2-1)<1e-6,'source '+driver.id+' projected area does not match the geometry manifest');
   if(driver.nominal_sd_m2!==undefined)ensure(Number.isFinite(driver.nominal_sd_m2)&&driver.nominal_sd_m2>0&&Math.abs(projected/driver.nominal_sd_m2-1)<.002,'source '+driver.id+' projected area differs from nominal Sd by at least 0.2%');
   const drvGroup=driver.abec_driving_group??(1000+g.tag);ensure(Number.isSafeInteger(drvGroup)&&drvGroup>0,'invalid ABEC driving group');
-  sources.push({id:driver.id,physical_tag:g.tag,driving_group:drvGroup,motion_into_air:axis,face_indices:faceIndices,normal_velocity_multipliers:multipliers,surface_area_m2:area,projected_area_m2:projected,nominal_sd_m2:driver.nominal_sd_m2??null,saved_voltage_rms:driver.saved_voltage_rms??null});
+  sources.push({id:driver.id,source_type:driver.source_type,velocity_basis:driver.source_type==='vent'?'prescribed vent-inlet axial velocity; rear chamber/motor loading absent':'rigid driver axial piston velocity',default_observation_weight:driver.source_type==='vent'?0:1,physical_tag:g.tag,driving_group:drvGroup,motion_into_air:axis,face_indices:faceIndices,normal_velocity_multipliers:multipliers,surface_area_m2:area,projected_area_m2:projected,nominal_sd_m2:driver.nominal_sd_m2??null,saved_voltage_rms:driver.saved_voltage_rms??null});
  }
  ensure(sources.length>0,'at least one independent source is required');
  ensure(new Set(sources.map(s=>s.id)).size===sources.length&&new Set(sources.map(s=>s.driving_group)).size===sources.length,'independent sources must have distinct ids and driving groups');
- const origin=options.mouthCenterM||input.horn?.mouth_center_m||manifest.observation_frame?.origin_m;
+ const origin=options.mouthCenterM||manifest.observation_frame?.origin_m||input.horn?.mouth_center_m;
  ensure(finiteVec(origin),'supply mouthCenterM explicitly (meters); observer placement must not infer an axis from a bounding box');
  const forward=unit(options.forward||manifest.observation_frame?.forward||manifest.axes?.z,'observation forward'),horizontal=unit(options.horizontal||manifest.observation_frame?.horizontal||manifest.axes?.x,'observation horizontal'),vertical=unit(options.vertical||manifest.observation_frame?.vertical||manifest.axes?.y,'observation vertical');
  ensure(Math.abs(dot(forward,horizontal))<1e-8&&Math.abs(dot(forward,vertical))<1e-8&&dot(cross(horizontal,vertical),forward)>1-1e-8,'observation frame must be orthogonal and right-handed');
- const f1=options.f1??100,f2=options.f2??manifest.mesh_request?.maximum_frequency_hz??1000,nf=options.numFrequencies??24;
+ const f2=options.f2??manifest.mesh_request?.maximum_frequency_hz??1000,f1=options.f1??Math.min(100,f2/2),nf=options.numFrequencies??24;
  ensure(Number.isFinite(f1)&&Number.isFinite(f2)&&f1>0&&f2>f1,'frequency range must be positive and increasing');ensure(Number.isSafeInteger(nf)&&nf>=2&&nf<=10000,'numFrequencies must be an integer from 2 to 10000');
  const meshFrequency=options.meshFrequency??f2;ensure(Number.isFinite(meshFrequency)&&meshFrequency>0,'meshFrequency must be positive');
+ const medium=manifest.medium?{sound_speed_m_s:manifest.medium.sound_speed_m_s,density_kg_m3:manifest.medium.density_kg_m3}:null;
+ if(medium)ensure(Object.values(medium).every(x=>Number.isFinite(x)&&x>0),'declared sound speed and density must be finite positive SI values');
+ const mediumSetup=medium?'In Global > Acoustic Parameters set sound speed to '+number(medium.sound_speed_m_s)+' m/s and density to '+number(medium.density_kg_m3)+' kg/m3.':'In Global > Acoustic Parameters choose and record sound speed and density; this input has no medium declaration.';
  // Keep source physical tags stable, while selecting constant-projection
  // subsets by elementary tag. Quantizing the cosine to 12 decimal places
  // introduces <=5e-13 absolute velocity error and avoids thousands of identical
@@ -130,8 +139,9 @@ function buildAbecProject(input,options={}){
  }
  const solving=['// MEH acoustic boundary export. SI meters; normals INTO the analyzed air.',
   '// Connected front passages and exterior are ONE exterior fluid; mouth has no cap.',
-  '// Source basis: rigid axial piston velocity, projected onto each cone facet.',
+  '// Source basis: prescribed axial velocity, projected onto each source facet.',
   '// Unit-velocity transfer problem, NOT the saved voltage-driven system response.',
+  '// '+mediumSetup,
   '// design_sha256='+manifest.design_sha256,'','Control_Solver',
   '  f1='+number(f1)+'Hz; f2='+number(f2)+'Hz; NumFrequencies='+nf+'; Abscissa=log',
   '  Dim=3D; MeshFrequency='+number(meshFrequency)+'Hz','','MeshFile_Properties "MEHMesh"','  MeshFileAlias="M1"','  Scale=1m','',
@@ -150,7 +160,7 @@ function buildAbecProject(input,options={}){
  const obs=['// Unit piston velocity on each independent source. Saved voltage is metadata only.',
   '// To isolate a source, set other weights to 0 in this ONE Driving_Values section.',
   'Driving_Values','  DrvType=Velocity; Value=1.0'];
- sources.forEach((s,i)=>obs.push('  '+(i+1)+' DrvGroup='+s.driving_group+' Weight=1.0 Delay=0.0'));
+ sources.forEach((s,i)=>obs.push('  '+(i+1)+' DrvGroup='+s.driving_group+' Weight='+s.default_observation_weight+'.0 Delay=0.0'));
  obs.push('','Nodes "FieldPoints"','  Scale=1m','  // node x y z; on-axis point is exactly 1 m forward of the supplied mouth origin');
  nodeRows.forEach(([id,p])=>obs.push('  '+id+' '+p.map(number).join(' ')));
  obs.push('','BE_Spectrum "On axis unit velocity"','  PlotType=Curves','  AnalysisType=Pressure','  RefNodes="FieldPoints"','  GraphHeader="Unit piston velocity - on axis 1m"','  BodeType=LeveldB','  Range=50dB','  1 1000 ID=1000','');
@@ -160,13 +170,13 @@ function buildAbecProject(input,options={}){
   'Radiation_Impedance "Source load matrix"','  GraphHeader="Normalized self and mutual source loading"','  BodeType=Complex','  RadImpType=Normalized');
  let row=1;for(const a of sources)for(const b of sources){obs.push('  '+row+' '+a.driving_group+' '+b.driving_group+' ID='+(3000+row));row++;}obs.push('');
  const project=['[Project]','Scriptname_InfoFile=','[Solving]','Scriptname_Solving=solving.txt','[DirectSound]','Scriptname_DirectSound=','[LEScript]','Scriptname_LEScript=','[Observation]','C0=observation.txt','[MeshFiles]','C0=boundary.msh,M1',''].join('\n');
- const warnings=['AKABAK/ABEC interpretation, import, normals check and acoustic solve have not been run.','Geometry validity is necessary but does not establish acoustic accuracy or convergence.','No motor, crossover or shared-rear compliance network is included in this unit-velocity BEM project.'];
+ const warnings=['AKABAK/ABEC interpretation, import, normals check and acoustic solve have not been run.','Geometry validity is necessary but does not establish acoustic accuracy or convergence.','No motor, crossover or rear acoustic loading network is included in this unit-velocity BEM project.','Acoustic medium parameters require manual entry after import; the scripts do not configure them.'];
  const denseMatrixBytes=16*mesh.faces.length*mesh.faces.length;
  if(denseMatrixBytes>4*1024**3)warnings.push('One dense complex128 matrix at this face count would require '+(denseMatrixBytes/1024**3).toFixed(1)+' GiB, before solver workspaces. This is an arithmetic size estimate, not an AKABAK memory benchmark. A verified coarse boundary mesh or coupled domain partition may be required for a practical solve.');
  if(checked.report.minimum_triangle_quality<.1)warnings.push('Some triangles have quality below 0.1; refine or remesh and check solver conditioning.');
  if(checked.report.maximum_edge_m>(manifest.mesh_request?.wavelength_maximum_edge_m??Infinity)*1.01)warnings.push('Some edges exceed the requested wavelength edge length.');
  const frame={origin_m:origin,forward,horizontal,vertical,on_axis_1m:nodeRows[0][1],polar_distance_m:2};
- const adapter={schema:'meh-abec-bundle/v1',model:'single-exterior',length_unit:'m',normal_convention:'into-air',source_basis:'rigid piston translation projected on each triangle normal',source_projection_maximum_rounding_error:5e-13,mesh_format:'Gmsh 2.2 ASCII, linear triangles',group_selection:'numeric elementary tags; physical tags remain stable semantic ids',dense_complex128_matrix_bytes:denseMatrixBytes,observation_frame:frame,checks:checked.report,warnings,proprietary_solver_validation:'not run',syntax_provenance:'R&D Team AKABAK help (2026-02-13); official ATH 2025-06 project/script output templates; see docs/acoustic-mesh-formulation.md'};
+ const adapter={schema:'meh-abec-bundle/v1',model:'single-exterior',length_unit:'m',normal_convention:'into-air',requested_medium:medium,acoustic_medium_transfer:'manual entry required; not configured by scripts',required_solver_medium_setup:mediumSetup,source_basis:'prescribed axial velocity projected on each source triangle normal',source_projection_maximum_rounding_error:5e-13,mesh_format:'Gmsh 2.2 ASCII, linear triangles',group_selection:'numeric elementary tags; physical tags remain stable semantic ids',dense_complex128_matrix_bytes:denseMatrixBytes,observation_frame:frame,checks:checked.report,warnings,proprietary_solver_validation:'not run',syntax_provenance:'R&D Team AKABAK help (2026-02-13); official ATH 2025-06 project/script output templates; see docs/acoustic-mesh-formulation.md'};
  const readme=['MEH acoustic boundary project — review prototype','',
   'This folder contains a real text project.abec, boundary.msh (Gmsh 2.2 ASCII),',
   'solving.txt, observation.txt, source-map.json and boundary-manifest.json.',
@@ -175,6 +185,8 @@ function buildAbecProject(input,options={}){
   'IMPORT IN AKABAK',
   'Use Tools > Import ABEC Project, select project.abec, then Start Import.',
   'Review the interpretation log and SI units, then Apply. All files stay in this folder.',
+  mediumSetup,
+  'The script does not transfer these medium settings. Do not assume solver defaults match.',
   'Confirm mesh dimensions, every source group and normals pointing into the air.',
   'Cone facets belonging to one mid must remain one shared Driving Group after import.',
   'Check Global > Fixed Driving: each active source has unit piston velocity, not voltage.',
@@ -183,12 +195,12 @@ function buildAbecProject(input,options={}){
   'ACOUSTIC MODEL',
   'One exterior domain contains all front chambers, real wall openings, horn and surrounding air.',
   'The horn mouth is open. No artificial cap is a wall or zero-pressure termination.',
-  'The exterior enclosure surface is an acoustic scatterer; its rear air is not modeled here.',
+  'The exterior enclosure surface is an acoustic scatterer; its rear chamber air is not modeled here.',
   'The compression-driver throat is rigidly closed for this mid-only study.',
-  'The saved driver voltage and shared rear volume are retained in the manifest only.',
+  'The saved driver voltage and rear loading are retained in the manifest only.',
   'Do not read the unit-velocity plots as the response at the saved voltage.',
-  'Couple all drivers to the full complex self/mutual front load matrix and shared rear',
-  'pressure before predicting voltage sensitivity, excursion or choosing port sizes.',
+  'Couple all drivers to the full complex self/mutual front load matrix and their rear',
+  'loading before predicting voltage sensitivity, excursion or choosing port sizes.',
   'The impedance observation is normalized; inspect the solver area/normalization convention',
   'before converting it to a dimensional acoustic or mechanical impedance matrix.',
   '',
@@ -199,6 +211,9 @@ function buildAbecProject(input,options={}){
   'The projected source area, surface',
   'area, motion vector, facet weights and element tags are in source-map.json.',
   'The default observation drives all mids with unit axial velocity and zero delay.',
+  'Independent vent-inlet sources, when present, default to zero weight. Set one to 1',
+  'and all other sources to 0 to inspect its radiation transfer basis. Prescribed inlet',
+  'velocity is not a solved reflex response; rear cavity and motor coupling are absent.',
   'Change the single Driving_Values table to inspect a unit-source basis.',
   '',
   'VALIDATION STILL REQUIRED',

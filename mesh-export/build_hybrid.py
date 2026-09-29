@@ -119,6 +119,8 @@ def main():
     p=argparse.ArgumentParser();p.add_argument('exterior');p.add_argument('--branches',required=True);p.add_argument('--size-mm',default='1.4');p.add_argument('--manifest',required=True);p.add_argument('--out',required=True);a=p.parse_args()
     out=Path(a.out);out.mkdir(parents=True,exist_ok=True);(out/'INCOMPLETE.txt').write_text('Assembly/validation incomplete.\n')
     manifest=json.loads(Path(a.manifest).read_text());root=Path(a.branches);branch_report=json.loads((root/'validation.json').read_text())
+    if len(manifest.get('drivers',[]))!=4 or manifest.get('vent_sources') or manifest.get('rear',{}).get('kind')!='shared-sealed-lumped-coupling':
+        raise ValueError('The experimental hybrid adapter is qualified only as a geometric contract for four shared-sealed branches. Use build_mesh.py for individual, reflex-basis or other driver-count surface exports.')
     exterior_records=[json.loads(p.read_text()) for p in (Path(a.exterior).parent/'manifest.json',Path(a.exterior).parent/'validation.json') if p.exists()]
     design=verify_provenance(manifest,branch_report,exterior_records)
     traces=[json.loads((root/f'mid_{i}_interface_{a.size_mm}mm.json').read_text()) for i in range(1,5)]

@@ -6,11 +6,14 @@ const fs=require('node:fs'),path=require('node:path');
 const {buildAbecProject}=require('./abec-project.cjs');
 function writeBundle(directory){
  const out=path.resolve(directory),manifest=JSON.parse(fs.readFileSync(path.join(out,'manifest.json'),'utf8')),mesh=JSON.parse(fs.readFileSync(path.join(out,'bem-air-outward.json'),'utf8'));
- const last=manifest.horn_stations?.at(-1);
- if(!last||!Number.isFinite(last.z_m))throw new Error('Canonical mouth rim station is missing from manifest');
- // This is the declared canonical rolled-rim plane, not a coordinate inferred
- // from a bounding box. All axis conventions come from the source manifest.
- const mouthCenterM=manifest.observation_frame?.origin_m||[0,0,last.z_m];
+ let mouthCenterM=manifest.observation_frame?.origin_m;
+ if(!mouthCenterM){
+  // Compatibility for archived jobs that predate an explicit observation
+  // frame. New jobs declare the geometric mouth, shared by every adapter.
+  const last=manifest.horn_stations?.at(-1);
+  if(!last||!Number.isFinite(last.z_m))throw new Error('Canonical observation frame or legacy mouth rim station is missing from manifest');
+  mouthCenterM=[0,0,last.z_m];
+ }
  const bundle=buildAbecProject({manifest,mesh},{normalConvention:'air-outward',mouthCenterM});
  const dir=path.join(out,'abec');fs.mkdirSync(dir,{recursive:true});
  for(const [name,data]of Object.entries(bundle.files))fs.writeFileSync(path.join(dir,name),data);

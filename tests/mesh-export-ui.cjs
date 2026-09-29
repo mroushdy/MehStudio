@@ -2,15 +2,15 @@
 'use strict';
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const Panel=require('../mesh-export/panel.cjs'),root=path.join(__dirname,'..');
-function harness({getDesign=()=>({format:'MEH-Lab-v2',state:{mouth:720}}),buildJob=(design,options)=>({manifest:{designHash:'test'},design,options})}={}){
+function harness({getDesign=()=>({format:'MEH-Lab-v2',state:{mouth:720}}),buildJob=(design,options)=>({manifest:{designHash:'test'},design,options}),runnerPackage}={}){
  const nodes=new Map(),saved=[],exportButton={events:{},addEventListener(event,fn){this.events[event]=fn;},removeEventListener(event,fn){if(this.events[event]===fn)delete this.events[event];}};
  const node=selector=>{if(!nodes.has(selector))nodes.set(selector,{value:'',checked:false,disabled:false,hidden:false,textContent:'',attributes:{},events:{},setAttribute(key,value){this.attributes[key]=value;},addEventListener(event,fn){this.events[event]=fn;}});return nodes.get(selector);};
  node('[data-mx-frequency]').value='1000';node('[data-mx-density]').value='8';node('[data-mx-volume]').checked=Panel.defaults.volumeMesh;node('[data-mx-info]').hidden=true;
- const host={innerHTML:'',querySelector:node},panel=Panel.init(host,{getDesign,buildJob,save:(...args)=>saved.push(args),exportButton});
+ const host={innerHTML:'',querySelector:node},panel=Panel.init(host,{getDesign,buildJob,save:(...args)=>saved.push(args),exportButton,runnerPackage});
  return {host,node,panel,saved,exportButton};
 }
 test('frequency and density controls reject blank or nonphysical settings',()=>{
- assert.deepEqual(Panel.readOptions('1000','8',true),{maxFrequencyHz:1000,elementsPerWavelength:8,volumeMesh:true});
+ assert.deepEqual(Panel.readOptions('1000','8',true),{maxFrequencyHz:1000,elementsPerWavelength:8,volumeMesh:true,rearVentBasis:false});
  for(const bad of ['',' ',0,99,10001,'bad','Infinity'])assert.throws(()=>Panel.readOptions(bad,8,true),/100 to 10,000/);
  for(const bad of ['',' ',0,5,21,6.5,'bad','Infinity'])assert.throws(()=>Panel.readOptions(1000,bad,true),/6 to 20/);
  assert.equal(Panel.readOptions(100,6,false).volumeMesh,false);
@@ -23,7 +23,7 @@ test('download reads the current design each time and retains native meshing set
  assert.deepEqual(first.options,Panel.defaults);assert.match(h.node('[data-mx-status]').textContent,/no response has been calculated/);
  mouth=740;h.node('[data-mx-frequency]').value='2000';h.node('[data-mx-density]').value='12';h.node('[data-mx-volume]').checked=false;
  h.exportButton.events.click();assert.equal(h.panel.job,null);await h.panel.run();
- const second=JSON.parse(h.saved[1][1]);assert.equal(second.design.state.mouth,740);assert.deepEqual(second.options,{maxFrequencyHz:2000,elementsPerWavelength:12,volumeMesh:false});
+ const second=JSON.parse(h.saved[1][1]);assert.equal(second.design.state.mouth,740);assert.deepEqual(second.options,{maxFrequencyHz:2000,elementsPerWavelength:12,volumeMesh:false,rearVentBasis:false});
 });
 test('a blank control blocks export before geometry or design is read',async()=>{
  let reads=0,builds=0;const h=harness({getDesign:()=>{reads++;return {};},buildJob:()=>{builds++;return {manifest:{}};}});
@@ -44,7 +44,7 @@ test('information disclosure stays concise and reports expanded state',()=>{
  const h=harness();h.node('[data-mx-help]').events.click();assert.equal(h.node('[data-mx-info]').hidden,false);assert.equal(h.node('[data-mx-help]').attributes['aria-expanded'],'true');
  h.node('[data-mx-help]').events.click();assert.equal(h.node('[data-mx-info]').hidden,true);assert.equal(h.node('[data-mx-help]').attributes['aria-expanded'],'false');
  assert.match(h.host.innerHTML,/Independent inside and outside simulations/);assert.match(h.host.innerHTML,/requires review in AKABAK/);
- assert.match(h.host.innerHTML,/build_mesh\.py MEH_acoustic_geometry\.json --out/);assert.match(h.host.innerHTML,/href="https:\/\/github.com\/mroushdy\/MehStudio\/tree\/main\/mesh-export"/);assert.doesNotMatch(h.host.innerHTML,/<script[^>]+src=/);
+ assert.match(h.host.innerHTML,/python3 run\.py MEH_acoustic_geometry\.json/);assert.match(h.host.innerHTML,/geometry job is not a mesh/);assert.match(h.host.innerHTML,/START_HERE\.md/);assert.match(h.host.innerHTML,/href="https:\/\/github.com\/mroushdy\/MehStudio\/tree\/main\/mesh-export"/);assert.doesNotMatch(h.host.innerHTML,/<script[^>]+src=/);
  h.panel.dispose();assert.equal(h.exportButton.events.click,undefined);
 });
 test('portable HTML embeds reviewed modules while preserving existing script indices and count',()=>{
@@ -64,4 +64,16 @@ test('embedded panel exports the exact saved design through canonical geometry',
  assert.equal(job.manifest.drivers.length,4);assert.ok(job.manifest.drivers.every(driver=>driver.saved_voltage_rms===1));
  assert.equal(job.manifest.units.length,'m');assert.equal(job.manifest.axes.forward,'+Z');assert.equal(job.source_design.state.fillerOpening,design.state.fillerOpening);
  assert.ok(h.saved[0][1].length>1000);assert.ok(!/NaN|Infinity/.test(h.saved[0][1]));
+});
+
+test('offline runner download is a binary ZIP and does not export a stale design',()=>{
+ const bundle=require('../mesh-export/runner-package.cjs').buildPackage();let reads=0;
+ const h=harness({getDesign:()=>{reads++;return {};},runnerPackage:{filename:'MEH-local-runner.zip',base64:bundle.bytes.toString('base64')}});
+ h.node('[data-mx-runner]').events.click();assert.equal(reads,0);assert.equal(h.saved.length,1);assert.equal(h.saved[0][0],'MEH-local-runner.zip');assert.equal(h.saved[0][2],'application/zip');assert.deepEqual(Buffer.from(h.saved[0][1]),bundle.bytes);
+ assert.match(h.node('[data-mx-status]').textContent,/setup is required once/);
+});
+test('rear vent sources require an explicit option and retain their limitation in the UI',async()=>{
+ const h=harness();await h.panel.run();assert.equal(JSON.parse(h.saved[0][1]).options.rearVentBasis,false);
+ h.node('[data-mx-vent-basis]').checked=true;await h.panel.run();assert.equal(JSON.parse(h.saved[1][1]).options.rearVentBasis,true);
+ assert.match(h.host.innerHTML,/rear-cavity and motor coupling/);assert.match(h.host.innerHTML,/native AKABAK import and solve are unverified/);
 });

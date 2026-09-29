@@ -2,9 +2,9 @@
 const {test}=require('node:test');
 const assert=require('node:assert/strict');
 const {buildAbecProject}=require('../mesh-export/abec-project.cjs');
-function fixture({scale=.05,asymmetric=false}={}){
+function fixture({scale=.05,asymmetric=false,count=2}={}){
  const mesh={vertices_m:[],faces:[],face_tags:[],normal_convention:'into-air'};
- for(let source=0;source<2;source++){
+ for(let source=0;source<count;source++){
   const base=mesh.vertices_m.length,shift=source*4;
   mesh.vertices_m.push(...[[-1,-1,0],[1,-1,0],[1,1,0],[-1,1,0],[asymmetric?.5:0,0,1]].map(p=>p.map((v,k)=>(v+(k===0?shift:0))*scale)));
   // Hand-wound outward faces. Two pyramid exclusion volumes, air outside.
@@ -12,6 +12,8 @@ function fixture({scale=.05,asymmetric=false}={}){
   mesh.face_tags.push(10,10,...Array(4).fill(101+source));
  }
  const manifest={design_sha256:'a'.repeat(64),units:{length:'m'},axes:{x:[1,0,0],y:[0,1,0],z:[0,0,1]},boundary_groups:[{tag:10,kind:'rigid-wall',id:'wall'},{tag:101,kind:'independent-driver-source',id:'mid_1'},{tag:102,kind:'independent-driver-source',id:'mid_2'}],drivers:[1,2].map(i=>({id:'mid_'+i,source_tag:100+i,motion_into_front_air:[0,0,1],nominal_sd_m2:4*scale**2,saved_voltage_rms:1})),mesh_request:{maximum_frequency_hz:1000}};
+ manifest.boundary_groups=[manifest.boundary_groups[0],...Array.from({length:count},(_,i)=>({tag:101+i,kind:'independent-driver-source',id:'mid_'+(i+1)}))];
+ manifest.drivers=Array.from({length:count},(_,i)=>({...manifest.drivers[0],id:'mid_'+(i+1),source_tag:101+i}));
  return {manifest,mesh,horn:{mouth_center_m:[0,0,scale]}};
 }
 function parseMsh(text){
@@ -86,4 +88,61 @@ test('a stale source-area manifest cannot silently drive a changed diaphragm',()
  assert.throws(()=>buildAbecProject(input),/projected area does not match/);
  delete input.manifest.drivers[0].projected_mesh_area_m2;input.manifest.drivers[0].nominal_sd_m2=.02;
  assert.throws(()=>buildAbecProject(input),/differs from nominal Sd/);
+});
+test('every offered driver count has complete independent selectors and mutual observations',()=>{
+ for(const count of [2,4,6]){
+  const out=buildAbecProject(fixture({count}));
+  assert.equal(out.sources.length,count);assert.equal(new Set(out.sources.map(s=>s.driving_group)).size,count);
+  assert.equal([...out.files['observation.txt'].matchAll(/^  \d+ 11\d+ 11\d+ ID=/gm)].length,count**2);
+  for(const source of out.sources)near(source.projected_area_m2,.01);
+ }
+});
+test('missing, duplicated and mismatched source metadata cannot silently drop a basis',()=>{
+ const missing=fixture();missing.mesh.face_tags=missing.mesh.face_tags.map(t=>t===102?10:t);
+ assert.throws(()=>buildAbecProject(missing),/declared source is missing/);
+ const duplicate=fixture();duplicate.manifest.drivers.push({...duplicate.manifest.drivers[0]});
+ assert.throws(()=>buildAbecProject(duplicate),/unique positive integers/);
+ const wrongRole=fixture();wrongRole.manifest.boundary_groups[2].kind='independent-vent-source';
+ assert.throws(()=>buildAbecProject(wrongRole),/role disagree/);
+});
+test('vent inlet basis keeps its own motion, tag and muted default without a nominal driver Sd',()=>{
+ const input=fixture();input.manifest.drivers.pop();input.manifest.boundary_groups[2].kind='independent-vent-source';
+ input.manifest.vent_sources=[{id:'rear_vent_1',source_tag:102,motion_into_air:[0,0,1],projected_mesh_area_m2:.01}];
+ const out=buildAbecProject(input),vent=out.sources.find(s=>s.source_type==='vent');
+ assert.equal(vent.physical_tag,102);assert.equal(vent.driving_group,1102);assert.equal(vent.nominal_sd_m2,null);near(vent.projected_area_m2,.01);
+ assert.equal(vent.default_observation_weight,0);assert.match(out.files['observation.txt'],/DrvGroup=1102 Weight=0\.0/);
+ assert.match(out.files['observation.txt'],/1101 1102 ID=/);assert.match(out.files['observation.txt'],/1102 1101 ID=/);
+ assert.match(vent.velocity_basis,/rear chamber\/motor loading absent/);
+ input.manifest.vent_sources[0].motion_into_air=[0,0,-1];assert.throws(()=>buildAbecProject(input),/facing away/);
+});
+test('a 100 Hz requested upper limit gets a valid default range; explicit invalid limits still fail',()=>{
+ const input=fixture();input.manifest.mesh_request.maximum_frequency_hz=100;
+ assert.match(buildAbecProject(input).files['solving.txt'],/f1=50Hz; f2=100Hz/);
+ assert.throws(()=>buildAbecProject(input,{f1:100}),/positive and increasing/);
+});
+test('the authoritative observation frame precedes legacy horn origin and survives the file bridge',()=>{
+ const fs=require('node:fs'),os=require('node:os'),path=require('node:path'),{writeBundle}=require('../mesh-export/write_bundle.cjs');
+ const input=fixture();input.manifest.observation_frame={origin_m:[.2,.3,.4],forward:[0,0,1],horizontal:[1,0,0],vertical:[0,1,0]};
+ const direct=buildAbecProject(input);assert.deepEqual(direct.observation_frame.origin_m,[.2,.3,.4]);
+ assert.deepEqual(buildAbecProject(input,{mouthCenterM:[.1,0,0]}).observation_frame.origin_m,[.1,0,0]);
+ const directory=fs.mkdtempSync(path.join(os.tmpdir(),'meh-abec-frame-'));
+ try{
+  const mesh={...input.mesh,faces:input.mesh.faces.map(([a,b,c])=>[a,c,b])};
+  fs.writeFileSync(path.join(directory,'manifest.json'),JSON.stringify(input.manifest));
+  fs.writeFileSync(path.join(directory,'bem-air-outward.json'),JSON.stringify(mesh));
+  writeBundle(directory);
+  assert.equal(fs.readFileSync(path.join(directory,'abec','observation.txt'),'utf8'),direct.files['observation.txt']);
+  delete input.manifest.observation_frame;input.manifest.horn_stations=[{z_m:.15}];
+  fs.writeFileSync(path.join(directory,'manifest.json'),JSON.stringify(input.manifest));writeBundle(directory);
+  const exported=JSON.parse(fs.readFileSync(path.join(directory,'abec','adapter-validation.json'),'utf8'));
+  assert.deepEqual(exported.observation_frame.origin_m,[0,0,.15]);
+ }finally{fs.rmSync(directory,{recursive:true,force:true});}
+});
+test('saved medium values are explicit manual import requirements, never an implicit solver-setting claim',()=>{
+ const input=fixture();input.manifest.medium={sound_speed_m_s:350,density_kg_m3:1.19};
+ const out=buildAbecProject(input);assert.deepEqual(out.validation.requested_medium,input.manifest.medium);
+ assert.match(out.validation.acoustic_medium_transfer,/manual entry required/);
+ assert.match(out.files['README.txt'],/sound speed to 350 m\/s and density to 1\.19 kg\/m3/);
+ assert.match(out.files['README.txt'],/script does not transfer/);
+ input.manifest.medium.density_kg_m3=-1;assert.throws(()=>buildAbecProject(input),/finite positive SI/);
 });

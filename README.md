@@ -24,7 +24,7 @@ Generated layouts must meet the entered assembly envelope limits and the existin
 
 Research analysis defaults to **Simple**, with practical response, excursion and air-speed summaries. **Advanced** exposes detailed settings, plots and model assumptions. The saved JSON includes Assisted goals, quotes and selected driver identities; older design files remain supported.
 
-**Export → Acoustic mesh** downloads a canonical geometry job for the native meshing tools. See [the exporter guide](mesh-export/README.md) for surface, ABEC and conforming hybrid FEM/BEM bundles. The browser does not run AKABAK or the native solver. Full-horn tetrahedral meshes that failed quality checks are withheld. Mesh topology checks do not establish acoustic convergence.
+**Export → Acoustic solver export** downloads a canonical geometry job and a self-contained local runner ZIP. Extract the runner, follow its `START_HERE.md` setup, then run your job to produce checked solver files. The job is not a mesh. See [the exporter guide](mesh-export/README.md) for surface, ABEC and conforming hybrid FEM/BEM bundles. The browser does not run AKABAK or the native solver. Full-horn tetrahedral meshes that failed quality checks are withheld. Mesh topology checks do not establish acoustic convergence.
 
 ## What it does
 

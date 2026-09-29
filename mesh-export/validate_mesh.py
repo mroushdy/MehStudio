@@ -3,8 +3,33 @@
 The BVH broad phase checks disjoint and adjacent triangle pairs. Adjacent
 triangles may meet only on their shared edge or vertex; geometric folds and
 intersections beyond that shared simplex are rejected. No random sampling.
+
+Nearly coplanar segment/triangle determinants can amplify floating roundoff
+into false barycentric hits. Ill-conditioned provisional hits are recomputed
+with exact rational arithmetic on the original binary64 input coordinates.
+This numerical filter retains the same determinant gate and inclusion
+tolerances; it does not suppress coplanar or real near-parallel intersections.
 """
+from fractions import Fraction
 import numpy as np
+
+
+def _segment_triangle_exact(p,q,a,b,c,tol):
+    """Confirm one provisional hit without ill-conditioned float division."""
+    p,q,a,b,c=([Fraction(float(v)) for v in point] for point in (p,q,a,b,c))
+    sub=lambda x,y:[u-v for u,v in zip(x,y)]
+    dot=lambda x,y:sum(u*v for u,v in zip(x,y))
+    def cross(x,y):
+        return [x[1]*y[2]-x[2]*y[1],x[2]*y[0]-x[0]*y[2],x[0]*y[1]-x[1]*y[0]]
+    d=sub(q,p);e1=sub(b,a);e2=sub(c,a);s=sub(p,a);h=cross(d,e2)
+    det=dot(e1,h)
+    if not det:
+        return False  # The separate coplanar test owns this case.
+    u=dot(s,h);v=dot(d,cross(s,e1));t=dot(e2,cross(s,e1))
+    if det<0:
+        det,u,v,t=-det,-u,-v,-t
+    allowance=Fraction(float(tol))*det
+    return u>=-allowance and v>=-allowance and u+v<=det+allowance and t>=-allowance and t<=det+allowance
 
 
 def segment_triangle(p,q,a,b,c,tol=1e-10):
@@ -12,7 +37,15 @@ def segment_triangle(p,q,a,b,c,tol=1e-10):
     scale=np.linalg.norm(d,axis=1)*np.linalg.norm(e1,axis=1)*np.linalg.norm(e2,axis=1)
     valid=np.abs(det)>64*np.finfo(float).eps*scale;inv=np.zeros_like(det);inv[valid]=1/det[valid]
     s=p-a;u=inv*np.einsum('ij,ij->i',s,h);v=inv*np.einsum('ij,ij->i',d,np.cross(s,e1));t=inv*np.einsum('ij,ij->i',e2,np.cross(s,e1))
-    return valid & (u>=-tol)&(v>=-tol)&(u+v<=1+tol)&(t>=-tol)&(t<=1+tol)
+    hit=valid & (u>=-tol)&(v>=-tol)&(u+v<=1+tol)&(t>=-tol)&(t<=1+tol)
+    # This is a precision-selection threshold, not a geometric tolerance.
+    # A normalized determinant below 1e-8 can lose eight or more decimal
+    # digits through cancellation. Recompute only provisional hits so that
+    # ordinary disjoint BVH candidates keep the vectorized fast path.
+    uncertain=np.flatnonzero(hit&(np.abs(det)<=1e-8*scale))
+    for i in uncertain:
+        hit[i]=_segment_triangle_exact(p[i],q[i],a[i],b[i],c[i],tol)
+    return hit
 
 
 def coplanar_intersect(x,y):

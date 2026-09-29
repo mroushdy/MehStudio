@@ -3,7 +3,7 @@
 const fs=require('node:fs'),path=require('node:path');
 const root=path.join(__dirname,'..'),file=path.join(root,'index.html');
 function source(){
- const modules=['geometry.cjs','panel.cjs'].map(name=>fs.readFileSync(path.join(__dirname,name),'utf8').trim());
+ const modules=[require('./runner-package.cjs').browserSource(),...['geometry.cjs','panel.cjs'].map(name=>fs.readFileSync(path.join(__dirname,name),'utf8').trim())];
  for(const text of modules)if(/<\/script/i.test(text))throw Error('Embedded mesh module contains a closing script tag.');
  return '/* BEGIN ACOUSTIC MESH EXPORT */\n'+modules.join('\n')+`\n(function(root){
  const host=root.document.getElementById('meshExport'),editor=root.__MEH_EDITOR__;

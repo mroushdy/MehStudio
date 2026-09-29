@@ -1,6 +1,7 @@
 """Regression mutations for nonlocal and adjacent triangle intersection tests."""
 import unittest
-from validate_mesh import intersection_check
+import numpy as np
+from validate_mesh import intersection_check,segment_triangle
 
 
 def mesh(vertices,faces):
@@ -76,6 +77,35 @@ class Intersections(unittest.TestCase):
         vertices=[[x*1e-6 for x in p] for p in vertices]
         with self.assertRaisesRegex(ValueError,'intersecting_nonlocal_pairs.*1'):
             intersection_check(mesh(vertices,[[0,1,2],[3,4,5]]))
+
+    def test_separated_nearly_coplanar_pod_cap_triangles(self):
+        # Exact saved 25 mm density regression, original faces181984/181989.
+        # Separate radial strips on one planar cap differ from coplanarity
+        # by <4e-17 m after rotation. A ~7e-22 determinant formerly invented
+        # an intersection. Exact original-float barycentrics are outside:
+        # u=.0116377121, v=1.0000116135, t=1.0125633012.
+        vertices=[[-0.01923298686250076,-0.27012416193895067,0.08527859857621078],[-0.017507649604160958,-0.27060067487089784,0.08600688138254582],[-0.008753824802080494,-0.2607198910016626,0.0709054968814554],[-0.01744424781195557,-0.2706171295925973,0.08603203010379407],[-0.007806742020247882,-0.2609502778662321,0.07125761070885094],[-0.0087221239059778,-0.2607281183625123,0.07091807124207951]]
+        for first in ([0,1,2],[2,1,0]):
+            for second in ([3,4,5],[5,4,3]):
+                with self.subTest(first=first,second=second):
+                    self.assertTrue(intersection_check(mesh(vertices,[first,second]))['passed'])
+
+    def test_exact_filter_preserves_true_nearly_parallel_crossing(self):
+        a=np.array([[0.,0.,0.]]);b=np.array([[1.,0.,0.]]);c=np.array([[0.,1.,0.]])
+        p=np.array([[.2,.2,-1e-13]]);q=np.array([[.8,.2,1e-13]])
+        # The normalized determinant is ~3e-13, exercising exact fallback.
+        # Its intersection (.5,.2,0) is truly inside the target triangle.
+        self.assertTrue(segment_triangle(p,q,a,b,c)[0])
+        vertices=[a[0].tolist(),b[0].tolist(),c[0].tolist(),p[0].tolist(),q[0].tolist(),[.2,.8,1e-13]]
+        with self.assertRaisesRegex(ValueError,'intersecting_nonlocal_pairs.*1'):
+            intersection_check(mesh(vertices,[[0,1,2],[3,4,5]]))
+
+    def test_exact_filter_preserves_noncoplanar_and_coplanar_overlap(self):
+        for z in (0.,1e-13):
+            with self.subTest(height=z):
+                vertices=[[0,0,0],[1,0,0],[0,1,0],[.2,.2,-z],[.8,.2,z],[.2,.8,z]]
+                with self.assertRaisesRegex(ValueError,'intersecting_nonlocal_pairs.*1'):
+                    intersection_check(mesh(vertices,[[0,1,2],[3,4,5]]))
 
 
 if __name__=='__main__':

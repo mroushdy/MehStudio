@@ -76,7 +76,7 @@ def profile_keep(profile,tolerance):
         if dist[j-a-1]>tolerance:keep.add(j);recurse(a,j);recurse(j,b)
     recurse(0,len(p)-1);return sorted(keep)
 
-def chart_horn(profile,roots,h,count,profile_tolerance=None):
+def chart_horn(profile,roots,h,count,profile_tolerance=None,azimuth_segments=None):
     """Hole edges and mouth cut are constrained; all mapped root nodes are exact."""
     p=np.array([[q['r'],q['z']] for q in profile]);s=np.r_[0,np.cumsum(np.linalg.norm(np.diff(p,axis=0),axis=1))]
     frontmost_i=int(np.argmax(p[:,1]));mouth_i=frontmost_i
@@ -86,7 +86,7 @@ def chart_horn(profile,roots,h,count,profile_tolerance=None):
     while mouth_i>1 and math.atan2(p[mouth_i+1,0]-p[mouth_i-1,0],p[mouth_i+1,1]-p[mouth_i-1,1])>math.radians(75): mouth_i-=1
     sm=s[mouth_i];length=s[-1];radius=float(p[:,0].max())
     seam=-math.pi/count
-    ntheta=max(64,int(math.ceil(2*math.pi*radius/h/count))*count)
+    ntheta=azimuth_segments or max(64,int(math.ceil(2*math.pi*radius/h/count))*count)
     angles=np.linspace(seam,seam+2*math.pi,ntheta+1)
     coords={};known={};pointcache={};edgecache={};geo=gmsh.model.geo
     def point(x,y,world=None):
@@ -171,6 +171,87 @@ def lathe(mesh,profile,angles,tag):
     return rings
 
 
+def bridge(mesh,first,second,tag):
+    """Join corresponding canonical rings without a buried return or cap."""
+    if len(first)!=len(second):raise ValueError('Exterior seam correspondence differs')
+    for j in range(len(first)):
+        k=(j+1)%len(first)
+        mesh.triangle([first[j],first[k],second[k]],tag)
+        mesh.triangle([first[j],second[k],second[j]],tag)
+
+
+def extruded_bridge(mesh,first,second,tag,h):
+    """Resolve long straight generators before triangulation, avoiding slivers.
+
+    Only translated rings use this path: the original ruled quads are planar,
+    so intermediate rings stay exactly on the same piecewise-planar surface.
+    """
+    a=np.asarray(first);b=np.asarray(second);delta=b-a
+    if not np.allclose(delta,delta[0],rtol=0,atol=1e-12):raise ValueError('Extrusion requires translated rings')
+    steps=max(1,math.ceil(float(np.linalg.norm(delta[0]))/(h*.8)))
+    last=first
+    for step in range(1,steps+1):
+        ring=second if step==steps else (a+delta*step/steps).tolist()
+        bridge(mesh,last,ring,tag);last=ring
+
+
+def individual_exterior(mesh,job,inner_rings,angles,h,ptol):
+    """Exposed outer horn + adapter shells + real cylindrical sealed pods."""
+    enclosure=job['enclosure'];pods=enclosure['pods']
+    gmsh.clear();gmsh.model.add('outer_horn_chart')
+    facets,rings,_,qc=chart_horn(job['horn']['outer_profile_m'],
+        [p['root_ring_m'] for p in pods],h,len(pods),ptol or None,len(angles))
+    for tri,_ in facets:mesh.triangle(tri,OUTSIDE)
+    bridge(mesh,inner_rings['lip'],rings['lip'],OUTSIDE)
+    disk(mesh,rings['throat'],OUTSIDE,h)
+    for index,pod in enumerate(pods):
+        chain=pod['adapter_rings_m']
+        for first,second in zip(chain,chain[1:]):bridge(mesh,first,second,OUTSIDE)
+        extruded_bridge(mesh,chain[-1],pod['rear_ring_m'],OUTSIDE,h)
+        if enclosure.get('vents'):
+            vent_boundary(mesh,pod['rear_ring_m'],enclosure['vents'][index],h)
+        else:disk(mesh,pod['rear_ring_m'],BACK,h)
+    qc['outer_root_count']=len(pods)
+    qc['join']='Exact outer-root intersections, adapter mounting rings and pod caps; no buried adapter returns'
+    return qc
+
+
+def vent_boundary(mesh,rear_ring,vent,h):
+    """A real open duct, terminated at its inner end by an independent basis.
+
+    No sealed rear wall covers the vent mouth. The inlet velocity basis does
+    not model rear cavity pressure or an electrical motor; its load is part of
+    the same exterior-connected field as the front-cone bases.
+    """
+    center=np.asarray(vent['mouth_center_m']);axis=np.asarray(vent['axis_into_exterior'])
+    opening=vent['opening_ring_m'];inlet=vent['inlet_ring_m']
+    if vent['shape'] not in ('round','rectangle'):raise ValueError('Unsupported rear vent outline')
+    for ring in (rear_ring,opening):
+        if np.max(np.abs((np.asarray(ring)-center)@axis))>1e-10:raise ValueError('Rear vent cap is not planar')
+    # Keep the canonical 128-gon or all four rectangle corners exactly, even
+    # when the enclosing rear cap has a different number of azimuth segments.
+    planar_annulus(mesh,rear_ring,opening,BACK,h)
+    extruded_bridge(mesh,opening,inlet,OUTSIDE,h)
+    disk(mesh,inlet,vent['source_tag'],h)
+
+
+def planar_annulus(mesh,outer,inner,tag,h):
+    """Constrained planar cap with distinct outer/inner vertex counts."""
+    gmsh.clear();gmsh.model.add('rear_cap');geo=gmsh.model.geo
+    loops=[]
+    for ring in (outer,inner):
+        points=[geo.addPoint(*p,h) for p in ring]
+        edges=[geo.addLine(a,b) for a,b in zip(points,points[1:]+points[:1])]
+        loops.append(geo.addCurveLoop(edges))
+    surface=geo.addPlaneSurface(loops);geo.synchronize()
+    for _,edge in gmsh.model.getEntities(1):gmsh.model.mesh.setTransfiniteCurve(edge,2)
+    gmsh.model.mesh.generate(2)
+    ids,coords,_=gmsh.model.mesh.getNodes();positions={int(k):p for k,p in zip(ids,np.asarray(coords).reshape(-1,3))}
+    types,_,nodes=gmsh.model.mesh.getElements(2,surface)
+    if list(types)!=[2]:raise ValueError('Rear annulus is not triangular')
+    for face in np.asarray(nodes[0]).reshape(-1,3):mesh.triangle([positions[int(i)] for i in face],tag)
+
+
 def disk(mesh,ring,tag,h):
     """Concentric rings avoid high aspect-ratio center fans on large closures."""
     center=np.mean(ring,axis=0);radius=np.linalg.norm(np.array(ring[0])-center);n=max(1,int(math.ceil(radius/h)))
@@ -224,12 +305,39 @@ def msh22(mesh,path,names):
     lines+=['$EndElements',''];Path(path).write_text('\n'.join(lines))
 
 
-def import_check(path,expected):
+def import_check(path,expected,mesh=None):
     gmsh.clear();gmsh.open(str(path));types,ets,ns=gmsh.model.mesh.getElements(2)
     n=sum(len(t) for t in ets)
     if n!=expected:raise ValueError('Gmsh import changed element count')
     groups={str(t):gmsh.model.getPhysicalName(d,t) for d,t in gmsh.model.getPhysicalGroups()}
-    return {'parser':'Gmsh '+gmsh.__version__,'triangles':n,'physical_groups':groups,'passed':True}
+    if mesh is not None:
+        nt,xyz,_=gmsh.model.mesh.getNodes();ids=np.argsort(nt)
+        if not np.array_equal(np.asarray(nt)[ids],np.arange(1,len(mesh.vertices)+1)):raise ValueError('Gmsh node identities changed')
+        if not np.allclose(np.asarray(xyz).reshape(-1,3)[ids],mesh.vertices,rtol=0,atol=1e-15):raise ValueError('Gmsh coordinate/unit round trip failed')
+        if set(map(int,groups))!=set(mesh.tags):raise ValueError('Gmsh lost physical groups')
+        for tag in set(mesh.tags):
+            elements=[];connectivity=[]
+            for entity in gmsh.model.getEntitiesForPhysicalGroup(2,tag):
+                typ,ets,ns=gmsh.model.mesh.getElements(2,int(entity))
+                if list(typ)!=[2]:raise ValueError('Nonlinear or nontriangle import')
+                elements.extend(ets[0]);connectivity.extend(np.asarray(ns[0]).reshape(-1,3))
+            order=np.argsort(elements);expected_ids=np.flatnonzero(np.asarray(mesh.tags)==tag)
+            if not np.array_equal(np.asarray(elements)[order],expected_ids+1) or not np.array_equal(np.asarray(connectivity)[order],np.asarray(mesh.faces)[expected_ids]+1):raise ValueError('Gmsh connectivity, winding or physical tags changed')
+    return {'parser':'Gmsh '+gmsh.__version__,'triangles':n,'physical_groups':groups,
+        'coordinate_connectivity_winding_and_tag_roundtrip':mesh is not None,'coordinate_absolute_tolerance_m':1e-15 if mesh is not None else None,'passed':True}
+
+
+def resources(started,face_count):
+    peak=None
+    try:
+        import resource
+        peak=int(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)*(1 if sys.platform=='darwin' else 1024)
+    except (ImportError,AttributeError):pass
+    return {'native_elapsed_seconds_before_adapter':time.monotonic()-started,
+        'native_process_peak_rss_bytes':peak,'rss_scope':'Native Python/Gmsh process only; excludes Node adapter and solver',
+        'one_dense_complex128_face_matrix_bytes':16*face_count**2,
+        'matrix_estimate_scope':'Arithmetic face-count estimate only; excludes solver refinement, factorization and workspaces; not measured AKABAK RAM',
+        'proprietary_solver_run':False}
 
 
 def tetrahedralize(mesh,path,h,gap_size=None):
@@ -266,7 +374,9 @@ def tetrahedralize(mesh,path,h,gap_size=None):
 
 def main():
     parser=argparse.ArgumentParser();parser.add_argument('job');parser.add_argument('--out',required=True);parser.add_argument('--size-mm',type=float);parser.add_argument('--no-volume',action='store_true');parser.add_argument('--volume',action='store_true');parser.add_argument('--gap-divisions',type=float,default=2);parser.add_argument('--skip-intersections',action='store_true');parser.add_argument('--profile-tolerance-mm',type=float,default=0)
-    args=parser.parse_args();started=time.monotonic();job=json.loads(Path(args.job).read_text());out=Path(args.out);out.mkdir(parents=True,exist_ok=True)
+    args=parser.parse_args();started=time.monotonic();job=json.loads(Path(args.job).read_text());out=Path(args.out)
+    if out.exists() and any(out.iterdir()):raise ValueError('Output directory is not empty; choose a new folder to avoid mixing old and new meshes')
+    out.mkdir(parents=True,exist_ok=True)
     manifest=job['manifest'];parts=job['parts'];options=job.get('options',{})
     freq=float(options.get('maxFrequencyHz',1000));epw=float(options.get('elementsPerWavelength',8));c=float(manifest.get('medium',{}).get('sound_speed_m_s',job['normalized_state']['soundSpeed']))
     h=min(c/(freq*epw),.025) if args.size_mm is None else args.size_mm*.001
@@ -288,31 +398,38 @@ def main():
             bem.triangle(tri,HORN)
             if kind=='front':front.triangle(tri,HORN)
         disk(bem,rings['throat'],THROAT,h);disk(front,rings['throat'],THROAT,h);disk(front,rings['mouth'],MOUTH,h)
-        outer=exterior['outer_profile_m']
-        if ptol:outer=[outer[i] for i in profile_keep(outer,ptol)]
-        lathe(bem,outer,angles,OUTSIDE)
-        rear_ring=[[outer[0]['r']*math.cos(a),outer[0]['r']*math.sin(a),outer[0]['z']] for a in angles]
-        disk(bem,rear_ring,BACK,h)
+        exterior_qc={}
+        if exterior['kind'] in ('individual-sealed-pods','individual-vented-pods'):
+            exterior_qc=individual_exterior(bem,job,rings,angles,h,ptol)
+        else:
+            outer=exterior['outer_profile_m']
+            if ptol:outer=[outer[i] for i in profile_keep(outer,ptol)]
+            lathe(bem,outer,angles,OUTSIDE)
+            rear_ring=[[outer[0]['r']*math.cos(a),outer[0]['r']*math.sin(a),outer[0]['z']] for a in angles]
+            if exterior.get('vents'):vent_boundary(bem,rear_ring,exterior['vents'][0],h)
+            else:disk(bem,rear_ring,BACK,h)
         # Exterior fluid's outward normal points INTO the enclosed obstacle;
         # therefore its signed enclosed volume is negative.
         refine(bem,h);refine(front,h)
-        checks={'bem':oriented_check(bem,-1),'front':oriented_check(front,1),'horn':horn_qc}
+        checks={'bem':oriented_check(bem,-1),'front':oriented_check(front,1),'horn':horn_qc,'exterior':exterior_qc}
         for label,mesh in [('bem',bem),('front',front)]:
             v=np.array(mesh.vertices);f=np.array(mesh.faces);tt=np.array(mesh.tags)
             source_checks=[]
-            for driver in manifest['drivers']:
+            sources=manifest['drivers']+(manifest.get('vent_sources',[]) if label=='bem' else [])
+            for driver in sources:
                 sf=f[tt==driver['source_tag']]
+                if not len(sf):raise ValueError('Missing independent source '+driver['id'])
                 av=np.cross(v[sf[:,1]]-v[sf[:,0]],v[sf[:,2]]-v[sf[:,0]])/2
-                flux=av@np.array(driver['motion_into_front_air'])
+                flux=np.einsum('ij,j->i',av,np.asarray(driver.get('motion_into_front_air',driver.get('motion_into_air'))))
                 if not np.all(flux<0):raise ValueError('Source outward-air normal inconsistent with inward motion')
-                projected=float(-flux.sum());relative=abs(projected/driver['nominal_sd_m2']-1)
-                if relative>.002:raise ValueError('Source projected area differs from Sd by more than0.2%')
-                source_checks.append({'id':driver['id'],'projected_area_m2':projected,'relative_Sd_error':relative,'all_inward_drive_projections_positive':True})
+                projected=float(-flux.sum());target=driver.get('nominal_sd_m2',driver['projected_mesh_area_m2']);relative=abs(projected/target-1)
+                if relative>.002:raise ValueError('Source projected area differs from declared area by more than 0.2%')
+                source_checks.append({'id':driver['id'],'source_tag':driver['source_tag'],'projected_area_m2':projected,'relative_declared_area_error':relative,'all_inward_drive_projections_positive':True})
             checks[label]['source_checks']=source_checks
         print(json.dumps({'stage':'assembled','bem':checks['bem']['triangles'],'front':checks['front']['triangles']}),flush=True)
-        names={WALL:'front_rigid_wall',HORN:'horn_rigid_wall',OUTSIDE:'enclosure_exterior',BACK:'sealed_rear_panel',MOUTH:'mouth_coupling_interface',THROAT:'closed_HF_throat',**{101+i:f'mid_{i+1:02d}' for i in range(len(branches))}}
+        names={WALL:'front_rigid_wall',HORN:'horn_rigid_wall',OUTSIDE:'enclosure_exterior',BACK:'rear_panel',MOUTH:'mouth_coupling_interface',THROAT:'closed_HF_throat',**{101+i:f'mid_{i+1:02d}' for i in range(len(branches))},**{v['source_tag']:v['id'] for v in manifest.get('vent_sources',[])}}
         for label,mesh in [('bem-air-outward',bem),('front-boundary',front)]:
-            path=out/(label+'.msh');msh22(mesh,path,names);checks[label+'_import']=import_check(path,len(mesh.faces));(out/(label+'.json')).write_text(json.dumps(mesh.data(),separators=(',',':')))
+            path=out/(label+'.msh');msh22(mesh,path,names);checks[label+'_import']=import_check(path,len(mesh.faces),mesh);(out/(label+'.json')).write_text(json.dumps(mesh.data(),separators=(',',':')))
         if not args.skip_intersections:
             from validate_mesh import intersection_check
             checks['bem']['self_intersection']=intersection_check(bem.data());checks['front']['self_intersection']=intersection_check(front.data())
@@ -322,10 +439,14 @@ def main():
             if port['tag']==MOUTH:
                 port.update(center_m=[0,0,horn_qc['mouth_z_m']],radius_m=horn_qc['mouth_radius_m'],area_m2=math.pi*horn_qc['mouth_radius_m']**2,meridian_station_index=horn_qc['mouth_station_index'],usage=horn_qc['interface_kind'])
         manifest['mesh_export']={'method':'canonical PLC + constrained meridian chart; shared root nodes','normals':'outward from acoustic air; BEM negative solid volume','max_edge_m':h,'max_frequency_hz':freq,'elements_per_wavelength':epw,'gap_divisions_requested':args.gap_divisions,'achieved_elements_per_wavelength_at_requested_max':c/(freq*h),'nominal_frequency_for_requested_epw_hz':c/(epw*h),'edge_override_exceeds_wavelength_target':h>c/(freq*epw),'intersection_validation_skipped':args.skip_intersections,'density_status':'initial wavelength and geometry target; not acoustic convergence qualification','checks':checks}
+        manifest['mesh_export']['provenance']={'job_sha256':hashlib.sha256(Path(args.job).read_bytes()).hexdigest(),'builder_sha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),'python':sys.version.split()[0],'gmsh':gmsh.__version__,'numpy':np.__version__}
+        checks['resources']=resources(started,len(bem.faces))
         (out/'manifest.json').write_text(json.dumps(manifest,indent=2));(out/'validation.json').write_text(json.dumps(checks,indent=2))
         script=Path(__file__).with_name('write_bundle.cjs')
         if script.exists():subprocess.run(['node',str(script),str(out)],check=True)
-        (out/'INCOMPLETE.txt').unlink()
+        if args.skip_intersections:
+            (out/'INCOMPLETE.txt').write_text('Diagnostic output only: exhaustive intersection validation was skipped. Rebuild in a new folder without --skip-intersections.\n')
+        else:(out/'INCOMPLETE.txt').unlink()
         print(json.dumps({'out':str(out),'runtime_s':time.monotonic()-started,'checks':checks}),flush=True)
     finally:gmsh.finalize()
 

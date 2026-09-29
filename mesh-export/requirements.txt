@@ -1,0 +1,5 @@
+# Binary wheels only; installed into the runner's private .venv by run.py --setup.
+# Python 3.10–3.13. No FEM/VTK/proprietary runtime is needed for surface export.
+gmsh==4.15.2
+numpy==2.2.6
+scipy==1.15.3

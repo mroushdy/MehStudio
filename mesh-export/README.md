@@ -1,8 +1,42 @@
-# MEH acoustic mesh exporter — Build 11 prototype
+# MEH acoustic mesh exporter
 
-The offline editor's **Export → Acoustic mesh** disclosure downloads a canonical geometry job for the current design. The native runner turns that job into a connected acoustic boundary and an ABEC project. It does not concatenate display meshes or export a manufacturing STL.
+The offline editor's **Export → Acoustic solver export** disclosure downloads a canonical geometry job for the current design and a matching local runner ZIP, both available offline. The native runner turns that job into a connected acoustic boundary and an ABEC project. It does not concatenate display meshes or export a manufacturing STL.
 
-## Reproduce
+## Local runner for an editor download
+
+Click **Download geometry job** and **Download local runner**. Extract the ZIP and
+follow [START_HERE.md](START_HERE.md): install Python 3.10–3.13 and Node.js 22+,
+then run `python3 run.py --setup` once. Setup installs pinned Gmsh, NumPy and SciPy
+into the runner's own `.venv`; it does not modify system packages. On Windows,
+use `py -3.12` in place of `python3`.
+
+Put the geometry job beside `run.py`, then run:
+
+```sh
+python3 run.py MEH_acoustic_geometry.json
+```
+
+The runner writes a new dated output folder beside the job. It preserves the
+input, logs native output, checks completion of native geometry and ABEC adapter
+gates, and records actual runtime versions, source hashes, triangle count and a
+dense-matrix memory estimate. Existing output folders are never overwritten.
+Only `EXPORT_COMPLETE.txt` marks a completed geometry export; `INCOMPLETE.txt`
+marks a failed/interrupted run whose partial files must not be imported. No
+AKABAK import or solve is performed by this runner. The complete bundle still
+needs proprietary inspection and acoustic convergence work.
+
+For an existing native environment, `--python /path/to/python` uses it without
+installing packages. `--check` tests runtime loading without meshing. Surface
+meshing is the default; the browser's optional volume request is honored and a
+failed volume gate withholds completion. Intersection validation cannot be
+bypassed through the packaged runner.
+
+`node mesh-export/runner-package.cjs OUTPUT.zip` creates the same deterministic
+ZIP embedded in the offline editor. `node mesh-export/embed.cjs` refreshes both
+browser modules and the runner after native source changes. No runtime binary,
+manual, reference document or credential is included.
+
+## Reproduce from the source checkout
 
 Use Python with Gmsh 4.15.2, NumPy and SciPy. VTK is used only for optional certified surface simplification; complex DOLFINx/PETSc is used only for native numerical smoke checks. No packages are installed by these scripts.
 
@@ -24,20 +58,24 @@ The research runtime already present on the author's machine can be used read-on
 
 ## Output contract
 
-- `bem-air-outward.json` and `.msh`: full connected exterior-air boundary, including cone fronts, insert/collector/tube walls, true horn openings, complete rolled horn, exposed shared enclosure and sealed rear panel. There is **no mouth cap** and no diagnostic branch cap.
+- `bem-air-outward.json` and `.msh`: full connected exterior-air boundary, including cone fronts, insert/collector/tube walls, true horn openings, complete rolled horn, exposed individual pods or smooth shared enclosure, rear panels, and explicitly requested vent ducts/inlet sources. There is **no mouth cap** and no diagnostic branch cap.
 - `front-boundary.json` and `.msh`: bounded front-air boundary for FEM. Its artificial interface is before the tangent rollover. A coupled exterior model must retain the downstream horn and roll.
 - `front-air.msh`: optional tagged tetrahedral front-air mesh. Only written after positive element quality checks.
 - `manifest.json`: versioned SI geometry, independent source groups, saved electrical drive, geometric vs physical tube dimensions, geometric volumes, interface conventions and native mesh checks.
 - `abec/`: relative-path `project.abec`, Gmsh 2.2 ASCII boundary, solving/observation scripts and independent source mapping. The adapter reverses air-outward winding exactly once to AKABAK's normal-into-air convention.
 - `validation.json`: checks completed on this exact output. `INCOMPLETE.txt` means a build did not finish all requested gates; that directory is not a validated bundle.
 
-Physical tags: branch wall10, horn11, enclosure exterior12, sealed rear13; independent cones101–104; diagnostic entry caps201–204 (removed in complete boundaries); artificial FEM interface301; closed mid-only HF throat302; connected FEM volume401. Coordinate frame is right handed with +Z forward, meters throughout.
+Physical tags: branch wall 10, horn 11, enclosure exterior 12, rear panels 13; independent cones 101–106; optional vent inlet sources 151–156; diagnostic entry caps 201–206 (removed in complete boundaries); artificial FEM interface 301; closed mid-only HF throat 302; connected FEM volume 401. Coordinate frame is right handed with +Z forward, meters throughout.
 
-The source drives are unit axial-velocity bases, with face-normal projection. Saved1V RMS remains metadata. A voltage-driven prediction must solve the full driver/motor system with self/mutual front loading and shared108L rear compliance. Fixed-velocity radiation curves are not that electrical prediction.
+The source drives are unit axial-velocity bases, with face-normal projection. Saved1V RMS remains metadata. A voltage-driven prediction must solve the full driver/motor system with self/mutual front loading and the saved individual or shared rear loading. Fixed-velocity radiation curves are not that electrical prediction.
 
 ## Supported cases and limits
 
-Current scope is a valid smooth shared sealed enclosure, the canonical conical diaphragm surrogate, four independently tagged mids, round/slot/teardrop entries, fitting offset or annular inserts, and insert-off. Other driver counts may generate geometry but are not included in the delivered native regression matrix. Unsupported rear reflex and individual-pod exteriors fail explicitly, since their true outer vent/mounting surfaces are not implemented here. HF is closed for mid-only work.
+The connected surface exporter supports **2, 4 and 6 mids**, individually sealed cylindrical pods and smooth shared sealed enclosures, round/slot/teardrop horn entries, fitting offset or annular inserts, and insert-off. Every design must pass fit and native geometry checks. Individual adapters must stay in disjoint driver sectors: cylinder-envelope clearance alone does not establish that their flared walls fit. Overlapping flares fail with a spacing error; the exporter does not silently change the design or union overlapping parts. Non-smooth shared enclosures remain gated.
+
+For a ported design, explicitly enable **Rear-vent velocity bases** (CLI extraction: `--rear-vent-basis`). Round or rectangular openings, physical duct walls and inlet-plane source caps connect to the same exterior air as all front passages. Each inlet is independently tagged and muted in the default ABEC driving table. Its velocity basis can supply radiation/load transfer data for a later coupled model; it is not a solved rear cavity, a tuned port prediction or the saved voltage response. The physical duct length is included exactly once; acoustic end correction is not added to the mesh. See [the formulation](../docs/acoustic-mesh-formulation.md).
+
+HF is rigid-closed for a mid-only study. The individual layout includes the canonical horn shell, front-adapter exteriors and pods; its outer throat is closed at the canonical shell ring. External compression-driver hardware, fasteners and mounting details are not scattering surfaces in this acoustic surrogate. It is not measured hardware or complete manufacturing CAD.
 
 Every branch retains canonical conservative insert facets. Horn triangulation is a constrained meridian/azimuth chart with the actual root polygons cut out, shared node identities and measured chord error. Meshes retain the editor's assumed cone and enclosure geometry; they are not measured hardware or manufacturing CAD.
 
@@ -55,11 +93,20 @@ python -m unittest discover -s mesh-export -p 'test_*.py'
 node mesh-export/embed.cjs
 ```
 
-The embed step preserves the existing fourteen script positions and the pinned geometry kernel. New source UI/canonical tests exercise the real saved design and changed opening, offset, entry shapes and insert-off. Native regression jobs can be generated with `node mesh-export/regression-jobs.cjs`.
+The embed step preserves the existing fourteen script positions and the pinned geometry kernel. New source UI/canonical tests exercise the real saved design and changed opening, offset, entry shapes and insert-off. The public regression definitions preserve the saved design hash and explicit patches. Reproduce the native surface matrix and its independent serialized ABEC-mesh audit:
+
+```sh
+node mesh-export/regression-suite.cjs work/regression-jobs
+python mesh-export/native_regression.py work/regression-jobs --out work/native-regression --workers 2
+```
+
+The matrix includes both layouts and all offered counts, offset/insert-off cases, varied front entry sizes, round/rectangular vent ducts, and a 35 → 25 mm density pair. It records actual native process peak memory separately from arithmetic BEM matrix estimates. The 0.2 mm profile setting is a meridian approximation request; the constrained-root chart and angular approximation have separate deviations, not a global 3D error bound. These are geometry/refinement checks, not acoustic convergence.
+
+Use a **new output directory** for each build. Direct diagnostic `--skip-intersections` runs retain `INCOMPLETE.txt`; the packaged runner never bypasses that gate. Individual and vented surfaces are not accepted by the older structured shared-exterior reducer. The experimental hybrid CLI remains explicitly gated to four shared-sealed branches.
 
 ## Four-branch hybrid FEM/BEM export
 
-A separate native path retains each narrow front chamber in FEM and puts the
+For the historical four-mid shared-sealed research case, a separate native path retains each narrow front chamber in FEM and puts the
 complete common horn, roll and enclosure exterior in BEM. It uses all four
 actual driver poses. No mirrors or manual source placement are needed.
 

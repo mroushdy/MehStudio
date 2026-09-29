@@ -9,10 +9,10 @@ const dot=(a,b)=>a.reduce((s,x,i)=>s+x*b[i],0);
 const near=(a,b,t=1e-12)=>assert.ok(Math.abs(a-b)<t,`${a} != ${b}`);
 // Four disjoint boxes with open square recesses: exact analytic volumes and
 // shared root seams. A recessed, asymmetric cone optionally replaces the floor.
-function fixture({cone=false,scale=.01}={}){
+function fixture({cone=false,scale=.01,count=4,sourceStart=101}={}){
  const bem={vertices_m:[],faces:[],face_tags:[]},branches=[],drivers=[],groups=[{tag:10,kind:'rigid-wall',id:'branch_wall'},{tag:11,kind:'rigid-wall',id:'external_wall'}];
- for(let i=0;i<4;i++){
-  const sourceTag=101+i,interfaceTag=201+i,id='mid_'+(i+1),base=bem.vertices_m.length;
+ for(let i=0;i<count;i++){
+  const sourceTag=sourceStart+i,interfaceTag=201+i,id='mid_'+(i+1),base=bem.vertices_m.length;
   const square=(size,z)=>[[-size,-size,z],[size,-size,z],[size,size,z],[-size,size,z]];
   const points=[...square(2,-1),...square(2,1),...square(1,0),...square(1,1),...(cone?[[.2,0,-.25]]:[])].map(p=>p.map((x,k)=>(x+(k===0?6*i:0))*scale));
   bem.vertices_m.push(...points);
@@ -105,4 +105,40 @@ test('block arithmetic is bounded in meaning and is not proprietary solver verif
  assert.equal(v.one_full_baseline_dense_matrix_bytes,16*112**2);assert.equal(v.sum_of_local_dense_matrix_bytes,16*(80**2+4*12**2));
  assert.equal(v.peak_one_local_dense_matrix_bytes,16*80**2);assert.equal(v.proprietary_solver_validation,'not run');assert.equal(v.physical_accuracy_validated,false);assert.equal(v.acoustic_convergence_validated,false);
  assert.match(v.memory_estimate_scope,/Not an AKABAK benchmark/);assert.match(out.files['README.txt'],/no coupled motor/);
+});
+test('all offered counts retain transparent joins and accurate generated instructions',()=>{
+ for(const count of [2,4,6]){
+  const {job,bem}=fixture({count}),out=buildAbecSubdomains(job,bem);
+  assert.equal(out.domains.length,count+1);assert.equal(out.interfaces.length,count);assert.equal(out.sources.length,count);
+  assert.match(out.files['README.txt'],new RegExp('The '+count+' finite front air branches'));
+  assert.match(out.files['README.txt'],new RegExp('Inspect all '+(count+1)+' domains'));
+  assert.equal([...out.files['observation.txt'].matchAll(/^  \d+ 11\d+ 11\d+ ID=/gm)].length,count**2);
+  near(out.validation.partition_volume_relative_error,0);
+ }
+});
+test('branch source selection follows metadata rather than an assumed numeric source range',()=>{
+ const {job,bem}=fixture({count:2,sourceStart:601}),out=buildAbecSubdomains(job,bem);
+ assert.deepEqual(out.sources.map(s=>s.physical_tag),[601,602]);
+ assert.ok(out.sources.every(s=>s.domain!==1));near(out.validation.partition_volume_relative_error,0);
+});
+test('an independent exterior inlet source remains driven after front-domain partition',()=>{
+ const {job,bem,scale}=fixture({count:2});
+ bem.face_tags[16]=701;bem.face_tags[17]=701;
+ job.manifest.boundary_groups.push({tag:701,kind:'independent-vent-source',id:'rear_vent_1'});
+ job.manifest.vent_sources=[{id:'rear_vent_1',source_tag:701,motion_into_air:[0,0,-1],projected_mesh_area_m2:16*scale**2}];
+ const out=buildAbecSubdomains(job,bem),vent=out.sources.find(s=>s.source_type==='vent');
+ assert.equal(vent.domain,1);assert.equal(vent.driving_group,1701);assert.equal(vent.face_indices.length,2);near(vent.projected_area_m2,16*scale**2);
+ const selectors=[...out.files['solving.txt'].matchAll(/Mesh Include (\d+)/g)].map(m=>Number(m[1]));
+ for(const i of vent.face_indices){assert.equal(selectors.filter(t=>t===out.mesh.elementary_tags[i]).length,1);assert.deepEqual(out.mesh.owners[i],{domain:1});}
+ assert.match(out.files['solving.txt'],/Elements "Source_701_Projection_1"\n  SubDomain=1/);
+ assert.match(out.files['observation.txt'],/DrvGroup=1701 Weight=0\.0/);
+ assert.equal([...out.files['observation.txt'].matchAll(/^  \d+ \d+ \d+ ID=/gm)].length,9);
+ near(out.validation.partition_volume_relative_error,0);
+});
+test('coupled adapter shares the authoritative observer origin and medium import instructions',()=>{
+ const {job,bem}=fixture();job.manifest.observation_frame={origin_m:[.1,.2,.3],forward:[0,0,1],horizontal:[1,0,0],vertical:[0,1,0]};job.manifest.medium={sound_speed_m_s:340,density_kg_m3:1.21};
+ const out=buildAbecSubdomains(job,bem),single=buildAbecProject({manifest:job.manifest,mesh:bem,horn:job.horn},{normalConvention:'air-outward'});
+ assert.equal(out.files['observation.txt'],single.files['observation.txt']);
+ assert.match(out.files['README.txt'],/sound speed to 340 m\/s and density to 1\.21 kg\/m3/);
+ assert.deepEqual(out.validation.requested_medium,job.manifest.medium);
 });

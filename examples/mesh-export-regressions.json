@@ -1,0 +1,92 @@
+{
+  "schema": "meh-mesh-regression-fixtures/v1",
+  "source_design": {
+    "path": "examples/offset-insert-study.json",
+    "file_sha256": "6242cf581c4f53ee7647b51b6b5f827e5f65fce286e6512135a21d20c2dd5af6",
+    "canonical_design_sha256": "efdb8eac77c7fc7b7c7c1c31363f4cae6527b12398c729aa065b576958b75758"
+  },
+  "defaults": {
+    "options": { "maxFrequencyHz": 1000, "elementsPerWavelength": 8, "volumeMesh": false },
+    "native": { "size_mm": 35, "profile_tolerance_mm": 0.2, "volume": false, "check_intersections": true }
+  },
+  "scope": "Reproducible geometry and native surface-mesh regression inputs. Passing extraction is not native mesh validation, an AKABAK solve, an acoustic convergence result or physical validation.",
+  "density_pair": {
+    "case": "individual-sealed-4-offset8-entry32",
+    "size_mm": [35, 25],
+    "profile_tolerance_mm": 0.2,
+    "interpretation": "Compare geometry quality, counts and resource use. These two meshes alone do not establish acoustic convergence."
+  },
+  "cases": [
+    {
+      "id": "individual-sealed-2",
+      "description": "Saved offset-insert design converted to two individually sealed pods.",
+      "state_patch": { "rearLayout": "individual", "count": 2 },
+      "expected": { "driver_count": 2, "vent_source_count": 0 }
+    },
+    {
+      "id": "individual-sealed-4-offset8-entry32",
+      "description": "Four individually sealed pods, longer stand-off, an offset insert and a smaller front entry. Also the density-pair fixture.",
+      "state_patch": { "rearLayout": "individual", "gap": 50, "offset": 8, "port": 32 },
+      "expected": { "driver_count": 4, "vent_source_count": 0 }
+    },
+    {
+      "id": "individual-sealed-6-open-entry55",
+      "description": "Six smaller 5NDL38 driver envelopes with sufficient spacing, an open collector and a larger front entry. Dimensions are explicit so catalog updates do not silently change this fixture.",
+      "state_patch": { "rearLayout": "individual", "count": 6, "midDriver": "bc5ndl38", "frame": 155, "cutout": 122, "sd": 95, "driverDepth": 75, "driverVol": 0.35, "fs": 80, "qts": 0.36, "vas": 4.3, "tap": 180, "gap": 70, "frontFiller": "none", "port": 55 },
+      "expected": { "driver_count": 6, "vent_source_count": 0 }
+    },
+    {
+      "id": "shared-sealed-2-offset8-entry55",
+      "description": "Two drivers in the smooth shared enclosure with offset inserts and larger front entries.",
+      "state_patch": { "count": 2, "offset": 8, "port": 55 },
+      "expected": { "driver_count": 2, "vent_source_count": 0 }
+    },
+    {
+      "id": "shared-sealed-4-saved-parity",
+      "description": "The unchanged saved design. Exact canonical branch geometry must retain its prior hashes and volumes.",
+      "state_patch": {},
+      "expected": { "driver_count": 4, "vent_source_count": 0, "design_sha256": "efdb8eac77c7fc7b7c7c1c31363f4cae6527b12398c729aa065b576958b75758" }
+    },
+    {
+      "id": "shared-sealed-6-entry32",
+      "description": "Six smaller drivers in a smooth shared enclosure, with spaced mounts and smaller front entries.",
+      "state_patch": { "count": 6, "midDriver": "bc5ndl38", "frame": 155, "cutout": 122, "sd": 95, "driverDepth": 75, "driverVol": 0.35, "fs": 80, "qts": 0.36, "vas": 4.3, "tap": 180, "gap": 70, "port": 32 },
+      "expected": { "driver_count": 6, "vent_source_count": 0 }
+    },
+    {
+      "id": "individual-vented-4-round20",
+      "description": "Four 20 mm rear vents, including short ducts only slightly longer than the rear cap.",
+      "state_patch": { "rearLayout": "individual", "rearConcept": "reflex", "gap": 50, "rearPortDiameter": 20 },
+      "options": { "rearVentBasis": true },
+      "expected": { "driver_count": 4, "vent_source_count": 4 }
+    },
+    {
+      "id": "individual-vented-4-round40-offset8-entry55",
+      "description": "Four 40 mm rear vents with a mechanically fitting requested tuning, offset inserts and larger front entries. The export remains an independent velocity basis.",
+      "state_patch": { "rearLayout": "individual", "rearConcept": "reflex", "gap": 50, "rearPortDiameter": 40, "rearTuning": 160, "offset": 8, "port": 55 },
+      "options": { "rearVentBasis": true },
+      "expected": { "driver_count": 4, "vent_source_count": 4 }
+    },
+    {
+      "id": "individual-vented-4-rectangle45x15-open-entry32",
+      "description": "Exact rectangular rear vents with open front collectors and smaller front entries.",
+      "state_patch": { "rearLayout": "individual", "rearConcept": "reflex", "gap": 50, "rearPortShape": "slot", "rearPortWidth": 45, "rearPortHeight": 15, "frontFiller": "none", "port": 32 },
+      "options": { "rearVentBasis": true },
+      "expected": { "driver_count": 4, "vent_source_count": 4 }
+    },
+    {
+      "id": "shared-vented-4-round80",
+      "description": "One 80 mm rear vent in the smooth shared enclosure; four independent cones plus one independent duct-inlet source.",
+      "state_patch": { "rearConcept": "reflex", "rearPortDiameter": 80, "rearTuning": 40 },
+      "options": { "rearVentBasis": true },
+      "expected": { "driver_count": 4, "vent_source_count": 1 }
+    },
+    {
+      "id": "shared-vented-4-rectangle80x40",
+      "description": "One exact 80 by 40 mm rectangular rear vent in the smooth shared enclosure.",
+      "state_patch": { "rearConcept": "reflex", "rearPortShape": "slot", "rearPortWidth": 80, "rearPortHeight": 40, "rearTuning": 35 },
+      "options": { "rearVentBasis": true },
+      "expected": { "driver_count": 4, "vent_source_count": 1 }
+    }
+  ]
+}
