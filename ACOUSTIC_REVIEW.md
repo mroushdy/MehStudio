@@ -9,6 +9,7 @@ Open `index.html` and import `examples/user-saved-study.json`; choose **Analyze 
 - [Physical model and API](docs/broadband-model.md)
 - [Independent conventions audit and primary sources](docs/acoustic-audit.md)
 - [Authentic Hornresp benchmarks, scope and capture instructions](docs/hornresp-benchmark.md)
+- [Existing BEAT / Boundary Lab spatial-engine assessment](docs/existing-spatial-solvers.md)
 - [Native front-passage reproduction](native-front-fem/README.md)
 - `acoustics/geometry/mesh-export-manifest-v1.json`: frozen sibling geometry contract; `handshake-report.json` records its validation. The native cap is at station 239; it must couple to the remaining horn/roll/exterior. It is not the reduced network's maximum-Z termination.
 
@@ -19,6 +20,7 @@ node acoustics/embed.cjs
 node --test --test-concurrency=1 tests/*.cjs benchmarks/benchmark.test.cjs
 node benchmarks/run.cjs
 node scripts/reproduce-acoustics.cjs examples/user-saved-study.json study-results
+node scripts/export-boundary-lab-comparison.cjs study-results comparison-results examples/user-saved-study.json
 python3 scripts/plot-acoustics.py study-results figures
 node scripts/build-review.cjs examples/user-saved-study.json MEH_Acoustic_Review.html
 ```
@@ -30,4 +32,4 @@ node acoustics/import-native.cjs <qualified-result.json> acoustics/data/current-
 node acoustics/embed.cjs
 ```
 
-The source geometry kernel is hash-locked by the embedder. Geometry regression tests are preserved. Browser-rendered QA is unavailable under the administrator policy; that restriction was not bypassed.
+The source geometry kernel is hash-locked by the embedder. Geometry regression tests are preserved. All 124 source/numerical tests passed. An independent run from the unpacked source archive reproduced the baseline, area sweep, local reference and model-comparison files byte for byte; hashes are recorded in `verification/summary.json`. Browser-rendered QA is unavailable under the administrator policy; that restriction was not bypassed.

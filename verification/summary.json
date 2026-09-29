@@ -202,5 +202,29 @@
   "browserRenderedQA": "Unavailable under administrator policy; no alternative browser backend used.",
   "physicalMeasurementValidation": false,
   "fullFourSidePortSpatialValidation": false,
-  "deployment": "No public-main merge or Site deployment"
+  "deployment": "No public-main merge or Site deployment",
+  "unpackedArchiveReproduction": {
+    "unpackedSourceReproductionMatches": true,
+    "files": {
+      "baseline.csv": "8169393634154085225bcb54abb7ce9570af483702f2ff2cd71cc904111b357c",
+      "qualified-front-reference.json": "03b63f11f560bb209ad296c490aaaadd824aa550814d1ab12aef7e9c4bb721c7",
+      "surrogate-vs-fem.json": "c421cdc210dd4f1d8a2338d0b0cf711ad1d0d7bfb2e56bd97d939370ba2a8d23",
+      "sweep-area.json": "190ae66851ba1d937dfa23b44973730df8b6c44db51e71e709ef7c6773d55361"
+    },
+    "sourceCommit": "cd080a36e6b32b6ea97ece785fff97159ea26284",
+    "scope": "Independent extraction of packaged source, then full reproduce-acoustics run; four representative output files match original bytes. Subsequent source changes add documentation, verification metadata and a read-only comparison exporter; acoustic numerical implementation is unchanged."
+  },
+  "boundaryLabComparisonExport": {
+    "sourceFieldsPreserved": true,
+    "independentCsvParsePassed": true,
+    "branchRecords": 584,
+    "fastFrequencies": 127,
+    "localFrontFrequencies": 19,
+    "commonExactFrequenciesHz": [
+      200,
+      700
+    ],
+    "newSolves": false,
+    "interpolation": false
+  }
 }

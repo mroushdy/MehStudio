@@ -73,11 +73,19 @@ Hornresp's main calculation uses area-law/electroacoustic treatments, including 
 
 ![Authentic benchmark](Hornresp_Benchmark_Comparison.png)
 
+## Existing spatial engine to evaluate next
+
+A source audit identified [BEAT Engine](https://github.com/JWSound/BEAT_Engine/tree/e6b3037df04d3ac32d2bd4586d2e9f0312e2d91f) and [Boundary Lab's coupled multi-region horn example](https://github.com/JWSound/boundary-lab/tree/bb9030c4ae0b5906569b3b3932e221a0c97670ac/examples/Multi_region_SAWMOD) as a concrete integration candidate. The example joins interior FEM and exterior BEM with electrodynamic motors. Boundary Lab's inspected revision pins BEAT 0.2.0; BEAT's current source declares 0.3.0. Both inspected repositories contain GPLv3 license texts. Exact revisions, license links, API mappings, and proposed qualification steps are in [the spatial-engine assessment](MEH_Existing_Spatial_Solvers.md).
+
+The next step is an isolated compatible-version runtime check and reference solve, followed by a conforming mesh adapter for the actual four entries. Neither engine was installed or run here. Fully coupled voltage response columns need their own importer; they cannot be inserted into our unit-volume-flow impedance contract or have motors/rear loading applied again. No solver code was copied into the prototype, and no full-horn performance or accuracy claim follows from this source audit.
+
+The [comparison baseline JSON](MEH_Boundary_Lab_Comparison_Baseline.json) and [flat CSV](MEH_Boundary_Lab_Comparison_Baseline.csv) retain per-mid complex pressure, flow, impedance and excursion for the independent validation task. They preserve the existing frequency grids without interpolation: fast-model samples within 100–1000 Hz and the 19 exact local-front reference frequencies. Their metadata distinguishes the pressure locations, source basis, mass assumptions and omitted physics.
+
 ## Use and reproduce
 
 Open **MEH_Acoustic_Review.html**: the supplied design loads automatically with Acoustic sizing open. Select a curve, open Size entries and chambers, compare candidates, preview a row, then use its geometry if desired. Changing geometry invalidates old FEM overlays. Targets, end correction, loss, mass and source phases live in a disclosure. Curve export saves baseline, native samples and candidate data with conventions. The original qualified passage/700 Hz field panel remains available.
 
-The source package is based exactly on Build 11 commit `52efe6ad23a8aa4de97099b752c34becafc1cc49`; it preserves the frozen geometry kernel and prior geometry regressions. No parent checkout, public main or live Site is modified. Native environment and original mesh files were read-only inputs. Browser-rendered QA remains unavailable under the administrator policy; source/behavior tests and generated scientific figures were checked.
+The source package is based exactly on Build 11 commit `52efe6ad23a8aa4de97099b752c34becafc1cc49`; it preserves the frozen geometry kernel and prior geometry regressions. All **124 source/numerical tests passed**. An independent reproduction from the unpacked source archive produced byte-identical baseline, area-sweep, local-reference and model-comparison files. No parent checkout, public main or live Site is modified. Native environment and original mesh files were read-only inputs. Browser-rendered QA remains unavailable under the administrator policy; source/behavior tests and generated scientific figures were checked.
 
 Unzip MEH_Acoustic_Prototype.zip and run from its source directory:
 
@@ -86,6 +94,7 @@ node acoustics/embed.cjs
 node --test --test-concurrency=1 tests/*.cjs benchmarks/benchmark.test.cjs
 node benchmarks/run.cjs
 node scripts/reproduce-acoustics.cjs examples/user-saved-study.json study-results
+node scripts/export-boundary-lab-comparison.cjs study-results comparison-results examples/user-saved-study.json
 python3 scripts/plot-acoustics.py study-results figures
 ```
 
