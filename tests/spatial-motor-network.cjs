@@ -28,6 +28,36 @@ test('Nonreciprocal, nonpassive and malformed full matrices cannot produce curve
  const active=fixture();active.rows[0].impedance=Array.from({length:4},(_,i)=>Array.from({length:4},(_,j)=>C(i===j?1:2)));assert.match(F.solve(a,active,300,opts).reason,/passive/);
  const malformed=fixture();malformed.rows[0].impedance[0][0].r=NaN;assert.equal(F.solve(a,malformed,300,opts).available,false);
 });
+function finiteAsymmetryFixture(resistance){
+ const data=fixture(),Z=Array.from({length:4},(_,i)=>Array.from({length:4},(_,j)=>i===j?C(resistance,1e6):C()));
+ Z[0][1]=C(0,.004);Z[1][0]=C(0,-.004);data.rows[0].impedance=Z;return data;
+}
+function rawOperatorPower(Z,q){
+ return Z.reduce((sum,row,i)=>{const p=row.reduce((s,z,j)=>add(s,mul(z,q[j])),C());return sum+p.r*q[i].r+p.i*q[i].i;},0);
+}
+test('Full Hermitian passivity rejects imaginary asymmetry that passes reciprocity and the old real-part shortcut',()=>{
+ const data=finiteAsymmetryFixture(.001),Z=data.rows[0].impedance,before=JSON.stringify(Z),q=[C(1/Math.SQRT2),C(0,1/Math.SQRT2),C(),C()];
+ assert.ok(abs(add(Z[0][1],scale(Z[1][0],-1)))<1e-8*Math.max(1,...Z.flat().map(abs)),'Counterexample must pass the unchanged reciprocity tolerance');
+ // sym(Re Z)=0.001 I is positive definite, but the full Hermitian block
+ // has eigenvalues 0.001 +/- 0.004; this coherent flow is its worst mode.
+ near(rawOperatorPower(Z,q),-.003,1e-7);
+ const r=F.validate(a,data,300,opts);assert.equal(r.available,false);assert.match(r.reason,/passive/);near(r.minimumHermitianEigenvalue,-.003,1e-12);
+ near(r.minimumRealEigenvalue,r.minimumHermitianEigenvalue,1e-12);assert.equal(JSON.stringify(Z),before,'Validation must not repair the raw operator');
+ assert.equal(F.solve(a,data,300,opts).available,false);
+});
+test('Passive finite imaginary asymmetry is retained and has the correct worst-phase power',()=>{
+ const data=finiteAsymmetryFixture(.005),Z=data.rows[0].impedance,before=JSON.stringify(Z),q=[C(1/Math.SQRT2),C(0,1/Math.SQRT2),C(),C()];
+ near(rawOperatorPower(Z,q),.001,1e-7);
+ const r=F.validate(a,data,300,opts);assert.equal(r.available,true,r.reason);near(r.minimumHermitianEigenvalue,.001,1e-12);near(r.minimumRealEigenvalue,r.minimumHermitianEigenvalue,1e-12);
+ assert.equal(JSON.stringify(Z),before,'Validation must preserve permitted asymmetry');
+ const solved=F.solve(a,data,300,{...opts,sourcePhasesDeg:[0,90,0,0]});assert.equal(solved.available,true,solved.reason);near(solved.minimumHermitianEigenvalue,.001,1e-12);assert.ok(solved.operatorPowerW>0);assert.ok(Math.abs(solved.relativePowerResidual)<1e-12);
+});
+test('Hermitian passivity keeps the existing 1e-9 entry-scale tolerance',()=>{
+ for(const [resistance,accepted]of [[-.5e-9,true],[-2e-9,false]]){
+  const data=fixture();data.rows[0].impedance=Array.from({length:4},(_,i)=>Array.from({length:4},(_,j)=>i===j?C(resistance,1e6):C()));
+  const r=F.validate(a,data,300,opts);assert.equal(r.available,accepted,r.reason);near(r.minimumHermitianEigenvalue,resistance,1e-12);
+ }
+});
 test('Exact frequency list does not imply interpolation or authentic solver completion',()=>{
  assert.deepEqual(F.availableFrequencies(fixture()),[300,700]);assert.equal(F.solve(a,fixture(),500,opts).available,false);assert.match(F.solve(a,fixture(),500,opts).reason,/interpolation/);assert.match(F.status,/No authentic/);
 });

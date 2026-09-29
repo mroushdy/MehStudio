@@ -1,0 +1,25 @@
+# BEAT / Boundary Lab interoperability assessment
+
+Read-only source inspection on 2026-09-29 supplements the AKABAK export. No BEAT or Boundary Lab code is copied into this prototype. The native engine integration is owned by the separate Boundary Lab validation task; the exporter checks alone do not qualify application import or a coupled acoustic solve.
+
+The application dependency and the latest inspected engine main snapshot are different:
+
+| Inspected source | Version and role |
+| --- | --- |
+| [Boundary Lab bb9030c4](https://github.com/JWSound/boundary-lab/blob/bb9030c4ae0b5906569b3b3932e221a0c97670ac/pyproject.toml) | Application version `0.5.0.dev0`; its dependency explicitly pins the BEAT **0.2.0** release wheel. |
+| [BEAT Engine 536b1657](https://github.com/JWSound/BEAT_Engine/blob/536b165758ee04054237d8af5b123859c0895a32/pyproject.toml) | **0.2.0**, the corresponding checked-out engine used by the separate Boundary Lab validation task. This is the compatibility baseline for that application snapshot. |
+| [BEAT Engine e6b3037d](https://github.com/JWSound/BEAT_Engine/blob/e6b3037df04d3ac32d2bd4586d2e9f0312e2d91f/pyproject.toml) | **0.3.0**, the separately inspected latest main snapshot. Its version is confirmed by `pyproject.toml`, not a cached README that still reported 0.1.4. It is not the app's pinned dependency. |
+
+The app pins wheel SHA-256 `bccad47b9647e5f4f7bc1ca6ac9d22e2e7751f1f39046fadc1e5e9782a282ad1`. These identities were checked from local read-only source checkouts and Git objects; no dependency was upgraded. Both repositories' inspected `LICENSE` files contain GPL version 3. Future redistribution/reuse must retain applicable licensing; this assessment uses the public interoperability contract without vendoring engine code.
+
+The compiled-system v1 contract is a suitable target for a separate native adapter: it represents tagged meshes, bounded/unbounded regions, independent components and explicit conforming interface maps. Our geometry manifest can supply the source locations, axes, SI dimensions and boundary identities. The runtime additionally requires completed native assets and solver-specific source/driver parameters. These contract details were checked against the app-compatible 0.2.0 source. [Pinned contract](https://github.com/JWSound/BEAT_Engine/blob/536b165758ee04054237d8af5b123859c0895a32/docs/BEAT%20Compiled%20System%20Contract.md).
+
+The pinned coupled file loaders have different mesh-format requirements: the BEM surface loader accepts **Gmsh 2.2 ASCII**, while `BeatEngineCoupled.load_gmsh41_volume` requires **Gmsh 4.1 ASCII** for FEM volumes. The exporter supplies certified Gmsh 2.2 interchange meshes, including its branch FEMs. For this BEAT coupled path, convert copies of the FEM files to 4.1, preserve coordinates, tetrahedral connectivity, physical tags and source areas, then regenerate and verify the interface maps against the final serialized files. Do not reuse old node/element array indices or mesh hashes after conversion. The separate native task identified this distinction when its initial coupled import failed before assembly; a successful in-memory branch solve had not exercised the coupled file loader. This is a serialization compatibility correction, not a geometry change.
+
+Critical adapter requirements: mesh paths resolve relative to the worker working directory; interface indices are zero based and depend on the exact saved node/facet order; complex result bases retain independent excitation order. Explicitly request and negotiate `exp(+i omega t)` because an omitted option keeps the legacy negative-time convention. Schema acceptance alone does not establish supported physics or a runnable backend.
+
+A hybrid implementation can keep narrow front passages in FEM and the horn/enclosure radiation in BEM. Interface faces must match both coordinates and triangle connectivity, including subdivision generated during tetrahedral meshing. The FEM boundary is authoritative. A one-to-one vertex/facet map and relative normal sign must be verified after writing/importing the exact assets. A curved opening can be used when its seam already conforms. [Pinned coupled-solver documentation](https://github.com/JWSound/boundary-lab/blob/bb9030c4ae0b5906569b3b3932e221a0c97670ac/docs/Coupled%20Solver.md).
+
+The shared 108 L rear compliance must remain a coupled common pressure term across four motors; do not assign four independent 108 L rear springs. Check the selected engine representation supports that shared term before claiming equivalence to the MEH circuit. A sealed rear is mechanically coupled through the cones, not an open FEM/BEM air interface.
+
+This export task did not launch BEAT, qualify an accelerator backend, or obtain an engine-accepted full MEH request for these meshes. A separate Boundary Lab validation task has its own pinned engine/runtime and results; its existence does not qualify new exporter assets. The native DOLFINx branch checks and Gmsh import of ABEC-format meshes establish neither application import nor coupled BEAT operation. Browser/application QA was not performed for this release.

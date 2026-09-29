@@ -1,0 +1,11 @@
+{
+  "name": "meh-studio",
+  "version": "12.0.0",
+  "private": true,
+  "description": "Offline MEH geometry and acoustic design study",
+  "scripts": {
+    "build": "node acoustics/embed.cjs && node mesh-export/embed.cjs",
+    "test": "node --test tests/*.cjs benchmarks/benchmark.test.cjs"
+  },
+  "devDependencies": {"jsdom": "26.1.0"}
+}

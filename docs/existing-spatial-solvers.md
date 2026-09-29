@@ -50,6 +50,21 @@ The following is our proposed adapter/qualification sequence, not work already p
 
 ## Evidence limits
 
+### Importer tolerances and backend qualification
+
+The prototype's full-spatial importer has strict defensive gates verified with synthetic operators. They are **not calibrated BEAT/FEM–BEM accuracy thresholds**. Reciprocity uses the largest entry of `Z - transpose(Z)`, limited to `1e-8 * max(1, max(abs(Z)))`. Passivity uses the smallest eigenvalue of the full complex Hermitian matrix `H = (Z + conjugateTranspose(Z))/2`, limited below by `-1e-9 * max(1, max(abs(H)))`. These SI-scale floors and maximum-entry normalizations must be recorded when comparing diagnostics produced with another norm. The raw impedance matrix is not symmetrized or modified for the solve.
+
+The initial full-spatial adapter used only the symmetric real part for its passivity diagnostic. A regression exposed a false acceptance when small imaginary nonreciprocity sat on a large reactive diagonal: diagonal `0.001 + j*1e6`, off-diagonal `Z01 = j*0.004`, `Z10 = -j*0.004`. The reciprocal gate passes, but the true Hermitian minimum is `-0.003`, and a quadrature excitation extracts negative real power. The corrected diagnostic includes that imaginary antisymmetric term. The local native FEM already used the full Hermitian matrix, and the delivered fast-model/local-front curves are unaffected.
+
+A future backend policy should be versioned and justified before adopting changed tolerances:
+
+- Preserve raw reciprocity metrics, full-Hermitian eigenvalues and worst-mode vectors, scales, conventions, residuals and provenance. Keep rejected or unresolved samples visibly experimental.
+- Separate fixed-mesh solver/precision/quadrature error from mesh, interface and exterior discretization error. Compare both the source operator and observer transfers under refinement, including frequencies around sharp features.
+- Use a documented dissipation/power error budget for negative Hermitian eigenvalues; a large reactive impedance is not evidence that negative dissipation is harmless. Mesh differences estimate uncertainty and do not by themselves establish a rigorous error bound or prove passivity.
+- Verify source power against exterior radiation plus modeled losses, including the worst Hermitian eigenvector excitation. Near-zero unresolved modes remain marginal. Do not repair matrices by silently symmetrizing them or clipping eigenvalues.
+
+The released strict gates stay in force. Admitting a dataset under a future policy requires explicit numerical evidence and a separately reviewed importer revision; this source audit does not authorize an automatic tolerance increase.
+
 The upstream numerical reference documentation includes manufactured exterior fields, cavity modes, independent excitation superposition, symmetry, coupled continuity/replay, condensed-versus-monolithic motor solves, and precision comparisons. It states that shared assembly kernels limit independence of some comparisons, and that accelerator qualification is hardware-specific. These are inspected upstream tests and claims, **not tests run in this task**, and not measured validation of the current horn. [Pinned numerical reference coverage](https://github.com/JWSound/BEAT_Engine/blob/e6b3037df04d3ac32d2bd4586d2e9f0312e2d91f/src/beat_engine/julia_local/tests/README.md).
 
 The selected route avoids a second full-solver implementation and addresses the missing coupled horn/exterior physics directly. Remaining work is substantial but concrete: acquire/qualify the runtime, compile conforming mesh/interface maps, audit driver normalization and dry mass, run the actual four-port model, and demonstrate mesh convergence and measurement agreement. No performance, GPU availability, complete current-design solve, or physical-accuracy claim follows from this source inspection.

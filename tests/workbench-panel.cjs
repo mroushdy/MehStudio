@@ -10,12 +10,12 @@ test('broadband plots distinguish FEM points, retain broken rows and never join 
 function harness(){
  const nodes=new Map(),events={};const defaults={drive:'1',distance:'3',mode:'spl',low:'200',high:'700',travel:'1.75',speed:'17',end:'0',loss:'1',mass:'0',phases:'0,0,0,0',parameter:'portAreaMM2',values:'1450,1650,1900'};
  const node=s=>{const k=s.match(/data-aw-([^\]]+)/)[1];if(!nodes.has(k))nodes.set(k,{value:defaults[k]||'',textContent:'',innerHTML:'',disabled:false,events:{},addEventListener(e,fn){this.events[e]=fn;}});return nodes.get(k);};
- const host={open:false,querySelector:node,addEventListener(k,f){events[k]=f;}};const panel=P.init(host);
+ const host={dataset:{},open:false,querySelector:node,addEventListener(k,f){events[k]=f;}};const panel=P.init(host);
  return {panel,host,node:k=>node('[data-aw-'+k+']'),open(){host.open=true;events.toggle();}};
 }
 test('panel is lazy, imports exact drive, invalidates on edits and rejects blank phase/number input',()=>{
  const h=harness(),a=c.MEH.analyze(saved.state);h.panel.update(a);assert.equal(h.panel.result,null);h.panel.setOptions({voltageRms:1});h.open();assert.equal(h.panel.result.available,true);assert.equal(h.panel.result.options.voltageRms,1);assert.equal(h.panel.result.options.endCorrection,0);
- assert.match(h.node('legend').innerHTML,/lossless local FEM/);h.node('drive').value='';h.node('drive').events.input();assert.equal(h.panel.result,null);assert.equal(h.node('plot').innerHTML,'');assert.equal(h.node('export').disabled,true);h.open();assert.match(h.node('status').textContent,/valid numbers/);h.node('drive').value='1';h.node('phases').value='0,,0,0';h.open();assert.equal(h.panel.result,null);h.panel.dispose();
+ assert.equal(h.panel.viewMode,'simple');assert.doesNotMatch(h.node('legend').innerHTML,/lossless local FEM/);const before=JSON.stringify(h.panel.options),result=h.panel.result;h.panel.setViewMode('advanced');assert.match(h.node('legend').innerHTML,/lossless local FEM/);h.panel.setViewMode('simple');assert.equal(h.panel.result,result);assert.equal(JSON.stringify(h.panel.options),before);assert.match(h.node('cards').innerHTML,/Response evenness/);h.node('drive').value='';h.node('drive').events.input();assert.equal(h.panel.result,null);assert.equal(h.node('plot').innerHTML,'');assert.equal(h.node('export').disabled,true);h.open();assert.match(h.node('status').textContent,/valid numbers/);h.node('drive').value='1';h.node('phases').value='0,,0,0';h.open();assert.equal(h.panel.result,null);h.panel.dispose();
 });
 test('portable integration preserves saved workbench settings and geometry refresh',()=>{
  assert.match(html,/workbenchPanel\?\.update\(analysis\)/);assert.match(html,/acousticWorkbench:workbenchPanel\?\{options:workbenchPanel.options\}/);assert.match(html,/workbenchPanel\?\.setOptions\(d.acousticWorkbench\?\.options/);
@@ -31,4 +31,17 @@ test('applying a candidate rejects stale geometry after flushing pending edits',
 test('portable broadband and sizing sources match the reviewed standalone modules',()=>{
  const N=require('../acoustics/multiport-network.cjs')(c.MEHHornAcoustics),S=require('../acoustics/coupled-system.cjs')(c.MEH,c.MEHAcoustics,N),E=require('../acoustics/broadband-engine.cjs')(c.MEH,c.MEHAcoustics,N,S),P0=require('../acoustics/workbench-panel.cjs')(c);
  for(const key of ['baseline','sweep','sparseReference','solve'])assert.equal(E[key].toString(),c.MEHBroadband[key].toString());assert.equal(P0.init.toString(),P.init.toString());
+});
+
+
+test('simple comparisons derive nearby values from the current geometry and cancel on parameter changes',async()=>{
+ const h=harness();h.panel.update(c.MEH.analyze(saved.state));h.panel.setOptions({voltageRms:1});h.open();
+ h.node('values').value='not a number'; // Advanced manual candidates do not override the guided comparison.
+ h.node('sweep').events.click();await new Promise(resolve=>setTimeout(resolve,40));
+ assert.match(h.node('sweep-status').textContent,/of 5 candidates/);
+ assert.match(h.node('simple-candidates').innerHTML,/mm opening/);
+ assert.equal(h.node('apply').disabled,true);
+ h.node('parameter').value='neckMM';h.node('parameter').events.change();
+ assert.equal(h.node('simple-candidates').innerHTML,'');assert.equal(h.node('apply').disabled,true);
+ h.panel.dispose();
 });

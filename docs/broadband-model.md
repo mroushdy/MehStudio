@@ -92,7 +92,7 @@ At the original five native frequencies, the lossless zero-extra-end surrogate m
 
 These are sample-specific **model discrepancy** values, not a calibrated accuracy envelope between points. In particular, the worsening 1 kHz error matters for sizing beyond the study band. The front matrix is not fitted to these values.
 
-Changing front segmentation from 48 to 96 collector cells alters the 1 kHz SPL by approximately 0.00030 dB in this reduced model. The analytic uniform-duct test shows approximately second-order convergence. Neither result proves physical correctness. Authentic native Hornresp-output benchmarking is pending; no match-or-beat claim is made.
+Changing front segmentation from 48 to 96 collector cells alters the 1 kHz SPL by approximately 0.00030 dB in this reduced model. The analytic uniform-duct test shows approximately second-order convergence. Neither result proves physical correctness. Two authentic published classical Hornresp input/output benchmarks are provided in `benchmarks/`; actual four-side-entry MEH validation remains pending. See `docs/hornresp-benchmark.md` for the model and frequency scope.
 
 The network power-balance denominator now includes the sum of individual apparent source powers as well as net real power. This handles valid destructive cancellation without dividing roundoff by nearly zero net power. The actual residual, passive losses and tolerance gates remain in place, and a direct opposing-source test with a passive third port verifies the cancellation case.
 

@@ -23,6 +23,7 @@ const limits=[
  'Spatial operator power combines its radiation and material/boundary dissipation. They cannot be separated without additional qualified output operators.',
  'The rear chamber is a uniform sealed compliance, outside the supplied front operator. Rear ports or rear radiation are unsupported by this contract.',
  'Catalog Mms free-air loading convention remains uncertain. Explicit mass subtraction is a sensitivity and preserves catalog-derived Cms and Rms.',
+ 'Reciprocity and full-Hermitian passivity tolerances are synthetic adapter guards, not accuracy thresholds calibrated against an authentic spatial backend.',
  'No interpolation is provided. Synthetic tests establish coupling algebra and contract checks, not the physical accuracy of an air-field backend.'
 ];
 function minimumEigenvalueSymmetric(matrix){
@@ -36,6 +37,7 @@ function minimumEigenvalueSymmetric(matrix){
  return Math.min(...x.map((r,i)=>r[i]));
 }
 function validate(analysis,data,frequencyHz,options={}){
+ const diagnostics={};
  try{
   const a=analysis?.p?analysis:M.analyze(analysis?.state||analysis||{}),o={density:1.204,movingMassCorrectionG:0,...options};
   if(data?.format!==schema.format||data.scope!==schema.scope||data.units!==schema.units||data.available!==true)throw Error('A full front+horn+exterior SI spatial operator is required.');
@@ -60,12 +62,24 @@ function validate(analysis,data,frequencyHz,options={}){
   if(row.operatorSha256!==data.operatorSha256||row.exteriorDomainSha256!==data.exteriorDomainSha256)throw Error('Matrix row belongs to a different operator or exterior domain.');
   const n=data.ports.length,Z=row.impedance;if(!Array.isArray(Z)||Z.length!==n||Z.some(r=>!Array.isArray(r)||r.length!==n||r.some(v=>!finite(v))))throw Error('Finite n-port acoustic impedance matrix required.');
   const norm=Math.max(1,...Z.flat().map(abs)),tolerance=norm*1e-8;for(let i=0;i<n;i++)for(let j=0;j<n;j++)if(abs(sub(Z[i][j],Z[j][i]))>tolerance)throw Error('Acoustic operator fails reciprocity.');
-  const real=Z.map((r,i)=>r.map((v,j)=>(v.r+Z[j][i].r)/2)),realScale=Math.max(1,...real.flat().map(Math.abs)),minEigenvalue=minimumEigenvalueSymmetric(real);if(minEigenvalue<-realScale*1e-9)throw Error('Acoustic operator fails passive real-power qualification.');
+  // Re(Q^H Z Q) = Q^H H Q with H=(Z+Z^H)/2. Small permitted
+  // nonreciprocity can dominate small radiation resistance, so its imaginary
+  // antisymmetric part must remain in H. Raw Z is never symmetrized or changed.
+  const H=Z.map((r,i)=>r.map((v,j)=>C((v.r+Z[j][i].r)/2,(v.i-Z[j][i].i)/2))),hermitianScale=Math.max(1,...H.flat().map(abs));
+  // The real symmetric representation [Re H, -Im H; Im H, Re H] has
+  // exactly the eigenvalues of H, each repeated twice. Normalize before
+  // Jacobi iteration; retain the same 1e-9 passivity tolerance afterward.
+  const block=Array.from({length:2*n},()=>Array(2*n).fill(0));
+  for(let i=0;i<n;i++)for(let j=0;j<n;j++){const h=H[i][j];block[i][j]=block[n+i][n+j]=h.r/hermitianScale;block[i][n+j]=-h.i/hermitianScale;block[n+i][j]=h.i/hermitianScale;}
+  const minEigenvalue=minimumEigenvalueSymmetric(block)*hermitianScale;
+  // Keep the old diagnostic name as an alias for existing callers.
+  Object.assign(diagnostics,{minimumHermitianEigenvalue:minEigenvalue,minimumRealEigenvalue:minEigenvalue});
+  if(minEigenvalue<-hermitianScale*1e-9)throw Error('Acoustic operator fails passive real-power qualification.');
   if(typeof o.observerId!=='string'||!o.observerId)throw Error('Choose an explicit observer from the common solved exterior.');const observers=Array.isArray(row.observers)?row.observers:[],matches=observers.filter(v=>v.id===o.observerId);if(matches.length!==1)throw Error('Exactly one matching observer transfer is required.');const observer=matches[0];
   if(observer.operatorSha256!==data.operatorSha256||observer.exteriorDomainSha256!==data.exteriorDomainSha256||observer.frequencyHz!==frequencyHz)throw Error('Observer transfer is disconnected from the impedance operator/exterior/frequency.');
   if(observer.qualified!==true||observer.pressureReferencePa!==2e-5||!Array.isArray(observer.locationM)||observer.locationM.length!==3||observer.locationM.some(v=>!Number.isFinite(v))||!Array.isArray(observer.pressurePerFlow)||observer.pressurePerFlow.length!==n||observer.pressurePerFlow.some(v=>!finite(v)))throw Error('Observer requires qualified SI pressure-per-source-flow transfer and its actual location.');
-  return {available:true,analysis:a,options:o,driver:d,row,observer,minimumRealEigenvalue:minEigenvalue,sourceAreaRatios:data.ports.map(p=>p.projectedAreaM2/(d.sd*1e-4))};
- }catch(e){return {available:false,frequencyHz,reason:e.message,backendStatus:status};}
+  return {available:true,analysis:a,options:o,driver:d,row,observer,...diagnostics,sourceAreaRatios:data.ports.map(p=>p.projectedAreaM2/(d.sd*1e-4))};
+ }catch(e){return {available:false,frequencyHz,reason:e.message,backendStatus:status,...diagnostics};}
 }
 function solve(analysis,data,frequencyHz,options={}){
  try{
@@ -82,7 +96,7 @@ function solve(analysis,data,frequencyHz,options={}){
   const sum=key=>branches.reduce((s,r)=>s+r[key],0),inputPowerW=sum('inputPowerW'),coilPowerW=sum('coilPowerW'),mechanicalLossW=sum('mechanicalLossW'),operatorPowerW=sum('frontPowerW'),residualPowerW=inputPowerW-coilPowerW-mechanicalLossW-operatorPowerW,scalePower=Math.max(1e-30,Math.abs(inputPowerW),coilPowerW+mechanicalLossW+Math.abs(operatorPowerW));
   if(operatorPowerW<-scalePower*1e-8||Math.abs(residualPowerW)>scalePower*1e-7)throw Error('Coupled spatial motor power balance failed.');
   const observerPressure=observer.pressurePerFlow.reduce((p,h,i)=>add(p,mul(h,nativeFlows[i])),C()),observerRmsPa=abs(observerPressure);
-  return {available:true,frequencyHz,model:'Qualified full spatial operator / coupled catalog motors / sealed rear',sampleKind:'exact supplied full-spatial frequency; no interpolation',backendStatus:status,branches,observer:{id:observer.id,locationM:observer.locationM.slice(),pressureRms:observerPressure,pressureRmsPa:observerRmsPa,splDb:20*Math.log10(Math.max(observerRmsPa/2e-5,1e-20)),phaseDeg:phase(observerPressure),pressureReferencePa:2e-5,convention:'Same solved exterior operator; no extra propagation, baffle or inverse-distance factor'},inputPowerW,coilPowerW,mechanicalLossW,operatorPowerW,operatorPowerMeaning:'Combined material/boundary loss plus radiated power represented by Re(Z); not separately measured radiation',rearLossW:0,residualPowerW,relativePowerResidual:residualPowerW/scalePower,excursionPeakMM:Math.max(...branches.map(b=>b.excursionPeakMM)),massConvention:{catalogMmsG:d.mmsG,massCorrectionG:o.movingMassCorrectionG,effectiveMechanicalMassG:d.mmsG-o.movingMassCorrectionG,Cms:k.Cms,Rms:k.Rms},provenance:{designSha256:data.designSha256,geometrySha256:data.geometrySha256,boundaryManifestSha256:data.boundaryManifestSha256,exteriorDomainSha256:data.exteriorDomainSha256,operatorSha256:data.operatorSha256,qualification:row.qualification},assumptions:limits};
+  return {available:true,frequencyHz,model:'Qualified full spatial operator / coupled catalog motors / sealed rear',sampleKind:'exact supplied full-spatial frequency; no interpolation',backendStatus:status,minimumHermitianEigenvalue:v.minimumHermitianEigenvalue,minimumRealEigenvalue:v.minimumRealEigenvalue,branches,observer:{id:observer.id,locationM:observer.locationM.slice(),pressureRms:observerPressure,pressureRmsPa:observerRmsPa,splDb:20*Math.log10(Math.max(observerRmsPa/2e-5,1e-20)),phaseDeg:phase(observerPressure),pressureReferencePa:2e-5,convention:'Same solved exterior operator; no extra propagation, baffle or inverse-distance factor'},inputPowerW,coilPowerW,mechanicalLossW,operatorPowerW,operatorPowerMeaning:'Combined material/boundary loss plus radiated power represented by (Z+Z^H)/2; not separately measured radiation',rearLossW:0,residualPowerW,relativePowerResidual:residualPowerW/scalePower,excursionPeakMM:Math.max(...branches.map(b=>b.excursionPeakMM)),massConvention:{catalogMmsG:d.mmsG,massCorrectionG:o.movingMassCorrectionG,effectiveMechanicalMassG:d.mmsG-o.movingMassCorrectionG,Cms:k.Cms,Rms:k.Rms},provenance:{designSha256:data.designSha256,geometrySha256:data.geometrySha256,boundaryManifestSha256:data.boundaryManifestSha256,exteriorDomainSha256:data.exteriorDomainSha256,operatorSha256:data.operatorSha256,qualification:row.qualification},assumptions:limits};
  }catch(e){return {available:false,frequencyHz,reason:e.message,backendStatus:status};}
 }
 function availableFrequencies(data){return data?.format===schema.format&&Array.isArray(data.rows)?data.rows.filter(r=>r.available===true&&r.qualified===true&&r.qualification?.passed===true).map(r=>r.frequencyHz).filter(f=>Number.isFinite(f)&&f>0).sort((a,b)=>a-b):[];}

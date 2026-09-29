@@ -14,6 +14,18 @@ python3 -m http.server 8520 --bind 127.0.0.1
 
 Open **http://127.0.0.1:8520/**.
 
+## Build 12: Assisted design
+
+Assisted now follows **Goals → Drivers → Designs → Refine**. Set the operating band, nominal coverage, drive, assembly limits, optional mid-band loudness target and driver budget. Choose a catalogue suggestion or select drivers you own, then generate layouts. Suggestions require complete motor data and a documented compression-driver handoff recommendation. They are a shortlist for further checks, not a universal best-buy ranking. Enter your own driver quotes to check cost; missing prices are never treated as zero.
+
+The starter uses the DCX464. The BMS 4594HE is excluded from Assisted generation pending accommodation of the 26.6 mm forward nose shown in its manufacturer drawing; older studies retain their original geometry for reproducibility and display a drawing-correction notice.
+
+Generated layouts must meet the entered assembly envelope limits and the existing sampled mechanical/acoustic admission checks. Candidate cards show dimensions and modeled tradeoffs. **Preview** changes only the viewer; **Apply design** makes the change. Refinement can prioritize compactness or modeled drive headroom and preserve the horn profile or entry dimensions. **Undo applied change** restores the preceding design. Changing goals does not silently replace geometry. The loudness estimate covers the cone mids using a baffled aperture; actual coverage, compression-driver response, crossover and complete loudspeaker output are not certified.
+
+Research analysis defaults to **Simple**, with practical response, excursion and air-speed summaries. **Advanced** exposes detailed settings, plots and model assumptions. The saved JSON includes Assisted goals, quotes and selected driver identities; older design files remain supported.
+
+**Export → Acoustic mesh** downloads a canonical geometry job for the native meshing tools. See [the exporter guide](mesh-export/README.md) for surface, ABEC and conforming hybrid FEM/BEM bundles. The browser does not run AKABAK or the native solver. Full-horn tetrahedral meshes that failed quality checks are withheld. Mesh topology checks do not establish acoustic convergence.
+
 ## What it does
 
 - Manual and Assisted design with R-OSSE rev7 horn profiles. Assisted accepts a 40–120° nominal coverage angle, carries it into generated profiles and saved briefs, and offers tap-to-open field help. This axisymmetric angle is not a predicted frequency-dependent beamwidth.
@@ -30,7 +42,7 @@ Open **http://127.0.0.1:8520/**.
 
 Manual edits update the design immediately. Design checks highlight affected controls and collect warnings without freezing the preview or blocking saved comparisons and exports. Driver selection loads dimensions directly; **Fit driver placement** and **Size chamber & port to fit** are explicit actions. Sliders batch geometry updates and briefly defer acoustic screening.
 
-Assisted starts from its own goals, rather than carrying over Manual dimensions. Failed fitting calculations preserve the current design. Acoustic screening and Assisted candidate acceptance still require geometry supported by their models.
+Assisted starts from its own goals. Refinement inherits only dimensions explicitly locked by the user. Failed fitting calculations preserve the current design. Acoustic screening and Assisted candidate acceptance still require geometry supported by their models.
 
 The direct collector model requires the entire entry projection to lie inside the equivalent active piston disk and requires positive collector depth. Invalid coupling cannot run the acoustic screen or pass rear-port fitting. This conservative geometric policy does not establish an acoustic alignment or rule out separately engineered side-entry arrangements.
 
@@ -40,7 +52,7 @@ The **Offset-outlet insert** follows the projected horn entry, including its sha
 
 ## Front chamber tradeoffs
 
-Open **Manual → Front chamber → Compare entry / cavity**, or expand **Front chamber tradeoffs** below the design workspace. Compare the current geometry with shorter/larger-cavity and longer/smaller-cavity choices. Set the tube step and cavity change, or match the bare LC reference to inspect why equal nominal resonance does not mean equal response. Standoff is solved from the actual curved volume, including the active insert aperture when fitted, and Apply changes only tube length and standoff.
+Open **Manual → Front chamber → Compare entry / cavity**, or choose **Advanced** and expand **Front chamber tradeoffs** below the design workspace. Compare the current geometry with shorter/larger-cavity and longer/smaller-cavity choices. Set the tube step and cavity change, or match the bare LC reference to inspect why equal nominal resonance does not mean equal response. Standoff is solved from the actual curved volume, including the active insert aperture when fitted, and Apply changes only tube length and standoff.
 
 The sweep uses the design’s low target and probe frequency, with voltage, end correction and horn assumptions from Acoustic screen. All curves use the current design’s peak flow reference; no candidate is ranked as a universal winner. Frequency shading, fit failures and model limits remain visible. Inserts retain geometry, area and clearance diagnostics without acoustic predictions. CSV records the baseline design, study settings, matched acoustic conditions, actual geometry, results and unavailable cases.
 
@@ -48,7 +60,7 @@ Read the concise [engineering reference](docs/front-chamber-reference.md) for pr
 
 ## Experimental system acoustics
 
-Open **System acoustics**, or **Manual → Front chamber → Analyze sound path**. View mouth flow, mouth-load power, per-mid impedance, excursion, entry speed, pressure and phase. Read [the model scope and workflow](docs/system-acoustics.md) before using these exploratory results. Changing the front passage invalidates its native result; a fresh mesh/solve is required. The browser does not run the native solver. The supplied case includes qualified insert/open-collector comparisons and a coupled 700 Hz pressure map. Import [`examples/offset-insert-study.json`](examples/offset-insert-study.json) to reproduce it. Native source, frozen inputs and verification records are in [`native-front-fem/`](native-front-fem/README.md). Full spatial horn junctions, directivity and calibrated compression-driver handoff remain unresolved.
+Choose **Advanced → Spatial passage detail**, or **Manual → Front chamber → Analyze sound path**. View mouth flow, mouth-load power, per-mid impedance, excursion, entry speed, pressure and phase. Read [the model scope and workflow](docs/system-acoustics.md) before using these exploratory results. Changing the front passage invalidates its native result; a fresh mesh/solve is required. The browser does not run the native solver. The supplied case includes qualified insert/open-collector comparisons and a coupled 700 Hz pressure map. Import [`examples/offset-insert-study.json`](examples/offset-insert-study.json) to reproduce it. Native source, frozen inputs and verification records are in [`native-front-fem/`](native-front-fem/README.md). Full spatial horn junctions, directivity and calibrated compression-driver handoff remain unresolved.
 
 ## Engineering limits
 
@@ -58,10 +70,11 @@ Candidate rankings apply only within the reduced model. Verify physical fit, con
 
 ## Development and checks
 
-The catalogue, geometry and renderer live in `index.html`. Reusable coupled-system sources live in `acoustics/`; run `node acoustics/embed.cjs` after editing those modules. The single-file editor embeds the complete interface and browser calculations. Node.js 22 or newer runs the source-level regression checks without installing packages:
+The catalogue, geometry and renderer live in `index.html`. Reusable coupled-system sources live in `acoustics/`; run `npm run build` after editing those modules or mesh-export sources. The single-file editor embeds the complete interface and browser calculations. Node.js 22 or newer runs the source-level regression checks with local development dependencies:
 
 ```sh
-node --test tests/editor-regression.cjs tests/front-study-regression.cjs tests/front-study-ui.cjs tests/multiport-network.cjs tests/coupled-system.cjs tests/spatial-study.cjs tests/pressure-field.cjs
+npm ci
+npm test
 ```
 
 The tests cover large-driver placement, individual/shared sealed and ported chambers, collector coupling, finite mesh coordinates, driver grouping, live Manual edits, export setting preservation, and insert mesh closure, volume, clearance and acoustic-model boundaries. Additional comparison tests cover actual volume targets, fixed conditions, matched-LC non-equivalence, shared normalization, voltage scaling, insert gating, inertance quadrature and interface state invalidation. They do not replace visual browser testing or acoustic measurements.

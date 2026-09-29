@@ -12,3 +12,7 @@ native-front-fem/cache/
 native-front-fem/**/__pycache__/
 native-front-fem/**/*.msh
 native-front-fem/**/*.checkpoint.json
+node_modules/
+mesh-export/**/__pycache__/
+mesh-export/runtime/
+mesh-export/cache/
