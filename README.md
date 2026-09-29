@@ -2,6 +2,8 @@
 
 Build 13.1 opens Assisted first, remembers the last mode on this browser, and restores the mode and Assisted settings in saved studies and design JSON. Older studies without a mode retain the Manual fallback.
 
+A short experimental-tool notice appears on first use. Dismissing it remembers the acknowledgment on this browser; saved designs and editor preferences are unchanged.
+
 A browser-based multiple-entry-horn study tool. The current editor is one self-contained HTML file with no installation, build step, or external JavaScript dependencies.
 
 ## Open the editor
