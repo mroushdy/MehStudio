@@ -18,4 +18,5 @@ test('Independent throat source drives the same coupled system with passive ener
 test('Missing/stale spatial matrices and incompatible horn profiles cannot produce results',()=>{
  const a=M.analyze({...base,frontFiller:'offset'});for(const frontTwoPort of [{},{available:false,frequencyHz:300,impedance:[[C(),C()],[C(),C()]]},{frequencyHz:400,impedance:[[C(),C()],[C(),C()]]}])assert.equal(S.solve(a,300,[{analysis:a,voltage:C(1),frontTwoPort}]).available,false);
  const b=M.analyze({...base,mouth:600});assert.equal(S.solve(a,300,[{analysis:b,voltage:C(1)}]).available,false);
+ const open=M.analyze({...base,frontFiller:'none'});assert.equal(S.solve(open,300,[{analysis:open,voltage:C(1)}],{soundSpeed:340}).available,false);
 });

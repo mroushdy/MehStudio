@@ -9,6 +9,7 @@ const C=(r=0,i=0)=>({r,i}),add=(a,b)=>C(a.r+b.r,a.i+b.i),sub=(a,b)=>C(a.r-b.r,a.
 function solve(horn,frequencyHz,branches,options={}){
  try{
   const o={density:1.204,endCorrection:1.4,rearLossQ:7,rearEndCorrectionScale:1,loadFactor:1,hornLoad:'webster',mouthTermination:'baffled',throatTermination:'closed',...options},w=2*Math.PI*frequencyHz;
+  if(o.soundSpeed!==undefined&&o.soundSpeed!==horn?.p?.soundSpeed)throw Error('Horn and front passage must use the same sound speed.');
   if(!Array.isArray(branches)||!branches.length||branches.length>16||!(frequencyHz>0))throw Error('Provide 1–16 mid branches and a positive frequency.');
   if(![o.density,o.rearLossQ,o.rearEndCorrectionScale].every(x=>Number.isFinite(x)&&x>0)||!Number.isFinite(o.endCorrection)||o.endCorrection<0)throw Error('Invalid medium, end correction or rear loss assumption.');
   const ks=[],front=[],drivers=[];

@@ -126,8 +126,8 @@ test('JSON exports retain acoustic choices during pending or unavailable calcula
  const host={querySelector(sel){if(!nodes.has(sel))nodes.set(sel,{checked:true,getContext:()=>null,addEventListener(){},setAttribute(){}});return nodes.get(sel)},querySelectorAll(sel){return sel==='[data-ma-input]'?numbers:sel==='[data-ma-choice]'?choices:[]}};
  const panel=c.MEHAcousticPanel.init(host);panel.update(M.analyze(starter),{defer:true});assert.equal(panel.result,null);assert.equal(panel.options.voltageRms,2.83);
  c.exportTestPanel=panel;c.exportTestState=M.normalize({...starter,frontFiller:'annular'});
- const value=vm.runInContext(`(()=>{const acousticPanel=exportTestPanel,state=exportTestState,analysis=MEH.analyze(state),origin='visual',generation=null,variants=[];const readBrief=()=>({}),flushPendingGeometry=()=>{};${between('function designJSON()',"$('#jsonExport')")};return designJSON()})()`,c);
- assert.equal(value.acousticScreen.options.voltageRms,2.83);assert.equal(value.acousticScreen.options.hornLoad,'resistive');assert.equal(value.validation.acousticStatus,'unavailable-or-pending');assert.equal(value.state.frontFiller,'annular');panel.dispose();delete c.exportTestPanel;delete c.exportTestState;
+ const value=vm.runInContext(`(()=>{const systemPanel={options:{voltageRms:1,mouthTermination:"baffled",throatTermination:"closed"}},acousticPanel=exportTestPanel,state=exportTestState,analysis=MEH.analyze(state),origin='visual',generation=null,variants=[];const readBrief=()=>({}),flushPendingGeometry=()=>{};${between('function designJSON()',"$('#jsonExport')")};return designJSON()})()`,c);
+ assert.equal(value.systemAcoustics.options.voltageRms,1);assert.equal(value.acousticScreen.options.voltageRms,2.83);assert.equal(value.acousticScreen.options.hornLoad,'resistive');assert.equal(value.validation.acousticStatus,'unavailable-or-pending');assert.equal(value.state.frontFiller,'annular');panel.dispose();delete c.exportTestPanel;delete c.exportTestState;
 });
 test('Offset-outlet insert follows the entry while preserving closed geometry and cone clearance',()=>{
  for(const shape of ['round','slot','teardrop'])for(const offset of [0,20,35]){

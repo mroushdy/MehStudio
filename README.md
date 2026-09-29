@@ -25,6 +25,7 @@ Open **http://127.0.0.1:8520/**.
 - Optional annular or offset-outlet cone inserts with opening, clearance and center-relief controls, section inspection and mesh-based displaced-air-volume accounting.
 - Reduced linear acoustic screening using supported driver motor data and a one-dimensional Webster horn network.
 - Front chamber tradeoffs: nearby actual tube/cavity geometries, common-reference response and phase comparisons, impedance, excursion, entry speed and geometry-only insert diagnostics.
+- Experimental System acoustics: independently coupled mids, qualified spatial-front result import, pressure/flow and motor results, with exact-geometry invalidation.
 - A measured-response crossover workbench, plus JSON, CSV and section-image exports.
 
 Manual edits update the design immediately. Design checks highlight affected controls and collect warnings without freezing the preview or blocking saved comparisons and exports. Driver selection loads dimensions directly; **Fit driver placement** and **Size chamber & port to fit** are explicit actions. Sliders batch geometry updates and briefly defer acoustic screening.
@@ -33,9 +34,9 @@ Assisted starts from its own goals, rather than carrying over Manual dimensions.
 
 The direct collector model requires the entire entry projection to lie inside the equivalent active piston disk and requires positive collector depth. Invalid coupling cannot run the acoustic screen or pass rear-port fitting. This conservative geometric policy does not establish an acoustic alignment or rule out separately engineered side-entry arrangements.
 
-The optional **Annular insert** occupies part of the collector and assumed cone recess, leaving a central opening around the full projected entry. Its clearance is measured axially from an assumed conical diaphragm; the central keepout is a provisional fraction of piston radius, not measured dust-cap geometry. The reported displaced volume comes from the same closed mesh used in the assembly. It is a volume study, not a path-equalizing phase plug or production part. Acoustic screening is unavailable while the insert is enabled because the current model does not include narrow-gap loading. Choose **Open collector** to return to the existing acoustic screen.
+The optional **Annular insert** occupies part of the collector and assumed cone recess, leaving a central opening around the full projected entry. Its clearance is measured axially from an assumed conical diaphragm; the central keepout is a provisional fraction of piston radius, not measured dust-cap geometry. The reported displaced volume comes from the same closed mesh used in the assembly. It is a volume study, not a path-equalizing phase plug or production part. The legacy Acoustic screen stays unavailable with an insert. **System acoustics** can use a matching, qualified native spatial result; it never substitutes a volume-only response for an insert.
 
-The **Offset-outlet insert** follows the projected horn entry, including its shape, rotation and driver offset. Opening size sets a minimum equivalent diameter; the aperture retains the entry outline with a 2 mm edge allowance. **Center relief depth** lowers the assumed cone apex to leave a flat dust-cap recess. **Inspect insert** zooms into a section cut from the same closed mesh used for rendering and volume. The collector transitions directly into the insert opening; its air volume uses that same passage boundary. The mesh conservatively maintains at least the entered axial clearance to the assumed cone, but actual diaphragm and dust-cap fit still require measurements. Narrow-gap acoustics remain outside the model.
+The **Offset-outlet insert** follows the projected horn entry, including its shape, rotation and driver offset. Opening size sets a minimum equivalent diameter; the aperture retains the entry outline with a 2 mm edge allowance. **Center relief depth** lowers the assumed cone apex to leave a flat dust-cap recess. **Inspect insert** zooms into a section cut from the same closed mesh used for rendering and volume. The collector transitions directly into the insert opening; its air volume uses that same passage boundary. The mesh conservatively maintains at least the entered axial clearance to the assumed cone, but actual diaphragm and dust-cap fit still require measurements. The experimental spatial-front model can resolve the lossless air field for a qualified geometry; thermoviscous gap losses and real diaphragm geometry remain outside it.
 
 ## Front chamber tradeoffs
 
@@ -45,6 +46,10 @@ The sweep uses the design’s low target and probe frequency, with voltage, end 
 
 Read the concise [engineering reference](docs/front-chamber-reference.md) for primary evidence, equations, units, limitations and next validation steps. The offline editor embeds its essential methods and source links.
 
+## Experimental system acoustics
+
+Open **System acoustics**, or **Manual → Front chamber → Analyze sound path**. View mouth flow, mouth-load power, per-mid impedance, excursion, entry speed, pressure and phase. Read [the model scope and workflow](docs/system-acoustics.md) before using these exploratory results. Changing the front passage invalidates its native result; a fresh mesh/solve is required. The browser does not run the native solver. Full spatial horn junctions, directivity and calibrated compression-driver handoff remain unresolved.
+
 ## Engineering limits
 
 This is a design-study tool, not a validated loudspeaker design or manufacturing CAD system. It does not predict full-field directivity, replace BEM/FEM, or provide tolerance-checked production STEP geometry. Rear-port and horn radiation are not summed. Driver appearance, cone recess and some displacement/clearance assumptions remain approximate; read the in-app **Methods** and manufacturer links.
@@ -53,10 +58,10 @@ Candidate rankings apply only within the reduced model. Verify physical fit, con
 
 ## Development and checks
 
-Edit `index.html` directly. It includes the catalogue, geometry, renderer, acoustic model and interface. Node.js 22 or newer runs the source-level regression checks without installing packages:
+The catalogue, geometry and renderer live in `index.html`. Reusable coupled-system sources live in `acoustics/`; run `node acoustics/embed.cjs` after editing those modules. The single-file editor embeds the complete interface and browser calculations. Node.js 22 or newer runs the source-level regression checks without installing packages:
 
 ```sh
-node --test tests/editor-regression.cjs tests/front-study-regression.cjs tests/front-study-ui.cjs
+node --test tests/editor-regression.cjs tests/front-study-regression.cjs tests/front-study-ui.cjs tests/multiport-network.cjs tests/coupled-system.cjs tests/spatial-study.cjs
 ```
 
 The tests cover large-driver placement, individual/shared sealed and ported chambers, collector coupling, finite mesh coordinates, driver grouping, live Manual edits, export setting preservation, and insert mesh closure, volume, clearance and acoustic-model boundaries. Additional comparison tests cover actual volume targets, fixed conditions, matched-LC non-equivalence, shared normalization, voltage scaling, insert gating, inertance quadrature and interface state invalidation. They do not replace visual browser testing or acoustic measurements.
