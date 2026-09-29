@@ -6,7 +6,8 @@ const M=c.MEH,A=c.MEHAcoustics,F=c.MEHFrontStudyCore;
 const editor=scripts[11];
 function between(start,end){const i=editor.indexOf(start);return editor.slice(i,editor.indexOf(end,i));}
 const seed=editor.match(/const starter=(.*);\nfor\(let/)[1];
-const starter=vm.runInContext(`(()=>{const M=MEH;${between('function seedRearLayout(','function driverLabel(')};return ${seed};})()`,c);
+// Hold the shared rear fixture fixed while exercising front passage variations.
+const starter=vm.runInContext(`(()=>{const M=MEH;${between('function seedRearLayout(','function driverLabel(')};return seedRearLayout('shared',${seed});})()`,c);
 const study={tubeStepMM:3,volumeStepPercent:10,matchLC:false};
 const options={hornLoad:'webster',voltageRms:1,endCorrection:1.4,fmin:200,fmax:700,points:17,sensitivity:false,density:1.204,loadFactor:1,mouthTermination:'baffled',throatTermination:'closed',rearLossQ:7,rearEndCorrectionScale:1};
 const plain=value=>JSON.parse(JSON.stringify(value));

@@ -4,6 +4,8 @@ const source=scripts[11];
 function between(start,end){return source.slice(source.indexOf(start),source.indexOf(end,source.indexOf(start)));}
 const seed=source.match(/const starter=(.*);\nfor\(let/)[1];
 const starter=vm.runInContext(`(()=>{const M=MEH;${between('function seedRearLayout(','function driverLabel(')};return ${seed};})()`,c);
+// Shared-enclosure regressions use an explicit fixture, independent of the UI default.
+const sharedStarter=vm.runInContext(`(()=>{const M=MEH;${between('function seedRearLayout(','function driverLabel(')};return seedRearLayout('shared',${JSON.stringify(starter)});})()`,c);
 function acoustic(a,hornLoad='webster'){return c.MEHAcoustics.analyze(a,{driverId:a.p.midDriver,hornLoad,points:17,fmin:100,fmax:700,sensitivity:false});}
 test('single-file script syntax and external-dependency contract',()=>{
  assert.equal(scripts.length,14);assert.ok(!/<script[^>]+\bsrc\s*=/i.test(html));
@@ -43,14 +45,14 @@ for(const id of ['bc8ndl51','bc10ndl64'])for(const rearLayout of ['shared','indi
 }
 test('large-driver mesh and smooth enclosure contain finite coordinates',()=>{
  for(const id of ['bc8ndl51','bc10ndl64']){
-  const a=M.fitMidDriver({...starter,rearConcept:'reflex'},id).analysis;
+  const a=M.fitMidDriver({...sharedStarter,rearConcept:'reflex'},id).analysis;
   const meshes=c.MEHMeshes(a,true);assert.ok(meshes.length>10);
   for(const mesh of meshes){assert.ok(mesh.data.length>0,mesh.name);assert.ok(mesh.data.every(Number.isFinite),mesh.name);}
   assert.equal(a.sharedRear.smoothJoin,true);assert.equal(a.sharedRear.valid,true);
  }
 });
-function manualHarness(){
- const setup=`(()=>{const M=MEH;let state=${JSON.stringify(starter)},analysis=M.analyze(state),manualDraft=null,pending=0,title='start';const nodes=new Map();const $=id=>{if(!nodes.has(id))nodes.set(id,{});return nodes.get(id)};const esc=s=>String(s);let updates=0,nextFrame=0;const frames=new Map();function requestAnimationFrame(fn){frames.set(++nextFrame,fn);return nextFrame}function cancelAnimationFrame(id){frames.delete(id)}function markEdited(){manualDraft=null}function syncDriverStatus(){}function fitAllViews(){}let driverFitMessage='';function update(){pending=0;analysis=M.analyze(state);state=analysis.p;updates++;renderRearEditNotice()}
+function manualHarness(initial=starter){
+ const setup=`(()=>{const M=MEH;let state=${JSON.stringify(initial)},analysis=M.analyze(state),manualDraft=null,pending=0,title='start';const nodes=new Map();const $=id=>{if(!nodes.has(id))nodes.set(id,{});return nodes.get(id)};const esc=s=>String(s);let updates=0,nextFrame=0;const frames=new Map();function requestAnimationFrame(fn){frames.set(++nextFrame,fn);return nextFrame}function cancelAnimationFrame(id){frames.delete(id)}function markEdited(){manualDraft=null}function syncDriverStatus(){}function fitAllViews(){}let driverFitMessage='';function update(){pending=0;analysis=M.analyze(state);state=analysis.p;updates++;renderRearEditNotice()}
  ${between('function flushPendingGeometry(','async function fitManualRearPort')}
  ${between('function renderRearEditNotice()','function seedRearLayout(')}
  ${between('function selectMidDriver(','async function fitSelectedMidDriver(')}
@@ -58,7 +60,7 @@ function manualHarness(){
  return vm.runInContext(setup,c);
 }
 test('Manual warnings leave geometry, subsequent edits, saving and export live',()=>{
- const ui=manualHarness();
+ const ui=manualHarness(sharedStarter);
  ui.edit('mouth',710);assert.equal(ui.state.mouth,710);assert.ok(ui.analysis.rearIssues.length);assert.equal(ui.disabled,false);
  ui.edit('offset',70);assert.equal(ui.state.offset,70);assert.ok(ui.analysis.directCouplingIssues.length);assert.equal(ui.disabled,false);
  ui.edit('gap',42);assert.equal(ui.state.offset,70);assert.equal(ui.analysis.p.gap,42);assert.equal(ui.updates,3);

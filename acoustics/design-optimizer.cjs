@@ -3,7 +3,7 @@ module.exports=function(M,A){
 'use strict';
 const PI=Math.PI,clamp=(x,l,h)=>Math.max(l,Math.min(h,x)),uniq=a=>[...new Set(a.filter(Number.isFinite).map(v=>Math.round(v*1000)/1000))],pause=()=>new Promise(resolve=>setTimeout(resolve,0));
 const hornKeys=['mouth','throat','coverage','throatAngle','k','r','m','b','q','wall','soundSpeed'];
-const goalDefaults=Object.freeze({midDriver:'bc6ndl38',compressionDriver:'bcDcx464',count:4,coverage:60,lowHz:100,handoffHz:700,designDriveVoltageRms:2.83,rearLayout:'shared',rearConcept:'individual',sharedRearShape:'teardrop'});
+const goalDefaults=Object.freeze({midDriver:'bc6ndl38',compressionDriver:'bcDcx464',count:4,coverage:60,lowHz:100,handoffHz:700,designDriveVoltageRms:2.83,rearLayout:'individual',rearConcept:'individual',sharedRearShape:'teardrop'});
 const freshProfile=Object.freeze({coverage:60,throatAngle:7.5,k:1.4,r:.2,m:.8,b:.1,q:3.5,wall:8,coneDepth:20,soundSpeed:343});
 const policy={maximumMach:.05,minimumDriverInletDiameters:1,minimumWallInletDiameters:.5,maximumPowerRelativeResidual:1e-5,geometrySeeds:325,shortlist:8,coarsePoints:25,finalPoints:193};
 const objective={mouthRipple:1,meanEfficiencyLoss:.5,mouthDeliveryLoss:.5,excursionUtilization:2,entryVelocityUtilization:2,rearVelocityUtilization:2,terminationSensitivity:.5,lowEdgeDeficit:.5};
