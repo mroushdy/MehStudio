@@ -34,7 +34,7 @@ def read_json(path):
 def load_job(path):
     job = read_json(path)
     if not isinstance(job, dict) or job.get('schema') != SCHEMA:
-        raise RunnerError('Choose MEH_acoustic_geometry.json from Export > Acoustic solver export > Download geometry job. A saved design JSON is not a geometry job.')
+        raise RunnerError('Choose MEH_acoustic_geometry.json from Export > Acoustic simulation files > Geometry job only. A saved design JSON is not a geometry job.')
     manifest = job.get('manifest')
     if not isinstance(manifest, dict) or not isinstance(manifest.get('units'), dict) or manifest['units'].get('length') != 'm':
         raise RunnerError('The job must declare metres. Export a fresh geometry job from MEH Studio.')
@@ -112,7 +112,9 @@ def validate_completion(out, job):
         raise RunnerError('The mesher left an INCOMPLETE marker. This is not a completed solver bundle.')
     required = ('manifest.json', 'validation.json', 'bem-air-outward.json', 'bem-air-outward.msh',
                 'abec/project.abec', 'abec/boundary.msh', 'abec/solving.txt', 'abec/observation.txt',
-                'abec/source-map.json', 'abec/adapter-validation.json')
+                'abec/source-map.json', 'abec/adapter-validation.json',
+                'boundary-lab/project.blab.json', 'boundary-lab/boundary.msh',
+                'boundary-lab/source-map.json', 'boundary-lab/adapter-validation.json')
     for name in required:
         if not (out / name).is_file() or (out / name).stat().st_size == 0:
             raise RunnerError(f'The mesher did not produce {name}. This is not a completed solver bundle.')
@@ -166,6 +168,12 @@ def validate_completion(out, job):
     actual = mapping(sources, 'physical_tag', 'ABEC source map')
     if exported != expected or actual != expected:
         raise RunnerError('The ABEC source map and output manifest must exactly match all input driver and vent sources.')
+    blab = read_json(out / 'boundary-lab/adapter-validation.json')
+    blab_map = read_json(out / 'boundary-lab/source-map.json')
+    if blab.get('checks', {}).get('triangle_count') != count or blab.get('length_unit') != 'm':
+        raise RunnerError('Boundary Lab mesh count or SI unit validation is missing.')
+    if mapping(blab_map.get('sources', []), 'physical_tag', 'Boundary Lab source map') != expected:
+        raise RunnerError('Boundary Lab source mapping does not match every input source.')
     return {'triangles': count, 'sources': len(sources), 'drivers': len(manifest.get('drivers', [])),
             'one_dense_complex128_matrix_gib': 16 * count * count / 1024**3,
             'proprietary_solver_validation': 'not run', 'acoustic_convergence': 'not established'}
@@ -235,11 +243,11 @@ def build(job_path, out, python, versions, size_mm=None, profile_tolerance_mm=No
             summary['runner_package'] = read_json(package)
         (out / 'runner-report.json').write_text(json.dumps(summary, indent=2) + '\n', encoding='utf-8')
         (out / 'EXPORT_COMPLETE.txt').write_text(
-            'Geometry and adapter checks completed. Open abec/project.abec in AKABAK to inspect/import.\n'
+            'Geometry and adapter checks completed. Open abec/project.abec in AKABAK or boundary-lab/project.blab.json in Boundary Lab.\n'
             'AKABAK/ABEC import and solve have NOT been verified by this runner. No acoustic response was calculated.\n'
             'Read abec/README.txt, validation.json and runner-report.json before solving.\n', encoding='utf-8')
         marker.unlink()
-        print(f'Geometry export complete: {out}\nProject for AKABAK inspection: {out / "abec/project.abec"}\n'
+        print(f'Geometry export complete: {out}\nProject for AKABAK inspection: {out / "abec/project.abec"}\nBoundary Lab project: {out / "boundary-lab/project.blab.json"}\n'
               f'{summary["triangles"]:,} triangles; {summary["sources"]} independent sources.\n'
               f'One dense complex128 matrix: {summary["one_dense_complex128_matrix_gib"]:.2f} GiB (not measured solver memory).\n'
               'AKABAK import/solve and acoustic convergence remain unverified; no response has been calculated.', flush=True)

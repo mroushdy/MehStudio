@@ -122,7 +122,7 @@ test('a 100 Hz requested upper limit gets a valid default range; explicit invali
 });
 test('the authoritative observation frame precedes legacy horn origin and survives the file bridge',()=>{
  const fs=require('node:fs'),os=require('node:os'),path=require('node:path'),{writeBundle}=require('../mesh-export/write_bundle.cjs');
- const input=fixture();input.manifest.observation_frame={origin_m:[.2,.3,.4],forward:[0,0,1],horizontal:[1,0,0],vertical:[0,1,0]};
+ const input=fixture();input.manifest.medium={sound_speed_m_s:343,density_kg_m3:1.204};input.manifest.observation_frame={origin_m:[.2,.3,.4],forward:[0,0,1],horizontal:[1,0,0],vertical:[0,1,0]};
  const direct=buildAbecProject(input);assert.deepEqual(direct.observation_frame.origin_m,[.2,.3,.4]);
  assert.deepEqual(buildAbecProject(input,{mouthCenterM:[.1,0,0]}).observation_frame.origin_m,[.1,0,0]);
  const directory=fs.mkdtempSync(path.join(os.tmpdir(),'meh-abec-frame-'));
@@ -136,6 +136,9 @@ test('the authoritative observation frame precedes legacy horn origin and surviv
   fs.writeFileSync(path.join(directory,'manifest.json'),JSON.stringify(input.manifest));writeBundle(directory);
   const exported=JSON.parse(fs.readFileSync(path.join(directory,'abec','adapter-validation.json'),'utf8'));
   assert.deepEqual(exported.observation_frame.origin_m,[0,0,.15]);
+  const blab=JSON.parse(fs.readFileSync(path.join(directory,'boundary-lab','adapter-validation.json'),'utf8'));
+  assert.deepEqual(blab.mesh_coordinate_transform.origin_m,[0,0,.15]);
+  assert.ok(fs.existsSync(path.join(directory,'boundary-lab','requests','source-101.json')));
  }finally{fs.rmSync(directory,{recursive:true,force:true});}
 });
 test('saved medium values are explicit manual import requirements, never an implicit solver-setting claim',()=>{

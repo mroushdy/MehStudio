@@ -22,6 +22,7 @@ def job_fixture():
 def completed_fixture(out, job=None):
     job = job or job_fixture()
     (out / 'abec').mkdir(parents=True, exist_ok=True)
+    (out / 'boundary-lab').mkdir(parents=True, exist_ok=True)
     manifest = dict(job['manifest'], mesh_export={'intersection_validation_skipped': False})
     surface = {'open_or_nonmanifold_edges': 0, 'connected_components': 1, 'self_intersection': {'passed': True}}
     files = {'manifest.json': manifest, 'validation.json': {'bem': surface, 'front': surface,
@@ -30,10 +31,13 @@ def completed_fixture(out, job=None):
              'abec/adapter-validation.json': {'checks': {'triangle_count': 42}},
              'abec/source-map.json': {'sources': [dict(id=source['id'], physical_tag=source['source_tag'])
                  for source in job['manifest']['drivers'] + job['manifest'].get('vent_sources', [])]}}
+    files['boundary-lab/adapter-validation.json'] = {'checks': {'triangle_count': 42}, 'length_unit': 'm'}
+    files['boundary-lab/source-map.json'] = files['abec/source-map.json']
     for name, value in files.items():
         (out / name).write_text(json.dumps(value))
     for name in ('bem-air-outward.json', 'bem-air-outward.msh', 'abec/project.abec',
-                 'abec/boundary.msh', 'abec/solving.txt', 'abec/observation.txt'):
+                 'abec/boundary.msh', 'abec/solving.txt', 'abec/observation.txt',
+                 'boundary-lab/project.blab.json', 'boundary-lab/boundary.msh'):
         (out / name).write_text('fixture')
 
 
@@ -80,7 +84,9 @@ class RunnerTests(unittest.TestCase):
                          ('validation.json', lambda data: data['bem'].pop('self_intersection')),
                          ('validation.json', lambda data: data['front'].update(connected_components=2)),
                          ('validation.json', lambda data: data['bem-air-outward_import'].update(passed=False)),
-                         ('abec/source-map.json', lambda data: data.update(sources=[]))]
+                         ('abec/source-map.json', lambda data: data.update(sources=[])),
+                         ('boundary-lab/source-map.json', lambda data: data.update(sources=[])),
+                         ('boundary-lab/adapter-validation.json', lambda data: data.update(length_unit='mm'))]
             for name, mutate in mutations:
                 completed_fixture(out)
                 data = json.loads((out / name).read_text()); mutate(data); (out / name).write_text(json.dumps(data))

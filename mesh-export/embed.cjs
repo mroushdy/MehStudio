@@ -3,10 +3,12 @@
 const fs=require('node:fs'),path=require('node:path');
 const root=path.join(__dirname,'..'),file=path.join(root,'index.html');
 function source(){
- const modules=[require('./runner-package.cjs').browserSource(),...['geometry.cjs','panel.cjs'].map(name=>fs.readFileSync(path.join(__dirname,name),'utf8').trim())];
+ const modules=[...['zip.cjs','formats.cjs','panel.cjs'].map(name=>fs.readFileSync(path.join(root,'exports',name),'utf8').trim()),require('./runner-package.cjs').browserSource(),...['geometry.cjs','panel.cjs'].map(name=>fs.readFileSync(path.join(__dirname,name),'utf8').trim())];
  for(const text of modules)if(/<\/script/i.test(text))throw Error('Embedded mesh module contains a closing script tag.');
  return '/* BEGIN ACOUSTIC MESH EXPORT */\n'+modules.join('\n')+`\n(function(root){
  const host=root.document.getElementById('meshExport'),editor=root.__MEH_EDITOR__;
+ const save=(name,data,type)=>{const url=root.URL.createObjectURL(new root.Blob([data],{type})),link=root.document.createElement('a');link.href=url;link.download=name;link.click();root.setTimeout(()=>root.URL.revokeObjectURL(url),1000);};
+ if(editor)root.MEHFileExportPanel.init(root.document.getElementById('fileExports'),{getDesign:()=>editor.designJSON(),save});
  if(host&&editor)root.MEHMeshExportPanel.init(host,{getDesign:()=>editor.designJSON(),exportButton:root.document.getElementById('export')});
  })(typeof globalThis!=='undefined'?globalThis:this);\n/* END ACOUSTIC MESH EXPORT */`;
 }

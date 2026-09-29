@@ -1,3 +1,9 @@
+# Start here: your acoustic export kit
+
+If this folder contains `OPEN_FIRST.html`, open it for the shorter setup guide. The current design and geometry job are already beside the runner; no files need to be moved.
+
+A completed run creates **both** `abec/project.abec` (AKABAK import) and `boundary-lab/project.blab.json` (Boundary Lab). Keep each project beside its meshes and read its README. The kit builds geometry; it does not include either solver or calculate a response. Boundary Lab channels are prescribed unit velocities, including optional vents, not solved driver voltages; use its source request files for independent bases.
+
 # Make solver files from your MEH design
 
 The browser downloads a **geometry job**, not a mesh. This runner builds and checks

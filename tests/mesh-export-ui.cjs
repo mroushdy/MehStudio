@@ -1,6 +1,7 @@
 // DOM behavior and portable-source checks. This is not rendered browser QA.
 'use strict';
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
+require('../exports/zip.cjs');
 const Panel=require('../mesh-export/panel.cjs'),root=path.join(__dirname,'..');
 function harness({getDesign=()=>({format:'MEH-Lab-v2',state:{mouth:720}}),buildJob=(design,options)=>({manifest:{designHash:'test'},design,options}),runnerPackage}={}){
  const nodes=new Map(),saved=[],exportButton={events:{},addEventListener(event,fn){this.events[event]=fn;},removeEventListener(event,fn){if(this.events[event]===fn)delete this.events[event];}};
@@ -51,7 +52,7 @@ test('portable HTML embeds reviewed modules while preserving existing script ind
  const {source}=require('../mesh-export/embed.cjs'),{context,html,scripts}=require('./load-editor.cjs')();
  assert.equal(scripts.at(-1).slice(scripts.at(-1).indexOf('/* BEGIN ACOUSTIC MESH EXPORT */')),source());assert.match(scripts[11],/function designJSON\(\)\{flushPendingGeometry\(\)/);assert.match(scripts[12],/Optional measured-response workbench/);
  assert.match(scripts[13],/MEHResponse\.init/);assert.match(scripts[13],/BEGIN ACOUSTIC MESH EXPORT/);assert.equal(scripts.length,14);
- assert.equal((html.match(/id="meshExport"/g)||[]).length,1);assert.match(html,/<dialog id="exportDialog">[\s\S]*?<details id="meshExport"><\/details><\/dialog>/);
+ assert.equal((html.match(/id="meshExport"/g)||[]).length,1);assert.match(html,/<dialog id="exportDialog">[\s\S]*?<details id="meshExport" open><\/details>[\s\S]*?id="fileExports"[\s\S]*?<\/dialog>/);
  context.document={getElementById:()=>null};vm.runInContext(scripts.at(-1),context);
  assert.equal(typeof context.MEHMeshGeometry.buildJob,'function');assert.equal(typeof context.MEHMeshExportPanel.init,'function');
 });
@@ -77,3 +78,12 @@ test('rear vent sources require an explicit option and retain their limitation i
  h.node('[data-mx-vent-basis]').checked=true;await h.panel.run();assert.equal(JSON.parse(h.saved[1][1]).options.rearVentBasis,true);
  assert.match(h.host.innerHTML,/rear-cavity and motor coupling/);assert.match(h.host.innerHTML,/native AKABAK import and solve are unverified/);
 });
+
+test('one primary download packages current job, saved design and open-first instructions with the offline builder',async()=>{
+ const bundle=require('../mesh-export/runner-package.cjs').buildPackage(),h=harness({runnerPackage:{filename:'MEH-local-runner.zip',base64:bundle.bytes.toString('base64')}});
+ await h.node('[data-mx-kit]').events.click();assert.equal(h.saved.length,1);assert.equal(h.saved[0][0],'MEH_AKABAK_export_kit.zip');assert.equal(h.saved[0][2],'application/zip');
+ const kit=Buffer.from(h.saved[0][1]);assert.ok(kit.includes(Buffer.from('MEH-local-runner/OPEN_FIRST.html')));assert.ok(kit.includes(Buffer.from('MEH-local-runner/MEH_acoustic_geometry.json')));assert.ok(kit.includes(Buffer.from('MEH-local-runner/MEH_design_study.json')));assert.ok(kit.includes(Buffer.from('abec/project.abec')));
+ h.node('[data-mx-target]').value='blab';h.node('[data-mx-target]').events.change();assert.match(h.node('[data-mx-kit]').textContent,/Boundary Lab/);await h.node('[data-mx-kit]').events.click();assert.equal(h.saved[1][0],'MEH_Boundary_Lab_export_kit.zip');assert.ok(Buffer.from(h.saved[1][1]).includes(Buffer.from('boundary-lab/project.blab.json')));
+});
+
+test('the actual individually sealed startup design can prepare a canonical export job',()=>{const {context:c,scripts}=require('./load-editor.cjs')();c.document={getElementById:()=>null};vm.runInContext(scripts.at(-1),c);const s=scripts[11],start=s.indexOf('function seedRearLayout('),end=s.indexOf('function driverLabel(',start),seed=s.match(/const starter=(.*);\nfor\(let/)[1];const state=vm.runInContext(`(()=>{const M=MEH;${s.slice(start,end)};return ${seed};})()`,c);const job=c.MEHMeshGeometry.buildGeometry(c.MEH,{state});assert.equal(job.enclosure.kind,'individual-sealed-pods');assert.equal(job.manifest.drivers.length,4);assert.ok(job.enclosure.checks.minimum_adapter_sector_clearance_m>0);});

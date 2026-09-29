@@ -1,0 +1,71 @@
+{
+  "build": "13",
+  "javascriptTestsPassed": 214,
+  "exporterPythonTestsPassed": 40,
+  "renderedBrowserQA": false,
+  "cadImporter": "OpenCascade OCP",
+  "cadImports": [
+    {
+      "file": "horn",
+      "faces": 20544,
+      "solids": 1,
+      "valid": true,
+      "bounds_mm": [
+        -350.0000001,
+        -350.0000001,
+        -1.077306146,
+        350.0000001,
+        350.0000001,
+        358.704242904
+      ]
+    },
+    {
+      "file": "reference",
+      "faces": 20544,
+      "solids": 0,
+      "valid": true,
+      "bounds_mm": [
+        -350.0000001,
+        -350.0000001,
+        -1.077306146,
+        350.0000001,
+        350.0000001,
+        358.704242904
+      ]
+    },
+    {
+      "file": "surfaces",
+      "faces": 2,
+      "solids": 0,
+      "valid": true,
+      "bounds_mm": [
+        -350.0000001,
+        -350.0000001,
+        -1.077306146,
+        350.0000001,
+        350.0000001,
+        358.704242904
+      ]
+    }
+  ],
+  "starterNativeMesh": {
+    "passed": true,
+    "midCount": 4,
+    "triangleCount": 67700,
+    "globalSizeMM": 35,
+    "retainedMeridianToleranceMM": 0.2,
+    "standOffMM": 35,
+    "oneDenseComplex128MatrixGiB": 68.29634308815002,
+    "acousticConvergence": "not established"
+  },
+  "boundaryLab": {
+    "nativeLoaderAndPreparationPassed": true,
+    "projectSchema": 9,
+    "independentStarterSourceRequests": 4,
+    "acousticSolveExecuted": false
+  },
+  "AKABAK": {
+    "importAndSolve": "not run"
+  },
+  "CADScope": "Uncut horn blank or separate reference surfaces; not a completed manufacturing assembly"
+}

@@ -1,7 +1,7 @@
 /* Deterministic ZIP of the reviewed local runner. No npm archive dependency. */
 'use strict';
 const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),zlib=require('node:zlib');
-const FILES=['run.py','requirements.txt','START_HERE.md','build_mesh.py','validate_mesh.py','write_bundle.cjs','abec-project.cjs'];
+const FILES=['run.py','requirements.txt','START_HERE.md','build_mesh.py','validate_mesh.py','write_bundle.cjs','abec-project.cjs','boundary-lab-project.cjs'];
 const sha256=bytes=>crypto.createHash('sha256').update(bytes).digest('hex');
 function crc32(data){let crc=0xffffffff;for(const byte of data){crc^=byte;for(let i=0;i<8;i++)crc=(crc>>>1)^((crc&1)?0xedb88320:0);}return (crc^0xffffffff)>>>0;}
 function zip(files){

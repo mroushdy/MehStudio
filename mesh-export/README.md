@@ -1,6 +1,6 @@
 # MEH acoustic mesh exporter
 
-The offline editor's **Export → Acoustic solver export** disclosure downloads a canonical geometry job for the current design and a matching local runner ZIP, both available offline. The native runner turns that job into a connected acoustic boundary and an ABEC project. It does not concatenate display meshes or export a manufacturing STL.
+Open **Export → Acoustic simulation files**, choose AKABAK or Boundary Lab, and click **Download export kit (.zip)**. It contains the current design, geometry job, local mesh builder and `OPEN_FIRST.html`. The local run produces both an ABEC project and a Boundary Lab project with checked meshes. Separate job/builder downloads remain under Mesh settings. This is a setup kit, not a prebuilt mesh, solver application or manufacturing STL.
 
 ## Local runner for an editor download
 
@@ -199,3 +199,7 @@ connectivity and physical groups, and rebuild the interface maps from the final
 serialized files. Conversion can change node/element numbering and file hashes.
 The separate Boundary Lab integration task owns that conversion and verification;
 a successful in-memory branch solve does not validate this coupled file loader.
+
+## Boundary Lab target
+
+Completed bundles include `boundary-lab/project.blab.json`, SI mesh, exact source projections and independent source request files. See [Boundary Lab export](../docs/boundary-lab-export.md) for the mouth-frame transform, real loader/preparation validation and limits. A loaded project is not a qualified acoustic result.
