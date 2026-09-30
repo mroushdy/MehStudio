@@ -1,0 +1,325 @@
+{
+  "schemaVersion": 1,
+  "id": "daytondma80_8",
+  "name": "Dayton Audio DMA80-8",
+  "category": "cone",
+  "variant": "8 ohm",
+  "modelStatus": "envelope-only",
+  "sources": [
+    {
+      "id": "drawing",
+      "url": "https://www.daytonaudio.com/images/resources/295-587--dayton-audio-dma80-8-specification-sheet.pdf",
+      "kind": "datasheet-pdf",
+      "sha256": "7fccf676ccf315b29c1e55599bebf83097dec2d3d4c909eab0420842ee0c19d4",
+      "inspection": "drawing-reviewed",
+      "accessDate": "2026-09-30",
+      "inspectionDate": "2026-09-30",
+      "localArchivePath": "work/dma80/dma80-8.pdf",
+      "downloadStatus": "downloaded",
+      "redistribution": "Local inspection only; source file not redistributed."
+    },
+    {
+      "id": "product",
+      "url": "https://www.daytonaudio.com/product/1619/dma80-8-3-dual-magnet-aluminum-cone-full-range-driver-8-ohm",
+      "kind": "product-page",
+      "sha256": "ba431556cad85ef3646fe09ffa1a584061879babf38c504497a7884becea69ec",
+      "inspection": "text-only",
+      "accessDate": "2026-09-30",
+      "localArchivePath": "work/dma80/dma80-8.html",
+      "downloadStatus": "downloaded",
+      "redistribution": "Local inspection only; source file not redistributed."
+    },
+    {
+      "id": "cad",
+      "url": "https://www.daytonaudio.com/images/resources/3D-Scans/DMA80-8_and_-4_3D_Files.zip",
+      "kind": "manufacturer-cad-zip",
+      "sha256": "287b1caced1c851532b4a6e3fbde3e4d8e8a854ab42d5dc41653f235b18b0aa4",
+      "inspection": "native-brep-reviewed",
+      "accessDate": "2026-09-30",
+      "inspectionDate": "2026-09-30",
+      "localArchivePath": "work/dma80/manufacturer-cad.zip",
+      "downloadStatus": "downloaded",
+      "redistribution": "Source URL only; vendor CAD not redistributed.",
+      "member": "DMA80-8 and -4.step",
+      "memberSHA256": "0ea7d46cee468035d3e0a5ff76ec98a53119128ac71583b7068d217aa650bcfc"
+    }
+  ],
+  "dimensions": {
+    "nominalDiameterInches": {
+      "value": 3,
+      "unit": "in",
+      "status": "published",
+      "sourceId": "product",
+      "location": "Product specifications",
+      "notes": "Nominal size, not mechanical envelope."
+    },
+    "overallWidth": {
+      "value": 80.5,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Manufacturer specification sheet, page 1 drawing",
+      "notes": "Square frame width; matched by native CAD optimal bounds."
+    },
+    "overallHeight": {
+      "value": 80.5,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Manufacturer specification sheet, page 1 drawing",
+      "notes": "Square frame height; matched by native CAD optimal bounds."
+    },
+    "overallDiagonal": {
+      "value": 113.84419177103416,
+      "unit": "mm",
+      "status": "conservative-envelope",
+      "sourceId": "drawing",
+      "location": "Manufacturer specification sheet, page 1 drawing",
+      "notes": "Circumscribed sharp-corner square envelope: sqrt(2) × 80.5. Rounded real corners are inside it. Ø95.5 in drawing is bolt circle, not frame diameter."
+    },
+    "depth": {
+      "value": 45.1,
+      "unit": "mm",
+      "status": "cad-inspected",
+      "sourceId": "cad",
+      "location": "Official shared DMA80-8 and -4 STEP, millimetres; native B-rep inspection",
+      "notes": "Complete CAD axial extent, -38.1 to +7.0 mm. Includes proud surround; not an installed rear projection."
+    },
+    "packagingEnvelopeDepth": {
+      "value": 45.1,
+      "unit": "mm",
+      "status": "conservative-envelope",
+      "sourceId": "cad",
+      "location": "Official shared DMA80-8 and -4 STEP, millimetres; native B-rep inspection",
+      "notes": "Full CAD extent retained for conservative frontmost-plane screening; installed mounting datum still needs verification."
+    },
+    "mountingFaceOffset": {
+      "value": 0,
+      "unit": "mm",
+      "status": "assumed",
+      "sourceId": "cad",
+      "location": "Official shared DMA80-8 and -4 STEP, millimetres; native B-rep inspection",
+      "notes": "Display/screening datum at frontmost envelope plane, NOT a verified flange/gasket seat. Do not use this offset to place a manufactured driver."
+    },
+    "cutoutDiameter": {
+      "value": 75,
+      "unit": "mm",
+      "status": "conservative-envelope",
+      "sourceId": "cad",
+      "location": "Official shared DMA80-8 and -4 STEP, millimetres; native B-rep inspection",
+      "notes": "Nominal circular passage surrogate chosen from CAD Ø75 feature (z=3.5 mm), conservatively above PDF 74.5 basket envelope. Not a tolerance-qualified baffle machining dimension."
+    },
+    "drawingBasketDiameter": {
+      "value": 74.5,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Manufacturer specification sheet, page 1 drawing",
+      "notes": "Drawing rear basket outside width. No baffle machining tolerance provided."
+    },
+    "drawingFlangeThickness": {
+      "value": 3,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Manufacturer specification sheet, page 1 drawing",
+      "notes": "Source callout; differs from some CAD axial features and is not used to infer seat position."
+    },
+    "drawingRearDepth": {
+      "value": 39.1,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Manufacturer specification sheet, page 1 drawing",
+      "notes": "Source side-view callout retained without forcing a common PDF/CAD mounting datum."
+    },
+    "drawingBoltCircleDiameter": {
+      "value": 95.5,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Manufacturer specification sheet, page 1 drawing",
+      "notes": "Four-hole dashed pitch circle."
+    },
+    "drawingBoltHoleDiameter": {
+      "value": 3.8,
+      "unit": "mm",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Manufacturer specification sheet, page 1 drawing",
+      "notes": "PDF says 4 × Ø3.8; CAD holes are Ø4.0. Automatic drill guides withheld."
+    },
+    "drawingBoltCount": {
+      "value": 4,
+      "unit": "count",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Manufacturer specification sheet, page 1 drawing",
+      "notes": "Four corner holes."
+    },
+    "drawingBoltStartAngle": {
+      "value": 45,
+      "unit": "deg",
+      "status": "derived",
+      "sourceId": "drawing",
+      "location": "Manufacturer specification sheet, page 1 drawing",
+      "notes": "Symmetric square hole pattern; centers ±95.5/(2 sqrt(2))."
+    },
+    "cadBoltHoleDiameter": {
+      "value": 4,
+      "unit": "mm",
+      "status": "cad-inspected",
+      "sourceId": "cad",
+      "location": "Official shared DMA80-8 and -4 STEP, millimetres; native B-rep inspection",
+      "notes": "Native STEP circular edges radius 2 mm at each corner; conflicts with drawing Ø3.8."
+    },
+    "cadBoltCenterOffsetX": {
+      "value": 33.75,
+      "unit": "mm",
+      "status": "cad-inspected",
+      "sourceId": "cad",
+      "location": "Official shared DMA80-8 and -4 STEP, millimetres; native B-rep inspection",
+      "notes": "Native STEP corner hole centers at x=±33.75 mm."
+    },
+    "cadBoltCenterOffsetY": {
+      "value": 33.75,
+      "unit": "mm",
+      "status": "cad-inspected",
+      "sourceId": "cad",
+      "location": "Official shared DMA80-8 and -4 STEP, millimetres; native B-rep inspection",
+      "notes": "Native STEP corner hole centers at y=±33.75 mm."
+    },
+    "boltCircleDiameter": {
+      "value": null,
+      "unit": "mm",
+      "status": "unresolved",
+      "sourceId": null,
+      "location": "Product specifications",
+      "notes": "PDF 95.5 versus CAD 95.4594; source-reference values retained separately."
+    },
+    "boltHoleDiameter": {
+      "value": null,
+      "unit": "mm",
+      "status": "unresolved",
+      "sourceId": null,
+      "location": "Product specifications",
+      "notes": "PDF Ø3.8 versus CAD Ø4.0; measure the physical variant before drilling."
+    },
+    "boltCount": {
+      "value": 4,
+      "unit": "count",
+      "status": "drawing-verified",
+      "sourceId": "drawing",
+      "location": "Manufacturer specification sheet, page 1 drawing",
+      "notes": "Count agrees across drawing and CAD; final drill geometry withheld."
+    },
+    "effectivePistonArea": {
+      "value": 31.2,
+      "unit": "cm2",
+      "status": "published",
+      "sourceId": "drawing",
+      "location": "Manufacturer specification sheet, page 1 drawing",
+      "notes": "Manufacturer Sd; do not confuse with chassis cutout area."
+    }
+  },
+  "geometry": {
+    "units": "mm",
+    "datum": "frontmost conservative envelope plane z=0; positive z rearward; actual mounting-seat offset unresolved",
+    "parts": [
+      {
+        "name": "Conservative complete driver envelope",
+        "type": "cylinder",
+        "params": {
+          "radius": 56.92209588551708,
+          "z": 0,
+          "depth": 45.1,
+          "center": [
+            0,
+            0
+          ]
+        },
+        "status": "envelope",
+        "sourceIds": [
+          "drawing",
+          "cad"
+        ],
+        "dimensionRefs": [
+          "overallDiagonal",
+          "packagingEnvelopeDepth",
+          "mountingFaceOffset"
+        ],
+        "notes": "Sharp-square circumscribed cylinder with complete native CAD axial extent. No diaphragm, mounting seat, hole or exact physical body is implied."
+      }
+    ]
+  },
+  "acousticSource": {
+    "sd": 31.2,
+    "fs": 97.6,
+    "qts": 0.47,
+    "vas": 1.34,
+    "re": 7.5,
+    "leMH": 0.5,
+    "mmsG": 2.7,
+    "bl": 5.1,
+    "qms": 2.06,
+    "qes": 0.61,
+    "cmsMMPerN": 0.98,
+    "xmaxMM": 2.5,
+    "nominalPowerW": 25,
+    "variant": "8 ohm",
+    "sourceId": "drawing",
+    "qesFromPublishedMotor": 0.47743511884312706,
+    "status": "conflicting-published-motor",
+    "units": {
+      "sd": "cm2",
+      "fs": "Hz",
+      "vas": "L",
+      "re": "ohm",
+      "leMH": "mH",
+      "mmsG": "g",
+      "bl": "Tm",
+      "cmsMMPerN": "mm/N",
+      "xmaxMM": "mm",
+      "nominalPowerW": "W"
+    },
+    "note": "DMA80-8 is geometry only: published Fs, Mms, Re and BL imply Qes 0.477, while the same sheet states 0.61. Acoustic prediction and Assisted generation await a consistent exact-variant motor dataset."
+  },
+  "acousticNote": "DMA80-8 is geometry only: published Fs, Mms, Re and BL imply Qes 0.477, while the same sheet states 0.61. Acoustic prediction and Assisted generation await a consistent exact-variant motor dataset.",
+  "uiNote": "DMA80-8 is geometry only: published Fs, Mms, Re and BL imply Qes 0.477, while the same sheet states 0.61. Acoustic prediction and Assisted generation await a consistent exact-variant motor dataset. The square frame uses a conservative 114 mm circular clearance envelope; mounting datum and PDF/CAD hole differences require CAD review.",
+  "unresolved": [
+    "No measured cone or dustcap profile is supplied to the acoustic model; the cone-recess control remains a user assumption.",
+    "PDF and CAD hole sizes differ (3.8 / 4.0 mm); no automatic drilling guides are generated.",
+    "Exact installed mounting-seat datum is unresolved; envelope placement and 75 mm passage are screening references, not fabrication dimensions.",
+    "Occupied driver displacement is unpublished; the full envelope cylinder is a conservative allowance, not Vd.",
+    "Allow measured wire bends, terminals, gasket compression and manufacturing tolerances.",
+    "DMA80-8 is geometry only: published Fs, Mms, Re and BL imply Qes 0.477, while the same sheet states 0.61. Acoustic prediction and Assisted generation await a consistent exact-variant motor dataset."
+  ],
+  "notes": [
+    "PDF sensitivity is 85.3 dB at 2.83 V/1 m, not 1 W/1 m."
+  ],
+  "audit": {
+    "date": "2026-09-30",
+    "scope": "Exact-variant motor/drawing review and native shared manufacturer STEP inspection",
+    "fitCheckStatus": "screening-only",
+    "manufacturerCADModel": true,
+    "nativeCAD": {
+      "valid": true,
+      "solidCount": 2,
+      "units": "mm",
+      "optimalBounds": [
+        [
+          -40.25,
+          -40.25,
+          -38.1
+        ],
+        [
+          40.25,
+          40.25,
+          7
+        ]
+      ],
+      "method": "OpenCascade STEPControl_Reader, BRepCheck_Analyzer, BRepBndLib.AddOptimal; STL cross-check"
+    },
+    "reason": "Source conflicts prevent fabrication-ready mounting geometry. Manufacturer CAD is a reference, not a measured diaphragm or acoustic validation."
+  }
+}

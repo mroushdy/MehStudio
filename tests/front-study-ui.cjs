@@ -7,7 +7,7 @@ const starter=vm.runInContext(`(()=>{const M=MEH;${between('function seedRearLay
 function harness(initialOptions={}){
  const nodes=new Map(),events={},applied=[],options={points:9,sensitivity:false,...initialOptions};
  function node(selector){if(!nodes.has(selector))nodes.set(selector,{value:'',checked:false,disabled:false,innerHTML:'',textContent:'',events:{},addEventListener(e,fn){this.events[e]=fn;}});return nodes.get(selector);}
- node('[data-fs-step]').value='3';node('[data-fs-volume]').value='10';node('[data-fs-mode]').value='flow';
+ node('[data-fs-step]').value='3';node('[data-fs-volume]').value='10';node('[data-fs-mode]').value='flow';node('[data-fs-comparison]').value='nearby';node('[data-fs-comparison]').options=['nearby','matched','target'].map(value=>({value,disabled:false}));
  node('[data-fs-mode]').options=['flow','phase','impedance','excursion','velocity','area'].map(value=>({value,disabled:false}));
  const host={open:false,innerHTML:'',querySelector:node,querySelectorAll:s=>s.split(',').map(node),addEventListener(e,fn){events[e]=fn;}};
  const panel=c.MEHFrontStudyPanel.init(host,{getOptions:()=>({...options}),onApply:(patch,label)=>applied.push({patch,label})});
@@ -25,7 +25,7 @@ test('comparison stays lazy while closed and invalidates stale curves on geometr
 test('insert UI retains geometry choices and Apply while withholding all response modes',()=>{
  const h=harness(),a=M.analyze({...starter,frontFiller:'offset'});h.panel.update(a);h.open();
  assert.match(h.node('[data-fs-status]').textContent,/Geometry only.*narrow-gap/i);
- assert.equal(h.node('[data-fs-match]').disabled,true);assert.equal(h.node('[data-fs-mode]').value,'area');
+ for(const option of h.node('[data-fs-comparison]').options)assert.equal(option.disabled,option.value!=='nearby');assert.equal(h.node('[data-fs-mode]').value,'area');
  for(const option of h.node('[data-fs-mode]').options)assert.equal(option.disabled,option.value!=='area');
  assert.ok(h.node('[data-fs-plot]').innerHTML.includes('Axial position'));
  assert.ok(h.panel.result.cases[1].analysis);h.apply(1);assert.equal(h.applied.length,1);
@@ -53,7 +53,7 @@ test('every plot mode yields finite self-contained SVG and phase wrap jumps are 
 });
 test('editor exposes the study from Front chamber and syncs geometry and acoustic changes',()=>{
  assert.match(html,/id="frontStudy" class="panel disclosure-panel"/);
- assert.match(editor,/compareFrontButton\.textContent='Compare entry \/ cavity'/);
+ assert.match(editor,/compareFrontButton\.textContent='Study chamber \/ entry resonance'/);assert.match(html,/id="openFrontStudy"/);assert.match(editor,/\$\('#openFrontStudy'\)\.onclick=openFrontStudy/);
  assert.match(editor,/frontStudyPanel\?\.update\(analysis\)/);
  assert.match(editor,/frontStudyPanel\?\.optionsChanged\(\)/);
  assert.match(editor,/onApply:applyFrontComparison/);assert.match(editor,/applyManualEdit\(\{\.\.\.state,\.\.\.patch\}/);
@@ -62,7 +62,7 @@ test('editor exposes the study from Front chamber and syncs geometry and acousti
 });
 
 test('matched LC tolerates an unused empty volume field and near-null probe differences remain unavailable',()=>{
- const h=harness();h.panel.update(M.analyze(starter));h.node('[data-fs-volume]').value='';h.node('[data-fs-match]').checked=true;h.open();assert.equal(h.panel.result.cases[0].result.available,true);assert.equal(h.node('[data-fs-volume]').disabled,true);
+ const h=harness();h.panel.update(M.analyze(starter));h.node('[data-fs-volume]').value='';h.node('[data-fs-comparison]').value='matched';h.open();assert.equal(h.panel.result.cases[0].result.available,true);assert.equal(h.node('[data-fs-volume]').disabled,true);
  const r=h.panel.result;for(const item of r.cases){if(item.rows.length)item.rows.at(-1).comparisonDb=null;}
  h.node('[data-fs-mode]').value='impedance';h.node('[data-fs-mode]').events.change();
  assert.ok(!h.node('[data-fs-rows]').innerHTML.includes('<td>0.00</td>'),'zero flow must not fabricate a zero-dB probe difference');h.panel.dispose();
@@ -79,4 +79,42 @@ test('Apply rechecks the baseline after flushing pending geometry edits',()=>{
  const method=between('function applyFrontComparison(','const frontStudyPanel=');
  const result=vm.runInContext(`(()=>{let state={neck:8,gap:28,mouth:700},analysis={},applied=0,refreshed=0,changed=true;const frontStudyPanel={update(){refreshed++}};function flushPendingGeometry(){if(changed)state={...state,mouth:720}}function applyManualEdit(next){state=next;applied++}${method};const stale=applyFrontComparison({neck:5,gap:30},'Shorter',{neck:8,gap:28,mouth:700});changed=false;const fresh=applyFrontComparison({neck:5,gap:30},'Shorter',{...state});return {stale,fresh,applied,refreshed,state};})()`,c);
  assert.equal(result.stale,false);assert.equal(result.fresh,true);assert.equal(result.refreshed,1);assert.equal(result.applied,1);assert.equal(result.state.mouth,720);assert.equal(result.state.neck,5);
+});
+
+test('target mode exposes inverse sizing, four curves, context markers and an applicable checked candidate',()=>{
+ const h=harness({fmin:100,fmax:1000,points:33});h.panel.update(M.analyze(starter));
+ h.node('[data-fs-comparison]').value='target';h.node('[data-fs-target]').value='550';h.node('[data-fs-crossover]').value='650';h.open();
+ assert.equal(h.panel.result.cases.length,4);assert.equal(h.node('[data-fs-target-label]').hidden,false);assert.equal(h.node('[data-fs-target-note]').hidden,false);assert.equal(h.node('[data-fs-volume]').disabled,true);
+ assert.match(h.node('[data-fs-context]').innerHTML,/exploratory/);assert.match(h.node('[data-fs-limit]').textContent,/geometry hypothesis/);assert.match(h.node('[data-fs-plot]').innerHTML,/Crossover context/);assert.ok(!/NaN|Infinity|undefined/.test(h.node('[data-fs-plot]').innerHTML));
+ h.apply(1);assert.equal(h.applied.length,1);assert.equal(h.applied[0].patch.neck,starter.neck);
+ h.node('[data-fs-target]').value='';h.open();assert.equal(h.panel.result,null);assert.match(h.node('[data-fs-status]').textContent,/positive frequencies/);h.panel.dispose();
+});
+
+test('panel settings restore target and band without changing design or inventing a crossover',()=>{
+ const h=harness(),a=M.analyze(starter),before=JSON.stringify(a);h.panel.update(a);h.open();
+ assert.equal(h.panel.settings.bandLowHz,a.p.lowTarget);assert.equal(h.panel.settings.bandHighHz,a.p.frequency);assert.equal(h.panel.settings.crossoverHz,undefined);
+ const saved={tubeStepMM:2,volumeStepPercent:12,matchLC:false,targetLCHz:600,bandLowHz:250,bandHighHz:650,crossoverHz:620};h.panel.restore(saved);assert.equal(h.panel.result,null);h.open();
+ assert.deepEqual(JSON.parse(JSON.stringify(h.panel.settings)),saved);assert.equal(JSON.stringify(a),before);assert.equal(h.applied.length,0);
+ h.panel.restore();h.open();assert.equal(h.node('[data-fs-comparison]').value,'nearby');assert.equal(h.panel.settings.crossoverHz,undefined);assert.equal(h.panel.settings.bandLowHz,a.p.lowTarget);h.panel.dispose();
+});
+
+test('design and named-study save/load retain front context while reset clears it independently',()=>{
+ assert.match(editor,/frontChamberStudy:frontStudyPanel\?\.settings/);
+ assert.match(editor,/frontChamberStudy:v\.frontChamberStudy/);
+ assert.match(editor,/frontStudyPanel\?\.restore\(d\.frontChamberStudy\)/);
+ assert.match(editor,/frontStudyPanel\?\.restore\(v\.frontChamberStudy\)/);
+ const reset=between('function clearDesign(','function showCandidates(');assert.match(reset,/frontStudyPanel\?\.restore\(\)/);
+});
+
+test('real DOM panel keeps target/context controls labeled and applies only the checked cavity geometry',()=>{
+ const {JSDOM}=require('jsdom'),dom=new JSDOM('<!doctype html><details id="frontStudy"></details>'),host=dom.window.document.querySelector('details'),applied=[];
+ const panel=c.MEHFrontStudyPanel.init(host,{getOptions:()=>({fmin:100,fmax:1000,points:17,sensitivity:false}),onApply:(patch,label,baseline)=>applied.push({patch,label,baseline})});
+ const a=M.analyze(starter);panel.update(a);host.open=true;host.dispatchEvent(new dom.window.Event('toggle'));
+ const q=s=>host.querySelector(s);q('[data-fs-comparison]').value='target';q('[data-fs-target]').value='550';q('[data-fs-crossover]').value='650';host.dispatchEvent(new dom.window.Event('toggle'));
+ assert.equal(panel.result.cases.length,4);assert.equal(q('[data-fs-target-label]').hidden,false);assert.equal(q('[data-fs-volume]').disabled,true);
+ for(const selector of ['[data-fs-target]','[data-fs-band-low]','[data-fs-band-high]','[data-fs-crossover]'])assert.ok(q(selector).closest('label').textContent.trim(),selector);
+ assert.equal(q('[data-fs-mode]').disabled,false);assert.equal(q('[data-fs-apply="1"]').disabled,false);q('[data-fs-apply="1"]').click();assert.equal(applied.length,1);
+ assert.equal(applied[0].baseline.neck,a.p.neck);assert.deepEqual(Object.keys(applied[0].patch).sort(),['gap','neck']);assert.equal(q('[data-fs-context] table').rows.length,5);
+ q('[data-fs-band-high]').value='100';host.dispatchEvent(new dom.window.Event('toggle'));assert.equal(panel.result,null);assert.equal(q('[data-fs-export]').disabled,true);assert.equal(q('[data-fs-apply="1"]'),null);
+ panel.dispose();dom.window.close();
 });

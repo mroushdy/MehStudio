@@ -1,0 +1,273 @@
+{
+  "date": "2026-09-30",
+  "base_commit": "9010138579de20db40f801c31eb57c153756ed6a",
+  "javascript_tests": {
+    "passed": 238,
+    "failed": 0
+  },
+  "python_mesher_unit_tests": {
+    "passed": 40,
+    "failed": 0
+  },
+  "cad": {
+    "zip": {
+      "crc_passed": true,
+      "members": [
+        "MEH-CAD-handoff/START_HERE.md",
+        "MEH-CAD-handoff/CAD_handoff.json",
+        "MEH-CAD-handoff/MEH_design_study.json",
+        "MEH-CAD-handoff/horn_blank_uncut.stl",
+        "MEH-CAD-handoff/assembly_reference.obj",
+        "MEH-CAD-handoff/entry_outlines_mm.csv",
+        "MEH-CAD-handoff/horn_profile_mm.csv"
+      ]
+    },
+    "horn_blank_uncut.stl": {
+      "parser": "meshio 5.3.5",
+      "vertices": 17472,
+      "triangles": 34944,
+      "finite": true,
+      "minimum_area_mm2": 1.0957486629486084,
+      "bounds_mm": [
+        [
+          -350,
+          -350,
+          -1.0773060321807861
+        ],
+        [
+          350,
+          350,
+          358.7042541503906
+        ]
+      ],
+      "sha256": "b1a003927a74b9f5155f41cff6736659f96889af18c08c2bde8cafc6ed0aafc1",
+      "closed_two_manifold": true,
+      "consistent_winding": true,
+      "volume_mm3": 4677334.5
+    },
+    "assembly_reference.obj": {
+      "parser": "meshio 5.3.5",
+      "vertices": 129302,
+      "triangles": 257408,
+      "finite": true,
+      "minimum_area_mm2": 0.11677226429839987,
+      "bounds_mm": [
+        [
+          -350.000030518,
+          -350.000030518,
+          -151.130935669
+        ],
+        [
+          350.000030518,
+          350.000030518,
+          358.695709229
+        ]
+      ],
+      "sha256": "c7cd0e8ea68ee79a619307272a77a431a20fb469a3340266b3cb24d7e512ca9d",
+      "named_parts": 30,
+      "part_manifest_counts_match": true,
+      "scope": "Separate reference surfaces; no assembly-solid claim."
+    },
+    "step": {
+      "parser": "OpenCascade via cadquery-ocp 7.8.1.1.post1",
+      "results": [
+        {
+          "file": "horn.step",
+          "faces": 34944,
+          "solids": 1,
+          "valid": true,
+          "bounds_mm": [
+            -350.0000001,
+            -350.0000001,
+            -1.077306146,
+            350.0000001,
+            350.0000001,
+            358.704242904
+          ]
+        },
+        {
+          "file": "reference.step",
+          "faces": 34944,
+          "solids": 0,
+          "valid": true,
+          "bounds_mm": [
+            -350.0000001,
+            -350.0000001,
+            -1.077306146,
+            350.0000001,
+            350.0000001,
+            358.704242904
+          ]
+        },
+        {
+          "file": "surfaces.step",
+          "faces": 2,
+          "solids": 0,
+          "valid": true,
+          "bounds_mm": [
+            -350.0000001,
+            -350.0000001,
+            -1.077306146,
+            350.0000001,
+            350.0000001,
+            358.704242904
+          ]
+        }
+      ],
+      "reference_scope": "The reference STEP test deliberately uses the same uncut horn surface as the solid test; it is not a full assembly solid check."
+    }
+  },
+  "native_cases": [
+    {
+      "name": "startup",
+      "runner": {
+        "triangles": 159210,
+        "sources": 4,
+        "drivers": 4,
+        "one_dense_complex128_matrix_gib": 377.7120128273964,
+        "proprietary_solver_validation": "not run",
+        "acoustic_convergence": "not established",
+        "schema": "meh-mesh-run/v1",
+        "input_job_sha256": "60eb46f0f8ba520da4532f3c68bec71658a125f10e393b33321530e45ed2a19f",
+        "design_sha256": "643c9134d1bd06b9809d6d07f04f78c1e34539862ab73ccd240d1c5f459fadfe",
+        "runtime": {
+          "python": "3.12.13",
+          "gmsh": "4.15.2",
+          "numpy": "2.5.3",
+          "scipy": "1.18.1",
+          "node": "v24.18.0"
+        },
+        "elapsed_seconds": 21.51
+      },
+      "surfaces": {
+        "bem": {
+          "vertices": 79607,
+          "triangles": 159210,
+          "connected_components": 1,
+          "open_or_nonmanifold_edges": 0,
+          "duplicate_faces": 0,
+          "signed_volume_m3": -0.022459590221174455,
+          "self_intersection_passed": true
+        },
+        "front": {
+          "vertices": 29039,
+          "triangles": 58074,
+          "connected_components": 1,
+          "open_or_nonmanifold_edges": 0,
+          "duplicate_faces": 0,
+          "signed_volume_m3": 0.024986855048028934,
+          "self_intersection_passed": true
+        }
+      },
+      "native_geometry_roundtrips": true,
+      "abec_gmsh_import": {
+        "passed": true,
+        "parser": "Gmsh 4.15.2"
+      },
+      "boundary_lab": {
+        "valid": true,
+        "validation": "actual Boundary Lab Python loader, compiler and solve preparation",
+        "project_schema_version": 9,
+        "open_edges": 0,
+        "nonmanifold_edges": 0,
+        "consistent_winding": true,
+        "acoustic_solve_executed": false
+      }
+    },
+    {
+      "name": "dma80-4-downloaded-kit",
+      "runner": {
+        "triangles": 82664,
+        "sources": 2,
+        "drivers": 2,
+        "one_dense_complex128_matrix_gib": 101.8246545791626,
+        "proprietary_solver_validation": "not run",
+        "acoustic_convergence": "not established",
+        "schema": "meh-mesh-run/v1",
+        "input_job_sha256": "e22e572925c07ccec41b01c7e79741a5d2916c1503d27b189db8f68e22cc0502",
+        "design_sha256": "1bcbd8eea97f681ff6d44974fa9c14f20bfcbda803b85ca92798a3aefe0a13d8",
+        "runtime": {
+          "python": "3.12.13",
+          "gmsh": "4.15.2",
+          "numpy": "2.5.3",
+          "scipy": "1.18.1",
+          "node": "v24.18.0"
+        },
+        "elapsed_seconds": 13.01,
+        "runner_package": {
+          "schema": "meh-local-runner/v1",
+          "geometry_job_schema": "meh-acoustic-geometry/v1",
+          "files": {
+            "run.py": {
+              "sha256": "30222cee42cf76ec34a299fe963ff99cfc20dc4bb5a5f16e61330e3a1a285c27",
+              "bytes": 17912
+            },
+            "requirements.txt": {
+              "sha256": "3b2e23b692e55fa8bf7023c19b6ac61272ba6bb18fde9c0f4c24b324054b2193",
+              "bytes": 206
+            },
+            "START_HERE.md": {
+              "sha256": "271f94ed8fd360ea18a193956d78058cb9df130851eed6ba000c1f1e47bc7e7c",
+              "bytes": 6847
+            },
+            "build_mesh.py": {
+              "sha256": "0873c617c8825428818e8c9ff3e604482973a32417ce987e4471c195c025b337",
+              "bytes": 29694
+            },
+            "validate_mesh.py": {
+              "sha256": "dffbebbb494fb702ed23f040305e2fb3e01785bd4d672493b7da9008c6cd9934",
+              "bytes": 12050
+            },
+            "write_bundle.cjs": {
+              "sha256": "af3815f0530eed77c309474e644321311c09147a129eb715d685f666f76540fe",
+              "bytes": 2222
+            },
+            "abec-project.cjs": {
+              "sha256": "34d4511308fd41ff2e79e52dc5d64138a8cde83fa2af55943473374be4fe9d89",
+              "bytes": 25196
+            },
+            "boundary-lab-project.cjs": {
+              "sha256": "962c8f2de1878d6127fd676ad4328cc027c9561ea17ec86c5bf6a92933ba0ab5",
+              "bytes": 13730
+            }
+          }
+        }
+      },
+      "surfaces": {
+        "bem": {
+          "vertices": 41334,
+          "triangles": 82664,
+          "connected_components": 1,
+          "open_or_nonmanifold_edges": 0,
+          "duplicate_faces": 0,
+          "signed_volume_m3": -0.003958335858809493,
+          "self_intersection_passed": true
+        },
+        "front": {
+          "vertices": 13867,
+          "triangles": 27730,
+          "connected_components": 1,
+          "open_or_nonmanifold_edges": 0,
+          "duplicate_faces": 0,
+          "signed_volume_m3": 0.0039875250245632226,
+          "self_intersection_passed": true
+        }
+      },
+      "native_geometry_roundtrips": true,
+      "abec_gmsh_import": {
+        "passed": true,
+        "parser": "Gmsh 4.15.2"
+      },
+      "boundary_lab": {
+        "valid": true,
+        "validation": "actual Boundary Lab Python loader, compiler and solve preparation",
+        "project_schema_version": 9,
+        "open_edges": 0,
+        "nonmanifold_edges": 0,
+        "consistent_winding": true,
+        "acoustic_solve_executed": false
+      }
+    }
+  ],
+  "scope": "Source, DOM behavior, numeric regressions, native geometry, file import and preparation only. No rendered browser QA, proprietary AKABAK solve, qualified whole-horn acoustic operator, acoustic convergence or physical validation."
+}

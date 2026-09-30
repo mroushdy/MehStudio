@@ -28,7 +28,11 @@ Generated layouts must meet the entered assembly envelope limits and the existin
 
 Research analysis defaults to **Simple**, with practical response, excursion and air-speed summaries. **Advanced** exposes detailed settings, plots and model assumptions. The saved JSON includes Assisted goals, quotes and selected driver identities; older design files remain supported.
 
-**Export → Acoustic solver export** downloads a canonical geometry job and a self-contained local runner ZIP. Extract the runner, follow its `START_HERE.md` setup, then run your job to produce checked solver files. The job is not a mesh. See [the exporter guide](mesh-export/README.md) for surface, ABEC and conforming hybrid FEM/BEM bundles. The browser does not run AKABAK or the native solver. Full-horn tetrahedral meshes that failed quality checks are withheld. Mesh topology checks do not establish acoustic convergence.
+**Export → ABEC / AKABAK & Boundary Lab meshes** downloads a canonical geometry job, saved design and self-contained local runner together. Extract the kit, open `OPEN_FIRST.html`, follow its setup, then run the included job to produce checked solver files. The kit is not a prebuilt mesh or solver. See [the exporter guide](mesh-export/README.md). The browser does not run AKABAK or the native solver. Full-horn tetrahedral meshes that failed quality checks are withheld. Mesh topology checks do not establish acoustic convergence.
+
+**Export → CAD & 3D-printing preparation → Download CAD handoff** packages a closed uncut horn blank, named assembly reference parts, entry outlines, sourced driver dimensions and placement metadata. Import in millimetres, then add entry cuts, mounting features, joins and print segmentation in CAD. It is not a fused printable assembly. Individual STL, OBJ, faceted STEP, NURBS horn surfaces and point clouds remain available. See [format scopes](docs/export-formats.md).
+
+**Design analysis → Chamber / entry resonance** compares actual tube/cavity candidates, with an optional bare Helmholtz/LC target and intended mid-band/crossover markers. Inspect loaded flow, phase, impedance, excursion and entry speed together. Targeting the bare LC value does not target a loaded peak/dip or validate a crossover; candidates above existing model references remain exploratory. Settings survive design export/import and saved studies. See [the front-chamber reference](docs/front-chamber-reference.md).
 
 ## What it does
 
@@ -36,7 +40,7 @@ Research analysis defaults to **Simple**, with practical response, excursion and
 - Round, capsule and teardrop entries; two, four or six cone mids.
 - Continuous front adapters with closed wall meshes and smooth neck-to-chamber transitions, shared by the 3D and section views. Entry tube length is adjustable separately from driver standoff; the acoustic model adds a fixed 3 mm passage allowance.
 - Individual pods or a shared rear enclosure, with sealed or ported loading and a cylindrical or curved shared shell.
-- Driver selection grouped by nominal size in inches. Manufacturer-referenced dimensions distinguish sourced geometry from representative appearance and clearance envelopes. The reviewed catalogue contains 54 mechanical records and 28 complete exact-variant cone motor datasets (27 mechanically selectable), including eight new 8-inch/10-inch models. Source records, known exclusions and reproducible generation live in [driver-research](driver-research/README.md). Original manufacturer documents remain in the local research archive and are not deployed.
+- Driver selection grouped by nominal size in inches, including 3-inch Dayton DMA80 variants. Manufacturer-referenced dimensions distinguish sourced geometry from representative appearance and clearance envelopes. The reviewed catalogue contains 56 mechanical records and 29 complete exact-variant cone motor datasets (28 mechanically selectable). DMA80-4 supports reduced-model screening; DMA80-8 remains geometry-only because its published motor values are inconsistent. Both retain conservative geometry and unresolved mounting references. Source records, known exclusions and reproducible generation live in [driver-research](driver-research/README.md). Original manufacturer documents remain in the local research archive and are not deployed.
 - 3D assembly, section and entry-footprint views, point measurements, and saved comparisons.
 - Optional annular or offset-outlet cone inserts with opening, clearance and center-relief controls, section inspection and mesh-based displaced-air-volume accounting.
 - Reduced linear acoustic screening using supported driver motor data and a one-dimensional Webster horn network.
@@ -69,6 +73,8 @@ Choose **Advanced → Spatial passage detail**, or **Manual → Front chamber �
 ## Engineering limits
 
 This is a design-study tool, not a validated loudspeaker design or manufacturing CAD system. It does not predict full-field directivity, replace BEM/FEM, or provide tolerance-checked production STEP geometry. Rear-port and horn radiation are not summed. Driver appearance, cone recess and some displacement/clearance assumptions remain approximate; read the in-app **Methods** and manufacturer links.
+
+Resistive rear slots and passive cardioid behavior require a coupled model of the rear air, material impedance and common exterior radiation. A rectangular bass-reflex port or exported vent velocity basis does not provide that prediction. The [capability contract](docs/passive-cardioid-contract.md) records the missing data and domain interfaces.
 
 Candidate rankings apply only within the reduced model. Verify physical fit, construction, acoustic response, crossover, excursion and thermal behavior through detailed engineering and measurements. Imported crossover traces must share microphone position, timing reference and calibrated level.
 

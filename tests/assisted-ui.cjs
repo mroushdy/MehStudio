@@ -68,3 +68,12 @@ test('saved studies retain mode and goals across reload and JSON imports; old fi
   delete design.editorMode;await importDesign(design);assert.equal(h.$('#wizard').hidden,true);assert.equal(h.$('#brief-coverage').value,'80');
  }finally{h.close();}
 });
+
+
+test('3-inch browsing and Manual DMA80-8 make motor and mounting limitations visible',()=>{const h=app();try{
+ h.$('[data-step="drivers"]').click();const size=h.$('#guided-midSize');size.value='3';size.dispatchEvent(new h.w.Event('change',{bubbles:true}));
+ assert.ok(h.$('[data-pair]'));assert.match(h.$('[data-driver-choices]').textContent,/DMA80-4/);assert.doesNotMatch(h.$('[data-driver-choices]').textContent,/DMA80-8/);assert.match(h.$('[data-shortlist-note]').textContent,/DMA80-8.*Manual geometry/);
+ h.$('#manualTab').click();const select=h.$('#midDriver');select.value='daytondma80_8';select.dispatchEvent(new h.w.Event('change',{bubbles:true}));
+ assert.equal(h.e.state.midDriver,'daytondma80_8');assert.match(h.$('#midDriverStatus').textContent,/Geometry only.*0\.477.*0\.61/);assert.match(h.$('#midDriverStatus').textContent,/mounting datum/i);
+ const design=JSON.parse(JSON.stringify(h.e.designJSON()));assert.equal(design.state.midDriver,'daytondma80_8');assert.equal(h.w.MEH.analyze(design.state).qtc,null);
+ }finally{h.close();}});

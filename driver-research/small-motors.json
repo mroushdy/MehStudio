@@ -1,0 +1,31 @@
+{
+  "daytondma80_4": {
+    "id": "daytondma80_4",
+    "name": "Dayton Audio DMA80-4 (4 ohm)",
+    "source": "https://www.daytonaudio.com/product/1618/dma80-4-3-dual-magnet-aluminum-cone-full-range-driver-4-ohm",
+    "nominalDiameterIn": 3,
+    "sd": 31.2,
+    "fs": 93.5,
+    "qts": 0.41,
+    "vas": 1.31,
+    "re": 4,
+    "leMH": 0.2,
+    "mmsG": 3.02,
+    "bl": 3.7,
+    "qms": 1.97,
+    "qes": 0.51,
+    "cmsMMPerN": 0.96,
+    "xmaxMM": 2.5,
+    "nominalPowerW": 25,
+    "review": {
+      "status": "manufacturer-published-reviewed",
+      "variant": "4 ohm",
+      "reviewedAt": "2026-09-30",
+      "datasheetUrl": "https://www.daytonaudio.com/images/resources/295-586--dayton-audio-dma80-4-specification-sheet.pdf",
+      "datasheetSHA256": "e22ad55d083a631ba96be4e46ed1028bb8a941d0e464fbdff446e5fa65c4bd57",
+      "productSHA256": "1e3c39ee5f1ccd99f0ebcb97c7051494ad422fbef4e0c97f4873414e591c2eb3",
+      "location": "Manufacturer specification sheet page1 PARAMETERS. Qes motor identity differs by 1.7%, within source rounding; no motor values adjusted.",
+      "notes": "No occupied driver volume or measured cone profile available. PDF/page sensitivity conflict is not used for calibration."
+    }
+  }
+}

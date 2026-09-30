@@ -10,7 +10,7 @@ function goals(raw={}){
   if(optional&&(out[k]===''||out[k]===null||out[k]===undefined)){out[k]=null;continue;}
   const v=Number(out[k]);if(out[k]===''||typeof out[k]==='boolean'||!Number.isFinite(v)||v<min||v>max)errors.push({field:k,message:`Enter ${k==='maxWidthMM'?'maximum width':k==='maxDepthMM'?'maximum depth':k==='distanceM'?'listening distance':k==='targetSPL'?'target SPL':k==='budget'?'driver budget':k==='midPrice'?'mid unit price':'compression driver price'} between ${min} and ${max}.`});else out[k]=v;
  }
- if(!['any','5','6','8','10'].includes(String(out.midSize)))errors.push({field:'midSize',message:'Choose a listed driver size.'});
+ if(!['any','3','5','6','8','10'].includes(String(out.midSize)))errors.push({field:'midSize',message:'Choose a listed driver size.'});
  if(!['balanced','compact','headroom'].includes(out.priority))errors.push({field:'priority',message:'Choose a supported design priority.'});
  return {ok:!errors.length,value:out,errors};
 }
@@ -32,7 +32,7 @@ function driverChoices(brief,raw){
  const check=goals(raw);if(!check.ok)return {...check,choices:[]};const g=check.value,choices=[];
  for(const midDriver of Object.keys(A.catalog))for(const [compressionDriver,cd]of Object.entries(M.drivers.compression)){
   if(!cd.available||!Number.isFinite(cd.recommendedLowCrossoverHz))continue;
-  const size=M.drivers.mid[midDriver]?.nominalDiameterInches,group=size<5.5?'5':size<7.5?'6':size<9?'8':'10';if(g.midSize!=='any'&&String(g.midSize)!==group)continue;
+  const size=M.drivers.mid[midDriver]?.nominalDiameterInches,group=size<4?'3':size<5.5?'5':size<7.5?'6':size<9?'8':'10';if(g.midSize!=='any'&&String(g.midSize)!==group)continue;
   const resolved=O.resolveGoals({...brief,midDriver,compressionDriver});if(!resolved.ok)continue;
   const mid=M.drivers.mid[midDriver],seedWidth=resolved.state.mouth+2*resolved.state.wall;
   if(seedWidth>g.maxWidthMM)continue;

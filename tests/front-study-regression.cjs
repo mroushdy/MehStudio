@@ -372,3 +372,64 @@ test('CSV metadata reconstructs the geometry and numerical comparison without sh
  assert.equal(result.baselineState.neck,starter.neck);assert.equal(result.studySettings.tubeStepMM,2);assert.equal(result.options.voltageRms,2.83);
  result.baselineState.offset=17;assert.equal(input.p.offset,starter.offset,'export snapshot cannot mutate the source geometry');
 });
+
+test('target bare LC sizes actual cavities at three tube lengths without equating their loaded responses',()=>{
+ const a=geometry(),before=JSON.stringify(a),r=F.compare(a,{...study,targetLCHz:550,volumeStepPercent:NaN,bandLowHz:200,bandHighHz:700,crossoverHz:650},{...options,fmin:100,fmax:1000,points:65});
+ assert.equal(JSON.stringify(a),before);assert.equal(r.cases.length,4);assert.equal(availableCases(r).length,4,r.cases.map(c=>c.reason).join('; '));
+ for(const item of r.cases.slice(1)){
+  const checked=M.analyze(item.analysis.p);near(F.diagnostics(checked,options).lcHz,550,1e-7,1e-7);near(checked.frontCavityV,item.targetCavityCM3,1e-7,1e-7);
+  for(const key of Object.keys(a.p))if(!['neck','gap'].includes(key))assert.deepEqual(plain(checked.p[key]),plain(a.p[key]),key);
+  assert.equal(M.mechanicalFitReasons(checked).length,0);assert.equal(item.context.bandCovered,true);assert.equal(item.context.bandAboveReference,true);
+ }
+ assert.equal(r.cases[1].analysis.p.neck,a.p.neck);assert.equal(r.cases[2].analysis.p.neck,a.p.neck-study.tubeStepMM);assert.equal(r.cases[3].analysis.p.neck,a.p.neck+study.tubeStepMM);
+ const left=r.cases[2],right=r.cases[3];
+ assert.ok(left.rows.some((v,i)=>Math.abs(v.comparisonDb-right.rows[i].comparisonDb)>.1));
+ assert.ok(left.rows.some((v,i)=>Math.abs(v.phaseDeltaDeg-right.rows[i].phaseDeltaDeg)>1));
+ assert.ok(left.rows.some((v,i)=>Math.abs(v.impedanceOhm-right.rows[i].impedanceOhm)>.01));
+ assert.ok(Math.abs(left.context.sampledMaximumHz-550)>10,'loaded sampled maximum must not be relabeled as the target reference');
+});
+
+test('target sizing honors physical bounds and keeps rejected target volumes inspectable',()=>{
+ for(const targetLCHz of [300,900]){
+  const r=compare({}, {targetLCHz});assert.equal(current(r).result.available,true);
+  for(const item of r.cases.slice(1)){assert.equal(item.analysis,null);assert.ok(item.targetCavityCM3>0);assert.match(item.reason,/standoff|transition/);assert.equal(item.rows.length,0);}
+ }
+ const r=compare({neck:M.specs.neck[0]}, {targetLCHz:600});
+ assert.equal(r.cases.find(c=>c.id==='shorter').analysis,null);assert.match(r.cases.find(c=>c.id==='shorter').reason,/bound/);
+ assert.ok(r.cases.find(c=>c.id==='target').analysis,'a same-tube cavity target remains available at a tube bound');
+});
+
+test('target LC retains insert and motor gates and invalid target/context never starts a sweep',()=>{
+ for(const frontFiller of ['annular','offset'])withAcousticSpy(calls=>{
+  const r=compare({frontFiller},{targetLCHz:550});assertNoCurves(r);assert.equal(calls.length,0);
+  for(const item of r.cases.slice(1)){assert.equal(item.analysis,null);assert.match(item.reason,/Target LC.*unavailable/);}
+ });
+ withAcousticSpy(calls=>{const r=compare({midDriver:'custom'},{targetLCHz:550});assertNoCurves(r);assert.equal(calls.length,0);assert.ok(r.cases.some(c=>c.analysis));});
+ for(const input of [{targetLCHz:0},{targetLCHz:Infinity},{targetLCHz:NaN},{targetLCHz:550,matchLC:true},{bandLowHz:700,bandHighHz:200},{bandLowHz:900},{bandHighHz:0},{crossoverHz:NaN},{crossoverHz:-1}])withAcousticSpy(calls=>{const r=compare({},input);assertNoCurves(r);assert.equal(calls.length,0,JSON.stringify(input));});
+});
+
+test('band and crossover are context only, with missing/incomplete samples explicitly withheld',()=>{
+ const opts={...options,fmin:100,fmax:1000,points:33},a=geometry(),r=F.compare(a,{...study,bandLowHz:200,bandHighHz:700,crossoverHz:650},opts),unchanged=F.compare(a,study,opts);
+ for(let i=0;i<r.cases.length;i++){
+  const item=r.cases[i],b=item.context;assert.equal(JSON.stringify(item.analysis.p),JSON.stringify(unchanged.cases[i].analysis.p));
+  assert.equal(JSON.stringify(item.rows),JSON.stringify(unchanged.cases[i].rows),'context must not filter or recalculate the circuit');
+  const rows=item.rows.filter(row=>row.frequency>=200&&row.frequency<=700),lo=Math.min(...rows.map(x=>x.comparisonDb)),hi=Math.max(...rows.map(x=>x.comparisonDb));
+  near(b.sampledVariationDb,hi-lo);assert.equal(b.sampleCount,rows.length);
+  const nearest=item.rows.reduce((best,row)=>Math.abs(Math.log(row.frequency/650))<Math.abs(Math.log(best.frequency/650))?row:best,item.rows[0]);
+  assert.equal(b.crossoverSampleHz,nearest.frequency);assert.equal(b.crossoverComparisonDb,nearest.comparisonDb);assert.equal(b.crossoverPhaseDeltaDeg,nearest.phaseDeltaDeg);assert.notEqual(b.crossoverSampleHz,650);
+ }
+ const partial=F.compare(a,{...study,bandLowHz:50,bandHighHz:700,crossoverHz:1500},opts).cases[0].context;
+ assert.equal(partial.bandCovered,false);assert.equal(partial.sampledVariationDb,null);assert.equal(partial.crossoverSampleHz,null);assert.equal(partial.crossoverPhaseDeltaDeg,null);
+ const tiny=F.compare(a,{...study,bandLowHz:500,bandHighHz:500.01},opts).cases[0].context;assert.equal(tiny.sampledVariationDb,null);
+ const nullFlow=F.contextSummary([{frequency:100,comparisonDb:null,phaseDeltaDeg:null},{frequency:200,comparisonDb:-1,phaseDeltaDeg:0}],{bandLowHz:100,bandHighHz:200,crossoverHz:100},150);
+ assert.equal(nullFlow.sampledVariationDb,null);assert.equal(nullFlow.crossoverComparisonDb,null);assert.equal(nullFlow.crossoverPhaseDeltaDeg,null);
+ const middleNull=F.contextSummary([{frequency:100,comparisonDb:0},{frequency:200,comparisonDb:null},{frequency:300,comparisonDb:0}],{bandLowHz:100,bandHighHz:300,crossoverHz:null},1000);assert.equal(middleNull.bandCovered,true);assert.equal(middleNull.sampleCount,2);assert.equal(middleNull.missingSampleCount,1);assert.equal(middleNull.sampledVariationDb,null,'finite endpoints around a null cannot claim flat response');
+});
+
+test('target and crossover CSV metadata reproduce geometry, context and loaded response',()=>{
+ const settings={...study,targetLCHz:600,bandLowHz:250,bandHighHz:650,crossoverHz:620},r=compare({},settings,{fmin:100,fmax:1000,points:33}),csv=F.csv(r),parsed=parseCSV(csv),meta=new Map(parsed.filter(row=>row[0].startsWith('#')).map(row=>[row[0],row[1]]));
+ const saved=JSON.parse(meta.get('# study_settings'));assert.deepEqual(saved,settings);assert.deepEqual(JSON.parse(meta.get('# band_and_crossover_context')),plain(r.context));
+ const restored=F.compare(M.analyze(JSON.parse(meta.get('# baseline_state'))),saved,JSON.parse(meta.get('# options')));
+ for(let i=0;i<r.cases.length;i++){near(restored.cases[i].analysis.p.gap,r.cases[i].analysis.p.gap);assert.deepEqual(plain(restored.cases[i].context),plain(r.cases[i].context));}
+ assert.equal(parsed.filter(row=>row[0]==='# sampled_context').length,4);assert.match(csv,/No crossover summation/);
+});

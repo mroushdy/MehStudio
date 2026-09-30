@@ -4,7 +4,7 @@ const fs=require('node:fs'),path=require('node:path');
 const root=path.join(__dirname,'..'),file=path.resolve(process.argv[2]||path.join(root,'index.html'));
 const json=f=>JSON.parse(fs.readFileSync(path.join(__dirname,f),'utf8'));
 const records=fs.readdirSync(path.join(__dirname,'records')).filter(f=>f.endsWith('.json')).sort().map(f=>json('records/'+f));
-const motors=Object.assign({},...['motors.json','motor-additions.json','new-motors.json'].filter(f=>fs.existsSync(path.join(__dirname,f))).map(json));
+const motors=Object.assign({},...['motors.json','motor-additions.json','new-motors.json','small-motors.json'].filter(f=>fs.existsSync(path.join(__dirname,f))).map(json));
 const packed=x=>JSON.stringify(x).replace(/</g,'\\u003c');
 const catalog=fs.readFileSync(path.join(__dirname,'catalog-runtime.js'),'utf8').replace('/* CATALOG_RECORDS */[]',()=>packed(records)).replace('/* CATALOG_MOTORS */{}',()=>packed(motors));
 let html=fs.readFileSync(file,'utf8');
