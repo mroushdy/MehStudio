@@ -1,10 +1,10 @@
 # MEH acoustic mesh exporter
 
-Open **Export → Acoustic simulation files**, choose AKABAK or Boundary Lab, and click **Download export kit (.zip)**. It contains the current design, geometry job, local mesh builder and `OPEN_FIRST.html`. The local run produces both an ABEC project and a Boundary Lab project with checked meshes. Separate job/builder downloads remain under Mesh settings. This is a setup kit, not a prebuilt mesh, solver application or manufacturing STL.
+Open **Export / CAD / solvers → ABEC / AKABAK / Boundary Lab**, choose your solver, and click **Download local kit (.zip)**. It contains the current design, geometry job, local mesh builder and `OPEN_FIRST.html`. The local run produces both an ABEC project and a Boundary Lab project with checked meshes. Separate job/builder downloads remain under Mesh settings. This is a setup kit, not a prebuilt mesh, solver application or manufacturing STL.
 
 ## Local runner for an editor download
 
-Click **Download geometry job** and **Download local runner**. Extract the ZIP and
+For separate downloads, open **Mesh settings & separate downloads** and choose **Geometry job only** and **Mesh builder only**. Extract the ZIP and
 follow [START_HERE.md](START_HERE.md): install Python 3.10–3.13 and Node.js 22+,
 then run `python3 run.py --setup` once. Setup installs pinned Gmsh, NumPy and SciPy
 into the runner's own `.venv`; it does not modify system packages. On Windows,
@@ -203,3 +203,8 @@ a successful in-memory branch solve does not validate this coupled file loader.
 ## Boundary Lab target
 
 Completed bundles include `boundary-lab/project.blab.json`, SI mesh, exact source projections and independent source request files. See [Boundary Lab export](../docs/boundary-lab-export.md) for the mouth-frame transform, real loader/preparation validation and limits. A loaded project is not a qualified acoustic result.
+# CAD / printing and resistive-slot scope
+
+For driver mounting work, use the editor's separate **CAD & 3D-printing preparation → Download CAD handoff**. It packages a closed uncut horn blank, named assembly references, entry/profile coordinates and source-backed dimensions with their uncertainty. Entry cuts, mounting holes, joins and fabrication checks still belong in CAD; the assembly is not a fused printable model. See [export formats](../docs/export-formats.md).
+
+Independent rear-vent source bases are not a resistive-slot/cardioid prediction. See the [passive-cardioid capability contract](../docs/passive-cardioid-contract.md) for the missing shared-chamber, material-loss, motor and exterior-field coupling.

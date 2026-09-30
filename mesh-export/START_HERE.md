@@ -4,6 +4,8 @@ If this folder contains `OPEN_FIRST.html`, open it for the shorter setup guide. 
 
 A completed run creates **both** `abec/project.abec` (AKABAK import) and `boundary-lab/project.blab.json` (Boundary Lab). Keep each project beside its meshes and read its README. The kit builds geometry; it does not include either solver or calculate a response. Boundary Lab channels are prescribed unit velocities, including optional vents, not solved driver voltages; use its source request files for independent bases.
 
+This acoustic mesh has real horn-entry openings and connected air boundaries. It is different from the separate **CAD / 3D-printing handoff**, whose uncut horn blank and assembly reference surfaces need cuts, mounting features, joins and fabrication checks in CAD. Neither download is a ready-to-build loudspeaker. Prescribed rear-vent velocity bases do not model resistive shared-chamber slots or establish cardioid behavior.
+
 # Make solver files from your MEH design
 
 The browser downloads a **geometry job**, not a mesh. This runner builds and checks
@@ -12,9 +14,10 @@ It does not run AKABAK, calculate a response, or establish acoustic accuracy.
 
 ## First use
 
-1. In MEH Studio, open **Export → Acoustic solver export**. Choose **Download
-   geometry job**, then **Download local runner**. Extract the entire runner ZIP
-   into a normal writable folder, such as Documents. Keep its files together.
+1. In MEH Studio, open **Export → ABEC / AKABAK & Boundary Lab meshes**. Choose
+   your solver and **Download local kit**. Extract the entire ZIP into a normal
+   writable folder, such as Documents. The current design and geometry job are
+   already included. Keep its files together.
 2. Install [Python 3.12](https://www.python.org/downloads/) and
    [Node.js 22 or newer](https://nodejs.org/). On Windows, enable Python's
    **Add python.exe to PATH** option. Reopen your terminal after installation.

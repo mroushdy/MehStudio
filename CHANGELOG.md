@@ -1,5 +1,15 @@
 # Changes
 
+## Scientist feedback workflows — 2026-09-30 (review)
+
+- Expose ABEC/AKABAK and Boundary Lab kits directly in Export, with setup and scope beside the choice and in the downloaded instructions.
+- Add a CAD handoff ZIP with named reference parts, a closed uncut blank, entry/profile data, sourced driver dimensions and placement metadata. Remove a decorative profile overlay from CAD exports. Actual cuts, mounting solids, joins and fabrication checks remain CAD work.
+- Add a discoverable chamber/entry resonance study with inverse bare-LC cavity targets, intended passband/crossover context and loaded response/phase/impedance comparisons. Keep model limits, invalid candidates and unsupported insert acoustics explicit; persist study settings in designs.
+- Add exact Dayton DMA80 variants and a 3-inch Assisted filter. DMA80-4 supports screening. DMA80-8 is geometry-only pending resolution of contradictory motor data. Preserve drawing/CAD mounting conflicts and conservative geometry assumptions.
+- Clarify the separate passive-cardioid capability gap and required coupled rear-slot/export contract. Preserve the one-time experimental disclaimer and its independent acknowledgment storage.
+
+Verification and limits are recorded in [the implementation validation report](docs/scientist-feedback-validation.md).
+
 ## Build 11 — front chamber study (proposed)
 
 - Compare nearby shorter-entry/larger-cavity and longer-entry/smaller-cavity geometries at fixed driver, horn, rear net volume, entry area and acoustic settings. Solve real standoff from the shared curved collector volume; retain failed targets with reasons.

@@ -26,7 +26,7 @@ test('all dimension references resolve and units stay explicit',()=>{
 });
 test('catalogue motors have exact identity, reviewed variant and complete fields before eligibility',()=>{
  const C=c.MEHDriverCatalog;
- for(const [id,m]of Object.entries(C.motors)){assert.equal(C.motorEligibility(C.byId[id],m).available,true,id);assert.equal(C.motorEligibility(C.byId[id],{...m,id:'other'}).available,false);assert.equal(C.motorEligibility(C.byId[id],{...m,leMH:undefined}).available,false);assert.equal(C.motorEligibility(C.byId[id],{...m,review:{...m.review,variant:'4 ohm'}}).available,false);}
+ for(const [id,m]of Object.entries(C.motors)){assert.equal(C.motorEligibility(C.byId[id],m).available,true,id);assert.equal(C.motorEligibility(C.byId[id],{...m,id:'other'}).available,false);assert.equal(C.motorEligibility(C.byId[id],{...m,leMH:undefined}).available,false);assert.equal(C.motorEligibility(C.byId[id],{...m,review:{...m.review,variant:m.review.variant==='4 ohm'?'8 ohm':'4 ohm'}}).available,false);}
 });
 test('selecting supported drivers preserves source values through normalization and keeps displacement provenance',()=>{
  const M=c.MEH;

@@ -35,7 +35,7 @@ function resolveGoals(raw={},_ignoredCurrentState){
  for(const [key,allowed] of [['rearLayout',['individual','shared']],['rearConcept',['individual','reflex']],['sharedRearShape',['cylinder','teardrop']]])if(!allowed.includes(brief[key]))bad(key,`Unsupported ${key}.`);
  const mid=M.drivers.mid[brief.midDriver],cd=M.drivers.compression[brief.compressionDriver];
  if(!mid||mid.available===false)bad('midDriver','Select an available mid-driver model.');
- else if(!A.catalog[brief.midDriver]||mid.hasMotorData===false||mid.acousticsReady===false)bad('midDriver',`${mid.name}: a complete verified motor dataset is not loaded. Assisted acoustic design is unavailable; Manual geometry remains available. No other driver's motor parameters will be substituted.`);
+ else if(!A.catalog[brief.midDriver]||mid.hasMotorData===false||mid.acousticsReady===false)bad('midDriver',mid.record?.acousticNote||`${mid.name}: a complete verified motor dataset is not loaded. Assisted acoustic design is unavailable; Manual geometry remains available. No other driver's motor parameters will be substituted.`);
  if(brief.compressionDriver==='bms4594he')bad('compressionDriver','The BMS 4594HE drawing shows a 26.6 mm forward nose. This adapter does not yet accommodate it; choose another compression driver for Assisted generation.');
  else if(!cd||cd.available===false)bad('compressionDriver','Select an available compression driver.');
  else if(Number.isFinite(cd.recommendedLowCrossoverHz)&&brief.handoffHz<cd.recommendedLowCrossoverHz)bad(['handoffHz','compressionDriver'],`The requested handoff is below ${cd.name}'s ${cd.recommendedLowCrossoverHz} Hz manufacturer recommendation. Its stated crossover conditions still require checking on the generated horn.`);
