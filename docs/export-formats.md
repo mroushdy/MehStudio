@@ -4,8 +4,9 @@ Build 13 brings the categories offered by [Hornstudio](https://github.com/mroush
 
 | Download | Content and scope |
 | --- | --- |
+| Mounting ZIP | Separate support plates / compression flange with real central openings and bolt through-holes. Local STL and faceted STEP solids, installed OBJ, dimensions, quantities, source evidence, measured overrides and saved study. Not a joined cabinet/horn. |
 | Design JSON | Applied design, goals, variants and acoustic settings; reloadable in MEH Studio. |
-| CAD handoff ZIP | Uncut closed horn STL, named OBJ reference parts, sampled entry/profile CSV, applied design, source/status manifest and a CAD preparation guide. Units, exact driver variants, source URLs, dimensions, unresolved evidence and displayed mounting transforms travel together. No drilling template or fused printable assembly. |
+| CAD handoff ZIP | Uncut closed horn STL, named OBJ reference parts, sampled entry/profile CSV, applied design, source/status manifest and a CAD preparation guide. Units, exact driver variants, source URLs, dimensions, unresolved evidence and displayed mounting transforms travel together. Selected mounting solids are included separately; no fused printable assembly. |
 | Profile / entry CSV | Current profile or every positioned entry outline, millimetres. Dot/comma decimal formats use comma/semicolon separators respectively. |
 | Section PNG | Current section image. |
 | STL | Binary triangles, mm. Uncut horn blank is a closed shell with thickness and roll; assembly reference is separate surfaces, not a Boolean union. |
@@ -47,3 +48,8 @@ Entry CSV loops follow the sampled inner horn surface and repeat their first poi
 ## Verification
 
 JavaScript tests cover STL binary parsing and units, opposite edge pairs/positive volume, unique OBJ parts and indices, exclusion of the decorative profile overlay, STEP references and solid/surface distinction, decimal-comma CSV, quarter-cloud scope, ZIP CRC/extraction with original compressed files, handoff source/datum preservation and entry-loop reconstruction, 1D node/source structure, applied-design downloads and the actual startup geometry job. Generate the actual handoff for independent checks with `node scripts/export-cad-review.cjs DIRECTORY [DESIGN_JSON]`. The optional `python3 tests/verify-step-native.py DIRECTORY` check uses a separately installed OpenCascade OCP package. Native OpenCascade STEP import verifies valid faceted horn solid, the same horn as open reference surfaces, and two rational NURBS faces with preserved mm bounds; it does not assert a valid assembly solid. These checks do not establish acoustic performance or production CAD readiness.
+
+
+## Driver mounting solids
+
+See [Driver mounting parts](driver-mounting.md) for source eligibility, editable construction choices, measured overrides, plate placement and fabrication limits. With mounting enabled, the CAD ZIP adds a `mounting/` folder. The horn blank and `assembly_reference.obj` retain their original reference scope; real mounting cutouts and through-holes are in the separate mounting solids.

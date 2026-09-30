@@ -1,6 +1,6 @@
 {
   "name": "meh-studio",
-  "version": "13.1.0",
+  "version": "13.2.0",
   "private": true,
   "description": "Offline MEH geometry and acoustic design study",
   "scripts": {
