@@ -1,5 +1,7 @@
 # Scientist feedback implementation: verification and limits
 
+Historical Build 13.1 verification. Later mounting and browser-native fabrication/acoustic studies are recorded in [Build 14 verification](browser-completion-validation.md). The remaining-work descriptions below refer to that earlier snapshot.
+
 Verified 30 September 2026 in an isolated clone of main `9010138579de20db40f801c31eb57c153756ed6a`. The deployed app and private Sites editor were not changed. [Machine-readable results](scientist-feedback-validation.json) retain geometry hashes, native runtime/source versions and parser results.
 
 ## Delivered workflows

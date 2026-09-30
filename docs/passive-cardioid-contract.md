@@ -1,5 +1,7 @@
 # Shared rear chamber and resistive slots: capability boundary
 
+Build 14 now includes an independent [compact-source passive-slot fixture](cardioid-study.md). This document remains the contract for the more complete horn/cabinet field model; the compact fixture does not qualify that full model.
+
 The editor's shared chamber is a common rear compliance for identical coherently driven cone mids. Sealed and bass-reflex loading are supported. A rectangular bass-reflex duct is not a passive resistive slot, and the rear vent loss-Q assumption is not a porous-material model. Neither reduced network predicts combined front/rear far-field radiation or passive cardioid behavior. The rear enclosure controls now state this distinction beside the loading choice.
 
 Fulcrum's [manufacturer explanation](https://www.fulcrum-acoustic.com/education/passive-cardioid-technology) describes coordinated driver placement, enclosure dimensions, ports and calibrated resistive elements. Its [published technical disclosure](https://patents.google.com/patent/US10123111B2/en) also describes coupled front and rear acoustic paths. These sources motivate the coupled-system requirements below; they do not validate a MEH Studio geometry or supply its material impedance data. Sources checked 30 September 2026.
