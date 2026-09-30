@@ -1,12 +1,12 @@
 # MEH Studio
 
-Build 13.2 adds editable driver mounting plates with real cutouts and bolt holes, standalone STL/STEP solids, and saved source-backed or measured mounting dimensions. See [driver mounting](docs/driver-mounting.md).
+Build 14 adds browser-native fabrication packages, complex crossover and MEH/coax comparisons, and a bounded passive-slot cardioid study. Designs retain their print settings, imported traces and material data. See [fabrication](docs/fabrication.md), [crossover comparison](docs/crossover-study.md), and [passive slots](docs/cardioid-study.md).
 
 The editor opens Assisted first, remembers the last mode on this browser, and restores the mode and Assisted settings in saved studies and design JSON. Older studies without a mode retain the Manual fallback.
 
 A short experimental-tool notice appears on first use. Dismissing it remembers the acknowledgment on this browser; saved designs and editor preferences are unchanged.
 
-A browser-based multiple-entry-horn study tool. The current editor is one self-contained HTML file with no installation, build step, or external JavaScript dependencies.
+A browser-based multiple-entry-horn study tool. The current editor is one self-contained HTML file with no installation or build step for users. Its licensed geometry engine and WebAssembly binary are embedded for offline use.
 
 ## Open the editor
 
@@ -20,7 +20,7 @@ python3 -m http.server 8520 --bind 127.0.0.1
 
 Open **http://127.0.0.1:8520/**.
 
-## Build 13.2: design, mounting and solver exports
+## Build 14: design, fabrication and acoustic studies
 
 Assisted follows **Goals → Drivers → Designs → Refine**, with grouped essentials, optional output/budget controls, a selected-driver summary, size filters, and one consistent next action. Preview Apply/Cancel controls appear beside the horn; current-design measurements are hidden during preview. Start with the driver count and enclosure in Goals, then set the operating band, nominal coverage, drive, assembly limits, optional mid-band loudness target and driver budget. New designs default to individually sealed rear chambers; Shared and Ported remain explicit choices. Imported studies retain their saved configuration. Choose a catalogue suggestion or select drivers you own, then generate layouts. Suggestions require complete motor data and a documented compression-driver handoff recommendation. They are a shortlist for further checks, not a universal best-buy ranking. Enter your own driver quotes to check cost; missing prices are never treated as zero.
 
@@ -32,9 +32,15 @@ Research analysis defaults to **Simple**, with practical response, excursion and
 
 **Export → ABEC / AKABAK & Boundary Lab meshes** downloads a canonical geometry job, saved design and self-contained local runner together. Extract the kit, open `OPEN_FIRST.html`, follow its setup, then run the included job to produce checked solver files. The kit is not a prebuilt mesh or solver. See [the exporter guide](mesh-export/README.md). The browser does not run AKABAK or the native solver. Full-horn tetrahedral meshes that failed quality checks are withheld. Mesh topology checks do not establish acoustic convergence.
 
-**Export → Driver mounting** generates separate support plates and compression flanges for supported drivers, with adjustable thickness, clearance and support margins. Explicit measured dimensions can fill missing source data; choices are saved with studies. The mounting ZIP contains real through-hole solids in local STL and faceted STEP, plus installed positions. These are separate parts, not a fused loudspeaker.
+**Export → CAD & mounting parts → Driver mounting** generates separate support plates and compression flanges for supported drivers, with adjustable thickness, clearance and support margins. Explicit measured dimensions can fill missing source data; choices are saved with studies. The mounting ZIP contains real through-hole solids in local STL and faceted STEP, plus installed positions. These are separate parts, not a fused loudspeaker.
 
-**Export → CAD & 3D-printing preparation → Download CAD handoff** packages a closed uncut horn blank, named assembly reference parts, entry outlines, sourced driver dimensions and placement metadata. Selected mounting solids are included in their own folder. Import in millimetres, then finish entry cuts, part connections, sealing and print segmentation in CAD. It is not a fused printable assembly. Individual STL, OBJ, faceted STEP, NURBS horn surfaces and point clouds remain available. See [format scopes](docs/export-formats.md).
+**Export → CAD & mounting parts → Download CAD handoff** packages a closed uncut horn blank, named assembly reference parts, entry outlines, sourced driver dimensions and placement metadata. Selected mounting solids are included in their own folder. Import in millimetres, then finish entry cuts, part connections, sealing and print segmentation in CAD. It is not a fused printable assembly. Individual STL, OBJ, faceted STEP, NURBS horn surfaces and point clouds remain available. See [format scopes](docs/export-formats.md).
+
+**Export → Printable assembly** builds joined material geometry with open horn entries, integrated collector/insert geometry and sourced driver support seats. Driver support plates are removable. Optional individual rear pods are detachable, and supported shared shells have removable lids. The assembly can be split for the chosen printer volume, with alignment holes and separate dowels where sufficient material exists. The ZIP contains actual local STL/faceted STEP parts, their installed assembly and an assembly manifest. Unsupported joins or mounting dimensions block export. This produces prototype geometry; fit, net rear volume, material strength, seals, print supports and physical performance require verification. See [fabrication scope](docs/fabrication.md). A [complete prototype example](examples/fabrication-prototype-study.json) is included for import; it is a verification fixture, not a recommended loudspeaker design.
+
+**Design analysis → Crossover and speaker comparison** imports complex response data, sums compatible mid/HF branches with filters, gain, delay and polarity, and searches bounded settings. Capture the reduced-model mid to compare chamber changes against a retained baseline; the tool cannot infer a compatible HF response. The A/B mode compares equally referenced MEH/coax levels and sampled angular coverage. Measurement templates and a repeatable test protocol are included. See [reference requirements](docs/crossover-study.md).
+
+**Design analysis → Passive-slot study** solves an independent low-frequency fixture containing cone motors, one shared rear compliance, material/duct impedances and a common exterior radiation approximation. It imports measured sheet impedance and reports electrical/acoustic power balance, flows and qualified polar/front-to-rear results. It does not predict the selected horn's full field, cabinet diffraction or actual cardioid performance. See [the model boundaries](docs/cardioid-study.md).
 
 **Design analysis → Chamber / entry resonance** compares actual tube/cavity candidates, with an optional bare Helmholtz/LC target and intended mid-band/crossover markers. Inspect loaded flow, phase, impedance, excursion and entry speed together. Targeting the bare LC value does not target a loaded peak/dip or validate a crossover; candidates above existing model references remain exploratory. Settings survive design export/import and saved studies. See [the front-chamber reference](docs/front-chamber-reference.md).
 
@@ -50,7 +56,8 @@ Research analysis defaults to **Simple**, with practical response, excursion and
 - Reduced linear acoustic screening using supported driver motor data and a one-dimensional Webster horn network.
 - Front chamber tradeoffs: nearby actual tube/cavity geometries, common-reference response and phase comparisons, impedance, excursion, entry speed and geometry-only insert diagnostics.
 - Experimental System acoustics: independently coupled mids, qualified spatial-front result import, pressure/flow and motor results, with exact-geometry invalidation.
-- A measured-response crossover workbench, plus JSON, CSV and section-image exports.
+- Complex crossover summation and bounded searches, compatible MEH/coax response and polar comparisons, and a separate low-frequency passive-slot study.
+- Browser fabrication solids, print segmentation, saved analysis datasets, and JSON/CSV/section-image exports.
 
 Manual edits update the design immediately. Design checks highlight affected controls and collect warnings without freezing the preview or blocking saved comparisons and exports. Driver selection loads dimensions directly; **Fit driver placement** and **Size chamber & port to fit** are explicit actions. Sliders batch geometry updates and briefly defer acoustic screening.
 
@@ -76,9 +83,9 @@ Choose **Advanced → Spatial passage detail**, or **Manual → Front chamber �
 
 ## Engineering limits
 
-This is a design-study tool, not a validated loudspeaker design or manufacturing CAD system. It does not predict full-field directivity, replace BEM/FEM, or provide tolerance-checked production STEP geometry. Rear-port and horn radiation are not summed. Driver appearance, cone recess and some displacement/clearance assumptions remain approximate; read the in-app **Methods** and manufacturer links.
+This is a design-study tool, not a validated loudspeaker design or manufacturing CAD system. It does not predict full-field directivity, replace BEM/FEM, or provide tolerance-checked production STEP geometry. The main horn screen does not sum rear-port and horn radiation. The separate passive-slot fixture couples front and rear compact sources only within its stated low-frequency limits. Driver appearance, cone recess and some displacement/clearance assumptions remain approximate; read the in-app **Methods** and manufacturer links.
 
-Resistive rear slots and passive cardioid behavior require a coupled model of the rear air, material impedance and common exterior radiation. A rectangular bass-reflex port or exported vent velocity basis does not provide that prediction. The [capability contract](docs/passive-cardioid-contract.md) records the missing data and domain interfaces.
+The new [passive-slot fixture](docs/cardioid-study.md) couples rear air, material impedance and a compact common exterior approximation. Actual horn/cabinet directivity still needs a qualified field model and measurements. A rectangular bass-reflex port or exported vent velocity basis alone does not predict passive cardioid behavior. The [field-model contract](docs/passive-cardioid-contract.md) records the remaining interfaces and validation requirements.
 
 Candidate rankings apply only within the reduced model. Verify physical fit, construction, acoustic response, crossover, excursion and thermal behavior through detailed engineering and measurements. Imported crossover traces must share microphone position, timing reference and calibrated level.
 
@@ -97,4 +104,4 @@ The tests cover large-driver placement, individual/shared sealed and ported cham
 
 The earlier modular Build 657 application, documentation, tests and third-party notices are preserved in [`legacy/build657/`](legacy/build657/). That is a separate historical implementation; its assembly scripts and test claims do not apply to the current editor. Git history is retained.
 
-No project-wide open-source license has been added. Existing third-party license notices remain with the legacy dependencies.
+No project-wide open-source license has been added. Current browser geometry includes Mapbox Earcut (ISC) and Manifold 3.5.4 (Apache-2.0), with licenses retained under `exports/vendor/` and embedded into the offline file. Existing third-party notices remain with the legacy dependencies.

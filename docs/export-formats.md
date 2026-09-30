@@ -1,5 +1,7 @@
 # Export formats and scopes
 
+Build 14 adds a separate **Printable assembly** workflow producing joined and cut material solids with optional print sections and removable lids. See [fabrication](fabrication.md). The reference/blank descriptions below still apply to the original CAD handoff workflow.
+
 Build 13 brings the categories offered by [Hornstudio](https://github.com/mroushdy/Hornstudio) into the MEH export dialog. These are independent MEH implementations; Hornstudio is a workflow/file-format reference. A shape export is not a solver model.
 
 | Download | Content and scope |
