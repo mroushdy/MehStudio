@@ -1,6 +1,8 @@
 # MEH Studio
 
-Build 13.1 opens Assisted first, remembers the last mode on this browser, and restores the mode and Assisted settings in saved studies and design JSON. Older studies without a mode retain the Manual fallback.
+Build 13.2 adds editable driver mounting plates with real cutouts and bolt holes, standalone STL/STEP solids, and saved source-backed or measured mounting dimensions. See [driver mounting](docs/driver-mounting.md).
+
+The editor opens Assisted first, remembers the last mode on this browser, and restores the mode and Assisted settings in saved studies and design JSON. Older studies without a mode retain the Manual fallback.
 
 A short experimental-tool notice appears on first use. Dismissing it remembers the acknowledgment on this browser; saved designs and editor preferences are unchanged.
 
@@ -18,7 +20,7 @@ python3 -m http.server 8520 --bind 127.0.0.1
 
 Open **http://127.0.0.1:8520/**.
 
-## Build 13.1: design and solver exports
+## Build 13.2: design, mounting and solver exports
 
 Assisted follows **Goals → Drivers → Designs → Refine**, with grouped essentials, optional output/budget controls, a selected-driver summary, size filters, and one consistent next action. Preview Apply/Cancel controls appear beside the horn; current-design measurements are hidden during preview. Start with the driver count and enclosure in Goals, then set the operating band, nominal coverage, drive, assembly limits, optional mid-band loudness target and driver budget. New designs default to individually sealed rear chambers; Shared and Ported remain explicit choices. Imported studies retain their saved configuration. Choose a catalogue suggestion or select drivers you own, then generate layouts. Suggestions require complete motor data and a documented compression-driver handoff recommendation. They are a shortlist for further checks, not a universal best-buy ranking. Enter your own driver quotes to check cost; missing prices are never treated as zero.
 
@@ -30,7 +32,9 @@ Research analysis defaults to **Simple**, with practical response, excursion and
 
 **Export → ABEC / AKABAK & Boundary Lab meshes** downloads a canonical geometry job, saved design and self-contained local runner together. Extract the kit, open `OPEN_FIRST.html`, follow its setup, then run the included job to produce checked solver files. The kit is not a prebuilt mesh or solver. See [the exporter guide](mesh-export/README.md). The browser does not run AKABAK or the native solver. Full-horn tetrahedral meshes that failed quality checks are withheld. Mesh topology checks do not establish acoustic convergence.
 
-**Export → CAD & 3D-printing preparation → Download CAD handoff** packages a closed uncut horn blank, named assembly reference parts, entry outlines, sourced driver dimensions and placement metadata. Import in millimetres, then add entry cuts, mounting features, joins and print segmentation in CAD. It is not a fused printable assembly. Individual STL, OBJ, faceted STEP, NURBS horn surfaces and point clouds remain available. See [format scopes](docs/export-formats.md).
+**Export → Driver mounting** generates separate support plates and compression flanges for supported drivers, with adjustable thickness, clearance and support margins. Explicit measured dimensions can fill missing source data; choices are saved with studies. The mounting ZIP contains real through-hole solids in local STL and faceted STEP, plus installed positions. These are separate parts, not a fused loudspeaker.
+
+**Export → CAD & 3D-printing preparation → Download CAD handoff** packages a closed uncut horn blank, named assembly reference parts, entry outlines, sourced driver dimensions and placement metadata. Selected mounting solids are included in their own folder. Import in millimetres, then finish entry cuts, part connections, sealing and print segmentation in CAD. It is not a fused printable assembly. Individual STL, OBJ, faceted STEP, NURBS horn surfaces and point clouds remain available. See [format scopes](docs/export-formats.md).
 
 **Design analysis → Chamber / entry resonance** compares actual tube/cavity candidates, with an optional bare Helmholtz/LC target and intended mid-band/crossover markers. Inspect loaded flow, phase, impedance, excursion and entry speed together. Targeting the bare LC value does not target a loaded peak/dip or validate a crossover; candidates above existing model references remain exploratory. Settings survive design export/import and saved studies. See [the front-chamber reference](docs/front-chamber-reference.md).
 

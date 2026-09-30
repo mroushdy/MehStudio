@@ -1,5 +1,12 @@
 # Changes
 
+## Build 13.2 — driver mounting
+
+- Generate separate mid support plates and compression-driver flanges with real central cutouts and bolt through-holes. Preview and export use the same generated part geometry.
+- Add editable plate thickness, bolt clearance, edge margin, gasket land and actual optional bolt-head counterbores. Gate incomplete source data and support explicit driver-bound measured overrides.
+- Save mounting choices with design JSON and named studies; include selected solids in the CAD handoff or download a standalone mounting ZIP with STL, faceted STEP and installed positions.
+- Preserve the distinction between separate mounting parts, reference assembly surfaces and acoustic solver geometry. See [scope and validation](docs/driver-mounting.md).
+
 ## Scientist feedback workflows — 2026-09-30 (review)
 
 - Expose ABEC/AKABAK and Boundary Lab kits directly in Export, with setup and scope beside the choice and in the downloaded instructions.

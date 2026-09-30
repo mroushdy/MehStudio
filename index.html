@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MEH / Lab — Build 13.1 Assisted Design</title>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MEH / Lab — Build 13.2 Driver Mounting</title>
 <style>
 :root{--bg:#f1f2ee;--panel:#fcfcf8;--ink:#202e2e;--muted:#667371;--line:#d9dfd9;--accent:#315a55;--copper:#ad6037;--soft:#e6ede7;--warn:#8e5529;--bad:#9d3637}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}button,input,select{font:inherit}button{cursor:pointer;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:8px 11px;color:var(--ink)}button:hover{border-color:#92a79e}button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}button.active,button.primary{background:var(--accent);color:#fff;border-color:var(--accent)}button.small{font-size:12px;padding:5px 8px}header{height:77px;padding:15px 25px;display:flex;align-items:center;justify-content:space-between;gap:15px;background:var(--panel);border-bottom:1px solid var(--line)}h1{font-size:25px;font-weight:650;letter-spacing:-1px;margin:0}h1 span{font-weight:400;color:var(--muted);font-size:14px;letter-spacing:0;margin-left:14px}.actions{display:flex;gap:7px;align-items:center}.actions select{padding:8px;border:1px solid var(--line);border-radius:6px;background:var(--panel);max-width:190px}.layout{display:grid;grid-template-columns:284px minmax(480px,1fr) 292px;min-height:calc(100vh - 77px)}aside{padding:18px;background:var(--panel)}.controls{border-right:1px solid var(--line);max-height:calc(100vh - 77px);overflow:auto;position:sticky;top:0}.measurements{border-left:1px solid var(--line)}.section-title{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin:0 0 13px;font-weight:600}details{border-bottom:1px solid var(--line);padding:12px 0}summary{cursor:pointer;font-weight:600;list-style:none;display:flex;justify-content:space-between}summary:after{content:'+';font-weight:400;color:var(--muted)}details[open]>summary:after{content:'−'}details[open]>summary{margin-bottom:15px}.control{margin:13px 0}.control-top{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:12px}.control-top label{max-width:170px}.number{display:flex;align-items:center;gap:4px;white-space:nowrap;color:var(--muted)}input[type=number]{width:63px;border:1px solid var(--line);border-radius:4px;padding:3px 4px;text-align:right;background:var(--panel);color:var(--ink);font-variant-numeric:tabular-nums}input[type=range]{width:100%;margin:8px 0 0;accent-color:var(--accent);height:15px}select.full{width:100%;padding:7px;border:1px solid var(--line);border-radius:5px;background:var(--panel);color:var(--ink)}.hint{font-size:11px;line-height:1.55;color:var(--muted);margin:9px 0 0}.workspace{padding:17px;min-width:0}.stage{border:1px solid var(--line);border-radius:10px;background:#f7f8f4;overflow:hidden}.stagebar{padding:10px;display:flex;gap:7px;flex-wrap:wrap;border-bottom:1px solid var(--line);align-items:center}.tabs{display:flex;gap:4px}.stagebar .grow{flex:1}.stagebar button{font-size:12px;padding:6px 9px}.viewport{position:relative;height:490px;min-height:330px}canvas.scene{width:100%;height:100%;display:block;touch-action:none}#overlay{position:absolute;inset:0;pointer-events:none;width:100%;height:100%;overflow:visible}.canvas-status{position:absolute;top:14px;left:16px;max-width:75%;pointer-events:none}.canvas-status strong{font-size:14px}.canvas-status p{margin:3px 0;color:var(--muted);font-size:11px}.canvas-tools{position:absolute;bottom:12px;left:12px;right:12px;display:flex;gap:6px;flex-wrap:wrap}.canvas-tools label{font-size:11px;padding:5px 8px;border:1px solid var(--line);border-radius:5px;background:#fcfcf8ed;cursor:pointer}.canvas-tools input{accent-color:var(--accent);vertical-align:middle}.statusline{padding:9px 13px;border-top:1px solid var(--line);font-size:11px;color:var(--muted);display:flex;justify-content:space-between;gap:12px}.summary-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:1px solid var(--line);background:var(--panel)}.summary-strip>div{padding:13px 15px;border-right:1px solid var(--line)}.summary-strip>div:last-child{border-right:0}.summary-strip span{display:block;font-size:11px;color:var(--muted)}.summary-strip b{font-size:22px;font-weight:500;font-variant-numeric:tabular-nums;display:block;margin-top:3px}.summary-strip small{font-size:11px;color:var(--muted)}.panel{margin-top:17px;background:var(--panel);border:1px solid var(--line);border-radius:9px;overflow:hidden}.panelhead{padding:13px 15px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:10px}.panelhead h2{font-size:13px;font-weight:600;margin:0}.scroll{overflow:auto}.table{border-collapse:collapse;width:100%;font-size:12px;font-variant-numeric:tabular-nums}.table th,.table td{padding:9px 10px;border-bottom:1px solid #e7ebe6;text-align:right;white-space:nowrap}.table th{font-size:10px;font-weight:500;color:var(--muted);line-height:1.4}.table th:first-child,.table td:first-child{text-align:left}.table tbody tr:hover{background:#f3f6f1}.table .selected{background:var(--soft)}.table .label-cell{max-width:160px;overflow:hidden;text-overflow:ellipsis}.panelnote{font-size:11px;color:var(--muted);padding:10px 14px;margin:0}.metric-group{margin:0 0 20px}.metric{display:flex;justify-content:space-between;gap:10px;font-size:12px;padding:7px 0;border-bottom:1px solid #e9ede7}.metric .value{font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}.metric em{font-size:10px;font-style:normal;color:var(--muted);display:block}.measurement-box{border:1px solid var(--line);background:var(--soft);padding:12px;border-radius:6px;margin:12px 0 18px}.measurement-box strong{font-size:19px;font-weight:500}.measurement-box p{font-size:11px;color:var(--muted);margin:6px 0 0}.finding{font-size:11px;border-left:2px solid #be986f;padding:2px 0 2px 10px;margin:12px 0;line-height:1.55;color:var(--warn)}.finding.error{color:var(--bad);border-color:var(--bad)}.tag{display:inline-block;font-size:10px;padding:3px 6px;background:var(--soft);color:var(--accent);border-radius:3px}.note{font-size:11px;line-height:1.6;color:var(--muted)}dialog{border:1px solid var(--line);border-radius:12px;max-width:760px;width:calc(100% - 32px);padding:25px;background:var(--panel);color:var(--ink)}dialog::backdrop{background:#10252566}dialog h2{font-size:20px;margin:0 0 15px}dialog h3{font-size:14px;margin-top:22px}dialog p,dialog li{font-size:13px;line-height:1.65}dialog a{color:var(--accent)}dialog .close{float:right}.fieldline{display:flex;gap:8px;flex-wrap:wrap}.fieldline input{border:1px solid var(--line);padding:6px;border-radius:4px;min-width:120px;width:190px}.visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}#fallback{display:none;position:absolute;top:65px;left:16px;right:16px;color:var(--warn);font-size:11px}.warning-count{color:var(--warn)}
 @media(min-width:1500px){.viewport{height:570px}}@media(max-width:1170px){.layout{grid-template-columns:260px minmax(400px,1fr)}.measurements{grid-column:2;border-left:0;border-top:1px solid var(--line);display:grid;grid-template-columns:1fr 1fr;gap:20px}.controls{grid-row:1/3}.measurements .metric-group{margin:0}.viewport{height:480px}h1 span{display:none}}@media(max-width:760px){header{height:auto;min-height:85px;padding:12px 14px;flex-wrap:wrap}.actions{flex-wrap:wrap}.actions select{max-width:165px}.layout{display:flex;flex-direction:column}.workspace{order:0;padding:10px}.controls{order:1;position:static;max-height:none;border-right:0;display:grid;grid-template-columns:1fr 1fr;gap:0 18px;border-top:1px solid var(--line)}.controls>.section-title{grid-column:1/-1}.measurements{order:2;display:block}.viewport{height:420px}.summary-strip>div{padding:10px}.summary-strip b{font-size:19px}.stagebar{gap:4px}.stagebar .grow{display:none}.statusline{flex-direction:column;gap:2px}.canvas-tools{bottom:8px;gap:3px}.canvas-tools label{padding:4px;font-size:10px}}@media(max-width:440px){.controls{display:block}.tabs button{padding:6px}.viewport{height:390px}.actions button{padding:6px 8px;font-size:12px}h1{font-size:23px}}
@@ -119,8 +119,10 @@ button:disabled{opacity:.42;cursor:not-allowed}.setup{max-width:1220px;margin:26
 
 #exportDialog{width:min(760px,calc(100vw - 32px));max-height:90vh;overflow:auto}#exportDialog h3{font-size:15px;margin:0 0 14px}#exportDialog .export-section{border-top:1px solid var(--line);margin-top:22px;padding-top:20px}#exportDialog .export-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}#exportDialog label{font-size:12px;display:flex;flex-direction:column;gap:6px}#exportDialog select{padding:9px;width:100%;min-width:0;background:var(--paper,#fff);color:inherit;border:1px solid var(--line);border-radius:6px}#exportDialog .export-csv{max-width:280px;margin-top:12px}#exportDialog button{white-space:normal}#exportDialog .fieldline{flex-wrap:wrap}@media(max-width:560px){#exportDialog .export-row{grid-template-columns:1fr}}
 #experimentalNotice{max-width:440px}#experimentalNotice .notice-actions{display:flex;justify-content:flex-end;margin-top:22px}#experimentalNotice .notice-ai{color:var(--muted);margin-bottom:0}
+
+.mounting-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 16px;margin:12px 0}.mounting-fields label{display:flex;flex-direction:column;gap:5px;font-size:12px}.mounting-fields input{width:100%;min-width:0;text-align:left}.mounting-wide{grid-column:1/-1}.mounting-choice{display:flex;align-items:flex-start;gap:8px;font-size:12px;margin:10px 0}.mounting-choice input{width:auto;flex:none;margin-top:3px}[data-ex-mounting] h4{margin:22px 0 8px}[data-mount-card]{border:1px solid var(--line);border-radius:7px;padding:12px;margin:14px 0}[data-mount-card] legend{font-size:13px;font-weight:600;padding:0 5px}[data-mount-preview]{margin-top:12px}[data-mount-measured-details] summary{font-size:12px}@media(max-width:520px){.mounting-fields{grid-template-columns:1fr}}
 </style></head><body data-design="empty"><div id="startupNotice" style="margin:18px;padding:16px;border:1px solid #d9dfd9;border-radius:8px;background:#fff"><strong>MEH — single-file editor</strong><p>Opening the visual editor… If this message stays visible, this preview may be blocking JavaScript. Download this HTML file and open it in a JavaScript-enabled browser. No other files, installation, or internet connection are needed.</p><p id="startupError" role="alert"></p><noscript><p><strong>JavaScript is disabled in this preview.</strong> The calculator requires a browser that runs JavaScript. All code is included in this single file.</p></noscript></div><script>window.addEventListener('error',function(e){var t=document.getElementById('startupError');if(t)t.textContent='The editor could not start: '+e.message;});</script>
-<header><h1>MEH / Lab <span id="buildStamp" class="tag">Build 13.1 · Assisted design</span></h1><div class="actions"><button id="newDesign">New design</button><button id="openImport">Import</button><select id="savedDesigns" aria-label="Open saved study" hidden><option value="">Saved studies…</option></select><button id="save" disabled>Save comparison</button><button id="export" disabled>Export / CAD / solvers</button><button id="methods">Methods</button></div></header>
+<header><h1>MEH / Lab <span id="buildStamp" class="tag">Build 13.2 · Driver mounting</span></h1><div class="actions"><button id="newDesign">New design</button><button id="openImport">Import</button><select id="savedDesigns" aria-label="Open saved study" hidden><option value="">Saved studies…</option></select><button id="save" disabled>Save comparison</button><button id="export" disabled>Export / CAD / solvers</button><button id="methods">Methods</button></div></header>
 <div class="layout"><main class="workspace"><div class="modelNote"><strong id="designOrigin">Starting design</strong><div id="rearEditNotice" class="rear-edit-notice" hidden><details style="border:0;padding:0"><summary id="manualWarningSummary">Design checks</summary><ul id="manualWarningList" class="hint"></ul></details></div></div><div class="stage"><div class="stagebar"><div class="tabs" role="tablist"><button data-view="3d" class="active" role="tab" aria-selected="true">3D assembly</button><button data-view="section" role="tab" aria-selected="false">Section</button><button data-view="footprint" role="tab" aria-selected="false">Port footprint</button></div><span class="grow"></span><button id="inspectDrivers">Inspect drivers</button><button id="inspectChamber">Inspect chamber</button><button id="zoomOut" aria-label="Zoom out">−</button><button id="zoomIn" aria-label="Zoom in">+</button><button id="fitView">Fit</button><button id="frontView">Front</button><button id="rearView">Rear</button><button id="measure">Measure 2 points</button><button id="clearMeasure">Clear</button></div>
 <div id="previewNotice" class="preview-notice" hidden><div><strong id="previewLabel">Design preview</strong><span>Not applied to your saved design</span></div><div class="actions"><button type="button" id="previewClose">Cancel</button><button type="button" class="primary" id="previewApply">Use this design</button></div></div><div class="viewport" id="viewport"><canvas id="scene" class="scene" aria-label="Interactive horn geometry"></canvas><canvas id="diagram" class="scene" style="display:none" aria-label="Dimensioned horn section or port footprint"></canvas><svg id="overlay" aria-hidden="true"></svg><div class="canvas-status"><strong id="viewTitle">No design loaded</strong><p id="viewSubtitle">Calculate or import a study to begin.</p></div><div id="fallback">WebGL is unavailable. Section and footprint views remain interactive.</div><div class="canvas-tools"><label><input id="cut" type="checkbox" checked>Cutaway</label><label><input id="pods" type="checkbox" checked>Rear enclosure</label><label><input id="drivers" type="checkbox" checked>Drivers</label><label><input id="dims" type="checkbox" checked>Dimensions</label><label><input id="paths" type="checkbox">Cone paths</label><label><input id="ghost" type="checkbox">Original profile</label></div></div>
 <div class="statusline"><span id="interactionHint">Drag to orbit · scroll to zoom</span></div><div class="summary-strip"><div><span>Entry / cone overlap</span><b id="heroOverlap">—</b></div><div><span>Cone / entry area</span><b id="heroCompression">—</b></div><div><span>Straight-line path spread</span><b id="heroSpread">—</b></div></div></div>
@@ -3164,9 +3166,12 @@ root.MEHPressureBasis={"schemaVersion":1,"frequencyHz":700,"plane":"local v=0 (e
 </script><script>(function(){'use strict';
 const M=window.MEH,$=s=>document.querySelector(s),fmt=(x,d=1)=>Number.isFinite(x)?x.toFixed(d):'—',esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let guidedPanel=null,previewDisabled=[];
+let mountingParts={};
+function mountingSnapshot(){for(const kind of ['mid','compression']){const id=state[kind==='mid'?'midDriver':'compressionDriver'];if(!mountingParts[kind]||mountingParts[kind].driverId!==id)mountingParts[kind]={enabled:false,driverId:id};}return JSON.parse(JSON.stringify(mountingParts));}
+function setMountingParts(value){mountingParts=value&&typeof value==='object'&&!Array.isArray(value)?JSON.parse(JSON.stringify(value)):{};return mountingSnapshot();}
 let state={...M.defaults},analysis=null,view='3d',measureMode=false,picks=[],title='No design loaded',pending=0,variants=[],generation=null,generationToken=0,manualEdits=false,origin='starter',wizardTouched=false,assistedTimer=0,manualBriefDirty=false,assistedUndo=null,activeBriefIssues=[],manualDraft=null,rearFitMessage='',driverFitMessage='';
 const rearManualKeys=new Set(['rearLayout','sharedRearShape','rearConcept','back','sharedBack','rearPortShape','rearTuning','rearPortDiameter','rearPortWidth','rearPortHeight']);
-function savedStudy(v){return {name:String(v.name||'Imported').slice(0,45),state:M.normalize(v.state||{}),editorMode:v.editorMode==='assisted'?'assisted':'manual',wizardBrief:v.wizardBrief,assistedWorkflow:v.assistedWorkflow,frontChamberStudy:v.frontChamberStudy};}
+function savedStudy(v){return {name:String(v.name||'Imported').slice(0,45),state:M.normalize(v.state||{}),editorMode:v.editorMode==='assisted'?'assisted':'manual',wizardBrief:v.wizardBrief,assistedWorkflow:v.assistedWorkflow,frontChamberStudy:v.frontChamberStudy,mountingParts:v.mountingParts};}
 function preferredEditorMode(){try{return localStorage.getItem('meh-editor-mode')==='manual'?'manual':'assisted';}catch{return 'assisted';}}
 function currentEditorMode(){return $('#wizard').hidden?'manual':'assisted';}
 try{variants=JSON.parse(localStorage.getItem('meh-lab-variants-v2')||'[]').slice(0,8).filter(v=>v&&v.state).map(savedStudy);}catch{}
@@ -3357,7 +3362,7 @@ analyzeSoundButton.onclick=()=>{flushPendingGeometry();const panel=$('#acousticW
 function markEdited(){manualDraft=null;rearFitMessage='';driverFitMessage='';const updating=assistedTimer||$('#briefForm').getAttribute('aria-busy')==='true';stopCalculation();manualBriefDirty=true;assistedUndo=null;$('#undoAssisted').hidden=true;if(updating)setCalculationStatus('Manual edit kept. Assisted update cancelled.');origin='visual';renderOrigin();if(generation){manualEdits=true;$('#candidateNotes').textContent='Manual edits are active. These options are from the previous assisted calculation.';for(const row of document.querySelectorAll('[data-candidate-row]')){row.classList.remove('selected');row.querySelector('[data-candidate]').setAttribute('aria-pressed','false');}}}
 function renderOrigin(){const labels={starter:'Starting design',visual:'Manual design',calculated:'Assisted candidate',imported:'Imported design',saved:'Saved design'};$('#designOrigin').textContent=labels[origin]||labels.visual;}
 
-function update(){pending=0;analysis=M.analyze(state);document.body.dataset.design='ready';$('#save').disabled=false;$('#export').disabled=false;state=analysis.p;picks=[];sync();renderRearEditNotice();renderOrigin();scene.setModel(analysis);renderValues();renderPortStudy();setView(view);$('#viewTitle').textContent=title;$('#viewSubtitle').textContent=`${state.count} mids · ${state.rearLayout==='shared'?'shared':'individual'} ${state.rearConcept==='reflex'?'ported':'sealed'} chamber${state.rearLayout==='shared'?'':'s'} · dimensions in mm`;$('#announcer').textContent='Geometry updated';acousticPanel?.update(analysis,{defer:true});frontStudyPanel?.update(analysis);systemPanel?.update(analysis);workbenchPanel?.update(analysis);guidedPanel?.onGeometryChange();}
+function update(){pending=0;analysis=M.analyze(state);document.body.dataset.design='ready';$('#save').disabled=false;$('#export').disabled=false;state=analysis.p;mountingSnapshot();picks=[];sync();renderRearEditNotice();renderOrigin();scene.setModel(analysis);renderValues();renderPortStudy();setView(view);$('#viewTitle').textContent=title;$('#viewSubtitle').textContent=`${state.count} mids · ${state.rearLayout==='shared'?'shared':'individual'} ${state.rearConcept==='reflex'?'ported':'sealed'} chamber${state.rearLayout==='shared'?'':'s'} · dimensions in mm`;$('#announcer').textContent='Geometry updated';acousticPanel?.update(analysis,{defer:true});frontStudyPanel?.update(analysis);systemPanel?.update(analysis);workbenchPanel?.update(analysis);guidedPanel?.onGeometryChange();}
 function schedule(){markEdited();if(pending)cancelAnimationFrame(pending);pending=requestAnimationFrame(update)}
 function renderValues(){let a=analysis,p=state;$('#heroOverlap').textContent=fmt(a.overlap*100,1)+'%';$('#heroCompression').textContent=fmt(a.compression,1)+':1';$('#heroSpread').textContent=fmt(a.pathSpread,1)+' mm';
  $('#geometryMetrics').innerHTML=[metric('Horn depth',fmt(a.depth)+' mm'),metric('Entry center: axial / radial',`${fmt(a.P[2])} / ${fmt(a.P[0])} mm`),metric('Nearest entry centers',fmt(a.minCenters)+' mm'),metric('Maximum aperture span',fmt(a.maxSpan)+' mm','Sampled points on horn surface'),metric('Closest entry-edge gap',fmt(a.minEdge)+' mm','Sampled geometry; sockets excluded'),metric('Entry area / mid',fmt(a.area/100,2)+' cm²'),metric('Total entry area',fmt(a.totalArea/100,1)+' cm²'),metric('Horn area at entry plane',fmt(a.localHornArea/100,1)+' cm²','Axial section; not a branch impedance'),metric('Total entries / local horn area',fmt(a.totalTapToLocalHornArea,2),'Geometric area ratio only'),metric('Total narrow passage',fmt(a.minimumAreaLand,1)+' mm','Entry tube + 3 mm allowance'),metric('Collector air before insert',fmt(a.collectorV,0)+' cm³','Matched entry-to-driver mesh'),...(a.frontFiller.enabled?[metric('Insert displaced volume',fmt(a.frontFiller.volumeCM3,1)+' cm³'),metric('Effective insert opening',fmt(a.frontFiller.effectiveOpeningMM,1)+' mm','Widened as needed to keep the entry projection open'),metric('Front cavity after insert',fmt(a.frontCavityV,1)+' cm³','Collector + assumed cone recess − insert')]:[]),metric('Collector / entry interface','Matched','Same outline, area, orientation and position'),metric('Total front air estimate','≈ '+fmt(a.frontV,0)+' cm³','Collector + neck + cone surrogate − insert'),metric('Frame-rim / wall proxy',fmt(a.plateGap)+' mm','Sampled distance less wall thickness')].join('');
@@ -3463,16 +3468,16 @@ function drawDiagram(){if(!analysis)return;let canvas=$('#diagram'),rect=$('#vie
  }
  drawOverlay();}
 const dialog=id=>{$('#'+id).showModal?.()};$('#methods').onclick=()=>dialog('methodsDialog');$('#export').onclick=()=>{flushPendingGeometry();dialog('exportDialog')};$('#save').onclick=()=>{flushPendingGeometry();$('#variantName').value=title==='Custom study'?'Custom study '+(variants.length+1):title;dialog('saveDialog')};document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>b.closest('dialog').close());
-$('#confirmSave').onclick=()=>{flushPendingGeometry();let name=$('#variantName').value.trim()||'Study '+(variants.length+1);if(variants.length>=8)variants.shift();variants.push({name:name.slice(0,45),state:{...state},editorMode:currentEditorMode(),wizardBrief:readBrief(),assistedWorkflow:guidedPanel?.snapshot,frontChamberStudy:frontStudyPanel?.settings});persist();renderComparisons();$('#saveDialog').close()};
+$('#confirmSave').onclick=()=>{flushPendingGeometry();let name=$('#variantName').value.trim()||'Study '+(variants.length+1);if(variants.length>=8)variants.shift();variants.push({name:name.slice(0,45),state:{...state},editorMode:currentEditorMode(),wizardBrief:readBrief(),assistedWorkflow:guidedPanel?.snapshot,frontChamberStudy:frontStudyPanel?.settings,mountingParts:mountingSnapshot()});persist();renderComparisons();$('#saveDialog').close()};
 function download(name,text,type='text/plain'){let url=URL.createObjectURL(new Blob([text],{type})),a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
-function designJSON(){flushPendingGeometry();if(!analysis)throw Error('Calculate or import a design first.');return {format:'MEH-Lab-v2',editorMode:currentEditorMode(),designOrigin:origin,wizardBrief:readBrief(),assistedWorkflow:typeof guidedPanel!=='undefined'?guidedPanel?.snapshot:null,inputBrief:generation?.brief||null,systemAcoustics:systemPanel?{options:systemPanel.options}:null,acousticWorkbench:workbenchPanel?{options:workbenchPanel.options}:null,frontChamberStudy:frontStudyPanel?.settings||null,acousticScreen:acousticPanel?{model:acousticPanel.result?.model||null,options:acousticPanel.options}:null,generation:generation?{tested:generation.tested,rejected:generation.rejected,assumptions:generation.assumptions,inputs:generation.inputs,provenance:generation.provenance,baseline:generation.baseline,objectiveWeights:generation.objectiveWeights,policy:generation.policy,modelStatus:generation.modelStatus,selectedCandidate:generation.selectedCandidate,manualEdits}:null,units:'mm',validation:{geometryErrors:[...analysis.errors],warnings:[...analysis.warnings],systemAcousticStatus:systemPanel?.result?.available?'experimental-calculated':'unavailable-or-pending',acousticStatus:acousticPanel?.result?.available?'calculated':'unavailable-or-pending',acousticMessage:acousticPanel?.reason||''},status:'Geometry and one-dimensional horn/driver acoustic screening; no full-field simulation or validated performance',state,variants,assumptions:{cone:'Conical surrogate, user-entered depth',frontVolume:'Smooth triangulated collector + polygon neck + conical recess minus optional triangulated contour insert',frontFiller:analysis.frontFiller?.enabled?analysis.frontFiller.assumption:'None',paths:'Straight distances to entry center; not acoustic transfer paths',velocity:'Piston continuity proxy; no cavity storage',rear:state.rearLayout==='shared'?'One shared sealed or ported enclosure; total net volume, estimated displacement and coherent identical-mid acoustic approximation. No radiated rear/front sum.':state.rearConcept==='reflex'?'Individual vented pods; estimated Helmholtz tuning with equal-area end correction, internal duct displacement and conservative fit checks. No radiated rear/front sum.':'Sealed-box proxy excludes horn and front chamber'}}}
+function designJSON(){flushPendingGeometry();if(!analysis)throw Error('Calculate or import a design first.');return {format:'MEH-Lab-v2',editorMode:currentEditorMode(),designOrigin:origin,wizardBrief:readBrief(),assistedWorkflow:typeof guidedPanel!=='undefined'?guidedPanel?.snapshot:null,inputBrief:generation?.brief||null,systemAcoustics:systemPanel?{options:systemPanel.options}:null,acousticWorkbench:workbenchPanel?{options:workbenchPanel.options}:null,frontChamberStudy:frontStudyPanel?.settings||null,mountingParts:mountingSnapshot(),acousticScreen:acousticPanel?{model:acousticPanel.result?.model||null,options:acousticPanel.options}:null,generation:generation?{tested:generation.tested,rejected:generation.rejected,assumptions:generation.assumptions,inputs:generation.inputs,provenance:generation.provenance,baseline:generation.baseline,objectiveWeights:generation.objectiveWeights,policy:generation.policy,modelStatus:generation.modelStatus,selectedCandidate:generation.selectedCandidate,manualEdits}:null,units:'mm',validation:{geometryErrors:[...analysis.errors],warnings:[...analysis.warnings],systemAcousticStatus:systemPanel?.result?.available?'experimental-calculated':'unavailable-or-pending',acousticStatus:acousticPanel?.result?.available?'calculated':'unavailable-or-pending',acousticMessage:acousticPanel?.reason||''},status:'Geometry and one-dimensional horn/driver acoustic screening; no full-field simulation or validated performance',state,variants,assumptions:{cone:'Conical surrogate, user-entered depth',frontVolume:'Smooth triangulated collector + polygon neck + conical recess minus optional triangulated contour insert',frontFiller:analysis.frontFiller?.enabled?analysis.frontFiller.assumption:'None',paths:'Straight distances to entry center; not acoustic transfer paths',velocity:'Piston continuity proxy; no cavity storage',rear:state.rearLayout==='shared'?'One shared sealed or ported enclosure; total net volume, estimated displacement and coherent identical-mid acoustic approximation. No radiated rear/front sum.':state.rearConcept==='reflex'?'Individual vented pods; estimated Helmholtz tuning with equal-area end correction, internal duct displacement and conservative fit checks. No radiated rear/front sum.':'Sealed-box proxy excludes horn and front chamber'}}}
 $('#jsonExport').onclick=()=>download('MEH_design_study.json',JSON.stringify(designJSON(),null,2),'application/json');
 $('#profileExport').onclick=()=>{flushPendingGeometry();download('MEH_horn_profile_mm.csv',window.MEHFileFormats.profileCSV(analysis,$('#csvNumberFormat').value==='comma'),'text/csv')};
 $('#portsExport').onclick=()=>{flushPendingGeometry();const comma=$('#csvNumberFormat').value==='comma',sep=comma?';':',',fmt=x=>comma?x.toFixed(6).replace('.',','):x.toFixed(6);download('MEH_entry_outlines_mm.csv',['entry','point','x_mm','y_mm','z_mm'].join(sep)+'\n'+analysis.poses.flatMap((o,i)=>o.edge.map((q,j)=>[i+1,j,...q.map(fmt)].join(sep))).join('\n'),'text/csv')};
 function metricsCSV(){let list=[{name:'Current',state},...variants];const head=['name','mouth_mm','throat_mm','nominal_angle_deg','horn_depth_mm','mid_count','port_shape','port_equivalent_diameter_mm','port_area_cm2','offset_mm','standoff_mm','projected_overlap_percent','path_spread_mm','front_air_estimate_cm3','compression_ratio','maximum_entry_span_mm','nearest_edge_gap_mm','probe_Hz','velocity_proxy_peak_m_s','back_L_per_mid','rear_concept','rear_port_shape','rear_tuning_target_Hz','rear_port_area_mm2','rear_duct_length_mm','rear_port_valid','rear_layout','total_shared_net_L','shared_rear_shape','front_filler','filler_displaced_cm3','filler_effective_opening_mm','filler_axial_clearance_mm','filler_center_relief_mm','filler_outlet_offset_mm'];return [head.join(','),...list.map(v=>{let a=M.analyze(v.state),p=a.p;return ['"'+v.name.replace(/"/g,'""')+'"',p.mouth,p.throat,p.coverage,a.depth,p.count,p.shape,a.deq,a.area/100,p.offset,p.gap,a.overlap*100,a.pathSpread,a.frontV,a.compression,a.maxSpan,a.minEdge,p.frequency,a.velocity,p.back,p.rearConcept,p.rearConcept==='reflex'?p.rearPortShape:'',p.rearConcept==='reflex'?p.rearTuning:'',p.rearConcept==='reflex'?a.rearPort.areaMM2:'',p.rearConcept==='reflex'?a.rearPort.lengthMM:'',p.rearConcept==='reflex'?String(a.rearPort.valid):'',p.rearLayout,p.rearLayout==='shared'?p.sharedBack:'',p.rearLayout==='shared'?p.sharedRearShape:'',p.frontFiller,a.frontFiller.volumeCM3,a.frontFiller.enabled?a.frontFiller.effectiveOpeningMM:'',a.frontFiller.enabled?p.fillerClearance:'',p.frontFiller==='offset'?p.fillerRelief:'',p.frontFiller==='offset'?-p.offset:''].map(x=>typeof x==='number'?x.toFixed(5):x).join(',')})].join('\n')}
 $('#metricsExport').onclick=()=>download('MEH_comparison_metrics.csv',metricsCSV(),'text/csv');
 $('#sectionExport').onclick=()=>{flushPendingGeometry();let old=view;setView('section');let a=document.createElement('a');a.download='MEH_section.png';a.href=$('#diagram').toDataURL('image/png');a.click();setView(old)};
-$('#importButton').onclick=()=>$('#importFile').click();$('#importFile').onchange=async e=>{let f=e.target.files?.[0];if(!f)return;stopCalculation();try{let d=JSON.parse(await f.text());if(d.format!=='MEH-Lab-v2'||!d.state)throw Error('Choose a MEH-Lab-v2 design export.');stopCalculation();variants=(d.variants||[]).slice(0,8).filter(v=>v&&v.state).map(savedStudy);persist();renderComparisons();generation=d.generation&&d.inputBrief?{...d.generation,brief:d.inputBrief,candidates:[]}:null;manualEdits=!!d.generation?.manualEdits;$('#candidateResults').hidden=true;$('#candidateRows').innerHTML='';for(let input of document.querySelectorAll('#acousticScreen [data-ma-input],[data-ma-choice]')){let v=d.acousticScreen?.options?.[input.dataset.maInput||input.dataset.maChoice];input.value=input.tagName==='SELECT'?([...input.options].some(o=>o.value===v)?v:input.options[0].value):Number.isFinite(v)?v:input.defaultValue;}applyState(d.state,'Imported study','imported');frontStudyPanel?.restore(d.frontChamberStudy);systemPanel?.setOptions(d.systemAcoustics?.options||d.acousticScreen?.options);workbenchPanel?.setOptions(d.acousticWorkbench?.options||{voltageRms:d.systemAcoustics?.options?.voltageRms??d.acousticScreen?.options?.voltageRms??1,endCorrection:0,distanceM:d.state.listeningDistance||3,targets:{lowHz:d.state.lowTarget||200,highHz:Number(d.wizardBrief?.handoffHz)||700,maxExcursionMM:d.state.frontFiller==='none'?3:d.state.fillerClearance-1,maxPortVelocityMS:17},sourcePhasesDeg:Array(d.state.count).fill(0)});workbenchPanel?.setBrief(d.wizardBrief);writeBrief(d.wizardBrief||d.generation?.inputs||d.inputBrief||coreBrief());guidedPanel?.reset(d.assistedWorkflow);wizardTouched=true;manualBriefDirty=false;assistedUndo=null;$('#undoAssisted').hidden=true;updateSuggestions();setWizard(d.editorMode==='assisted',false);setCalculationStatus('Imported study loaded.');$('#exportDialog').close();scene.fit?.();}catch(err){alert('Import failed: '+err.message)}e.target.value=''};
+$('#importButton').onclick=()=>$('#importFile').click();$('#importFile').onchange=async e=>{let f=e.target.files?.[0];if(!f)return;stopCalculation();try{let d=JSON.parse(await f.text());if(d.format!=='MEH-Lab-v2'||!d.state)throw Error('Choose a MEH-Lab-v2 design export.');stopCalculation();variants=(d.variants||[]).slice(0,8).filter(v=>v&&v.state).map(savedStudy);persist();renderComparisons();generation=d.generation&&d.inputBrief?{...d.generation,brief:d.inputBrief,candidates:[]}:null;manualEdits=!!d.generation?.manualEdits;$('#candidateResults').hidden=true;$('#candidateRows').innerHTML='';for(let input of document.querySelectorAll('#acousticScreen [data-ma-input],[data-ma-choice]')){let v=d.acousticScreen?.options?.[input.dataset.maInput||input.dataset.maChoice];input.value=input.tagName==='SELECT'?([...input.options].some(o=>o.value===v)?v:input.options[0].value):Number.isFinite(v)?v:input.defaultValue;}applyState(d.state,'Imported study','imported');setMountingParts(d.mountingParts);frontStudyPanel?.restore(d.frontChamberStudy);systemPanel?.setOptions(d.systemAcoustics?.options||d.acousticScreen?.options);workbenchPanel?.setOptions(d.acousticWorkbench?.options||{voltageRms:d.systemAcoustics?.options?.voltageRms??d.acousticScreen?.options?.voltageRms??1,endCorrection:0,distanceM:d.state.listeningDistance||3,targets:{lowHz:d.state.lowTarget||200,highHz:Number(d.wizardBrief?.handoffHz)||700,maxExcursionMM:d.state.frontFiller==='none'?3:d.state.fillerClearance-1,maxPortVelocityMS:17},sourcePhasesDeg:Array(d.state.count).fill(0)});workbenchPanel?.setBrief(d.wizardBrief);writeBrief(d.wizardBrief||d.generation?.inputs||d.inputBrief||coreBrief());guidedPanel?.reset(d.assistedWorkflow);wizardTouched=true;manualBriefDirty=false;assistedUndo=null;$('#undoAssisted').hidden=true;updateSuggestions();setWizard(d.editorMode==='assisted',false);setCalculationStatus('Imported study loaded.');$('#exportDialog').close();scene.fit?.();}catch(err){alert('Import failed: '+err.message)}e.target.value=''};
 const resize=()=>{if(view==='3d')scene.draw();else drawDiagram();drawOverlay()};if(window.ResizeObserver)new ResizeObserver(resize).observe($('#viewport'));else window.addEventListener('resize',resize);
 const rearBriefKeys=['rearLayout','sharedRearShape','rearConcept'];
 const briefKeys=['midDriver','compressionDriver','count','coverage','lowHz','handoffHz','designDriveVoltageRms',...rearBriefKeys];
@@ -3541,7 +3546,7 @@ function setWizard(open,focus=true){
  if(focus)$('#'+(open?'wizardToggle':'manualTab')).focus({preventScroll:true});
  if(open&&!updating&&$('#briefForm').getAttribute('aria-busy')!=='true')setCalculationStatus(activeBriefIssues.length?'Review the highlighted controls. Your current horn is unchanged.':'Ready.',activeBriefIssues.length>0);
 }
-function clearDesign(scroll=true,mode='assisted'){guidedPanel?.reset();for(const camera of Object.values(diagramCameras))Object.assign(camera,{zoom:1,x:0,y:0,bounds:null});stopCalculation();if(pending)cancelAnimationFrame(pending);pending=0;generation=null;manualEdits=false;wizardTouched=false;manualBriefDirty=false;assistedUndo=null;$('#undoAssisted').hidden=true;$('#briefForm').reset();for(let input of document.querySelectorAll('#acousticScreen [data-ma-input]'))input.value=input.defaultValue;$('#candidateResults').hidden=true;$('#candidateRows').innerHTML='';$('#candidateNotes').textContent='';picks=[];measureMode=false;$('#measure').classList.remove('active');view='3d';for(let key of ['cut','pods','drivers','dims','paths','ghost']){let input=$('#'+key);input.checked=input.defaultChecked;scene.options[key]=input.checked;}scene.yaw=.48;scene.pitch=-.35;applyState(starter,'Visual starting point','starter');frontStudyPanel?.restore();systemPanel?.setOptions({voltageRms:1,mouthTermination:'baffled',throatTermination:'closed'});workbenchPanel?.setOptions({voltageRms:1,distanceM:state.listeningDistance||3,targets:{lowHz:state.lowTarget||200,highHz:700,maxExcursionMM:state.frontFiller==='none'?3:state.fillerClearance-1,maxPortVelocityMS:17},sourcePhasesDeg:Array(state.count).fill(0)});workbenchPanel?.setBrief(coreBrief());writeBrief(coreBrief());updateSuggestions();setCalculationStatus('Ready.');setWizard(mode==='assisted',false);scene.fit?.();if(scroll)window.scrollTo({top:0,behavior:'smooth'});}
+function clearDesign(scroll=true,mode='assisted'){guidedPanel?.reset();for(const camera of Object.values(diagramCameras))Object.assign(camera,{zoom:1,x:0,y:0,bounds:null});stopCalculation();if(pending)cancelAnimationFrame(pending);pending=0;generation=null;manualEdits=false;wizardTouched=false;manualBriefDirty=false;assistedUndo=null;$('#undoAssisted').hidden=true;$('#briefForm').reset();for(let input of document.querySelectorAll('#acousticScreen [data-ma-input]'))input.value=input.defaultValue;$('#candidateResults').hidden=true;$('#candidateRows').innerHTML='';$('#candidateNotes').textContent='';picks=[];measureMode=false;$('#measure').classList.remove('active');view='3d';for(let key of ['cut','pods','drivers','dims','paths','ghost']){let input=$('#'+key);input.checked=input.defaultChecked;scene.options[key]=input.checked;}scene.yaw=.48;scene.pitch=-.35;applyState(starter,'Visual starting point','starter');setMountingParts();frontStudyPanel?.restore();systemPanel?.setOptions({voltageRms:1,mouthTermination:'baffled',throatTermination:'closed'});workbenchPanel?.setOptions({voltageRms:1,distanceM:state.listeningDistance||3,targets:{lowHz:state.lowTarget||200,highHz:700,maxExcursionMM:state.frontFiller==='none'?3:state.fillerClearance-1,maxPortVelocityMS:17},sourcePhasesDeg:Array(state.count).fill(0)});workbenchPanel?.setBrief(coreBrief());writeBrief(coreBrief());updateSuggestions();setCalculationStatus('Ready.');setWizard(mode==='assisted',false);scene.fit?.();if(scroll)window.scrollTo({top:0,behavior:'smooth'});}
 function showCandidates(result,automatic=false){
  const resized=['midDriver','compressionDriver','count','mouth','rearLayout','rearConcept','sharedRearShape'].some(k=>state[k]!==result.candidates[0].state[k]);
  if(JSON.stringify(state)!==JSON.stringify(result.candidates[0].state)){assistedUndo={state:{...state},title,origin,brief:readBrief()};$('#undoAssisted').hidden=false;}
@@ -3573,7 +3578,7 @@ function briefChanged(){
  assistedTimer=setTimeout(()=>{assistedTimer=0;if(!$('#wizard').hidden)calculateDesign({automatic:true});},650);
 }
 function briefInput(){briefChanged();}
-function loadSaved(v){guidedPanel?.reset(v.assistedWorkflow);stopCalculation();generation=null;manualEdits=false;wizardTouched=false;manualBriefDirty=false;assistedUndo=null;$('#undoAssisted').hidden=true;$('#candidateResults').hidden=true;$('#candidateRows').innerHTML='';applyState(v.state,v.name,'saved');frontStudyPanel?.restore(v.frontChamberStudy);writeBrief(v.wizardBrief||v.assistedWorkflow?.brief||coreBrief());wizardTouched=true;updateSuggestions();setWizard(v.editorMode==='assisted',false);setCalculationStatus('Saved study loaded.');scene.fit?.();}
+function loadSaved(v){guidedPanel?.reset(v.assistedWorkflow);stopCalculation();generation=null;manualEdits=false;wizardTouched=false;manualBriefDirty=false;assistedUndo=null;$('#undoAssisted').hidden=true;$('#candidateResults').hidden=true;$('#candidateRows').innerHTML='';applyState(v.state,v.name,'saved');setMountingParts(v.mountingParts);frontStudyPanel?.restore(v.frontChamberStudy);writeBrief(v.wizardBrief||v.assistedWorkflow?.brief||coreBrief());wizardTouched=true;updateSuggestions();setWizard(v.editorMode==='assisted',false);setCalculationStatus('Saved study loaded.');scene.fit?.();}
 $('#briefForm').onsubmit=e=>{e.preventDefault();calculateDesign()};$('#briefForm').oninput=briefInput;$('#briefForm').onchange=briefInput;$('#cancelCalculate').onclick=()=>{stopCalculation();setCalculationStatus('Calculation cancelled. Your current horn is unchanged.');};$('#newDesign').onclick=()=>clearDesign();$('#wizardToggle').onclick=()=>{if($('#wizard').hidden)setWizard(true);};$('#manualTab').onclick=()=>{if(!$('#manualPanel').hidden)return;setWizard(false);};$('#openImport').onclick=()=>$('#importFile').click();$('#savedDesigns').onchange=e=>{let v=variants[+e.target.value];if(e.target.value!==''&&v)loadSaved(v);};
 for(const id of ['manualTab','wizardToggle'])$('#'+id).onkeydown=e=>{if(['ArrowLeft','ArrowRight','Home','End'].includes(e.key)){e.preventDefault();setWizard(e.key==='Home'||(e.key!=='End'&&id==='manualTab'));}};
 $('#undoAssisted').onclick=()=>{if(!assistedUndo)return;const previous=assistedUndo;stopCalculation();assistedUndo=null;$('#undoAssisted').hidden=true;generation=null;manualEdits=false;manualBriefDirty=false;$('#candidateResults').hidden=true;$('#candidateRows').innerHTML='';applyState(previous.state,previous.title,previous.origin);writeBrief(previous.brief);updateSuggestions();setWizard(false,false);setCalculationStatus('Previous design restored.');};
@@ -3586,7 +3591,7 @@ guidedPanel=window.MEHAssistedPanel?.init($('#wizard'),{
  restore:p=>{generation=null;applyState(p,'Restored design','saved');},manual:()=>setWizard(false),
  showAnalysis:()=>{const panel=$('#acousticWorkbench');panel.open=true;panel.scrollIntoView({behavior:'smooth',block:'start'});}
 });
-window.__MEH_EDITOR__={get state(){return analysis?state:null},get analysis(){return analysis},get manualDraft(){return manualDraft},get rearDraft(){return manualDraft},get variants(){return variants},get view(){return view},get diagramMap(){return diagramMap},get diagramCameras(){return diagramCameras},apply:applyState,setView,pickAt,designJSON,metricsCSV,renderComparisons,scene,clear:clearDesign,get generation(){return generation},calculate:()=>guidedPanel.generate(),guided:guidedPanel,setWizard};
+window.__MEH_EDITOR__={get state(){return analysis?state:null},get analysis(){return analysis},get manualDraft(){return manualDraft},get rearDraft(){return manualDraft},get variants(){return variants},get view(){return view},get diagramMap(){return diagramMap},get diagramCameras(){return diagramCameras},apply:applyState,setView,pickAt,designJSON,setMountingParts,metricsCSV,renderComparisons,scene,clear:clearDesign,get generation(){return generation},calculate:()=>guidedPanel.generate(),guided:guidedPanel,setWizard};
 renderComparisons();clearDesign(false,preferredEditorMode());document.getElementById("startupNotice")?.remove();document.getElementById("staticPreview")?.remove();document.documentElement.classList.add("editor-ready");
 // Keep acknowledgment separate from saved designs and other editor preferences.
 (function showExperimentalNotice(){
@@ -3684,6 +3689,704 @@ const api={parse,sum,filter,init};root.MEHResponse=api;if(typeof module!=='undef
 })(typeof globalThis!=='undefined'?globalThis:this);
 </script><script>if(window.MEHResponse)window.MEHResponse.init(document.getElementById("responsePanel"));
 /* BEGIN ACOUSTIC MESH EXPORT */
+/* ISC License
+
+Copyright (c) 2016, Mapbox
+
+Permission to use, copy, modify, and/or distribute this software for any purpose
+with or without fee is hereby granted, provided that the above copyright notice
+and this permission notice appear in all copies.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
+FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS
+OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
+TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
+THIS SOFTWARE. */
+(function(root){const module={exports:{}};
+'use strict';
+
+module.exports = earcut;
+module.exports.default = earcut;
+
+function earcut(data, holeIndices, dim) {
+
+    dim = dim || 2;
+
+    var hasHoles = holeIndices && holeIndices.length,
+        outerLen = hasHoles ? holeIndices[0] * dim : data.length,
+        outerNode = linkedList(data, 0, outerLen, dim, true),
+        triangles = [];
+
+    if (!outerNode || outerNode.next === outerNode.prev) return triangles;
+
+    var minX, minY, maxX, maxY, x, y, invSize;
+
+    if (hasHoles) outerNode = eliminateHoles(data, holeIndices, outerNode, dim);
+
+    // if the shape is not too simple, we'll use z-order curve hash later; calculate polygon bbox
+    if (data.length > 80 * dim) {
+        minX = maxX = data[0];
+        minY = maxY = data[1];
+
+        for (var i = dim; i < outerLen; i += dim) {
+            x = data[i];
+            y = data[i + 1];
+            if (x < minX) minX = x;
+            if (y < minY) minY = y;
+            if (x > maxX) maxX = x;
+            if (y > maxY) maxY = y;
+        }
+
+        // minX, minY and invSize are later used to transform coords into integers for z-order calculation
+        invSize = Math.max(maxX - minX, maxY - minY);
+        invSize = invSize !== 0 ? 32767 / invSize : 0;
+    }
+
+    earcutLinked(outerNode, triangles, dim, minX, minY, invSize, 0);
+
+    return triangles;
+}
+
+// create a circular doubly linked list from polygon points in the specified winding order
+function linkedList(data, start, end, dim, clockwise) {
+    var i, last;
+
+    if (clockwise === (signedArea(data, start, end, dim) > 0)) {
+        for (i = start; i < end; i += dim) last = insertNode(i, data[i], data[i + 1], last);
+    } else {
+        for (i = end - dim; i >= start; i -= dim) last = insertNode(i, data[i], data[i + 1], last);
+    }
+
+    if (last && equals(last, last.next)) {
+        removeNode(last);
+        last = last.next;
+    }
+
+    return last;
+}
+
+// eliminate colinear or duplicate points
+function filterPoints(start, end) {
+    if (!start) return start;
+    if (!end) end = start;
+
+    var p = start,
+        again;
+    do {
+        again = false;
+
+        if (!p.steiner && (equals(p, p.next) || area(p.prev, p, p.next) === 0)) {
+            removeNode(p);
+            p = end = p.prev;
+            if (p === p.next) break;
+            again = true;
+
+        } else {
+            p = p.next;
+        }
+    } while (again || p !== end);
+
+    return end;
+}
+
+// main ear slicing loop which triangulates a polygon (given as a linked list)
+function earcutLinked(ear, triangles, dim, minX, minY, invSize, pass) {
+    if (!ear) return;
+
+    // interlink polygon nodes in z-order
+    if (!pass && invSize) indexCurve(ear, minX, minY, invSize);
+
+    var stop = ear,
+        prev, next;
+
+    // iterate through ears, slicing them one by one
+    while (ear.prev !== ear.next) {
+        prev = ear.prev;
+        next = ear.next;
+
+        if (invSize ? isEarHashed(ear, minX, minY, invSize) : isEar(ear)) {
+            // cut off the triangle
+            triangles.push(prev.i / dim | 0);
+            triangles.push(ear.i / dim | 0);
+            triangles.push(next.i / dim | 0);
+
+            removeNode(ear);
+
+            // skipping the next vertex leads to less sliver triangles
+            ear = next.next;
+            stop = next.next;
+
+            continue;
+        }
+
+        ear = next;
+
+        // if we looped through the whole remaining polygon and can't find any more ears
+        if (ear === stop) {
+            // try filtering points and slicing again
+            if (!pass) {
+                earcutLinked(filterPoints(ear), triangles, dim, minX, minY, invSize, 1);
+
+            // if this didn't work, try curing all small self-intersections locally
+            } else if (pass === 1) {
+                ear = cureLocalIntersections(filterPoints(ear), triangles, dim);
+                earcutLinked(ear, triangles, dim, minX, minY, invSize, 2);
+
+            // as a last resort, try splitting the remaining polygon into two
+            } else if (pass === 2) {
+                splitEarcut(ear, triangles, dim, minX, minY, invSize);
+            }
+
+            break;
+        }
+    }
+}
+
+// check whether a polygon node forms a valid ear with adjacent nodes
+function isEar(ear) {
+    var a = ear.prev,
+        b = ear,
+        c = ear.next;
+
+    if (area(a, b, c) >= 0) return false; // reflex, can't be an ear
+
+    // now make sure we don't have other points inside the potential ear
+    var ax = a.x, bx = b.x, cx = c.x, ay = a.y, by = b.y, cy = c.y;
+
+    // triangle bbox; min & max are calculated like this for speed
+    var x0 = ax < bx ? (ax < cx ? ax : cx) : (bx < cx ? bx : cx),
+        y0 = ay < by ? (ay < cy ? ay : cy) : (by < cy ? by : cy),
+        x1 = ax > bx ? (ax > cx ? ax : cx) : (bx > cx ? bx : cx),
+        y1 = ay > by ? (ay > cy ? ay : cy) : (by > cy ? by : cy);
+
+    var p = c.next;
+    while (p !== a) {
+        if (p.x >= x0 && p.x <= x1 && p.y >= y0 && p.y <= y1 &&
+            pointInTriangle(ax, ay, bx, by, cx, cy, p.x, p.y) &&
+            area(p.prev, p, p.next) >= 0) return false;
+        p = p.next;
+    }
+
+    return true;
+}
+
+function isEarHashed(ear, minX, minY, invSize) {
+    var a = ear.prev,
+        b = ear,
+        c = ear.next;
+
+    if (area(a, b, c) >= 0) return false; // reflex, can't be an ear
+
+    var ax = a.x, bx = b.x, cx = c.x, ay = a.y, by = b.y, cy = c.y;
+
+    // triangle bbox; min & max are calculated like this for speed
+    var x0 = ax < bx ? (ax < cx ? ax : cx) : (bx < cx ? bx : cx),
+        y0 = ay < by ? (ay < cy ? ay : cy) : (by < cy ? by : cy),
+        x1 = ax > bx ? (ax > cx ? ax : cx) : (bx > cx ? bx : cx),
+        y1 = ay > by ? (ay > cy ? ay : cy) : (by > cy ? by : cy);
+
+    // z-order range for the current triangle bbox;
+    var minZ = zOrder(x0, y0, minX, minY, invSize),
+        maxZ = zOrder(x1, y1, minX, minY, invSize);
+
+    var p = ear.prevZ,
+        n = ear.nextZ;
+
+    // look for points inside the triangle in both directions
+    while (p && p.z >= minZ && n && n.z <= maxZ) {
+        if (p.x >= x0 && p.x <= x1 && p.y >= y0 && p.y <= y1 && p !== a && p !== c &&
+            pointInTriangle(ax, ay, bx, by, cx, cy, p.x, p.y) && area(p.prev, p, p.next) >= 0) return false;
+        p = p.prevZ;
+
+        if (n.x >= x0 && n.x <= x1 && n.y >= y0 && n.y <= y1 && n !== a && n !== c &&
+            pointInTriangle(ax, ay, bx, by, cx, cy, n.x, n.y) && area(n.prev, n, n.next) >= 0) return false;
+        n = n.nextZ;
+    }
+
+    // look for remaining points in decreasing z-order
+    while (p && p.z >= minZ) {
+        if (p.x >= x0 && p.x <= x1 && p.y >= y0 && p.y <= y1 && p !== a && p !== c &&
+            pointInTriangle(ax, ay, bx, by, cx, cy, p.x, p.y) && area(p.prev, p, p.next) >= 0) return false;
+        p = p.prevZ;
+    }
+
+    // look for remaining points in increasing z-order
+    while (n && n.z <= maxZ) {
+        if (n.x >= x0 && n.x <= x1 && n.y >= y0 && n.y <= y1 && n !== a && n !== c &&
+            pointInTriangle(ax, ay, bx, by, cx, cy, n.x, n.y) && area(n.prev, n, n.next) >= 0) return false;
+        n = n.nextZ;
+    }
+
+    return true;
+}
+
+// go through all polygon nodes and cure small local self-intersections
+function cureLocalIntersections(start, triangles, dim) {
+    var p = start;
+    do {
+        var a = p.prev,
+            b = p.next.next;
+
+        if (!equals(a, b) && intersects(a, p, p.next, b) && locallyInside(a, b) && locallyInside(b, a)) {
+
+            triangles.push(a.i / dim | 0);
+            triangles.push(p.i / dim | 0);
+            triangles.push(b.i / dim | 0);
+
+            // remove two nodes involved
+            removeNode(p);
+            removeNode(p.next);
+
+            p = start = b;
+        }
+        p = p.next;
+    } while (p !== start);
+
+    return filterPoints(p);
+}
+
+// try splitting polygon into two and triangulate them independently
+function splitEarcut(start, triangles, dim, minX, minY, invSize) {
+    // look for a valid diagonal that divides the polygon into two
+    var a = start;
+    do {
+        var b = a.next.next;
+        while (b !== a.prev) {
+            if (a.i !== b.i && isValidDiagonal(a, b)) {
+                // split the polygon in two by the diagonal
+                var c = splitPolygon(a, b);
+
+                // filter colinear points around the cuts
+                a = filterPoints(a, a.next);
+                c = filterPoints(c, c.next);
+
+                // run earcut on each half
+                earcutLinked(a, triangles, dim, minX, minY, invSize, 0);
+                earcutLinked(c, triangles, dim, minX, minY, invSize, 0);
+                return;
+            }
+            b = b.next;
+        }
+        a = a.next;
+    } while (a !== start);
+}
+
+// link every hole into the outer loop, producing a single-ring polygon without holes
+function eliminateHoles(data, holeIndices, outerNode, dim) {
+    var queue = [],
+        i, len, start, end, list;
+
+    for (i = 0, len = holeIndices.length; i < len; i++) {
+        start = holeIndices[i] * dim;
+        end = i < len - 1 ? holeIndices[i + 1] * dim : data.length;
+        list = linkedList(data, start, end, dim, false);
+        if (list === list.next) list.steiner = true;
+        queue.push(getLeftmost(list));
+    }
+
+    queue.sort(compareX);
+
+    // process holes from left to right
+    for (i = 0; i < queue.length; i++) {
+        outerNode = eliminateHole(queue[i], outerNode);
+    }
+
+    return outerNode;
+}
+
+function compareX(a, b) {
+    return a.x - b.x;
+}
+
+// find a bridge between vertices that connects hole with an outer ring and and link it
+function eliminateHole(hole, outerNode) {
+    var bridge = findHoleBridge(hole, outerNode);
+    if (!bridge) {
+        return outerNode;
+    }
+
+    var bridgeReverse = splitPolygon(bridge, hole);
+
+    // filter collinear points around the cuts
+    filterPoints(bridgeReverse, bridgeReverse.next);
+    return filterPoints(bridge, bridge.next);
+}
+
+// David Eberly's algorithm for finding a bridge between hole and outer polygon
+function findHoleBridge(hole, outerNode) {
+    var p = outerNode,
+        hx = hole.x,
+        hy = hole.y,
+        qx = -Infinity,
+        m;
+
+    // find a segment intersected by a ray from the hole's leftmost point to the left;
+    // segment's endpoint with lesser x will be potential connection point
+    do {
+        if (hy <= p.y && hy >= p.next.y && p.next.y !== p.y) {
+            var x = p.x + (hy - p.y) * (p.next.x - p.x) / (p.next.y - p.y);
+            if (x <= hx && x > qx) {
+                qx = x;
+                m = p.x < p.next.x ? p : p.next;
+                if (x === hx) return m; // hole touches outer segment; pick leftmost endpoint
+            }
+        }
+        p = p.next;
+    } while (p !== outerNode);
+
+    if (!m) return null;
+
+    // look for points inside the triangle of hole point, segment intersection and endpoint;
+    // if there are no points found, we have a valid connection;
+    // otherwise choose the point of the minimum angle with the ray as connection point
+
+    var stop = m,
+        mx = m.x,
+        my = m.y,
+        tanMin = Infinity,
+        tan;
+
+    p = m;
+
+    do {
+        if (hx >= p.x && p.x >= mx && hx !== p.x &&
+                pointInTriangle(hy < my ? hx : qx, hy, mx, my, hy < my ? qx : hx, hy, p.x, p.y)) {
+
+            tan = Math.abs(hy - p.y) / (hx - p.x); // tangential
+
+            if (locallyInside(p, hole) &&
+                (tan < tanMin || (tan === tanMin && (p.x > m.x || (p.x === m.x && sectorContainsSector(m, p)))))) {
+                m = p;
+                tanMin = tan;
+            }
+        }
+
+        p = p.next;
+    } while (p !== stop);
+
+    return m;
+}
+
+// whether sector in vertex m contains sector in vertex p in the same coordinates
+function sectorContainsSector(m, p) {
+    return area(m.prev, m, p.prev) < 0 && area(p.next, m, m.next) < 0;
+}
+
+// interlink polygon nodes in z-order
+function indexCurve(start, minX, minY, invSize) {
+    var p = start;
+    do {
+        if (p.z === 0) p.z = zOrder(p.x, p.y, minX, minY, invSize);
+        p.prevZ = p.prev;
+        p.nextZ = p.next;
+        p = p.next;
+    } while (p !== start);
+
+    p.prevZ.nextZ = null;
+    p.prevZ = null;
+
+    sortLinked(p);
+}
+
+// Simon Tatham's linked list merge sort algorithm
+// http://www.chiark.greenend.org.uk/~sgtatham/algorithms/listsort.html
+function sortLinked(list) {
+    var i, p, q, e, tail, numMerges, pSize, qSize,
+        inSize = 1;
+
+    do {
+        p = list;
+        list = null;
+        tail = null;
+        numMerges = 0;
+
+        while (p) {
+            numMerges++;
+            q = p;
+            pSize = 0;
+            for (i = 0; i < inSize; i++) {
+                pSize++;
+                q = q.nextZ;
+                if (!q) break;
+            }
+            qSize = inSize;
+
+            while (pSize > 0 || (qSize > 0 && q)) {
+
+                if (pSize !== 0 && (qSize === 0 || !q || p.z <= q.z)) {
+                    e = p;
+                    p = p.nextZ;
+                    pSize--;
+                } else {
+                    e = q;
+                    q = q.nextZ;
+                    qSize--;
+                }
+
+                if (tail) tail.nextZ = e;
+                else list = e;
+
+                e.prevZ = tail;
+                tail = e;
+            }
+
+            p = q;
+        }
+
+        tail.nextZ = null;
+        inSize *= 2;
+
+    } while (numMerges > 1);
+
+    return list;
+}
+
+// z-order of a point given coords and inverse of the longer side of data bbox
+function zOrder(x, y, minX, minY, invSize) {
+    // coords are transformed into non-negative 15-bit integer range
+    x = (x - minX) * invSize | 0;
+    y = (y - minY) * invSize | 0;
+
+    x = (x | (x << 8)) & 0x00FF00FF;
+    x = (x | (x << 4)) & 0x0F0F0F0F;
+    x = (x | (x << 2)) & 0x33333333;
+    x = (x | (x << 1)) & 0x55555555;
+
+    y = (y | (y << 8)) & 0x00FF00FF;
+    y = (y | (y << 4)) & 0x0F0F0F0F;
+    y = (y | (y << 2)) & 0x33333333;
+    y = (y | (y << 1)) & 0x55555555;
+
+    return x | (y << 1);
+}
+
+// find the leftmost node of a polygon ring
+function getLeftmost(start) {
+    var p = start,
+        leftmost = start;
+    do {
+        if (p.x < leftmost.x || (p.x === leftmost.x && p.y < leftmost.y)) leftmost = p;
+        p = p.next;
+    } while (p !== start);
+
+    return leftmost;
+}
+
+// check if a point lies within a convex triangle
+function pointInTriangle(ax, ay, bx, by, cx, cy, px, py) {
+    return (cx - px) * (ay - py) >= (ax - px) * (cy - py) &&
+           (ax - px) * (by - py) >= (bx - px) * (ay - py) &&
+           (bx - px) * (cy - py) >= (cx - px) * (by - py);
+}
+
+// check if a diagonal between two polygon nodes is valid (lies in polygon interior)
+function isValidDiagonal(a, b) {
+    return a.next.i !== b.i && a.prev.i !== b.i && !intersectsPolygon(a, b) && // dones't intersect other edges
+           (locallyInside(a, b) && locallyInside(b, a) && middleInside(a, b) && // locally visible
+            (area(a.prev, a, b.prev) || area(a, b.prev, b)) || // does not create opposite-facing sectors
+            equals(a, b) && area(a.prev, a, a.next) > 0 && area(b.prev, b, b.next) > 0); // special zero-length case
+}
+
+// signed area of a triangle
+function area(p, q, r) {
+    return (q.y - p.y) * (r.x - q.x) - (q.x - p.x) * (r.y - q.y);
+}
+
+// check if two points are equal
+function equals(p1, p2) {
+    return p1.x === p2.x && p1.y === p2.y;
+}
+
+// check if two segments intersect
+function intersects(p1, q1, p2, q2) {
+    var o1 = sign(area(p1, q1, p2));
+    var o2 = sign(area(p1, q1, q2));
+    var o3 = sign(area(p2, q2, p1));
+    var o4 = sign(area(p2, q2, q1));
+
+    if (o1 !== o2 && o3 !== o4) return true; // general case
+
+    if (o1 === 0 && onSegment(p1, p2, q1)) return true; // p1, q1 and p2 are collinear and p2 lies on p1q1
+    if (o2 === 0 && onSegment(p1, q2, q1)) return true; // p1, q1 and q2 are collinear and q2 lies on p1q1
+    if (o3 === 0 && onSegment(p2, p1, q2)) return true; // p2, q2 and p1 are collinear and p1 lies on p2q2
+    if (o4 === 0 && onSegment(p2, q1, q2)) return true; // p2, q2 and q1 are collinear and q1 lies on p2q2
+
+    return false;
+}
+
+// for collinear points p, q, r, check if point q lies on segment pr
+function onSegment(p, q, r) {
+    return q.x <= Math.max(p.x, r.x) && q.x >= Math.min(p.x, r.x) && q.y <= Math.max(p.y, r.y) && q.y >= Math.min(p.y, r.y);
+}
+
+function sign(num) {
+    return num > 0 ? 1 : num < 0 ? -1 : 0;
+}
+
+// check if a polygon diagonal intersects any polygon segments
+function intersectsPolygon(a, b) {
+    var p = a;
+    do {
+        if (p.i !== a.i && p.next.i !== a.i && p.i !== b.i && p.next.i !== b.i &&
+                intersects(p, p.next, a, b)) return true;
+        p = p.next;
+    } while (p !== a);
+
+    return false;
+}
+
+// check if a polygon diagonal is locally inside the polygon
+function locallyInside(a, b) {
+    return area(a.prev, a, a.next) < 0 ?
+        area(a, b, a.next) >= 0 && area(a, a.prev, b) >= 0 :
+        area(a, b, a.prev) < 0 || area(a, a.next, b) < 0;
+}
+
+// check if the middle point of a polygon diagonal is inside the polygon
+function middleInside(a, b) {
+    var p = a,
+        inside = false,
+        px = (a.x + b.x) / 2,
+        py = (a.y + b.y) / 2;
+    do {
+        if (((p.y > py) !== (p.next.y > py)) && p.next.y !== p.y &&
+                (px < (p.next.x - p.x) * (py - p.y) / (p.next.y - p.y) + p.x))
+            inside = !inside;
+        p = p.next;
+    } while (p !== a);
+
+    return inside;
+}
+
+// link two polygon vertices with a bridge; if the vertices belong to the same ring, it splits polygon into two;
+// if one belongs to the outer ring and another to a hole, it merges it into a single ring
+function splitPolygon(a, b) {
+    var a2 = new Node(a.i, a.x, a.y),
+        b2 = new Node(b.i, b.x, b.y),
+        an = a.next,
+        bp = b.prev;
+
+    a.next = b;
+    b.prev = a;
+
+    a2.next = an;
+    an.prev = a2;
+
+    b2.next = a2;
+    a2.prev = b2;
+
+    bp.next = b2;
+    b2.prev = bp;
+
+    return b2;
+}
+
+// create a node and optionally link it with previous one (in a circular doubly linked list)
+function insertNode(i, x, y, last) {
+    var p = new Node(i, x, y);
+
+    if (!last) {
+        p.prev = p;
+        p.next = p;
+
+    } else {
+        p.next = last.next;
+        p.prev = last;
+        last.next.prev = p;
+        last.next = p;
+    }
+    return p;
+}
+
+function removeNode(p) {
+    p.next.prev = p.prev;
+    p.prev.next = p.next;
+
+    if (p.prevZ) p.prevZ.nextZ = p.nextZ;
+    if (p.nextZ) p.nextZ.prevZ = p.prevZ;
+}
+
+function Node(i, x, y) {
+    // vertex index in coordinates array
+    this.i = i;
+
+    // vertex coordinates
+    this.x = x;
+    this.y = y;
+
+    // previous and next vertex nodes in a polygon ring
+    this.prev = null;
+    this.next = null;
+
+    // z-order curve value
+    this.z = 0;
+
+    // previous and next nodes in z-order
+    this.prevZ = null;
+    this.nextZ = null;
+
+    // indicates whether this is a steiner point
+    this.steiner = false;
+}
+
+// return a percentage difference between the polygon area and its triangulation area;
+// used to verify correctness of triangulation
+earcut.deviation = function (data, holeIndices, dim, triangles) {
+    var hasHoles = holeIndices && holeIndices.length;
+    var outerLen = hasHoles ? holeIndices[0] * dim : data.length;
+
+    var polygonArea = Math.abs(signedArea(data, 0, outerLen, dim));
+    if (hasHoles) {
+        for (var i = 0, len = holeIndices.length; i < len; i++) {
+            var start = holeIndices[i] * dim;
+            var end = i < len - 1 ? holeIndices[i + 1] * dim : data.length;
+            polygonArea -= Math.abs(signedArea(data, start, end, dim));
+        }
+    }
+
+    var trianglesArea = 0;
+    for (i = 0; i < triangles.length; i += 3) {
+        var a = triangles[i] * dim;
+        var b = triangles[i + 1] * dim;
+        var c = triangles[i + 2] * dim;
+        trianglesArea += Math.abs(
+            (data[a] - data[c]) * (data[b + 1] - data[a + 1]) -
+            (data[a] - data[b]) * (data[c + 1] - data[a + 1]));
+    }
+
+    return polygonArea === 0 && trianglesArea === 0 ? 0 :
+        Math.abs((trianglesArea - polygonArea) / polygonArea);
+};
+
+function signedArea(data, start, end, dim) {
+    var sum = 0;
+    for (var i = start, j = end - dim; i < end; i += dim) {
+        sum += (data[j] - data[i]) * (data[i + 1] + data[j + 1]);
+        j = i;
+    }
+    return sum;
+}
+
+// turn a polygon in a multi-dimensional array form (e.g. as in GeoJSON) into a form Earcut accepts
+earcut.flatten = function (data) {
+    var dim = data[0][0].length,
+        result = {vertices: [], holes: [], dimensions: dim},
+        holeIndex = 0;
+
+    for (var i = 0; i < data.length; i++) {
+        for (var j = 0; j < data[i].length; j++) {
+            for (var d = 0; d < dim; d++) result.vertices.push(data[i][j][d]);
+        }
+        if (i > 0) {
+            holeIndex += data[i - 1].length;
+            result.holes.push(holeIndex);
+        }
+    }
+    return result;
+};
+root.MEHEarcut=module.exports;})(typeof globalThis!=="undefined"?globalThis:this);
 /* ZIP32 writer and append-only packager: preserves the embedded runner's compressed entries. */
 (function(root){'use strict';
 const bytes=v=>typeof v==='string'?new TextEncoder().encode(v):v instanceof Uint8Array?v:new Uint8Array(v);
@@ -3709,7 +4412,7 @@ for(let i=0;i<n-1;i++)for(let j=0;j<segments;j++){quad(at(0,i,j),at(0,i,j+1),at(
 for(let j=0;j<segments;j++){quad(at(0,0,j),at(1,0,j),at(1,0,j+1),at(0,0,j+1));quad(at(0,n-1,j),at(0,n-1,j+1),at(1,n-1,j+1),at(1,n-1,j));}
 let volume=faces.reduce((s,f)=>s+vertices[f[0]].reduce((v,x,i)=>v+x*cross(vertices[f[1]],vertices[f[2]])[i],0)/6,0);if(volume<0)for(const f of faces)[f[1],f[2]]=[f[2],f[1]];return {name:'Horn blank - no entry cuts',vertices,faces,closed:true};}
 function obj(meshes){let offset=1,lines=['# MEH Studio - millimetres, +Z forward. Separate reference parts; no Boolean union.'];for(const m of meshes){lines.push('o '+safe((m.partId?m.partId+' ':'')+m.name).replace(/ /g,'_'));for(const p of m.vertices)lines.push('v '+p.map(num).join(' '));for(const f of m.faces)lines.push('f '+f.map(i=>i+offset).join(' '));offset+=m.vertices.length;}return lines.join('\n')+'\n';}
-function stl(meshes){const count=meshes.reduce((n,m)=>n+m.faces.length,0),bytes=new Uint8Array(84+count*50),view=new DataView(bytes.buffer);const header='MEH Studio | mm | '+(meshes.length===1&&meshes[0].closed?'uncut horn blank':'assembly reference surfaces - not a fused solid');for(let i=0;i<Math.min(80,header.length);i++)bytes[i]=header.charCodeAt(i);view.setUint32(80,count,true);let p=84;for(const m of meshes)for(const f of m.faces){const points=f.map(i=>m.vertices[i]),normal=cross(sub(points[1],points[0]),sub(points[2],points[0])),l=length(normal);for(const x of [...normal.map(v=>v/l),...points.flat()]){if(!Number.isFinite(x))throw Error('Invalid STL coordinate.');view.setFloat32(p,x,true);p+=4;}p+=2;}return bytes;}
+function stl(meshes){const count=meshes.reduce((n,m)=>n+m.faces.length,0),bytes=new Uint8Array(84+count*50),view=new DataView(bytes.buffer);const header='MEH Studio | mm | '+(meshes.length===1&&meshes[0].closed?(/horn blank/i.test(meshes[0].name)?'uncut horn blank':'closed mounting part'):'assembly reference surfaces - not a fused solid');for(let i=0;i<Math.min(80,header.length);i++)bytes[i]=header.charCodeAt(i);view.setUint32(80,count,true);let p=84;for(const m of meshes)for(const f of m.faces){const points=f.map(i=>m.vertices[i]),normal=cross(sub(points[1],points[0]),sub(points[2],points[0])),l=length(normal);for(const x of [...normal.map(v=>v/l),...points.flat()]){if(!Number.isFinite(x))throw Error('Invalid STL coordinate.');view.setFloat32(p,x,true);p+=4;}p+=2;}return bytes;}
 function cloud(meshes,quarter=false){const points=new Map();for(const m of meshes)for(const p of m.vertices)if(!quarter||p[0]>=-1e-8&&p[1]>=-1e-8){const q=p.map(v=>Math.abs(v)<1e-8?0:v),line=q.map(num).join(' ');points.set(line,true);}return [...points.keys()].join('\n')+'\n';}
 function stepWriter(name,description){let id=0;const lines=[],E=s=>{lines.push('#'+(++id)+'='+s+';');return id;},ref=a=>a.map(i=>'#'+i).join(','),point=p=>E("CARTESIAN_POINT('',("+p.map(num).join(',')+"))");
 function finish(items,type='SHAPE_REPRESENTATION'){
@@ -3717,7 +4420,7 @@ function finish(items,type='SHAPE_REPRESENTATION'){
  E("APPLICATION_PROTOCOL_DEFINITION('international standard','automotive_design',2000,#"+app+")");const pc=E("PRODUCT_CONTEXT('',#"+app+",'mechanical')"),prod=E("PRODUCT('"+safe(name)+"','"+safe(name)+"','',(#"+pc+"))"),form=E("PRODUCT_DEFINITION_FORMATION('1',$,#"+prod+")"),dc=E("PRODUCT_DEFINITION_CONTEXT('part definition',#"+app+",'design')"),pd=E("PRODUCT_DEFINITION('design',$,#"+form+",#"+dc+")"),shape=E("PRODUCT_DEFINITION_SHAPE('','',#"+pd+")");E('SHAPE_DEFINITION_REPRESENTATION(#'+shape+',#'+rep+')');
  return "ISO-10303-21;\nHEADER;\nFILE_DESCRIPTION(('"+safe(description)+"'),'2;1');\nFILE_NAME('"+safe(name)+".step','2026-09-29T00:00:00',('MEH Studio'),(''),'MEH Studio','','');\nFILE_SCHEMA(('AUTOMOTIVE_DESIGN'));\nENDSEC;\nDATA;\n"+lines.join('\n')+'\nENDSEC;\nEND-ISO-10303-21;\n';}
 return {E,ref,point,finish};}
-function facetedStep(meshes){const s=stepWriter('MEH geometry','mm - separate faceted reference surfaces or an uncut horn blank'),items=[];for(const m of meshes){const p=m.vertices.map(s.point),faces=[];for(const f of m.faces){const [a,b,c]=f.map(i=>m.vertices[i]),n=cross(sub(b,a),sub(c,a)),l=length(n),u=sub(b,a),ul=length(u);const dn=s.E("DIRECTION('',("+n.map(v=>num(v/l)).join(',')+"))"),dx=s.E("DIRECTION('',("+u.map(v=>num(v/ul)).join(',')+"))"),axis=s.E("AXIS2_PLACEMENT_3D('',#"+p[f[0]]+',#'+dn+',#'+dx+')'),plane=s.E("PLANE('',#"+axis+')'),loop=s.E("POLY_LOOP('',("+s.ref(f.map(i=>p[i]))+"))"),bound=s.E("FACE_OUTER_BOUND('',#"+loop+",.T.)");faces.push(s.E("FACE_SURFACE('',(#"+bound+"),#"+plane+",.T.)"));}
+function facetedStep(meshes){const s=stepWriter('MEH geometry','mm - separate faceted solids or reference surfaces'),items=[];for(const m of meshes){const p=m.vertices.map(s.point),faces=[];for(const f of m.faces){const [a,b,c]=f.map(i=>m.vertices[i]),n=cross(sub(b,a),sub(c,a)),l=length(n),u=sub(b,a),ul=length(u);const dn=s.E("DIRECTION('',("+n.map(v=>num(v/l)).join(',')+"))"),dx=s.E("DIRECTION('',("+u.map(v=>num(v/ul)).join(',')+"))"),axis=s.E("AXIS2_PLACEMENT_3D('',#"+p[f[0]]+',#'+dn+',#'+dx+')'),plane=s.E("PLANE('',#"+axis+')'),loop=s.E("POLY_LOOP('',("+s.ref(f.map(i=>p[i]))+"))"),bound=s.E("FACE_OUTER_BOUND('',#"+loop+",.T.)");faces.push(s.E("FACE_SURFACE('',(#"+bound+"),#"+plane+",.T.)"));}
 const shell=s.E((m.closed?'CLOSED_SHELL':'OPEN_SHELL')+"('"+safe(m.name)+"',("+s.ref(faces)+"))");items.push(s.E(m.closed?"FACETED_BREP('"+safe(m.name)+"',#"+shell+")":"SHELL_BASED_SURFACE_MODEL('"+safe(m.name)+"',(#"+shell+"))"));}return s.finish(items);}
 function nurbsStep(a){const s=stepWriter('MEH uncut horn surfaces','NURBS horn blank - inner and outer surfaces - no entry cuts or enclosure'),surfaces=[];
 // Exact rational circles; linear meridian segments reproduce the sampled profile without spline overshoot.
@@ -3733,7 +4436,105 @@ for(let i=0;i<a.p.count;i++){const rear=shared?10:20+i,front=40+i;lines.push("Dr
 for(let i=0;i<zs.length-1;i++)lines.push("Waveguide 'Horn "+(i+1)+"'",'Node='+(100+i)+'='+(101+i),'STh='+num(area(zs[i])/100)+'cm2','SMo='+num(area(zs[i+1])/100)+'cm2','Len='+num((zs[i+1]-zs[i])/10)+'cm','Conical','');lines.push("Radiator 'Horn mouth'",'Node='+(99+zs.length),'SD='+num(area(z1)/100)+'cm2','Label=1','');return lines.join('\n');}
 const api={simplifyProfile,indexMesh,displayMeshes,hornBlank,obj,stl,cloud,facetedStep,nurbsStep,profileCSV,aks};root.MEHFileFormats=api;if(typeof module!=='undefined'&&module.exports)module.exports=api;
 })(typeof globalThis!=='undefined'?globalThis:this);
-/* CAD handoff: source references and reproducible placement, never fabricated mounting solids. */
+/* Separate driver mounting parts. Source geometry and editable construction allowances stay distinct. */
+(function(root){
+'use strict';
+const TAU=2*Math.PI,EPS=1e-7,KINDS=['mid','compression'];
+const copy=x=>x===undefined?null:JSON.parse(JSON.stringify(x));
+const finite=x=>typeof x==='number'&&Number.isFinite(x);
+const sub=(a,b)=>a.map((v,i)=>v-b[i]),dot=(a,b)=>a.reduce((s,x,i)=>s+x*b[i],0),cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];
+const area=p=>p.reduce((s,a,i)=>{const b=p[(i+1)%p.length];return s+a[0]*b[1]-a[1]*b[0];},0)/2;
+const circle=(r,n=128,c=[0,0])=>Array.from({length:n},(_,i)=>[c[0]+r*Math.cos(TAU*i/n),c[1]+r*Math.sin(TAU*i/n)]);
+function segmentDistance(p,a,b){const v=sub(b,a),d=dot(v,v),t=d?Math.max(0,Math.min(1,dot(sub(p,a),v)/d)):0;return Math.hypot(p[0]-a[0]-v[0]*t,p[1]-a[1]-v[1]*t);}
+function inside(p,outline){let hit=false;for(let i=0,j=outline.length-1;i<outline.length;j=i++){const a=outline[i],b=outline[j];if((a[1]>p[1])!==(b[1]>p[1])&&p[0]<(b[0]-a[0])*(p[1]-a[1])/(b[1]-a[1])+a[0])hit=!hit;}return hit;}
+function clearance(p,outline){const d=Math.min(...outline.map((a,i)=>segmentDistance(p,a,outline[(i+1)%outline.length])));return inside(p,outline)?d:-d;}
+function hull(points){const p=points.map(q=>q.slice()).sort((a,b)=>a[0]-b[0]||a[1]-b[1]).filter((a,i,all)=>!i||Math.hypot(...sub(a,all[i-1]))>1e-9),turn=(a,b,c)=>(b[0]-a[0])*(c[1]-a[1])-(b[1]-a[1])*(c[0]-a[0]),lo=[],hi=[];for(const q of p){while(lo.length>1&&turn(lo.at(-2),lo.at(-1),q)<=1e-10)lo.pop();lo.push(q);}for(const q of p.slice().reverse()){while(hi.length>1&&turn(hi.at(-2),hi.at(-1),q)<=1e-10)hi.pop();hi.push(q);}return lo.slice(0,-1).concat(hi.slice(0,-1));}
+function sourceRecord(r){return r?{id:r.id,name:r.name,variant:r.variant,datum:r.geometry?.datum,dimensions:copy(r.dimensions),mountingPatterns:copy((r.geometry?.parts||[]).filter(p=>p.type==='bolt-pattern')),sources:(r.sources||[]).map(s=>Object.fromEntries(['id','url','sha256','kind','inspection','inspectionDate'].filter(k=>s[k]!==undefined).map(k=>[k,s[k]]))),unresolved:copy(r.unresolved||[])}:null;}
+function sourceDimension(r,key,{zero=false}={}){const d=r?.dimensions?.[key],s=r?.sources?.find(s=>s.id===d?.sourceId);return !!(d&&finite(d.value)&&(zero?d.value>=0:d.value>0)&&['drawing-verified','cad-inspected','published','derived'].includes(d.status)&&s);}
+function sourcePattern(r){const part=r?.geometry?.parts?.find(p=>p.type==='bolt-pattern'&&p.status==='dimensioned'&&(p.sourceIds||[]).some(id=>r.sources?.some(s=>s.id===id&&['drawing-reviewed','cad-inspected'].includes(s.inspection))));if(!part)return null;const d=r.dimensions,p=part.params;const start=sourceDimension(r,'boltStartAngle',{zero:true})?d.boltStartAngle.value:p.startAngleDeg;if(!finite(start)||!finite(p.count)||!finite(p.circleDiameter))return null;if(p.count!==d.boltCount?.value||Math.abs(p.circleDiameter-d.boltCircleDiameter?.value)>EPS)return null;return {part,start};}
+function baseDefaults(kind,r){const hole=r?.dimensions?.boltHoleDiameter?.value,thread=r?.dimensions?.boltThread?.value;return {enabled:false,thicknessMM:6,boltHoleDiameterMM:finite(hole)&&hole>0?hole:(/^M6(?:$|[- ])/.test(thread||'')?6.5:null),edgeMarginMM:3,gasketLandMM:2,counterboreDiameterMM:0,counterboreDepthMM:0,override:null};}
+function inspectOne(a,kind,deps){const model=deps.model||root.MEH,land=deps.land||root.MEHMounting,driverId=a.p[kind==='mid'?'midDriver':'compressionDriver'],selected=model?.driverModel?.(a.p,kind),entry=model?.drivers?.[kind==='mid'?'mid':'compression']?.[driverId],r=selected?.record||entry?.record||null,reasons=[],warnings=[],defaults={...baseDefaults(kind,r),driverId};let spec=null;
+ if(!selected)reasons.push('The current dimensions do not match an inspected driver model.');
+ if(r&&selected&&selected.id!==driverId)reasons.push('The selected model identity does not match the active driver.');
+ if(!r||!r.variant)reasons.push('An exact driver variant and source record are required.');
+ if(r&&entry?.sourceRecordId&&entry.sourceRecordId!==r.id)reasons.push('The catalogue source record does not match the selected driver.');
+ if(kind==='compression'&&entry?.available===false)reasons.push(entry.unavailableReason||'This driver needs a dedicated throat interface that is not implemented.');
+ const cutoutKey=kind==='mid'?'cutoutDiameter':'exitDiameter',pattern=sourcePattern(r);
+ if(kind==='mid'&&typeof land?.create!=='function')reasons.push('The mounting-outline module is unavailable.');
+ for(const key of [cutoutKey,'boltCircleDiameter','boltCount'])if(!sourceDimension(r,key))reasons.push('A resolved, sourced '+key+' is required.');
+ if(r&&!Number.isInteger(r.dimensions?.boltCount?.value))reasons.push('Bolt count must be an integer.');
+ if(kind==='mid'&&!sourceDimension(r,'mountingFaceOffset',{zero:true}))reasons.push('The mounting-seat offset from the front rim is unresolved.');
+ if(kind==='mid'&&!sourceDimension(r,'boltHoleDiameter'))reasons.push('The driver bolt-hole diameter is unresolved or conflicting.');
+ if(kind==='compression'&&!/mounting.*(?:face|flange).*z\s*=\s*0|mounting\s+flange\s+face\s+z\s*=\s*0/i.test(r?.geometry?.datum||''))reasons.push('A mounting-face datum at z=0 is required.');
+ if(!pattern)reasons.push('The bolt pattern and its angular registration need an inspected drawing.');
+ if(!reasons.length){const d=r.dimensions,outline=kind==='mid'?land.create(a.p,r,{gasketLandMM:0,boltEdgeLandMM:0})?.outline:null;if(kind==='mid'&&(!outline||outline.length<3))reasons.push('A usable mounting outline is unavailable.');spec={cutoutDiameterMM:d[cutoutKey].value,outerDiameterMM:kind==='mid'?Math.max(0,...(outline||[]).map(p=>Math.hypot(...p)))*2:d.boltCircleDiameter.value+20,boltCircleDiameterMM:d.boltCircleDiameter.value,boltCount:d.boltCount.value,startAngleDeg:pattern.start,mountOffsetMM:kind==='mid'?d.mountingFaceOffset.value:0,outline:kind==='mid'?copy(outline):null,outlineStatus:kind==='mid'?'source-derived-outline':'designed-circular-flange',driverBoltHoleDiameterMM:sourceDimension(r,'boltHoleDiameter')?d.boltHoleDiameter.value:null,driverBoltThread:d.boltThread?.value||null,origin:'catalogue'};
+  if(kind==='mid'&&(!outline||outline.length<3)){reasons.push('A usable mounting outline is unavailable.');spec=null;}
+  if(kind==='mid')warnings.push('The plate follows the catalogue frame outline; undimensioned contours remain approximate.');
+  else warnings.push('Flange outer diameter is a design allowance. The catalogue mounting-face outline and bolt engagement are not fully defined.');
+ }
+ const catalogueReasons=reasons.slice(),override=deps.settings?.[kind]?.override;
+ if(override){const bad=[];if(override.confirmed!==true)bad.push('Confirm that override dimensions were checked against the physical driver or a measured drawing.');if(override.driverId!==driverId)bad.push('Measured overrides belong to another driver; re-enter them for the current selection.');if(typeof override.note!=='string'||!override.note.trim())bad.push('A source or measurement note is required for overrides.');for(const key of ['cutoutDiameterMM','outerDiameterMM','boltCircleDiameterMM','boltCount'])if(!finite(override[key])||override[key]<=0)bad.push('Override '+key+' must be a positive number.');if(!Number.isInteger(override.boltCount)||override.boltCount>64)bad.push('Override boltCount must be an integer from 1 to 64.');if(!finite(override.startAngleDeg))bad.push('Override startAngleDeg must be a finite number.');if(!finite(override.mountOffsetMM)||override.mountOffsetMM<0)bad.push('Override mountOffsetMM must be a nonnegative number.');
+  if(kind==='compression'&&(entry?.phaseProjectionMM>0||entry?.available===false))bad.push('A measured bolt pattern cannot resolve the unsupported forward phase plug or throat coupling.');
+  if(kind==='compression'&&finite(override.mountOffsetMM)&&override.mountOffsetMM!==0)bad.push('Compression overrides must use their mounting face as local z=0.');
+  if(!bad.length){spec={...Object.fromEntries(['cutoutDiameterMM','outerDiameterMM','boltCircleDiameterMM','boltCount','startAngleDeg','mountOffsetMM'].map(k=>[k,override[k]])),outline:null,outlineStatus:'measured-circular-envelope',driverBoltHoleDiameterMM:null,driverBoltThread:null,origin:'measured-override',measurementNote:override.note.trim()};reasons.length=0;warnings.push('Geometry uses explicit measured overrides; the original catalogue limitations remain in the manifest.');}
+  else reasons.push(...bad);
+ }
+ if(spec){spec.boltCenters=Array.from({length:spec.boltCount},(_,i)=>{const t=spec.startAngleDeg*Math.PI/180+TAU*i/spec.boltCount;return [spec.boltCircleDiameterMM/2*Math.cos(t),spec.boltCircleDiameterMM/2*Math.sin(t)];});if(!spec.outline)spec.outline=circle(spec.outerDiameterMM/2);}
+ warnings.push('Plate thickness, hole clearance, gasket land and edge margin are editable construction assumptions. Verify fastener access, engagement, material strength, seals and assembly interference.');
+ return {available:reasons.length===0,reasons,warnings,driverId,name:r?.name||entry?.name||driverId,variant:r?.variant||null,source:sourceRecord(r),spec,defaults,catalogueReasons};
+}
+function inspect(a,deps={}){if(!a?.p)throw Error('An analyzed design is required.');return Object.fromEntries(KINDS.map(kind=>[kind,inspectOne(a,kind,deps)]));}
+function settingsFor(input,inspection){return Object.fromEntries(KINDS.map(kind=>[kind,{...inspection[kind].defaults,...copy(input?.[kind]||{}),enabled:input?.[kind]?.enabled===true}]));}
+function resolveSpec(info,settings){const errors=[],spec={...copy(info.spec),thicknessMM:settings.thicknessMM,boltHoleDiameterMM:settings.boltHoleDiameterMM,edgeMarginMM:settings.edgeMarginMM,gasketLandMM:settings.gasketLandMM,counterboreDiameterMM:settings.counterboreDiameterMM,counterboreDepthMM:settings.counterboreDepthMM};
+ for(const key of ['thicknessMM','boltHoleDiameterMM'])if(!finite(spec[key])||spec[key]<=0)errors.push(key+' must be a positive number.');
+ for(const key of ['edgeMarginMM','gasketLandMM'])if(!finite(spec[key])||spec[key]<0)errors.push(key+' must be a nonnegative number.');
+ for(const key of ['counterboreDiameterMM','counterboreDepthMM'])if(!finite(spec[key])||spec[key]<0)errors.push(key+' must be a nonnegative number.');
+ spec.hasCounterbores=spec.counterboreDiameterMM>0||spec.counterboreDepthMM>0;
+ if(spec.hasCounterbores&&(!(spec.counterboreDepthMM>0)||!(spec.counterboreDepthMM<spec.thicknessMM)))errors.push('Counterbore depth must be greater than zero and less than plate thickness.');
+ if(spec.hasCounterbores&&!(spec.counterboreDiameterMM>spec.boltHoleDiameterMM))errors.push('Counterbore diameter must exceed the through-hole diameter.');
+ if(spec.thicknessMM>1000||spec.boltHoleDiameterMM>1000||spec.edgeMarginMM>1000||spec.gasketLandMM>1000)errors.push('Plate dimensions exceed the supported 1000 mm construction range.');
+ if(!spec.outline?.length)return {spec,errors:[...errors,'No mounting outline is available.']};
+ if(errors.length)return {spec,errors};
+ // Circumscribed hole polygons retain at least the requested aperture across flats.
+ const cut=spec.cutoutDiameterMM/2/Math.cos(Math.PI/128),through=spec.boltHoleDiameterMM/2/Math.cos(Math.PI/48),recess=spec.hasCounterbores?spec.counterboreDiameterMM/2/Math.cos(Math.PI/48):through,bolt=Math.max(through,recess),centers=spec.boltCenters,outer=spec.outline,supports=[];
+ spec.holeApproximation={method:'circumscribed polygons; requested diameter is minimum across flats',centralSegments:128,boltSegments:48,centralMaximumRadialAllowanceMM:cut-spec.cutoutDiameterMM/2,boltMaximumRadialAllowanceMM:through-spec.boltHoleDiameterMM/2,counterboreMaximumRadialAllowanceMM:spec.hasCounterbores?recess-spec.counterboreDiameterMM/2:0};
+ if(clearance([0,0],outer)<cut+spec.gasketLandMM-EPS)supports.push(...circle((cut+spec.gasketLandMM)/Math.cos(Math.PI/128)));
+ for(const q of centers){if(Math.hypot(...q)-bolt-cut<spec.gasketLandMM-EPS)errors.push('A bolt hole or counterbore intersects the central opening or leaves less than the requested gasket land.');if(clearance(q,outer)<bolt+spec.edgeMarginMM-EPS)supports.push(...circle((bolt+spec.edgeMarginMM)/Math.cos(Math.PI/32),32,q));}
+ for(let i=0;i<centers.length;i++)for(let j=i+1;j<centers.length;j++)if(Math.hypot(...sub(centers[i],centers[j]))-2*bolt<spec.edgeMarginMM-EPS)errors.push('Adjacent bolt holes or counterbores intersect or leave less than the requested edge margin.');
+ if(supports.length)spec.outline=hull([...outer,...supports]);
+ spec.expandedForAllowances=supports.length>0;spec.outerDiameterMM=2*Math.max(...spec.outline.map(p=>Math.hypot(...p)));spec.holes=[circle(cut),...centers.map(q=>circle(through,48,q))];spec.topHoles=[circle(cut),...centers.map(q=>circle(recess,48,q))];spec.counterboreFace='local +Z; mid rear fastener side or compression horn-facing side';
+ spec.clearances={outerGasketLandMM:clearance([0,0],spec.outline)-cut,boltToOpeningMM:Math.min(...centers.map(q=>Math.hypot(...q)-bolt-cut)),boltToOuterEdgeMM:Math.min(...centers.map(q=>clearance(q,spec.outline)-bolt)),boltToBoltMM:centers.length>1?Math.min(...centers.flatMap((q,i)=>centers.slice(i+1).map(v=>Math.hypot(...sub(q,v))-2*bolt))):null};
+ return {spec,errors:[...new Set(errors)]};
+}
+function checkMesh(mesh){let volume=0;const edges=new Map();for(const f of mesh.faces){if(f.length!==3||new Set(f).size!==3)throw Error('A mounting triangle has invalid indices.');const [a,b,c]=f.map(i=>mesh.vertices[i]);if(![a,b,c].every(p=>p?.length===3&&p.every(finite)))throw Error('A mounting vertex is invalid.');if(Math.hypot(...cross(sub(b,a),sub(c,a)))<1e-10)throw Error('A mounting triangle is degenerate.');volume+=dot(a,cross(b,c))/6;for(let i=0;i<3;i++){const x=f[i],y=f[(i+1)%3],k=x<y?x+':'+y:y+':'+x;if(!edges.has(k))edges.set(k,[]);edges.get(k).push(x<y?1:-1);}}
+ for(const signs of edges.values())if(signs.length!==2||signs[0]+signs[1]!==0)throw Error('Mounting mesh is not a closed consistently oriented surface.');if(!(volume>0))throw Error('Mounting mesh has nonpositive volume.');return {closed:true,oriented:true,positiveVolume:true,signedVolumeMM3:volume,vertexCount:mesh.vertices.length,triangleCount:mesh.faces.length};}
+function extrude(spec,triangulate){
+ const oriented=(loop,outer)=>{const p=loop.map(q=>q.slice());if((area(p)>0)!==outer)p.reverse();return p;},bottomLoops=[spec.outline,...spec.holes].map((p,i)=>oriented(p,i===0)),topLoops=[spec.outline,...spec.topHoles].map((p,i)=>oriented(p,i===0)),bottom=bottomLoops.flat(),top=topLoops.flat(),starts=[];let n=0;for(const loop of bottomLoops){starts.push(n);n+=loop.length;}
+ const vertices=[...bottom.map(p=>[...p,0]),...top.map(p=>[...p,spec.thicknessMM])],faces=[];
+ function cap(points,offset,up){const indices=triangulate(points.flat(),starts.slice(1),2);if(!Array.isArray(indices)||!indices.length||indices.length%3)throw Error('Triangulation failed.');for(let i=0;i<indices.length;i+=3){let f=indices.slice(i,i+3),a=points[f[0]],b=points[f[1]],c=points[f[2]];if((b[0]-a[0])*(c[1]-a[1])-(b[1]-a[1])*(c[0]-a[0])<0)f=[f[0],f[2],f[1]];if(!up)f=[f[0],f[2],f[1]];faces.push(f.map(j=>j+offset));}}
+ cap(bottom,0,false);cap(top,n,true);
+ function wall(lower,upper,count){for(let i=0;i<count;i++){const j=(i+1)%count,a=lower+i,b=lower+j,c=upper+j,d=upper+i;faces.push([a,b,c],[a,c,d]);}}
+ for(let k=0;k<bottomLoops.length;k++){
+  const count=bottomLoops[k].length,start=starts[k];
+  if(k<2||!spec.hasCounterbores){wall(start,n+start,count);continue;}
+  const shoulderZ=spec.thicknessMM-spec.counterboreDepthMM,smallStart=vertices.length;for(const p of bottomLoops[k])vertices.push([...p,shoulderZ]);const largeStart=vertices.length;for(const p of topLoops[k])vertices.push([...p,shoulderZ]);wall(start,smallStart,count);wall(largeStart,n+start,count);
+  // Upward-facing annular shoulder shares vertices with both cylindrical walls.
+  for(let i=0;i<count;i++){const j=(i+1)%count,a=smallStart+i,b=smallStart+j,c=largeStart+j,d=largeStart+i;faces.push([a,b,c],[a,c,d]);}
+ }
+ const mesh={vertices,faces,closed:true},checks=checkMesh(mesh),throughArea=spec.holes.reduce((s,p)=>s+Math.abs(area(p)),0),topArea=spec.topHoles.reduce((s,p)=>s+Math.abs(area(p)),0),expected=(Math.abs(area(spec.outline))-throughArea)*spec.thicknessMM-(topArea-throughArea)*spec.counterboreDepthMM;
+ if(!(expected>0)||Math.abs(checks.signedVolumeMM3-expected)>Math.max(1e-5,expected*1e-8))throw Error('Triangulated volume differs from the plate area; holes may be invalid.');checks.polygonalVolumeMM3=expected;checks.volumeErrorMM3=checks.signedVolumeMM3-expected;return {mesh,checks};
+}
+function transformMesh(mesh,transform){const {origin,basisX:x,basisY:y,basisZ:z}=transform;if(![origin,x,y,z].every(p=>Array.isArray(p)&&p.length===3&&p.every(finite)))throw Error('Invalid mounting placement.');const determinant=dot(cross(x,y),z);if(Math.abs(Math.abs(determinant)-1)>1e-6||[x,y,z].some(v=>Math.abs(dot(v,v)-1)>1e-6)||Math.abs(dot(x,y))+Math.abs(dot(x,z))+Math.abs(dot(y,z))>1e-6)throw Error('Mounting placement requires an orthonormal basis.');transform.determinant=determinant;return {...mesh,vertices:mesh.vertices.map(p=>origin.map((v,i)=>v+p[0]*x[i]+p[1]*y[i]+p[2]*z[i])),faces:mesh.faces.map(f=>determinant<0?[f[0],f[2],f[1]]:f.slice())};}
+function build(a,input={},deps={}){const inspection=inspect(a,{...deps,settings:input}),settings=settingsFor(input,inspection),parts=[],errors=[],warnings=[],triangulate=deps.triangulate||root.MEHEarcut||(typeof require==='function'?require('./vendor/earcut.cjs'):null);
+ for(const kind of KINDS){const info=inspection[kind],opt=settings[kind];if(!opt.enabled)continue;if(opt.driverId!==info.driverId){errors.push(info.name+': Mounting settings belong to another driver; review them for the current selection.');continue;}if(!info.available){errors.push(...info.reasons.map(s=>info.name+': '+s));continue;}const result=resolveSpec(info,opt);if(result.errors.length){errors.push(...result.errors.map(s=>info.name+': '+s));continue;}const spec=result.spec;
+  try{if(typeof triangulate!=='function')throw Error('The polygon triangulator is unavailable.');if(kind==='mid'&&(!Array.isArray(a.poses)||!a.poses.length))throw Error('No mid-driver placement is available.');const {mesh,checks}=extrude(spec,triangulate),poses=kind==='mid'?a.poses:[null],kindParts=[];for(let i=0;i<poses.length;i++){const pose=poses[i],id=kind==='mid'?'mid_mount_'+(i+1):'compression_mount',name=kind==='mid'?'Mid '+(i+1)+' mounting plate':'Compression-driver mounting flange',axis=pose&&(pose.driverN||pose.n),transform=kind==='mid'?{origin:pose.F.map((v,j)=>v+axis[j]*spec.mountOffsetMM),basisX:copy(pose.t),basisY:copy(pose.v),basisZ:copy(axis),note:'Plate starts at the underside driver flange and extends toward the magnet.'}:{origin:[0,0,-12],basisX:[1,0,0],basisY:[0,1,0],basisZ:[0,0,1],note:'Plate extends toward the horn from the displayed mounting face 12 mm behind the throat; the adapter placement is a design assumption.'};const localMesh={...mesh,name,partId:id,role:'separate-mounting-part',units:'mm'},worldMesh=transformMesh(localMesh,transform),worldChecks=checkMesh(worldMesh);kindParts.push({id,kind,driverId:info.driverId,name,variant:info.variant,spec:copy(spec),source:info.source,transform,localMesh,worldMesh,checks:{...checks,worldSignedVolumeMM3:worldChecks.signedVolumeMM3},warnings:info.warnings.slice()});}parts.push(...kindParts);warnings.push(...info.warnings);
+  }catch(error){errors.push(info.name+': '+error.message);}
+ }
+ return {schema:'MEH-mounting-parts-v1',units:'mm',settings,inspection,parts,errors:[...new Set(errors)],warnings:[...new Set(warnings)],scope:'Separate mounting solids with through holes and optional top-face counterbores; no assembly union, structural rating, fastener engagement or completed horn entry cuts.'};
+}
+const api={inspect,build,checkMesh};root.MEHMountParts=api;if(typeof module!=='undefined'&&module.exports)module.exports=api;
+})(typeof globalThis!=='undefined'?globalThis:this);
+/* CAD handoff: reference assembly plus explicitly selected, separate mounting solids. */
 (function(root){'use strict';
 const add=(a,b)=>a.map((v,i)=>v+b[i]),mul=(a,k)=>a.map(v=>v*k),cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]],dot=(a,b)=>a.reduce((s,v,i)=>s+v*b[i],0);
 const copy=v=>JSON.parse(JSON.stringify(v));
@@ -3742,12 +4543,41 @@ const limitations=[
  'The horn blank has wall thickness and the roll but no entry cuts. Viewer-only horn cuts are not baked into the CAD reference assembly.',
  'Entry outlines are sampled positions on the inner horn wall, not cutter solids, hole depths or fabrication tolerances.',
  'Manufacturer dimensions retain their source and status. Undimensioned frame contours, baskets, cones, hardware, gaskets and clearance envelopes can be approximate.',
- 'Create real entry cuts, mounting holes, joins, fastener engagement, seals and print segmentation in CAD; verify material thickness, moving clearances, tolerances and interference with actual parts.',
+ 'Selected mounting plates include real cutouts and bolt holes. Finish entry cuts, structural connections, fastener engagement, seals and print segmentation in CAD; verify material thickness, moving clearances, tolerances and interference with actual parts.',
  'Cone inserts use an editable diaphragm surrogate. Real cone, dust cap, surround and excursion clearances require measurement.',
  'The CAD assets are not acoustic domains. Use the separate ABEC / AKABAK or Boundary Lab local solver kit for checked acoustic boundary meshes.'
 ];
 function sourceRecord(record){if(!record)return null;return {id:record.id,name:record.name,variant:record.variant,model_status:record.modelStatus,datum:record.geometry?.datum||null,dimensions:copy(record.dimensions),mounting_patterns:copy((record.geometry?.parts||[]).filter(p=>p.type==='bolt-pattern')),unresolved:copy(record.unresolved||[]),sources:(record.sources||[]).map(s=>Object.fromEntries(['id','url','kind','sha256','inspection','accessDate','inspectionDate','redistribution'].filter(k=>s[k]!==undefined).map(k=>[k,s[k]])))};}
-function build(a,design,{formats=root.MEHFileFormats,buildMeshes=root.MEHMeshes,model=root.MEH}={}){
+function mountingKit(a,design,{formats=root.MEHFileFormats,model=root.MEH,land=root.MEHMounting,mounting=root.MEHMountParts}={}){
+ if(!mounting&&typeof require==='function')mounting=require('./mounting.cjs');
+ if(!formats||!model||!mounting)throw Error('Mounting components are unavailable.');
+ if(a.errors.length)throw Error('Resolve geometry errors before exporting mounts: '+a.errors.join(' '));
+ const result=mounting.build(a,design.mountingParts||{},{model,land});
+ if(result.errors.length)throw Error(result.errors.join(' '));
+ if(!result.parts.length)throw Error('Select at least one driver mounting part.');
+ const prefix='MEH-mounting/',files={},types=new Map();
+ for(const part of result.parts){
+  if(types.has(part.kind))continue;
+  const stem=part.kind+'_mount';types.set(part.kind,stem);
+  files[prefix+stem+'.stl']=formats.stl([part.localMesh]);
+  files[prefix+stem+'.step']=formats.facetedStep([part.localMesh]);
+ }
+ const limits=[
+  'Separate mounting parts with actual central openings and bolt through-holes; not a joined horn or cabinet assembly.',
+  'STL and STEP parts use local millimetre coordinates, one reusable part per driver kind. Quantities and installed transforms are in this manifest; installed_mounts.obj shows all placements.',
+  'Mid support plates seat at the recorded rear underside of the flange and extend toward the magnet. The compression flange sits on the horn side of the editor mounting face, 12 mm behind the throat; this adapter distance is an existing design assumption.',
+  'Plate thickness, bolt clearance, edge margin and gasket land are design choices. Thread engagement, bolt length, gasket compression, hardware/tool access, strength and print material are not validated.',
+  'The plate cutout and bolt holes are checked against each other and the plate boundary. Complete driver, horn, chamber and fastener interference, attachment and sealing still require CAD and physical-fit checks.',
+  'These parts do not change the acoustic model or certify a printable assembled loudspeaker. Selected counterbores are cut into the local +Z face: rear side for mids and horn side for the compression flange. Threaded inserts are not generated.'
+ ];
+ const manifest={schema:'MEH-mounting-kit-v1',units:'mm',settings:copy(result.settings),design_state:copy(a.p),warnings:copy(result.warnings),parts:result.parts.map(p=>({id:p.id,kind:p.kind,driver_id:p.driverId,local_stl:types.get(p.kind)+'.stl',local_step:types.get(p.kind)+'.step',spec:copy(p.spec),transform:copy(p.transform),checks:copy(p.checks)})),quantities:Object.fromEntries([...types.keys()].map(k=>[k,result.parts.filter(p=>p.kind===k).length])),drivers:{mid:sourceRecord(a.midDriver?.record||model.drivers.mid[a.p.midDriver]?.record),compression:sourceRecord(a.compressionDriver?.record)},limitations:limits};
+ files[prefix+'installed_mounts.obj']=formats.obj(result.parts.map(p=>({...p.worldMesh,partId:p.id})));
+ files[prefix+'mounting_parts.json']=JSON.stringify(manifest,null,2);
+ files[prefix+'MEH_design_study.json']=JSON.stringify(design,null,2);
+ files[prefix+'START_HERE.txt']=['MEH Studio driver mounting parts','','Import STL or faceted STEP as millimetres. Each local part rests at z=0 and extends to its selected thickness. Print/machine the quantity in mounting_parts.json; the installed OBJ is a positioning reference, not a print layout.','',...limits.map(x=>'- '+x),'','Source and chosen dimensions, measured overrides and the exact saved study accompany the parts.','',...result.warnings].join('\n');
+ return {files,manifest,result};
+}
+function build(a,design,{formats=root.MEHFileFormats,buildMeshes=root.MEHMeshes,model=root.MEH,land=root.MEHMounting,mounting=root.MEHMountParts}={}){
  if(!formats||!model||typeof buildMeshes!=='function')throw Error('CAD handoff components are unavailable.');
  if(a.errors.length)throw Error('Resolve geometry errors before exporting CAD: '+a.errors.join(' '));
  const meshes=formats.displayMeshes(a,buildMeshes),blank=formats.hornBlank(a),mid=model.driverModel(a.p,'mid'),compression=model.driverModel(a.p,'compression');
@@ -3755,18 +4585,100 @@ function build(a,design,{formats=root.MEHFileFormats,buildMeshes=root.MEHMeshes,
  const mounts=a.poses.map((pose,index)=>{const n=pose.driverN||pose.n,offset=mid?.mountOffsetMM??null;return {id:'mid_'+(index+1),driver_id:a.p.midDriver,editor_front_rim_origin_mm:copy(pose.F),catalogue_datum_origin_mm:offset===null?null:add(pose.F,mul(n,offset)),catalogue_datum_offset_from_front_rim_mm:offset,catalogue_datum_offset_status:mid?(mid.record.dimensions.mountingFaceOffset?.status||mid.record.dimensions.flangeThickness?.status||'assumed-zero-offset'):null,basis_x:copy(pose.t),basis_y:copy(pose.v),basis_z_toward_magnet:copy(n),basis_determinant:dot(cross(pose.t,pose.v),n),transform:'world = catalogue_datum_origin_mm + local_x*basis_x + local_y*basis_y + local_z*basis_z_toward_magnet',catalogue_model_placed:!!mid,datum_note:mid?'Reproduces the displayed catalogue model placement, not a verified fabrication datum. Consult the dimension status and unresolved source notes; a default or assumed offset is not a measured mounting face.':'Edited/custom geometry has no matching catalogue model placement. Front-rim pose remains a design reference; do not apply catalogue mounting dimensions as a fabrication template.'};});
  const manifest={schema:'MEH-CAD-handoff-v1',units:{length:'mm',angle:'degrees unless explicitly marked radians'},axes:{origin:'Horn throat center',forward:'+Z',handedness:'right'},scope:'CAD and printing preparation; no fabricated assembly supplied',normalized_design_state:copy(a.p),validation:{errors:copy(a.errors),warnings:copy(a.warnings),mechanical_fit_reasons:copy(model.mechanicalFitReasons(a)),scope:'Editor geometry screening only; no production or physical validation'},files:{'horn_blank_uncut.stl':'Closed uncut horn blank; STL has no formal unit metadata: import as millimetres.','assembly_reference.obj':'Named separate reference parts in world coordinates; import as millimetres.','entry_outlines_mm.csv':'Closed sampled inner-wall entry outlines; first point repeated at the end.','horn_profile_mm.csv':'Sampled inner and outer horn profile.','MEH_design_study.json':'Original reloadable applied design.'},parts:meshes.map(m=>({id:m.partId,name:m.name,obj_object:(m.partId+' '+m.name).replace(/[^a-zA-Z0-9_. -]/g,'_').replace(/[\r\n]/g,' ').slice(0,120).replace(/ /g,'_'),vertex_count:m.vertices.length,triangle_count:m.faces.length,role:'reference surface; solid/manifold status not asserted',provenance:m.provenance})),drivers:{mid:midRecord,compression:compressionRecord},mid_mounts:mounts,compression_mount:compression?{driver_id:a.p.compressionDriver,catalogue_datum_origin_mm:[0,0,-12],basis_x:[1,0,0],basis_y:[0,1,0],basis_z_toward_magnet:[0,0,-1],basis_determinant:-1,datum_note:'Displayed adapter assumption: compression-driver mounting face 12 mm behind throat. Check phase-plug projection, gasket and bolt engagement in CAD.'}:null,limitations};
  const lines=['entry_id,point_index,x_mm,y_mm,z_mm'];for(const [i,pose]of a.poses.entries()){const points=[...pose.edge,pose.edge[0]];points.forEach((p,j)=>lines.push(['mid_'+(i+1),j,...p.map(v=>v.toFixed(9))].join(',')));}
- const guide=['# MEH Studio CAD / 3D-printing handoff','','Open CAD_handoff.json alongside your CAD application. All geometry is in millimetres, origin at the horn throat center, +Z toward the mouth. STL and OBJ may be imported without units by your application: select mm and verify the saved mouth diameter.','','1. Import horn_blank_uncut.stl as a starting blank, or use the individual NURBS STEP download in MEH Studio for editable uncut horn surfaces. The blank is closed; it has no entry holes.','2. Import assembly_reference.obj with object/group separation enabled. Part IDs and original display names are indexed in CAD_handoff.json. The reference-only original-profile overlay is excluded. Do not Boolean-union all parts: drivers, gaskets and hardware are placement references.','3. Use entry_outlines_mm.csv and horn_profile_mm.csv to reconstruct the actual entry cuts and desired CAD surfaces. The CSV entry loops are on the inner wall; they do not define through-wall cutters.','4. For driver mounts, use the exact variant, source URLs, dimension status and local datum in CAD_handoff.json. mid_mounts supplies the editor front-rim pose and the catalogue model transform when it matches. The local basis may have determinant -1; preserve that handedness when transforming coordinates. No drilling template is supplied.','5. Add mounting features, joins and print segmentation; check against the manufacturer drawing and actual driver. Verify seals, fastener access and engagement, material thickness, moving clearances, tolerances and interference before fabrication.','','## Scope and outstanding work','',...limitations.map(x=>'- '+x),'','## Driver source notes','',...[['Mid',midRecord],['Compression',compressionRecord]].flatMap(([label,r])=>r?[label+': '+r.name+' / '+r.variant+' / '+r.model_status,...r.unresolved.map(note=>'- '+note),'See CAD_handoff.json for dimension-by-dimension status and source URLs.','']:[label+': no matching catalogue record; mounting geometry must be established independently.','']),'## Reproduce this handoff','','Reload MEH_design_study.json in MEH Studio and export the CAD handoff again. The JSON manifest preserves the normalized dimensions used for this export. Reference links are supplied without bundling manufacturer CAD or drawings. No internet connection is needed to inspect this package.','','## Geometry checks','','Editor warnings: '+(a.warnings.join(' ')||'None.'),'Mechanical fit advisories: '+(manifest.validation.mechanical_fit_reasons.join(' ')||'None.'),'These checks do not establish production readiness or acoustic performance.',''].join('\n');
- return {manifest,files:{'MEH-CAD-handoff/START_HERE.md':guide,'MEH-CAD-handoff/CAD_handoff.json':JSON.stringify(manifest,null,2),'MEH-CAD-handoff/MEH_design_study.json':JSON.stringify(design,null,2),'MEH-CAD-handoff/horn_blank_uncut.stl':formats.stl([blank]),'MEH-CAD-handoff/assembly_reference.obj':formats.obj(meshes),'MEH-CAD-handoff/entry_outlines_mm.csv':lines.join('\n')+'\n','MEH-CAD-handoff/horn_profile_mm.csv':formats.profileCSV(a)}};
+ const guide=['# MEH Studio CAD / 3D-printing handoff','','Open CAD_handoff.json alongside your CAD application. All geometry is in millimetres, origin at the horn throat center, +Z toward the mouth. STL and OBJ may be imported without units by your application: select mm and verify the saved mouth diameter.','','1. Import horn_blank_uncut.stl as a starting blank, or use the individual NURBS STEP download in MEH Studio for editable uncut horn surfaces. The blank is closed; it has no entry holes.','2. Import assembly_reference.obj with object/group separation enabled. Part IDs and original display names are indexed in CAD_handoff.json. The reference-only original-profile overlay is excluded. Do not Boolean-union all parts: drivers, gaskets and hardware are placement references.','3. Use entry_outlines_mm.csv and horn_profile_mm.csv to reconstruct the actual entry cuts and desired CAD surfaces. The CSV entry loops are on the inner wall; they do not define through-wall cutters.','4. For driver mounts, use the exact variant, source URLs, dimension status and local datum in CAD_handoff.json. mid_mounts supplies the editor front-rim pose and the catalogue model transform when it matches. The local basis may have determinant -1; preserve that handedness when transforming coordinates. No drilling template is supplied for these reference driver surfaces; generated mounting plates, when selected, are supplied separately.','5. Use selected mounting parts or add the required mounts, then finish joins and print segmentation; check against the manufacturer drawing and actual driver. Verify seals, fastener access and engagement, material thickness, moving clearances, tolerances and interference before fabrication.','','## Scope and outstanding work','',...limitations.map(x=>'- '+x),'','## Driver source notes','',...[['Mid',midRecord],['Compression',compressionRecord]].flatMap(([label,r])=>r?[label+': '+r.name+' / '+r.variant+' / '+r.model_status,...r.unresolved.map(note=>'- '+note),'See CAD_handoff.json for dimension-by-dimension status and source URLs.','']:[label+': no matching catalogue record; mounting geometry must be established independently.','']),'## Reproduce this handoff','','Reload MEH_design_study.json in MEH Studio and export the CAD handoff again. The JSON manifest preserves the normalized dimensions used for this export. Reference links are supplied without bundling manufacturer CAD or drawings. No internet connection is needed to inspect this package.','','## Geometry checks','','Editor warnings: '+(a.warnings.join(' ')||'None.'),'Mechanical fit advisories: '+(manifest.validation.mechanical_fit_reasons.join(' ')||'None.'),'These checks do not establish production readiness or acoustic performance.',''].join('\n');
+ const files={'MEH-CAD-handoff/START_HERE.md':guide,'MEH-CAD-handoff/MEH_design_study.json':JSON.stringify(design,null,2),'MEH-CAD-handoff/horn_blank_uncut.stl':formats.stl([blank]),'MEH-CAD-handoff/assembly_reference.obj':formats.obj(meshes),'MEH-CAD-handoff/entry_outlines_mm.csv':lines.join('\n')+'\n','MEH-CAD-handoff/horn_profile_mm.csv':formats.profileCSV(a)};
+ if(['mid','compression'].some(kind=>design.mountingParts?.[kind]?.enabled===true)){
+  const kit=mountingKit(a,design,{formats,model,land,mounting});
+  for(const [name,data]of Object.entries(kit.files))files['MEH-CAD-handoff/mounting/'+name.slice('MEH-mounting/'.length)]=data;
+  manifest.mounting_parts={manifest:'mounting/mounting_parts.json',quantities:kit.manifest.quantities,scope:'Separate solid parts with real cutouts and through-holes; not fused to the reference assembly.'};
+  files['MEH-CAD-handoff/START_HERE.md']+='\n\n## Selected mounting parts\n\nThe mounting folder contains separate solid STL and faceted STEP plates with actual holes. Read mounting/START_HERE.txt and mounting/mounting_parts.json for quantities, source dimensions, design choices and installed positions. Reference driver surfaces above remain references; selected plates are separate parts.\n';
+ }
+ files['MEH-CAD-handoff/CAD_handoff.json']=JSON.stringify(manifest,null,2);
+ return {manifest,files};
 }
-const api={build,sourceRecord,limitations};root.MEHCADHandoff=api;if(typeof module!=='undefined'&&module.exports)module.exports=api;
+const api={build,mountingKit,sourceRecord,limitations};root.MEHCADHandoff=api;if(typeof module!=='undefined'&&module.exports)module.exports=api;
 })(typeof globalThis!=='undefined'?globalThis:this);
 (function(root){'use strict';
-function init(host,{getDesign,save}={}){if(!host)return;const F=root.MEHFileFormats,M=root.MEH;
-host.innerHTML=`<h3 tabindex="-1">CAD &amp; 3D-printing preparation</h3><p class="note">Take the design into CAD to add driver mounts, entry cuts and fabrication details. All coordinates are in millimetres.</p><button type="button" class="primary" data-ex-handoff>Download CAD handoff (.zip)</button><p class="note">Includes a closed uncut horn blank (STL), named assembly reference parts (OBJ), entry outlines, driver dimensions with sources, placement data and the saved design. The assembly is separate reference surfaces; it is not a fused printable or ready-to-build model.</p><details><summary>Individual CAD files</summary><div class="export-row"><label>Geometry<select data-ex-scope><option value="blank">Horn blank · no entry cuts</option><option value="assembly">Assembly · reference surfaces</option></select></label><label>File type<select data-ex-format><option value="stl">STL (.stl)</option><option value="obj">OBJ (.obj)</option><option value="step">STEP · faceted (.step)</option><option value="nurbs">STEP · NURBS horn surfaces (.step)</option><option value="xyz">Point cloud (.xyz)</option><option value="quarter">Quarter horn cloud (.xyz)</option></select></label></div><p class="note" data-ex-scope-note>The horn blank includes wall thickness and the roll, without entry holes. Finish openings and mounting in CAD.</p><button type="button" data-ex-download>Download STL (.stl)</button></details><p class="note" data-ex-status role="status" aria-live="polite"></p>`;
+const kinds=['mid','compression'],labels={mid:'Cone driver mounting rings',compression:'Compression driver mounting plate'};
+const fields=[['thicknessMM','Plate thickness / mm'],['boltHoleDiameterMM','Through-hole diameter / mm'],['edgeMarginMM','Minimum outer edge margin / mm'],['gasketLandMM','Minimum gasket land / mm']];
+const recessFields=[['counterboreDiameterMM','Bolt-head recess diameter / mm'],['counterboreDepthMM','Bolt-head recess depth / mm']];
+const overrideFields=[['cutoutDiameterMM','Cutout diameter / mm'],['outerDiameterMM','Outer diameter / mm'],['boltCircleDiameterMM','Bolt circle diameter / mm'],['boltCount','Bolt count'],['startAngleDeg','First bolt angle / degrees'],['mountOffsetMM','Mounting seat offset / mm']];
+const copy=x=>JSON.parse(JSON.stringify(x)),esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const messages=list=>(list||[]).map(x=>typeof x==='string'?x:x.message||x.reason||JSON.stringify(x));
+function numberField(kind,key,label,override=false){return `<label>${label}<input type="number" step="${key==='boltCount'?'1':'any'}" data-mount-${override?'override':'field'}="${key}" data-mount-kind="${kind}"></label>`;}
+function previewSVG(part){
+ const s=part.spec,outline=s?.outline,bolts=s?.boltCenters;
+ if(!Array.isArray(outline)||outline.length<3||!Array.isArray(bolts)||![...outline,...bolts].every(p=>Array.isArray(p)&&p.length>=2&&p.every(Number.isFinite)))return '';
+ const xs=outline.map(p=>p[0]),ys=outline.map(p=>p[1]),pad=Math.max(3,(Math.max(...xs)-Math.min(...xs))*.06),x=Math.min(...xs)-pad,y=Math.min(...ys)-pad,w=Math.max(...xs)-x+pad,h=Math.max(...ys)-y+pad;
+ const hole=s.boltHoleDiameterMM,cut=s.cutoutDiameterMM;
+ if(![x,y,w,h,hole,cut].every(Number.isFinite)||w<=0||h<=0)return '';
+ const holes=s.topHoles||s.holes;
+ if(!Array.isArray(holes)||!holes.every(loop=>loop.every(p=>p.length===2&&p.every(Number.isFinite))))return '';
+ const path=loops=>loops.map(loop=>loop.map((p,i)=>(i?'L':'M')+p.join(',')).join('')+'Z').join(''),d=path([outline,...holes]);
+ const shoulders=s.hasCounterbores?holes.slice(1).map((loop,i)=>`<path d="${path([loop,s.holes[i+1]])}" fill="#ecf1ed" fill-rule="evenodd" stroke="#879a91" stroke-width="${Math.max(w,h)*.002}"/>`).join(''):'';
+ return `<svg viewBox="${x} ${y} ${w} ${h}" role="img" aria-label="${esc(labels[part.kind])}: actual plate outline, cutout and ${bolts.length} through holes${s.hasCounterbores?' with bolt-head recesses':''}" data-mount-preview-kind="${esc(part.kind)}" style="display:block;width:100%;max-width:240px;max-height:220px;margin:auto"><title>${esc(labels[part.kind])} — ${part.kind==='mid'?'rear face':'horn-facing face'}, millimetres</title><path d="${d}" fill="#dce9e6" fill-rule="evenodd" stroke="#267367" stroke-width="${Math.max(w,h)*.004}"/>${shoulders}</svg>`;
+}
+function init(host,{getDesign,onChange,save,exportButton}={}){
+ if(!host?.querySelector||typeof getDesign!=='function')return null;
+ host.innerHTML=`<h4>Driver mounting</h4><p class="note">Generate separate mounting parts with real cutouts and through holes. Selected parts are also included in the CAD handoff. Dimensions are in millimetres.</p>${kinds.map(kind=>`<fieldset data-mount-card="${kind}"><legend>${labels[kind]}</legend><p class="note" data-mount-driver="${kind}"></p><label class="mounting-choice"><input type="checkbox" data-mount-enabled="${kind}"> Include ${kind==='mid'?'one ring for each cone driver':'compression mounting plate'}</label><p class="note" data-mount-eligibility="${kind}"></p><div class="mounting-fields">${fields.map(([key,label])=>numberField(kind,key,label)).join('')}</div><details><summary>Bolt-head recesses (optional)</summary><p class="note">Enter diameter and depth to add flat-bottomed recesses; use zero for both to omit them. Recesses are on the rear face of cone-driver plates and the horn-facing face of the compression flange.</p><div class="mounting-fields">${recessFields.map(([key,label])=>numberField(kind,key,label)).join('')}</div></details><details data-mount-measured-details="${kind}"><summary>Use measured mounting dimensions</summary><p class="note">Use a circular plate and bolt circle measured for this exact driver. This replaces the catalogue pattern. The mounting seat offset is measured from the editor's front-rim datum toward the magnet for a cone driver, or zero at the compression driver's mounting face.</p><label class="mounting-choice"><input type="checkbox" data-mount-measured="${kind}"> Use my measured dimensions</label><div class="mounting-fields">${overrideFields.map(([key,label])=>numberField(kind,key,label,true)).join('')}<label class="mounting-wide">Measurement source / note<input type="text" maxlength="500" data-mount-note="${kind}" placeholder="For example: actual driver measured on 30 September"></label></div><label class="mounting-choice"><input type="checkbox" data-mount-confirm="${kind}"> I checked these dimensions against this driver</label></details><div data-mount-preview="${kind}"></div><p class="note" data-mount-check="${kind}"></p></fieldset>`).join('')}<p class="note">These are separate plates and rings with through holes and optional bolt-head recesses. Joining them to the horn or collector, print segmentation and structural checks remain CAD work.</p><button type="button" data-mount-download>Download mounting parts (.zip)</button><p class="note" data-mount-status role="status" aria-live="polite"></p>`;
+ const q=s=>host.querySelector(s),button=q('[data-mount-download]'),status=q('[data-mount-status]');
+ let settings={},analysis=null,inspection=null,result=null,busy=false;
+ function dependencies(){return {model:root.MEH,land:root.MEHMounting,triangulate:root.MEHEarcut};}
+ function persist(){onChange?.(copy(settings));}
+ function read(){
+  const design=getDesign();analysis=root.MEH.analyze(design.state);inspection=root.MEHMountParts.inspect(analysis,dependencies());
+  const old=design.mountingParts||{};settings={};
+  for(const kind of kinds){const item=inspection[kind],id=analysis.p[kind==='mid'?'midDriver':'compressionDriver'],saved=old[kind];settings[kind]={enabled:false,driverId:id,thicknessMM:6,boltHoleDiameterMM:5.5,edgeMarginMM:3,gasketLandMM:2,counterboreDiameterMM:0,counterboreDepthMM:0,...item?.defaults,...(saved?.driverId===id?saved:{})};}
+  return design;
+ }
+ function fill(){for(const kind of kinds){
+  const item=inspection[kind],s=settings[kind],o=s.override;
+  q(`[data-mount-driver="${kind}"]`).textContent=[item?.name||s.driverId,item?.variant].filter(Boolean).join(' · ');
+  q(`[data-mount-enabled="${kind}"]`).checked=s.enabled===true;
+  q(`[data-mount-eligibility="${kind}"]`).textContent=item?.available?'Catalogue mounting pattern available. Review the generated part and source dimensions before fabrication.':'Catalogue mounting unavailable: '+(messages(item?.reasons).join(' ')||'Exact mounting geometry is not established for this driver.');
+  for(const [key]of [...fields,...recessFields])q(`[data-mount-field="${key}"][data-mount-kind="${kind}"]`).value=s[key]??'';
+  q(`[data-mount-measured="${kind}"]`).checked=!!o;
+  for(const [key]of overrideFields)q(`[data-mount-override="${key}"][data-mount-kind="${kind}"]`).value=o?.[key]??'';
+  q(`[data-mount-note="${kind}"]`).value=o?.note||'';q(`[data-mount-confirm="${kind}"]`).checked=o?.confirmed===true;
+  if(o)q(`[data-mount-measured-details="${kind}"]`).open=true;
+  enableOverride(kind);
+ }}
+ function enableOverride(kind){const enabled=!!settings[kind].override;for(const input of host.querySelectorAll(`[data-mount-override][data-mount-kind="${kind}"],[data-mount-note="${kind}"],[data-mount-confirm="${kind}"]`))input.disabled=!enabled;}
+ function evaluate(){
+  try{result=root.MEHMountParts.build(analysis,settings,dependencies());const errors=messages(result.errors),warnings=messages(result.warnings);
+   for(const kind of kinds){const parts=result.parts.filter(p=>p.kind===kind),preview=q(`[data-mount-preview="${kind}"]`);preview.innerHTML=parts.length?previewSVG(parts[0]):'';
+    q(`[data-mount-check="${kind}"]`).textContent=parts.length?`${parts.length} ${parts.length===1?'part':'parts'} · ${parts[0].spec.thicknessMM??settings[kind].thicknessMM} mm thick · ${parts[0].spec.boltCenters.length} through holes per part. ${kind==='mid'?'Rear-face':'Horn-facing'} preview; installed locations are in the OBJ.`:settings[kind].enabled?'No valid part generated.':'Not included.';
+   }
+   button.disabled=busy||!result.parts.length||errors.length>0;
+   status.textContent=errors.length?errors.join(' '):result.parts.length?`${result.parts.length} mounting parts ready. ${warnings.join(' ')}`:'Choose the mounting parts to include.';
+  }catch(e){result=null;button.disabled=true;for(const kind of kinds)q(`[data-mount-preview="${kind}"]`).innerHTML='';status.textContent='Mounting unavailable: '+e.message;}
+ }
+ function refresh(){try{read();fill();evaluate();}catch(e){result=null;button.disabled=true;status.textContent='Mounting unavailable: '+e.message;}return result;}
+ function changed(event){const el=event.target;if(!el.matches('input'))return;
+  const kind=el.dataset.mountKind||el.dataset.mountEnabled||el.dataset.mountMeasured||el.dataset.mountNote||el.dataset.mountConfirm;if(!kinds.includes(kind))return;
+  const s=settings[kind];if(!s)return;
+  if(el.hasAttribute('data-mount-enabled'))s.enabled=el.checked;
+  else if(el.hasAttribute('data-mount-measured')){s.override=el.checked?{driverId:s.driverId,confirmed:false,note:'',cutoutDiameterMM:null,outerDiameterMM:null,boltCircleDiameterMM:null,boltCount:null,startAngleDeg:0,mountOffsetMM:kind==='compression'?0:null}:null;fill();}
+  else if(el.hasAttribute('data-mount-field'))s[el.dataset.mountField]=Number.isFinite(el.valueAsNumber)?el.valueAsNumber:null;
+  else if(el.hasAttribute('data-mount-override')&&s.override){s.override[el.dataset.mountOverride]=Number.isFinite(el.valueAsNumber)?el.valueAsNumber:null;s.override.confirmed=false;q(`[data-mount-confirm="${kind}"]`).checked=false;}
+  else if(el.hasAttribute('data-mount-note')&&s.override)s.override.note=el.value;
+  else if(el.hasAttribute('data-mount-confirm')&&s.override)s.override.confirmed=el.checked;
+  persist();evaluate();
+ }
+ async function download(){if(busy)return;refresh();if(button.disabled)return;busy=true;button.disabled=true;status.textContent='Preparing mounting parts…';await new Promise(resolve=>root.setTimeout(resolve,0));try{const design=getDesign(),a=root.MEH.analyze(design.state),kit=root.MEHCADHandoff.mountingKit(a,{...design,mountingParts:copy(settings)});save('MEH_mounting_parts.zip',root.MEHDownloadZip.create(kit.files),'application/zip');status.textContent='Mounting parts downloaded. Extract the ZIP for separate STL and STEP solids, installed OBJ and the source/dimension manifest.';return kit;}catch(e){status.textContent='Mounting export unavailable: '+e.message;}finally{busy=false;button.disabled=!result?.parts.length||!!result?.errors.length;}}
+ host.addEventListener('input',changed);button.addEventListener('click',download);exportButton?.addEventListener('click',refresh);refresh();
+ return {refresh,download,get settings(){return copy(settings);},get result(){return result;}};
+}
+const api={init,previewSVG};root.MEHMountingPanel=api;if(typeof module!=='undefined'&&module.exports)module.exports=api;
+})(typeof globalThis!=='undefined'?globalThis:this);
+(function(root){'use strict';
+function init(host,{getDesign,save,onMountingChange,exportButton}={}){if(!host)return;const F=root.MEHFileFormats,M=root.MEH;
+host.innerHTML=`<h3 tabindex="-1">CAD &amp; 3D-printing preparation</h3><p class="note">Generate driver mounts here, then take the design into CAD to finish entry cuts, joins and fabrication details. All coordinates are in millimetres.</p><button type="button" class="primary" data-ex-handoff>Download CAD handoff (.zip)</button><p class="note">Includes a closed uncut horn blank (STL), named assembly reference parts (OBJ), entry outlines, driver dimensions with sources, placement data and the saved design. The assembly is separate reference surfaces; it is not a fused printable or ready-to-build model.</p><section data-ex-mounting></section><details><summary>Individual CAD files</summary><div class="export-row"><label>Geometry<select data-ex-scope><option value="blank">Horn blank · no entry cuts</option><option value="assembly">Assembly · reference surfaces</option></select></label><label>File type<select data-ex-format><option value="stl">STL (.stl)</option><option value="obj">OBJ (.obj)</option><option value="step">STEP · faceted (.step)</option><option value="nurbs">STEP · NURBS horn surfaces (.step)</option><option value="xyz">Point cloud (.xyz)</option><option value="quarter">Quarter horn cloud (.xyz)</option></select></label></div><p class="note" data-ex-scope-note>The horn blank includes wall thickness and the roll, without entry holes. Finish openings and mounting in CAD.</p><button type="button" data-ex-download>Download STL (.stl)</button></details><p class="note" data-ex-status role="status" aria-live="polite"></p>`;
 const q=s=>host.querySelector(s),format=q('[data-ex-format]'),scope=q('[data-ex-scope]'),button=q('[data-ex-download]'),handoff=q('[data-ex-handoff]'),status=q('[data-ex-status]');let busy=false;
+const mountingHost=q('[data-ex-mounting]'),mounting=mountingHost?.querySelector?root.MEHMountingPanel?.init(mountingHost,{getDesign,onChange:onMountingChange,save,exportButton}):null;
 function sync(){const special=['nurbs','quarter'].includes(format.value);if(special)scope.value='blank';scope.disabled=special;button.textContent='Download '+({stl:'STL (.stl)',obj:'OBJ (.obj)',step:'faceted STEP (.step)',nurbs:'NURBS STEP (.step)',xyz:'point cloud (.xyz)',quarter:'quarter horn cloud (.xyz)'}[format.value]);q('[data-ex-scope-note]').textContent=format.value==='nurbs'?'Inner and outer NURBS horn surfaces, including the roll. Uncut surfaces only; add entries and closures in CAD.':format.value==='quarter'?'Uncut horn only, X ≥ 0 and Y ≥ 0, in mm. This point cloud has no solver boundaries or driver sources.':scope.value==='assembly'?'Separate assembly surfaces, including driver envelopes. Horn entry cuts shown in the viewer are not baked into these reference surfaces; finish cuts and joins in CAD.':'The horn blank includes wall thickness and the roll, without entry holes. Finish openings and mounting in CAD.';status.textContent='';}
 async function run(asHandoff=false){if(busy)return;busy=true;button.disabled=true;handoff.disabled=true;const kind=format.value,target=scope.value;status.textContent='Preparing download…';await new Promise(r=>root.setTimeout(r,0));try{const design=getDesign(),a=M.analyze(design.state);if(a.errors.length)throw Error('Resolve geometry errors before exporting CAD: '+a.errors.join(' '));if(asHandoff===true){const kit=root.MEHCADHandoff.build(a,design);save('MEH_CAD_handoff.zip',root.MEHDownloadZip.create(kit.files),'application/zip');status.textContent='CAD handoff downloaded. Extract it and read START_HERE.md. Import geometry as mm; finish and verify the assembly in CAD.';return kit;}let data,type='text/plain',ext=kind,name='MEH_'+(target==='assembly'?'assembly_reference':'horn_blank');if(kind==='nurbs'){data=F.nurbsStep(a);ext='step';name='MEH_horn_uncut_NURBS_surfaces';}else{const meshes=target==='assembly'?F.displayMeshes(a,root.MEHMeshes):[F.hornBlank(a)];if(kind==='stl'){data=F.stl(meshes);type='model/stl';}else if(kind==='obj')data=F.obj(meshes);else if(kind==='step')data=F.facetedStep(meshes);else{data=F.cloud(meshes,kind==='quarter');ext='xyz';if(kind==='quarter')name+='_'+kind;}}save(name+'.'+ext,data,type);status.textContent='Downloaded '+name+'.'+ext+' · millimetres.';}catch(e){status.textContent='Export unavailable: '+e.message;}finally{busy=false;button.disabled=false;handoff.disabled=false;}}
-format.addEventListener('change',sync);scope.addEventListener('change',sync);button.addEventListener('click',()=>run());handoff.addEventListener('click',()=>run(true));sync();return {run,sync};}
+format.addEventListener('change',sync);scope.addEventListener('change',sync);button.addEventListener('click',()=>run());handoff.addEventListener('click',()=>run(true));sync();return {run,sync,mounting};}
 root.MEHFileExportPanel={init};if(typeof module!=='undefined'&&module.exports)module.exports={init};
 })(typeof globalThis!=='undefined'?globalThis:this);
 /* Local runner is embedded so this download works offline. */
@@ -4002,7 +4914,7 @@ const api={defaults,readOptions,init};root.MEHMeshExportPanel=api;if(typeof modu
 (function(root){
  const host=root.document.getElementById('meshExport'),editor=root.__MEH_EDITOR__;
  const save=(name,data,type)=>{const url=root.URL.createObjectURL(new root.Blob([data],{type})),link=root.document.createElement('a');link.href=url;link.download=name;link.click();root.setTimeout(()=>root.URL.revokeObjectURL(url),1000);};
- if(editor)root.MEHFileExportPanel.init(root.document.getElementById('fileExports'),{getDesign:()=>editor.designJSON(),save});
+ if(editor)root.MEHFileExportPanel.init(root.document.getElementById('fileExports'),{getDesign:()=>editor.designJSON(),onMountingChange:settings=>editor.setMountingParts(settings),exportButton:root.document.getElementById('export'),save});
  if(host&&editor)root.MEHMeshExportPanel.init(host,{getDesign:()=>editor.designJSON(),exportButton:root.document.getElementById('export')});
  for(const button of root.document.querySelectorAll?.('[data-export-jump]')||[])button.addEventListener('click',()=>{const target=root.document.getElementById(button.dataset.exportJump);if(!target)return;if(target.tagName==='DETAILS')target.open=true;target.scrollIntoView?.({block:'start',behavior:'smooth'});target.querySelector('summary,h3')?.focus();});
  })(typeof globalThis!=='undefined'?globalThis:this);

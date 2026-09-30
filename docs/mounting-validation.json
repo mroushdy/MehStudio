@@ -1,0 +1,53 @@
+{
+  "date": "2026-09-30",
+  "build": "13.2.0",
+  "base_commit": "68c40aad0971bc090e4b8542c24e6b0d78cd04df",
+  "javascript_tests": {
+    "passed": 262,
+    "failed": 0
+  },
+  "automatically_eligible_geometry_checked": {
+    "cone_records": 6,
+    "compression_records": 12
+  },
+  "native_cad_fixture": {
+    "mid_driver": "bc6ndl38",
+    "compression_driver": "bcDcx464",
+    "thickness_mm": 8,
+    "mid_counterbore_diameter_mm": 9,
+    "compression_counterbore_diameter_mm": 12,
+    "counterbore_depth_mm": 3,
+    "parser": "OpenCascade OCP",
+    "results": [
+      {
+        "file": "mid_mount.step",
+        "valid": true,
+        "solids": 1,
+        "triangles": 2288,
+        "volume_mm3": 46964.49190524783,
+        "through_holes_checked": 5,
+        "counterbores_checked": 4,
+        "stl_matches_step": true
+      },
+      {
+        "file": "compression_mount.step",
+        "valid": true,
+        "solids": 1,
+        "triangles": 2576,
+        "volume_mm3": 83313.01427377829,
+        "through_holes_checked": 5,
+        "counterbores_checked": 4,
+        "stl_matches_step": true
+      }
+    ]
+  },
+  "final_embedded_export_geometry_sha256": {
+    "MEH-mounting/mid_mount.stl": "2e4913f3b390efd9450d6fad41db5cc743395c33e34c189288328f05e8c37200",
+    "MEH-mounting/mid_mount.step": "f6f056edcb446533f07f14e6836ec91276e75213e459d1921d9d2e4435818121",
+    "MEH-mounting/compression_mount.stl": "bedbfb02e65787504637716ebc44b8711b26a329539d89461e81d667f8292096",
+    "MEH-mounting/compression_mount.step": "f589000c34c683041e5a369324deb13c25cbadb97f938681e9ec8fc68effade6",
+    "MEH-mounting/installed_mounts.obj": "fc1a24d7284bee0b53186970c1c45a8c413930f549b0157b5528bb44f7d556ac"
+  },
+  "offline_html_sha256": "72223176ea4fdc3deed23f33355d92193739554738ce3feedf0445af8167ca70",
+  "scope": "Source/DOM and exported solid validation. No rendered browser QA, physical fit, complete-assembly interference, structural rating or acoustic validation."
+}
